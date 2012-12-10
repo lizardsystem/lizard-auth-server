@@ -1,0 +1,23 @@
+{% load formhelpers %}
+{% with field.field.widget|klass as input_type %}
+    {% if input_type == "HiddenInput" %}
+        {{ field }}
+    {% else %}
+        <div class="clearfix">
+            {{ field.label_tag }}
+            <div class="controls{% if field.errors %} control-group error{% endif %}">
+                    {% if input_type == "CheckboxSelectMultiple" %}
+                        {% include "lizard_auth_server/form_choices.html" with type="checkbox" %}
+                    {% elif input_type == "RadioSelect" %}
+                        {% include "lizard_auth_server/form_choices.html" with type="radio" %}
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                {% if field.errors %}
+                    <span class="help-inline control-group error">{{ field.errors|join:'<br />' }}</span>
+                {% endif %}
+                <span class="help-block">{{ field.help_text }}</span>
+            </div>
+        </div>
+    {% endif %}
+{% endwith %}

@@ -1,0 +1,17 @@
+{% extends 'lizard_auth_server/base.html' %}
+{% load i18n %}
+
+{% block subtitle %}{% trans 'Access denied' %}{% endblock %}
+
+{% block container %}
+    <div class="content">
+        <h3>{% trans 'Access denied' %}</h3>
+        <p>
+            U heeft geen toegang tot dit portaal.
+        </p>
+        <ul>
+            <li><a href="{{ login_url }}">Log in</a> met een andere gebruiker, die w&egrave;l toegang heeft.</li>
+            <li>Bekijk <a href="{% url profile %}">uw profiel</a> om te zien tot welke portalen u toegang heeft.</li>
+        </ul>
+    </div>
+{% endblock %}

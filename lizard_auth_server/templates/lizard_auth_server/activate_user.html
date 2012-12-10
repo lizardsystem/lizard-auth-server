@@ -1,0 +1,26 @@
+{% extends 'lizard_auth_server/base.html' %}
+{% load i18n %}
+
+{% block subtitle %}{% trans 'Activate user' %}{% endblock %}
+
+{% block container %}
+<div class="content">
+    {% if form.errors %}
+        <div class="alert alert-block fade in">
+            <a class="close" data-dismiss="alert" href="#">×</a>
+            <p>{% blocktrans count form.errors.items|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}</p>
+        </div>
+    {% endif %}
+    <form action="" method="post" id="register-user-form">{% csrf_token %}
+        <fieldset>
+            <legend>{% trans 'Activate user' %}</legend>
+            {% for field in form %}
+                {% include 'lizard_auth_server/form_field.html' %}
+            {% endfor %}
+            <div class="actions">
+                <input type="submit" class="btn btn-primary" value="{% trans 'Continue to next step' %}">&nbsp;<button type="reset" class="btn">{% trans 'Reset values' %}</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

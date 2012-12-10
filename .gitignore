@@ -36,6 +36,14 @@ src
 etc/*.nginx.conf
 etc/*.logrotate
 
+# Eclipse / PyDev
+.project
+.pydevproject
+.pydevproject.bak
+.settings
+
 # Old (local) stuff
 old
 
+# Local settings
+lizard_auth_server/local*.py

@@ -114,7 +114,7 @@ SSO_TOKEN_TIMEOUT_MINUTES = 30
 # Activation keys expire after this timedelta
 ACCOUNT_ACTIVATION_DAYS = 7
 # Prefix used to generate absolute links to this site. Note: should NOT end with a slash.
-SITE_PUBLIC_URL_PREFIX = 'http://ubuntu-dev-1-mirror:8001'
+SITE_PUBLIC_URL_PREFIX = 'http://127.0.0.1:8001'
 # Name of this site, for use in email subjects et cetera
 SITE_NAME = 'sso.lizard.net'
 

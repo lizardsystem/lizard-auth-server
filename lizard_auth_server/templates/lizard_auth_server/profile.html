@@ -51,18 +51,17 @@
             </tbody>
         </table>
         <h3>{% trans 'Available portals' %}</h3>
-        <p>Dit zijn de portalen waar u toegang tot heeft:</p>
+        <p>{% trans 'You have access to the following portals:' %}</p>
         <ul>
             {% for portal in view.profile.portals.all %}
             <li><a href="{{ portal.visit_url }}">{{ portal.name }} ({{ portal.visit_url }})</a></li>
             {% empty %}
-            <li>Geen portalen gevonden.</li>
+            <li>{% trans 'No portals found.' %}</li>
             {% endfor %}
         </ul>
         <h3>{% trans 'Actions' %}</h3>
         <ul>
             <li><a href="{% url django.contrib.auth.views.password_change %}">{% trans "Change password" %}</a></li>
-            <li><a href="{% url django.contrib.auth.views.password_reset %}">{% trans "Reset my password" %}</a></li>
             {% if user.is_staff %}
             <li><a href="{% url lizard_auth_server.invite_user %}">{% trans 'Register a new user' %}</a></li>
             <li><a href="{% url admin:lizard_auth_server_portal_changelist %}">{% trans 'Manage SSO portals' %}</a></li>

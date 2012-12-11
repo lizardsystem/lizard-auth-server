@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-11 23:28+0100\n"
+"POT-Creation-Date: 2012-12-11 23:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,9 +121,19 @@ msgstr "Telefoonnummer (mobiel)"
 msgid "An unknown error occurred."
 msgstr "Onbekende fout."
 
-#: views.py:422
-msgid "Invalid activation key."
-msgstr "Ongeldige activatiesleutel."
+#: views.py:160 views.py:177 views.py:197 views.py:227
+msgid "Communication error."
+msgstr "Communicatiefout."
+
+#: views.py:235
+msgid "Token timed out. Please return to the portal to get a fresh token."
+msgstr "Token is verlopen. Ga terug naar het portaal, en log daar opnieuw in."
+
+#: views.py:423
+msgid "Invalid activation key. Perhaps this account was already activated?"
+msgstr ""
+"Ongeldige activatiesleutel. Dit betekent waarschijnlijk dat het account al "
+"geactiveerd is."
 
 #: templates/admin/base_site.html:5
 msgid "Lizard SSO"

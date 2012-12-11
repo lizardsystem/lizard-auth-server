@@ -157,7 +157,7 @@ class PortalActionView(ProcessGetFormView):
 
     def form_invalid(self, form):
         logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
-        return HttpResponseBadRequest('Bad signature')
+        return ErrorMessageResponse(self.request, _('Communication error.'), 400)
 
 class LogoutRedirectView(ProcessGetFormView):
     '''
@@ -173,7 +173,8 @@ class LogoutRedirectView(ProcessGetFormView):
             return HttpResponseBadRequest('Unknown action')
 
     def form_invalid(self, form):
-        return HttpResponseBadRequest('Bad signature')
+        logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
+        return ErrorMessageResponse(self.request, _('Communication error.'), 400)
 
 class RequestTokenView(ProcessGetFormView):
     '''
@@ -193,7 +194,7 @@ class RequestTokenView(ProcessGetFormView):
 
     def form_invalid(self, form):
         logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
-        return HttpResponseBadRequest('Bad signature')
+        return ErrorMessageResponse(self.request, _('Communication error.'), 400)
 
 class AuthorizeView(ProcessGetFormView):
     '''
@@ -223,7 +224,7 @@ class AuthorizeView(ProcessGetFormView):
 
     def form_invalid(self, form):
         logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
-        return HttpResponseBadRequest('Bad signature')
+        return ErrorMessageResponse(self.request, _('Communication error.'), 400)
 
     def check_token_timeout(self):
         delta = datetime.datetime.now(tz=pytz.UTC) - self.token.created
@@ -231,7 +232,7 @@ class AuthorizeView(ProcessGetFormView):
 
     def token_timeout(self):
         self.token.delete()
-        return HttpResponseForbidden('Token timed out')
+        return ErrorMessageResponse(self.request, _('Token timed out. Please return to the portal to get a fresh token.'), 403)
 
     def form_valid_authenticated(self):
         '''
@@ -419,7 +420,7 @@ class InvitationMixin(object):
         return super(InvitationMixin, self).dispatch(request, *args, **kwargs)
 
     def invalid_activation_key(self, request):
-        return ErrorMessageResponse(request, _('Invalid activation key.'), 404)
+        return ErrorMessageResponse(request, _('Invalid activation key. Perhaps this account was already activated?'), 404)
 
 class ActivateUserView1(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user.html'

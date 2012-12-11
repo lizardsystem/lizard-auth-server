@@ -419,7 +419,7 @@ class InvitationMixin(object):
         return super(InvitationMixin, self).dispatch(request, *args, **kwargs)
 
     def invalid_activation_key(self, request):
-        return ErrorMessageResponse(self.request, _('Invalid activation key.'))
+        return ErrorMessageResponse(request, _('Invalid activation key.'))
 
 class ActivateUserView1(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user.html'

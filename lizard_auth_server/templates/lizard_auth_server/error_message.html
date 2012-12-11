@@ -1,0 +1,17 @@
+{% extends 'lizard_auth_server/base.html' %}
+{% load i18n %}
+
+{% block subtitle %}{% trans 'An error occurred' %}{% endblock %}
+
+{% block container %}
+    <div class="content">
+        <h3>{% trans 'An error occurred' %}</h3>
+        <p>
+            {{ error_message }}
+        </p>
+        <p>
+            {% url index as index_url %}
+            {% blocktrans %}Back to the <a href="{{ index_url }}">home page</a>.{% endblocktrans %}
+        </p>
+    </div>
+{% endblock %}

@@ -92,6 +92,7 @@ urlpatterns = patterns(
             'template_name': 'lizard_auth_server/password_reset_form.html',
             'email_template_name': 'lizard_auth_server/password_reset_email.html',
             'subject_template_name': 'lizard_auth_server/password_reset_subject.txt'
+            # TODO can't configure email language somehow
         },
         name='password_reset'
     ),

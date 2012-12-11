@@ -16,6 +16,7 @@ from django.views.decorators.debug import sensitive_post_parameters, sensitive_v
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.views.generic.edit import FormView, FormMixin
+from django.utils.translation import ugettext as _
 from django.http import (
     HttpResponse,
     HttpResponseForbidden,
@@ -111,6 +112,26 @@ class ProfileView(ViewContextMixin, TemplateView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
+
+class ErrorMessageResponse(TemplateResponse):
+    '''
+    Display a slightly more user-friendly error message.
+    '''
+    def __init__(self, request, error_message=None, status=500):
+        if not error_message:
+            error_message = _('An unknown error occurred.')
+        context = RequestContext(
+            request,
+            {
+                'error_message': error_message
+            }
+        )
+        super(ErrorMessageResponse, self).__init__(
+            request,
+            'lizard_auth_server/error_message.html',
+            context,
+            status=status
+        )
 
 class PortalActionView(ProcessGetFormView):
     '''
@@ -394,11 +415,11 @@ class InvitationMixin(object):
         try:
             self.invitation = Invitation.objects.get(activation_key=activation_key)
         except Invitation.DoesNotExist:
-            return self.invalid_activation_key()
+            return self.invalid_activation_key(request)
         return super(InvitationMixin, self).dispatch(request, *args, **kwargs)
 
-    def invalid_activation_key(self):
-        return HttpResponseBadRequest('Invalid activation key')
+    def invalid_activation_key(self, request):
+        return ErrorMessageResponse(self.request, _('Invalid activation key'))
 
 class ActivateUserView1(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user.html'

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django import forms
+from django.forms import ValidationError
 from django.contrib import auth
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
@@ -21,26 +22,29 @@ class DecryptForm(forms.Form):
         try:
             self.portal = Portal.objects.get(sso_key=data['key'])
         except Portal.DoesNotExist:
-            raise forms.ValidationError('Invalid portal key')
+            raise ValidationError('Invalid portal key')
         try:
             new_data = URLSafeTimedSerializer(self.portal.sso_secret).loads(data['message'], max_age=300)
         except BadSignature:
-            raise forms.ValidationError('Bad signature')
+            raise ValidationError('Bad signature')
         return new_data
 
 MIN_LENGTH = 8
 HUGE_LENGTH = 14
 
 def validate_password(cleaned_password):
+    if settings.DEBUG:
+        return
+
     # At least MIN_LENGTH long
     if len(cleaned_password) < MIN_LENGTH:
-        raise forms.ValidationError(_("The new password must be at least %d characters long.") % self.MIN_LENGTH)
+        raise ValidationError(_("The new password must be at least %d characters long.") % MIN_LENGTH)
 
     # At least one letter and one non-letter, unless it is a huge password
     is_huge = len(cleaned_password) > HUGE_LENGTH
     first_isalpha = cleaned_password[0].isalpha()
     if not is_huge and all(c.isalpha() == first_isalpha for c in cleaned_password):
-        raise forms.ValidationError(_("The new password must contain at least one letter and at least one digit or punctuation character."))
+        raise ValidationError(_("The new password must contain at least one letter and at least one digit or punctuation character."))
 
 class PasswordChangeForm(auth.forms.PasswordChangeForm):
     '''Used to verify whether the new password is secure.'''
@@ -50,9 +54,9 @@ class PasswordChangeForm(auth.forms.PasswordChangeForm):
         validate_password(password1)
         return password1
 
-class RegisterUserForm(forms.Form):
+class InviteUserForm(forms.Form):
     '''
-    Form used by an administrator to register a user.
+    Form used by an administrator to invite a user.
     '''
 #    def __init__(self, *args, **kwargs):
 #        self.portals_queryset = kwargs['portals_queryset']
@@ -83,7 +87,7 @@ class RegisterUserForm(forms.Form):
         email = self.cleaned_data.get('email')
         users = User.objects.filter(email=email)
         if users.exists():
-            raise forms.ValidationError(_('{} is already taken.').format(email))
+            raise ValidationError(_('{} is already taken.').format(email))
         return email
 
 class ActivateUserForm1(forms.Form):
@@ -99,6 +103,20 @@ class ActivateUserForm1(forms.Form):
         'password_mismatch': _("The two password fields didn't match."),
     }
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        users = User.objects.filter(username=username)
+        if users.exists():
+            raise ValidationError(_('{} is already taken.').format(username))
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        users = User.objects.filter(email=email)
+        if users.exists():
+            raise ValidationError(_('{} is already taken.').format(email))
+        return email
+
     def clean_new_password1(self):
         password1 = self.cleaned_data.get('new_password1')
         validate_password(password1)
@@ -109,8 +127,7 @@ class ActivateUserForm1(forms.Form):
         password2 = self.cleaned_data.get('new_password2')
         if password1 and password2:
             if password1 != password2:
-                raise forms.ValidationError(
-                    self.error_messages['password_mismatch'])
+                raise ValidationError(self.error_messages['password_mismatch'])
         return password2
 
 class ActivateUserForm2(forms.Form):

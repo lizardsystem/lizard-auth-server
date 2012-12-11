@@ -24,11 +24,19 @@
   "portals": [1],
   "street": "Zakkendragersteeg 34",
   "postal_code": "3512 AA",
-  "user": 1,
+  "user": 1
+ }
+},
+{
+ "pk": 1,
+ "model": "lizard_auth_server.invitation",
+ "fields": {
+  "profile": 1,
   "is_activated": true,
-  "activation_name": "Jan Janssen",
-  "activation_email": "noreply@nelen-schuurmans.nl",
-  "activation_language": "nl",
+  "name": "Jan Janssen",
+  "email": "noreply@nelen-schuurmans.nl",
+  "language": "nl",
+  "created_at": "2012-11-27T05:18:32.642",
   "activated_on": "2012-11-27T08:46:02.529",
   "activation_key_date": "2012-11-27T08:46:02.529"
  }

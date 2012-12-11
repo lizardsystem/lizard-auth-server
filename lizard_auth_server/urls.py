@@ -6,10 +6,20 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ImproperlyConfigured
 
 from lizard_auth_server import views
 from lizard_auth_server import forms
 
+def check_settings():
+    '''
+    Ensure settings are valid, to offer some extra security.
+    '''
+    if not 'django.middleware.csrf.CsrfViewMiddleware' in settings.MIDDLEWARE_CLASSES:
+        raise ImproperlyConfigured('This app REALLY needs django.middleware.csrf.CsrfViewMiddleware.')
+    if not getattr(settings, 'USE_TZ', False):
+        raise ImproperlyConfigured('Setting USE_TZ = True in your settings is also a good idea.')
+check_settings()
 
 admin.autodiscover()
 
@@ -24,8 +34,9 @@ urlpatterns = patterns(
     url(r'^i18n/', include('django.conf.urls.i18n')),
     # Private SSO URLs used for internal communication between the servers
     # Note: these are part of the "API" and thus referred to by the client: change them there as well
-    url(r'^sso/request_token/$', views.RequestTokenView.as_view(), name='lizard_auth_server.sso_request_token'),
-    url(r'^sso/verify/$',        views.VerifyView.as_view(),       name='lizard_auth_server.sso_verify'),
+    url(r'^sso/authenticate/$',  views.AuthenticationApiView.as_view(), name='lizard_auth_server.sso_authenticate'),
+    url(r'^sso/request_token/$', views.RequestTokenView.as_view(),      name='lizard_auth_server.sso_request_token'),
+    url(r'^sso/verify/$',        views.VerifyView.as_view(),            name='lizard_auth_server.sso_verify'),
     # Public SSO URLs for use by visitors
     # Note: these are part of the "API" and thus referred to by the client: change them there as well
     url(r'^sso/portal_action/$',   views.PortalActionView.as_view(),   name='lizard_auth_server.sso_portal_action'),
@@ -110,14 +121,14 @@ urlpatterns = patterns(
     ),
     # URLs for user registration
     url(
-        r'^register/$',
-        views.RegisterUserView.as_view(),
-        name='lizard_auth_server.register_user'
+        r'^invite/$',
+        views.InviteUserView.as_view(),
+        name='lizard_auth_server.invite_user'
     ),
     url(
-        r'^register/complete/(?P<profile_pk>\d+)$',
-        views.RegistrationCompleteView.as_view(),
-        name='lizard_auth_server.registration_complete'
+        r'^invite/complete/(?P<invitation_pk>\d+)$',
+        views.InviteUserCompleteView.as_view(),
+        name='lizard_auth_server.invite_user_complete'
     ),
     url(
         r'^activate/(?P<activation_key>\w+)/$',

@@ -7,7 +7,7 @@
 {{ site_public_url_prefix }}{% url lizard_auth_server.activate activation_key=activation_key %}
 
 {% trans "With this account, you can access the following sites:" %}
-{% for portal in registered_profile.portals.all %}
+{% for portal in invitation.portals.all %}
 - {{ portal.name }} ({{ portal.visit_url }})
 {% empty %}
 - {% trans "No portals found." %}

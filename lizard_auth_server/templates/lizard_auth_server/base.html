@@ -42,10 +42,10 @@
                 <li class="btn-group">
                     <form action="/i18n/setlang/" method="post" class="form-inline modal-form">{% csrf_token %}
                       <input name="next" type="hidden" value="{{ request.get_full_path }}" />
-                      <input name="language" type="hidden" value="{{ lang.0 }}" />
+                      <input name="language" type="hidden" value="{{ lang.code }}" />
                       <button type="submit"
-                              class="btn {% ifequal LANGUAGE_CODE lang.0 %}active{% endifequal %}"
-                      >{{ lang.1 }}</button>
+                              class="btn {% ifequal LANGUAGE_CODE lang.code %}active{% endifequal %}"
+                      >{{ lang.0|language_name_local }}</button>
                     </form>
                 </li>
                 {% endfor %}

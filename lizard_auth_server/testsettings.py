@@ -75,6 +75,7 @@ SITE_ID = 1
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name although not all
 # choices may be available on all operating systems.  If running in a Windows
 # environment this must be set to the same as your system time zone.
+USE_TZ = True
 TIME_ZONE = 'Europe/Amsterdam'
 
 # Language code for this installation. All choices can be found here:
@@ -84,7 +85,7 @@ LANGUAGE_CODE = 'nl-NL'
 # the interface!
 LANGUAGES = (
     ('en', 'English'),
-    ('nl', 'Dutch'),
+    ('nl', 'Nederlands'),
 )
 # If you set this to False, Django will make some optimizations so as not to
 # load the internationalization machinery.

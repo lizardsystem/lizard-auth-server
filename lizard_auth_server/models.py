@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils import translation
+from django.core.exceptions import ValidationError
 
 from lizard_auth_server.utils import gen_secret_key
 
@@ -33,23 +34,6 @@ def gen_key(model, field):
         return key
     return _genkey
 
-class TokenManager(models.Manager):
-    def create_for_portal(self, portal):
-        """
-        Create a new token for a portal object.
-        """
-        request_token = gen_secret_key(64)
-        auth_token = gen_secret_key(64)
-        # check unique constraints
-        while self.filter(Q(request_token=request_token) | Q(auth_token=auth_token)).exists():
-            request_token = gen_secret_key(64)
-            auth_token = gen_secret_key(64)
-        return self.create(
-            portal=portal,
-            request_token=request_token,
-            auth_token=auth_token,
-        )
-
 class Portal(models.Model):
     """
     A portal. If secret/key change, the portal website has to be updated too!
@@ -67,6 +51,23 @@ class Portal(models.Model):
         self.sso_secret = gen_key(Portal, 'sso_secret')()
         self.sso_key = gen_key(Portal, 'sso_key')()
         self.save()
+
+class TokenManager(models.Manager):
+    def create_for_portal(self, portal):
+        """
+        Create a new token for a portal object.
+        """
+        request_token = gen_secret_key(64)
+        auth_token = gen_secret_key(64)
+        # check unique constraints
+        while self.filter(Q(request_token=request_token) | Q(auth_token=auth_token)).exists():
+            request_token = gen_secret_key(64)
+            auth_token = gen_secret_key(64)
+        return self.create(
+            portal=portal,
+            request_token=request_token,
+            auth_token=auth_token,
+        )
 
 class Token(models.Model):
     """
@@ -97,7 +98,7 @@ class UserProfileManager(models.Manager):
         return p
 
 class UserProfile(models.Model):
-    user = models.ForeignKey(User, null=True, unique=True)
+    user = models.ForeignKey(User, null=False, unique=True)
     portals = models.ManyToManyField(Portal, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
@@ -108,56 +109,76 @@ class UserProfile(models.Model):
     town = models.CharField(max_length=255, null=True, blank=True)
     phone_number = models.CharField(max_length=255, null=True, blank=True)
     mobile_phone_number = models.CharField(max_length=255, null=True, blank=True)
-    is_activated = models.BooleanField(default=False)
-    activated_on = models.DateTimeField(null=True)
-    activation_name = models.CharField(max_length=255, null=True, blank=True)
-    activation_email = models.EmailField(null=False, blank=False)
-    activation_language = models.CharField(max_length=16, null=False, blank=False)
-    activation_key = models.CharField(max_length=64, null=True, blank=True, unique=True)
-    activation_key_date = models.DateTimeField(null=True,
-        help_text='Date on which the activation key was generated. Used for expiration.'
-    )
 
     objects = UserProfileManager()
 
     def __unicode__(self):
-        if self.user is None:
-            return '{}, {} (Not activated)'.format(self.activation_name, self.activation_email)
-        else:
+        if self.user:
             return '{}, {}'.format(self.user, self.user.email)
+        else:
+            return 'UserProfile {}'.format(self.pk)
 
     @property
     def username(self):
-        return self.user.username if self.user else ''
+        return self.user.username
 
     @property
     def first_name(self):
-        return self.user.first_name if self.user else ''
+        return self.user.first_name
 
     @property
     def last_name(self):
-        return self.user.last_name if self.user else ''
+        return self.user.last_name
 
     @property
     def email(self):
-        if self.user is None:
-            return self.activation_email
-        else:
-            return self.user.email
+        return self.user.email
 
     @property
     def is_active(self):
-        if self.user is None:
-            return False
-        else:
-            return self.user.is_active
+        '''
+        Returns True when the account is active, meaning the User has not been
+        deactivated by an admin.
 
-    def rotate_activation_key(self):
+        Note: unrelated to account activation.
+        '''
+        return self.user.is_active
+
+class Invitation(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    email = models.EmailField(null=False, blank=False)
+    language = models.CharField(max_length=16, null=False, blank=False)
+    portals = models.ManyToManyField(Portal, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    activation_key = models.CharField(max_length=64, null=True, blank=True, unique=True)
+    activation_key_date = models.DateTimeField(null=True, blank=True,
+        help_text='Date on which the activation key was generated. Used for expiration.'
+    )
+    is_activated = models.BooleanField(default=False)
+    activated_on = models.DateTimeField(null=True, blank=True)
+    profile = models.ForeignKey(UserProfile, null=True, blank=True)
+
+    def __unicode__(self):
+        if self.profile:
+            return '{}, {}'.format(self.profile.user, self.profile.email)
+        else:
+            return '{}, {} (Not activated)'.format(self.name, self.email)
+
+    def clean(self):
+        if self.is_activated:
+            if self.activation_key:
+                raise ValidationError('Invitation is marked as activated, there is still an activation key set.')
+            if self.profile is None:
+                raise ValidationError('Invitation is marked as activated, but its profile isnt set.')
+            if self.activated_on is None:
+                raise ValidationError('Invitation is marked as activated, but its field "activated_on" isnt set.')
+
+    def _rotate_activation_key(self):
         if self.is_activated:
             raise Exception('user is already activated')
 
         # generate a new activation key
-        self.activation_key = gen_key(UserProfile, 'activation_key')()
+        self.activation_key = gen_key(Invitation, 'activation_key')()
 
         # update key date so we can check for expiration
         self.activation_key_date = datetime.datetime.now()
@@ -168,30 +189,33 @@ class UserProfile(models.Model):
             raise Exception('user is already activated')
 
         # generate a fresh key
-        self.rotate_activation_key()
+        self._rotate_activation_key()
 
-        # send this user an email containing the key
+        ## send this user an email containing the key
+        # build a render context for the email template 
         expiration_date = datetime.datetime.now() + datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
         ctx_dict = {
-            'name': self.activation_name,
+            'name': self.name,
             'activation_key': self.activation_key,
             'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
             'expiration_date': expiration_date,
             'site_name': settings.SITE_NAME,
             'site_public_url_prefix': settings.SITE_PUBLIC_URL_PREFIX,
-            'registered_profile': self,
+            'invitation': self,
         }
+
         # switch to the users language
         old_lang = translation.get_language()
-        translation.activate(self.activation_language)
+        translation.activate(self.language)
 
-        subject = render_to_string('lizard_auth_server/activation_email_subject.txt', ctx_dict)
-        # Email subject *must not* contain newlines
+        # render the email subject and message using Django's templating
+        subject = render_to_string('lizard_auth_server/invitation_email_subject.txt', ctx_dict)
+        # ensure email subject doesn't contain newlines
         subject = ''.join(subject.splitlines())
-        message = render_to_string('lizard_auth_server/activation_email.html', ctx_dict)
+        message = render_to_string('lizard_auth_server/invitation_email.html', ctx_dict)
 
         # switch language back
         translation.activate(old_lang)
 
         # send the actual email
-        send_mail(subject, message, None, [self.activation_email])
+        send_mail(subject, message, None, [self.email])

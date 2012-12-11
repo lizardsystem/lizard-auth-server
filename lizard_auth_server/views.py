@@ -10,10 +10,11 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.views.generic.edit import FormView
 from django.http import (
     HttpResponse,
@@ -30,7 +31,8 @@ from django.template.response import TemplateResponse
 from itsdangerous import URLSafeTimedSerializer, BadSignature
 
 from lizard_auth_server import forms
-from lizard_auth_server.models import Token, Portal, UserProfile
+from lizard_auth_server.models import Token, Portal, UserProfile, Invitation
+from lizard_auth_server.http import JsonResponse, JsonError
 
 from lizard_auth_server.utils import SIMPLE_KEYS
 
@@ -59,8 +61,7 @@ class SecurePostMixin(object):
     '''
     Ensure this is first in the inheritance list!
     '''
-    #@method_decorator(sensitive_post_parameters) # Causes an error?
-    @method_decorator(csrf_protect)
+    @method_decorator(sensitive_post_parameters('password', 'old_password', 'new_password1', 'new_password2'))
     @method_decorator(never_cache)
     def post(self, request, *args, **kwargs):
         return super(SecurePostMixin, self).post(request, *args, **kwargs)
@@ -81,7 +82,7 @@ class ProfileView(ViewContextMixin, TemplateView):
 class PortalActionView(View):
     '''
     View that either redirects to the actual logout page,
-    or back to the SSO client.
+    or back to the portal.
     '''
     def get(self, request):
         decrypted = forms.DecryptForm(request.GET)
@@ -248,6 +249,24 @@ class AuthorizeView(View):
     def form_invalid(self):
         return HttpResponseBadRequest('Bad signature')
 
+def construct_user_data(user):
+    data = {}
+    for key in SIMPLE_KEYS:
+        data[key] = getattr(user, key)
+    data['permissions'] = []
+    for perm in user.user_permissions.select_related('content_type').all():
+        data['permissions'].append({
+            'content_type': perm.content_type.natural_key(),
+            'codename': perm.codename,
+        })
+    profile = UserProfile.objects.fetch_for_user(user)
+    for key in ['organisation']:
+        data[key] = getattr(profile, key)
+    for key in ['created_at']:
+        # datetimes should be serialized to an iso8601 string
+        data[key] = getattr(profile, key).isoformat()
+    return data
+
 class VerifyView(View):
     """
     View called by the portal application to verify the Auth Token passed by
@@ -265,30 +284,18 @@ class VerifyView(View):
             return self.form_valid()
         else:
             return self.form_invalid()
-    
-    def construct_user(self):
-        data = {}
-        for key in SIMPLE_KEYS:
-            data[key] = getattr(self.token.user, key)
-        data['permissions'] = []
-        for perm in self.token.user.user_permissions.select_related('content_type').all():
-            data['permissions'].append({
-                'content_type': perm.content_type.natural_key(),
-                'codename': perm.codename,
-            })
-        return data
 
     def get_user_json(self):
         """
         Returns the JSON string representation of the user object for a portal.
         """
-        data = self.construct_user()
+        data = construct_user_data(self.token.user)
         return simplejson.dumps(data)
     
     def form_valid(self):
-        self.user = self.get_user_json()
+        user_data = self.get_user_json()
         params = {
-            'user': self.user
+            'user': user_data
         }
         data = URLSafeTimedSerializer(self.token.portal.sso_secret).dumps(params)
         self.token.delete()
@@ -297,70 +304,118 @@ class VerifyView(View):
     def form_invalid(self):
         return HttpResponseBadRequest('Bad signature')
 
-class RegisterUserView(StaffOnlyMixin, SecurePostMixin, FormView):
+########################################
+# Invitation / registration / activation
+########################################
+
+class InviteUserView(StaffOnlyMixin, SecurePostMixin, FormView):
     template_name = 'lizard_auth_server/register_user.html'
-    form_class = forms.RegisterUserForm
+    form_class = forms.InviteUserForm
 
     def form_valid(self, form):
         data = form.cleaned_data
-        profile = UserProfile.objects.create_deactivated(
-            data['name'],
-            data['email'],
-            data['language'],
-            data['organisation'],
-            data['portals']
-        )
-        profile.send_new_activation_email()
-        return HttpResponseRedirect(reverse('lizard_auth_server.registration_complete', kwargs={'profile_pk': profile.pk}))
+        inv = Invitation()
+        inv.name = data['name']
+        inv.email = data['email']
+        inv.language = data['language']
+        inv.organisation = data['organisation']
+        inv.save()
+        inv.portals = data['portals']
 
-class RegistrationCompleteView(StaffOnlyMixin, ViewContextMixin, TemplateView):
+        inv.send_new_activation_email()
+
+        return HttpResponseRedirect(reverse('lizard_auth_server.invite_user_complete', kwargs={'invitation_pk': inv.pk}))
+
+class InviteUserCompleteView(StaffOnlyMixin, ViewContextMixin, TemplateView):
     template_name = 'lizard_auth_server/registration_complete.html'
-    _registered_profile = None
+    _invitiation = None
 
-    def get(self, request, profile_pk, *args, **kwargs):
-        self.profile_pk = int(profile_pk)
-        return super(RegistrationCompleteView, self).get(request, *args, **kwargs)
+    def get(self, request, invitation_pk, *args, **kwargs):
+        self.invitation_pk = int(invitation_pk)
+        return super(InviteUserCompleteView, self).get(request, *args, **kwargs)
 
-    def registered_profile(self):
-        if not self._registered_profile:
-            self._registered_profile = UserProfile.objects.get(pk=self.profile_pk)
-        return self._registered_profile
+    def invitiation(self):
+        if not self._invitiation:
+            self._invitiation = Invitation.objects.get(pk=self.invitation_pk)
+        return self._invitiation
 
-class ActivationMixin(object):
-    activation_key = None
-    activation_profile = None
+class InvitationMixin(object):
+    invitation = None
 
     def dispatch(self, request, activation_key, *args, **kwargs):
-        self.activation_key = activation_key
         try:
-            self.activation_profile = UserProfile.objects.get(activation_key=activation_key)
-        except UserProfile.NotFound:
-            self.invalid_activation_key()
-        return super(ActivationMixin, self).dispatch(request, *args, **kwargs)
+            self.invitation = Invitation.objects.get(activation_key=activation_key)
+        except Invitation.DoesNotExist:
+            return self.invalid_activation_key()
+        return super(InvitationMixin, self).dispatch(request, *args, **kwargs)
 
     def invalid_activation_key(self):
         return HttpResponseBadRequest('Invalid activation key')
 
-class ActivateUserView1(ActivationMixin, FormView):
+class ActivateUserView1(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user.html'
     form_class = forms.ActivateUserForm1
 
-    def form_valid(self, form):
-        data = form.cleaned_data
-        return HttpResponseRedirect(reverse('lizard_auth_server.activate_step_2', kwargs={'activation_key': self.activation_key}))
-
-class ActivateUserView2(ActivationMixin, FormView):
-    template_name = 'lizard_auth_server/activate_user_step_2.html'
-    form_class = forms.ActivateUserForm2
-
     def get_initial(self):
         return {
-            'email': self.activation_profile.activation_email
+            'email': self.invitation.email
         }
 
     def form_valid(self, form):
         data = form.cleaned_data
+        # User.create deactived
+        # self.invitation.user = user
+        return HttpResponseRedirect(reverse('lizard_auth_server.activate_step_2', kwargs={'activation_key': self.invitation.activation_key}))
+
+class ActivateUserView2(InvitationMixin, FormView):
+    template_name = 'lizard_auth_server/activate_user_step_2.html'
+    form_class = forms.ActivateUserForm2
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        # UserProfile.objects.create
+        # profile.user = self.invitation.user
+        # activate User
         return HttpResponseRedirect(reverse('lizard_auth_server.activation_complete'))
 
-class ActivationCompleteView(FormView):
+class ActivationCompleteView(View):
     pass
+
+class AuthenticationApiView(SecurePostMixin, View):
+    '''
+    View which can be used by API's to authenticate a username / password combo.
+    '''
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AuthenticationApiView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        # just a simple debug form
+        return HttpResponse(
+            '''
+            <form method="post">
+            <input type="text" name="username">
+            <input type="text" name="password">
+            <input type="submit">
+            </form>
+            '''
+        )
+
+    @method_decorator(sensitive_variables('password'))
+    def post(self, request, *args, **kwargs):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if user:
+                if not user.is_active:
+                    return JsonError('User account is disabled.')
+                else:
+                    data = construct_user_data(user)
+                    return JsonResponse(data)
+            else:
+                return JsonError('Login failed')
+        else:
+            return JsonError('Missing "username" or "password" POST parameters.')

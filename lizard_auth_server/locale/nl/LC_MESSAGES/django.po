@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-10 17:11+0100\n"
+"POT-Creation-Date: 2012-12-11 09:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,86 +29,86 @@ msgstr ""
 msgid "Shortcut URLs"
 msgstr ""
 
-#: forms.py:41
+#: forms.py:40
 #, python-format
 msgid "The new password must be at least %d characters long."
 msgstr "Het nieuwe wachtwoord moet minimaal %d karakters lang zijn."
 
-#: forms.py:47
+#: forms.py:46
 msgid ""
 "The new password must contain at least one letter and at least one digit or "
 "punctuation character."
 msgstr "Het nieuwe wachtwoord moet minimaal een cijfer of leesteken bevatten."
 
-#: forms.py:62 templates/lizard_auth_server/profile.html:12
+#: forms.py:67 templates/lizard_auth_server/profile.html:12
 msgid "Name"
 msgstr "Naam"
 
-#: forms.py:63 forms.py:92 templates/lizard_auth_server/profile.html:16
+#: forms.py:68 forms.py:97 templates/lizard_auth_server/profile.html:16
 msgid "Email"
 msgstr "E-mail"
 
-#: forms.py:64 templates/lizard_auth_server/profile.html:24
+#: forms.py:69 templates/lizard_auth_server/profile.html:24
 msgid "Organisation"
 msgstr "Organisatie"
 
-#: forms.py:66
+#: forms.py:71
 msgid "Language"
 msgstr "Taal"
 
-#: forms.py:74
+#: forms.py:79
 msgid "Portalen"
 msgstr ""
 
-#: forms.py:84
+#: forms.py:89
 msgid "{} is already taken."
 msgstr ""
 
-#: forms.py:91
+#: forms.py:96
 msgid "Username"
 msgstr ""
 
-#: forms.py:93
+#: forms.py:98
 msgid "New password"
 msgstr ""
 
-#: forms.py:94
+#: forms.py:99
 msgid "New password confirmation"
 msgstr ""
 
-#: forms.py:97
+#: forms.py:102
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: forms.py:113
+#: forms.py:123
 msgid "First name"
 msgstr "Voornaam"
 
-#: forms.py:114
+#: forms.py:124
 msgid "Last name"
 msgstr "Achternaam"
 
-#: forms.py:115 templates/lizard_auth_server/profile.html:20
+#: forms.py:125 templates/lizard_auth_server/profile.html:20
 msgid "Title"
 msgstr "Titel"
 
-#: forms.py:116 templates/lizard_auth_server/profile.html:28
+#: forms.py:126 templates/lizard_auth_server/profile.html:28
 msgid "Street"
 msgstr "Straat"
 
-#: forms.py:117 templates/lizard_auth_server/profile.html:32
+#: forms.py:127 templates/lizard_auth_server/profile.html:32
 msgid "Postal code"
 msgstr "Postcode"
 
-#: forms.py:118 templates/lizard_auth_server/profile.html:36
+#: forms.py:128 templates/lizard_auth_server/profile.html:36
 msgid "Town"
 msgstr "Plaats"
 
-#: forms.py:119 templates/lizard_auth_server/profile.html:40
+#: forms.py:129 templates/lizard_auth_server/profile.html:40
 msgid "Phone number"
 msgstr "Telefoonnummer"
 
-#: forms.py:120 templates/lizard_auth_server/profile.html:44
+#: forms.py:130 templates/lizard_auth_server/profile.html:44
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
@@ -159,44 +159,6 @@ msgstr "Beginwaarden"
 msgid "Complete registration"
 msgstr "Stuur registratie e-mail"
 
-#: templates/lizard_auth_server/activation_email.html:3
-#, python-format
-msgid "Hello %(name)s,"
-msgstr "Hallo, %(name)s"
-
-#: templates/lizard_auth_server/activation_email.html:4
-#, python-format
-msgid "An account has been created for you at %(site_name)s."
-msgstr ""
-
-#: templates/lizard_auth_server/activation_email.html:6
-msgid ""
-"Please go to the following page and fill in your details, to activate your "
-"account:"
-msgstr ""
-
-#: templates/lizard_auth_server/activation_email.html:9
-msgid "With this account, you can access the following sites:"
-msgstr "Met dit account kunt u de volgende portalen benaderen:"
-
-#: templates/lizard_auth_server/activation_email.html:13
-msgid "No portals found."
-msgstr "Geen portalen gevonden."
-
-#: templates/lizard_auth_server/activation_email.html:16
-msgid "Sincerely,"
-msgstr "Met vriendelijke groet,"
-
-#: templates/lizard_auth_server/activation_email.html:18
-#, python-format
-msgid "The %(site_name)s team"
-msgstr ""
-
-#: templates/lizard_auth_server/activation_email_subject.txt:2
-#, python-format
-msgid "An account has been made for you at %(site_name)s"
-msgstr "Er is een account voor u aangemaakt op %(site_name)s"
-
 #: templates/lizard_auth_server/base.html:54
 #, python-format
 msgid "Hello, %(name)s"
@@ -234,6 +196,44 @@ msgstr ""
 #: templates/lizard_auth_server/profile.html:65
 msgid "Reset my password"
 msgstr ""
+
+#: templates/lizard_auth_server/invitation_email.html:3
+#, python-format
+msgid "Hello %(name)s,"
+msgstr "Hallo %(name)s,"
+
+#: templates/lizard_auth_server/invitation_email.html:4
+#, python-format
+msgid "An account has been created for you at %(site_name)s."
+msgstr ""
+
+#: templates/lizard_auth_server/invitation_email.html:6
+msgid ""
+"Please go to the following page and fill in your details, to activate your "
+"account:"
+msgstr ""
+
+#: templates/lizard_auth_server/invitation_email.html:9
+msgid "With this account, you can access the following sites:"
+msgstr "Met dit account kunt u de volgende portalen benaderen:"
+
+#: templates/lizard_auth_server/invitation_email.html:13
+msgid "No portals found."
+msgstr "Geen portalen gevonden."
+
+#: templates/lizard_auth_server/invitation_email.html:15
+msgid "Sincerely,"
+msgstr "Met vriendelijke groet,"
+
+#: templates/lizard_auth_server/invitation_email.html:17
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: templates/lizard_auth_server/invitation_email_subject.txt:2
+#, python-format
+msgid "An account has been made for you at %(site_name)s"
+msgstr "Er is een account voor u aangemaakt op %(site_name)s"
 
 #: templates/lizard_auth_server/logged_out.html:4
 msgid "Logged out"
@@ -394,12 +394,16 @@ msgid "Registration complete"
 msgstr "Registratie afgerond"
 
 #: templates/lizard_auth_server/registration_complete.html:10
-msgid "The account has been registered, and an activation email has been sent to"
+msgid ""
+"The account has been registered, and an activation email has been sent to"
 msgstr "Het account is geregisteerd, en een activatie e-mail is verstuurt naar"
 
 #: templates/lizard_auth_server/registration_complete.html:13
-msgid "Visit the specific portals to grant this account additional permissions:"
-msgstr "Bezoek de specifieke portalen om extra permissies toe te kennen aan dit account:"
+msgid ""
+"Visit the specific portals to grant this account additional permissions:"
+msgstr ""
+"Bezoek de specifieke portalen om extra permissies toe te kennen aan dit "
+"account:"
 
 #: templates/lizard_auth_server/registration_complete.html:19
 msgid "No portals selected."

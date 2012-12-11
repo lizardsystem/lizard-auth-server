@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-11 22:59+0100\n"
+"POT-Creation-Date: 2012-12-11 23:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,6 +111,14 @@ msgstr ""
 msgid "Mobile phone number"
 msgstr ""
 
+#: views.py:122
+msgid "An unknown error occurred."
+msgstr ""
+
+#: views.py:422
+msgid "Invalid activation key."
+msgstr ""
+
 #: templates/admin/base_site.html:5
 msgid "Lizard SSO"
 msgstr ""
@@ -135,7 +143,7 @@ msgid ""
 "access to this portal."
 msgstr ""
 
-#: templates/lizard_auth_server/access_denied.html:21
+#: templates/lizard_auth_server/access_denied.html:20
 #, python-format
 msgid ""
 "Check <a href=\"%(profile_url)s\">your profile</a> to see which portals are "

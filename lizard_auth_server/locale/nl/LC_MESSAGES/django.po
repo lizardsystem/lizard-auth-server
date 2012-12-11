@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-11 22:59+0100\n"
+"POT-Creation-Date: 2012-12-11 23:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -117,6 +117,14 @@ msgstr "Telefoonnummer"
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
+#: views.py:122
+msgid "An unknown error occurred."
+msgstr "Onbekende fout."
+
+#: views.py:422
+msgid "Invalid activation key."
+msgstr "Ongeldige activatiesleutel."
+
 #: templates/admin/base_site.html:5
 msgid "Lizard SSO"
 msgstr ""
@@ -141,17 +149,17 @@ msgid ""
 "<a href=\"%(login_url)s\">Log in</a> with another account, which does have "
 "access to this portal."
 msgstr ""
-"<a href=\"%(login_url)s\">Log in</a> met een andere gebruiker, "
-"die w&egrave;l toegang heeft."
+"<a href=\"%(login_url)s\">Log in</a> met een andere gebruiker, die w&egrave;"
+"l toegang heeft."
 
-#: templates/lizard_auth_server/access_denied.html:21
+#: templates/lizard_auth_server/access_denied.html:20
 #, python-format
 msgid ""
 "Check <a href=\"%(profile_url)s\">your profile</a> to see which portals are "
 "available to you."
 msgstr ""
-"Bekijk <a href=\"%(profile_url)s\">uw profiel</a> om te zien tot "
-"welke portalen u toegang heeft."
+"Bekijk <a href=\"%(profile_url)s\">uw profiel</a> om te zien tot welke "
+"portalen u toegang heeft."
 
 #: templates/lizard_auth_server/activate_user.html:4
 #: templates/lizard_auth_server/activate_user.html:16
@@ -229,7 +237,7 @@ msgstr ""
 #: templates/lizard_auth_server/error_message.html:4
 #: templates/lizard_auth_server/error_message.html:8
 msgid "An error occurred"
-msgstr ""
+msgstr "Er heeft zich een fout voorgedaan"
 
 #: templates/lizard_auth_server/error_message.html:14
 #, python-format

@@ -117,7 +117,7 @@ class ErrorMessageResponse(TemplateResponse):
     '''
     Display a slightly more user-friendly error message.
     '''
-    def __init__(self, request, error_message=None, status=200):
+    def __init__(self, request, error_message=None, status=500):
         if not error_message:
             error_message = _('An unknown error occurred.')
         context = RequestContext(
@@ -419,7 +419,7 @@ class InvitationMixin(object):
         return super(InvitationMixin, self).dispatch(request, *args, **kwargs)
 
     def invalid_activation_key(self, request):
-        return ErrorMessageResponse(request, _('Invalid activation key.'))
+        return ErrorMessageResponse(request, _('Invalid activation key.'), 404)
 
 class ActivateUserView1(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user.html'

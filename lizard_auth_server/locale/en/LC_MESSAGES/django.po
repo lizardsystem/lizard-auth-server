@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-11 21:11+0100\n"
+"POT-Creation-Date: 2012-12-11 22:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,6 +216,7 @@ msgid "With this account, you can access the following sites:"
 msgstr ""
 
 #: templates/lizard_auth_server/invitation_email.html:14
+#: templates/lizard_auth_server/profile.html:59
 msgid "No portals found."
 msgstr ""
 

@@ -8,10 +8,17 @@
         <h3>{% trans 'Access denied' %}</h3>
         <p>
             U heeft geen toegang tot dit portaal.
+            {% trans 'You do not have access to this portal.' %}
         </p>
         <ul>
-            <li><a href="{{ login_url }}">Log in</a> met een andere gebruiker, die w&egrave;l toegang heeft.</li>
-            <li>Bekijk <a href="{% url profile %}">uw profiel</a> om te zien tot welke portalen u toegang heeft.</li>
+            <li>
+                {% url login as login_url %}
+                {% blocktrans %}<a href="{{ login_url }}">Log in</a> with another account, which does have access to this portal.{% endblocktrans %}
+            </li>
+            <li>
+                {% url profile as profile_url %}
+                {% blocktrans %}Check <a href="{{ profile_url }}">your profile</a> to see which portals are available to you.{% endblocktrans %}
+            </li>
         </ul>
     </div>
 {% endblock %}

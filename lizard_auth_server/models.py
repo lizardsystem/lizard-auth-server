@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import datetime
+import logging
 
 from django.db import models
 from django.db import transaction
@@ -18,6 +19,8 @@ import pytz
 
 from lizard_auth_server.utils import gen_secret_key
 
+
+logger = logging.getLogger(__name__)
 
 def gen_key(model, field):
     """
@@ -234,20 +237,23 @@ class Invitation(models.Model):
 
     def create_user(self, data):
         with transaction.commit_on_success():
-            # create the Django auth user
-            user = User.objects.create_user(
-                username=data['username'],
-                email=data['email'],
-                password=data['new_password1']
-            )
+            if self.user is None:
+                # create the Django auth user
+                user = User.objects.create_user(
+                    username=data['username'],
+                    email=data['email'],
+                    password=data['new_password1']
+                )
 
-            # immediately deactivate this user, no way to do this directly
-            user.is_active = False
-            user.save()
+                # immediately deactivate this user, no way to do this directly
+                user.is_active = False
+                user.save()
 
-            # link the new user to the invitation
-            self.user = user
-            self.save()
+                # link the new user to the invitation
+                self.user = user
+                self.save()
+            else:
+                logger.warn('this invitation already has a user linked to it: {}'.format(user))
 
     def activate(self, data):
         with transaction.commit_on_success():

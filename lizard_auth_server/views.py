@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import datetime
 import urllib
+import logging
 from urlparse import urljoin
 
 from django.conf.urls.defaults import patterns, url
@@ -15,7 +16,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, FormMixin
 from django.http import (
     HttpResponse,
     HttpResponseForbidden, 
@@ -27,15 +28,18 @@ from django.utils.decorators import method_decorator
 from django.views.generic.base import View, TemplateView
 from django.template.context import RequestContext
 from django.template.response import TemplateResponse
+from django.contrib.auth.models import User
 
 from itsdangerous import URLSafeTimedSerializer, BadSignature
+import pytz
 
 from lizard_auth_server import forms
 from lizard_auth_server.models import Token, Portal, UserProfile, Invitation
 from lizard_auth_server.http import JsonResponse, JsonError
-
 from lizard_auth_server.utils import SIMPLE_KEYS
 
+
+logger = logging.getLogger(__name__)
 
 TOKEN_TIMEOUT = datetime.timedelta(minutes=settings.SSO_TOKEN_TIMEOUT_MINUTES)
 
@@ -66,6 +70,18 @@ class SecurePostMixin(object):
     def post(self, request, *args, **kwargs):
         return super(SecurePostMixin, self).post(request, *args, **kwargs)
 
+class ProcessGetFormView(FormMixin, View):
+    def get_form(self, form_class):
+        return form_class(self.request.GET)
+
+    def get(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
 class ProfileView(ViewContextMixin, TemplateView):
     template_name = 'lizard_auth_server/profile.html'
     _profile = None
@@ -79,27 +95,30 @@ class ProfileView(ViewContextMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
 
-class PortalActionView(View):
+class PortalActionView(ProcessGetFormView):
     '''
     View that either redirects to the actual logout page,
     or back to the portal.
     '''
-    def get(self, request):
-        decrypted = forms.DecryptForm(request.GET)
-        if decrypted.is_valid():
-            self.portal = decrypted.portal
-            if decrypted.cleaned_data['action'] == 'logout':
-                nextparams = {
-                    'message': self.request.GET['message'],
-                    'key': self.request.GET['key'],
-                }
-                nextparams = urllib.urlencode([('next', '%s?%s' % (reverse('lizard_auth_server.sso_logout_redirect'), urllib.urlencode(nextparams)))])
-                url = '%s?%s' % (reverse('django.contrib.auth.views.logout'), nextparams)
-                return HttpResponseRedirect(url)
-            else:
-                return HttpResponseBadRequest('Unknown action')
+    form_class = forms.DecryptForm
+
+    def form_valid(self, form):
+        portal = form.portal
+        if form.cleaned_data['action'] == 'logout':
+            nextparams = {
+                'message': self.request.GET['message'],
+                'key': self.request.GET['key'],
+            }
+            nextparams = urllib.urlencode([('next', '%s?%s' % (reverse('lizard_auth_server.sso_logout_redirect'), urllib.urlencode(nextparams)))])
+            url = '%s?%s' % (reverse('django.contrib.auth.views.logout'), nextparams)
+            return HttpResponseRedirect(url)
         else:
-            return HttpResponseBadRequest('Bad signature')
+            return HttpResponseBadRequest('Unknown action')
+
+    def form_invalid(self, form):
+        logger.error('Error while while decrypting form: {}'.format(form.errors.as_text()))
+        import pdb; pdb.set_trace()
+        return HttpResponseBadRequest('Bad signature')
 
 class LogoutRedirectView(View):
     '''
@@ -127,9 +146,9 @@ class RequestTokenView(View):
     one-time Request Token.
     """
     def get(self, request):
-        decrypted = forms.DecryptForm(request.GET)
-        if decrypted.is_valid():
-            self.portal = decrypted.portal
+        self.form = forms.DecryptForm(request.GET)
+        if self.form.is_valid():
+            self.portal = self.form.portal
             return self.form_valid()
         else:
             return self.form_invalid()
@@ -145,7 +164,8 @@ class RequestTokenView(View):
         data = URLSafeTimedSerializer(token.portal.sso_secret).dumps(params)
         return HttpResponse(data)
     
-    def form_invalid(self):
+    def form_invalid(self, form):
+        logger.error('Error while while decrypting form: {}'.format(form.errors.as_text()))
         return HttpResponseBadRequest('Bad signature')
 
 class AuthorizeView(View):
@@ -182,7 +202,7 @@ class AuthorizeView(View):
             return self.form_valid_unauthenticated()
 
     def check_token_timeout(self):
-        delta = datetime.datetime.now() - self.token.created
+        delta = datetime.datetime.now(tz=pytz.UTC) - self.token.created
         return delta <= TOKEN_TIMEOUT
     
     def token_timeout(self):
@@ -314,13 +334,25 @@ class InviteUserView(StaffOnlyMixin, SecurePostMixin, FormView):
 
     def form_valid(self, form):
         data = form.cleaned_data
+#        inv = Invitation()
+#        inv.name = data['name']
+#        inv.email = data['email']
+#        inv.language = data['language']
+#        inv.organisation = data['organisation']
+#        inv.save()
         inv = Invitation()
         inv.name = data['name']
         inv.email = data['email']
         inv.language = data['language']
         inv.organisation = data['organisation']
         inv.save()
+
+        # many-to-many, so save these after the invitation has been
+        # assigned an ID
         inv.portals = data['portals']
+        inv.save()
+
+#        inv.portals = data['portals']
 
         inv.send_new_activation_email()
 
@@ -363,8 +395,9 @@ class ActivateUserView1(InvitationMixin, FormView):
 
     def form_valid(self, form):
         data = form.cleaned_data
-        # User.create deactived
-        # self.invitation.user = user
+
+        self.invitation.create_user(data)
+
         return HttpResponseRedirect(reverse('lizard_auth_server.activate_step_2', kwargs={'activation_key': self.invitation.activation_key}))
 
 class ActivateUserView2(InvitationMixin, FormView):
@@ -373,13 +406,24 @@ class ActivateUserView2(InvitationMixin, FormView):
 
     def form_valid(self, form):
         data = form.cleaned_data
-        # UserProfile.objects.create
-        # profile.user = self.invitation.user
-        # activate User
+
+        self.invitation.activate(data)
+
         return HttpResponseRedirect(reverse('lizard_auth_server.activation_complete'))
 
 class ActivationCompleteView(View):
-    pass
+    template_name = 'lizard_auth_server/activation_complete.html'
+    _profile = None
+
+    def get(self, request, profile_pk, *args, **kwargs):
+        self.profile_pk = int(profile_pk)
+        return super(ActivationCompleteView, self).get(request, *args, **kwargs)
+
+    @property
+    def profile(self):
+        if not self._profile:
+            self._profile = UserProfile.objects.get(pk=self.profile_pk)
+        return self._profile
 
 class AuthenticationApiView(SecurePostMixin, View):
     '''

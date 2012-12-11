@@ -157,7 +157,7 @@ msgstr "Beginwaarden"
 
 #: templates/lizard_auth_server/activate_user_step_2.html:21
 msgid "Complete registration"
-msgstr "Stuur registratie e-mail"
+msgstr "Rond registratie af"
 
 #: templates/lizard_auth_server/base.html:54
 #, python-format

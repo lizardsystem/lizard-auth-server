@@ -32,8 +32,11 @@ class InvitationAdmin(admin.ModelAdmin):
     send_new_activation_email.short_description = ugettext_lazy('Resend the activation email, with a new key')
 
     def shortcut_urls(self, obj):
-        url = reverse('lizard_auth_server.activate', kwargs={'activation_key': obj.activation_key})
-        return '<a href="{}">{}</a>'.format(url, _('Activate manually'))
+        if self.is_activated:
+            return ''
+        else:
+            url = reverse('lizard_auth_server.activate', kwargs={'activation_key': obj.activation_key})
+            return '<a href="{}">{}</a>'.format(url, _('Activate manually'))
     shortcut_urls.allow_tags = True
     shortcut_urls.short_description = ugettext_lazy('Shortcut URLs')
 

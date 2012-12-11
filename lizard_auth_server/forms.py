@@ -14,8 +14,8 @@ from lizard_auth_server.models import Token, Portal
 
 
 class DecryptForm(forms.Form):
-    key = forms.CharField(max_length=64)
-    message = forms.CharField(max_length=1024)
+    key = forms.CharField(max_length=1024)
+    message = forms.CharField(max_length=8192)
     
     def clean(self):
         data = super(DecryptForm, self).clean()
@@ -94,8 +94,8 @@ class ActivateUserForm1(forms.Form):
     '''
     Form used by a user to activate his/her account.
     '''
-    username = forms.CharField(max_length=30, label=_('Username'), required=True)
     email = forms.EmailField(max_length=255, label=_('Email'), required=True)
+    username = forms.CharField(max_length=30, label=_('Username'), required=True)
     new_password1 = forms.CharField(label=_("New password"), widget=forms.PasswordInput)
     new_password2 = forms.CharField(label=_("New password confirmation"), widget=forms.PasswordInput)
 

@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import datetime
 
 from django.db import models
+from django.db import transaction
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from django.db.models.loading import get_model
@@ -12,6 +13,8 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.core.exceptions import ValidationError
+
+import pytz
 
 from lizard_auth_server.utils import gen_secret_key
 
@@ -77,7 +80,7 @@ class Token(models.Model):
     request_token = models.CharField(max_length=64, unique=True)
     auth_token = models.CharField(max_length=64, unique=True)
     user = models.ForeignKey(User, null=True)
-    created = models.DateTimeField(default=datetime.datetime.now)
+    created = models.DateTimeField(default=(lambda: datetime.datetime.now(tz=pytz.UTC)))
 
     objects = TokenManager()
 
@@ -98,6 +101,10 @@ class UserProfileManager(models.Manager):
         return p
 
 class UserProfile(models.Model):
+    '''
+    Note: when migrating to Django 1.5, this is the ideal candidate
+    for using the new custom User model features.
+    '''
     user = models.ForeignKey(User, null=False, unique=True)
     portals = models.ManyToManyField(Portal, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -114,13 +121,17 @@ class UserProfile(models.Model):
 
     def __unicode__(self):
         if self.user:
-            return '{}, {}'.format(self.user, self.user.email)
+            return 'UserProfile {} ({}, {})'.format(self.pk, self.user, self.user.email)
         else:
             return 'UserProfile {}'.format(self.pk)
 
     @property
     def username(self):
         return self.user.username
+
+    @property
+    def full_name(self):
+        return self.user.get_full_name()
 
     @property
     def first_name(self):
@@ -156,6 +167,7 @@ class Invitation(models.Model):
     )
     is_activated = models.BooleanField(default=False)
     activated_on = models.DateTimeField(null=True, blank=True)
+    user = models.ForeignKey(User, null=True, blank=True)
     profile = models.ForeignKey(UserProfile, null=True, blank=True)
 
     def __unicode__(self):
@@ -167,7 +179,7 @@ class Invitation(models.Model):
     def clean(self):
         if self.is_activated:
             if self.activation_key:
-                raise ValidationError('Invitation is marked as activated, there is still an activation key set.')
+                raise ValidationError('Invitation is marked as activated, but there is still an activation key set.')
             if self.profile is None:
                 raise ValidationError('Invitation is marked as activated, but its profile isnt set.')
             if self.activated_on is None:
@@ -181,7 +193,7 @@ class Invitation(models.Model):
         self.activation_key = gen_key(Invitation, 'activation_key')()
 
         # update key date so we can check for expiration
-        self.activation_key_date = datetime.datetime.now()
+        self.activation_key_date = datetime.datetime.now(tz=pytz.UTC)
         self.save()
 
     def send_new_activation_email(self):
@@ -191,9 +203,9 @@ class Invitation(models.Model):
         # generate a fresh key
         self._rotate_activation_key()
 
-        ## send this user an email containing the key
+        ### send this user an email containing the key
         # build a render context for the email template 
-        expiration_date = datetime.datetime.now() + datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
+        expiration_date = datetime.datetime.now(tz=pytz.UTC) + datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
         ctx_dict = {
             'name': self.name,
             'activation_key': self.activation_key,
@@ -219,3 +231,56 @@ class Invitation(models.Model):
 
         # send the actual email
         send_mail(subject, message, None, [self.email])
+
+    def create_user(self, data):
+        with transaction.commit_on_success():
+            # create the Django auth user
+            user = User.objects.create_user(
+                username=data['username'],
+                email=data['email'],
+                password=data['new_password1']
+            )
+
+            # immediately deactivate this user, no way to do this directly
+            user.is_active = False
+            user.save()
+
+            # link the new user to the invitation
+            self.user = user
+            self.save()
+
+    def activate(self, data):
+        with transaction.commit_on_success():
+            user = self.user
+
+            # create and fill the profile
+            profile = UserProfile()
+            profile.title = data['title']
+            profile.street = data['street']
+            profile.postal_code =data['postal_code']
+            profile.town = data['town']
+            profile.phone_number = data['phone_number']
+            profile.mobile_phone_number = data['mobile_phone_number']
+            profile.user = user
+            profile.save()
+
+            # many-to-many, so save these after profile has been assigned an ID
+            profile.portals = self.portals.all()
+            profile.save()
+
+            # set the additional attributes on the user model,
+            # and mark it as active
+            user.is_active = True
+            user.first_name = data['first_name']
+            user.last_name = data['last_name']
+            user.save()
+
+            # link the profile to the invitation so we have a trail
+            # from invitation to user
+            self.profile = profile
+
+            # clear now invalid activation key
+            self.activation_key = None
+            self.activated_on = datetime.datetime.now(tz=pytz.UTC)
+            self.is_activated = True
+            self.save()

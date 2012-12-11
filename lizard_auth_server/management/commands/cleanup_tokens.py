@@ -16,5 +16,5 @@ class Command(BaseCommand):
     help = "Clear expired SSO tokens from the database."
 
     def handle(self, *args, **options):
-        max_age = datetime.datetime.now() - TOKEN_TIMEOUT
+        max_age = datetime.datetime.now(tz=pytz.UTC) - TOKEN_TIMEOUT
         Token.objects.filter(created__lt=max_age).delete()

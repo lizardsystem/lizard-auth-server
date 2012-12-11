@@ -420,6 +420,7 @@ class InvitationMixin(object):
         return super(InvitationMixin, self).dispatch(request, *args, **kwargs)
 
     def invalid_activation_key(self, request):
+        logger.warn('invalid activation key used by {}'.format(request.META['REMOTE_ADDR']))
         return ErrorMessageResponse(request, _('Invalid activation key. Perhaps this account was already activated?'), 404)
 
 class ActivateUserView1(InvitationMixin, FormView):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-11 23:49+0100\n"
+"POT-Creation-Date: 2012-12-12 01:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -129,7 +129,7 @@ msgstr "Communicatiefout."
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr "Token is verlopen. Ga terug naar het portaal, en log daar opnieuw in."
 
-#: views.py:423
+#: views.py:424
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 "Ongeldige activatiesleutel. Dit betekent waarschijnlijk dat het account al "
@@ -156,19 +156,19 @@ msgstr "U heeft geen toegang tot dit portaal."
 #: templates/lizard_auth_server/access_denied.html:16
 #, python-format
 msgid ""
-"<a href=\"%(login_url)s\">Log in</a> with another account, which does have "
+"<a href=\"%(login_url)s\">Log in with another account</a>, which does have "
 "access to this portal."
 msgstr ""
-"<a href=\"%(login_url)s\">Log in</a> met een andere gebruiker, die w&egrave;"
+"<a href=\"%(login_url)s\">Log in met een andere gebruiker</a>, die w&egrave;"
 "l toegang heeft."
 
 #: templates/lizard_auth_server/access_denied.html:20
 #, python-format
 msgid ""
-"Check <a href=\"%(profile_url)s\">your profile</a> to see which portals are "
+"<a href=\"%(profile_url)s\">Check your profile</a>, to see which portals are "
 "available to you."
 msgstr ""
-"Bekijk <a href=\"%(profile_url)s\">uw profiel</a> om te zien tot welke "
+"<a href=\"%(profile_url)s\">Bekijk uw profiel</a>, om te zien tot welke "
 "portalen u toegang heeft."
 
 #: templates/lizard_auth_server/activate_user.html:4
@@ -251,8 +251,8 @@ msgstr "Er heeft zich een fout voorgedaan"
 
 #: templates/lizard_auth_server/error_message.html:14
 #, python-format
-msgid "Back to the <a href=\"%(index_url)s\">home page</a>."
-msgstr "Terug naar de <a href=\"%(index_url)s\">voorpagina</a>."
+msgid "<a href=\"%(index_url)s\">Back to the home page</a>"
+msgstr "<a href=\"%(index_url)s\">Terug naar de voorpagina</a>"
 
 # Note: already in Django
 #: templates/lizard_auth_server/invitation_email.html:3

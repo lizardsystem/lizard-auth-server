@@ -13,11 +13,11 @@
         <ul>
             <li>
                 {% url login as login_url %}
-                {% blocktrans %}<a href="{{ login_url }}">Log in</a> with another account, which does have access to this portal.{% endblocktrans %}
+                {% blocktrans %}<a href="{{ login_url }}">Log in with another account</a>, which does have access to this portal.{% endblocktrans %}
             </li>
             <li>
                 {% url profile as profile_url %}
-                {% blocktrans %}Check <a href="{{ profile_url }}">your profile</a> to see which portals are available to you.{% endblocktrans %}
+                {% blocktrans %}<a href="{{ profile_url }}">Check your profile</a>, to see which portals are available to you.{% endblocktrans %}
             </li>
         </ul>
     </div>

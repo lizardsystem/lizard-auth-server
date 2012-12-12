@@ -502,9 +502,10 @@ class AuthenticationApiView(SecurePostMixin, View):
                 if not user.is_active:
                     return JsonError('User account is disabled.')
                 else:
-                    data = construct_user_data(user)
-                    return JsonResponse(data)
+                    user_data = construct_user_data(user)
+                    return JsonResponse({'user': user_data})
             else:
+                logger.warn('Login failed for user {} and ip {}'.format(username, request.META['REMOTE_ADDR']))
                 return JsonError('Login failed')
         else:
             return JsonError('Missing "username" or "password" POST parameters.')

@@ -7,7 +7,7 @@ from django.http import HttpResponse
 def JsonResponse(data, already_serialized=False):
     if isinstance(data, dict):
         if not 'success' in data:
-            if 'errors' in data:
+            if 'error' in data:
                 data['success'] = False
             else:
                 data['success'] = True
@@ -20,6 +20,6 @@ def JsonResponse(data, already_serialized=False):
 def JsonError(error_string):
     data = {
         'success': False,
-        'errors': error_string,
+        'error': error_string,
     }
     return JsonResponse(data)

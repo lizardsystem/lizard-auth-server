@@ -161,9 +161,9 @@ class UserProfile(models.Model):
         return self.portals.filter(pk=portal.pk).exists()
 
 # have the creation of a User trigger the creation of a Profile
-def create_user_profile(sender, user, created, **kwargs):
+def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=user)
+        UserProfile.objects.create(user=instance)
 
 post_save.connect(create_user_profile, sender=User)
 

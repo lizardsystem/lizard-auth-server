@@ -125,9 +125,9 @@ class ActivateUserForm1(forms.Form):
                 raise ValidationError(self.error_messages['password_mismatch'])
         return password2
 
-class ActivateUserForm2(forms.Form):
+class EditProfileForm(forms.Form):
     '''
-    Form used by a user to activate his/her account.
+    Form used by a user to edit the profile or activate his/her account.
     '''
     first_name = forms.CharField(max_length=30, label=_('First name'), required=True)
     last_name = forms.CharField(max_length=30, label=_('Last name'), required=True)

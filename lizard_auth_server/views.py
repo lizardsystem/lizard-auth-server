@@ -446,7 +446,7 @@ class ActivateUserView1(InvitationMixin, FormView):
 
 class ActivateUserView2(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user_step_2.html'
-    form_class = forms.ActivateUserForm2
+    form_class = forms.EditProfileForm
 
     def form_valid(self, form):
         data = form.cleaned_data

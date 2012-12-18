@@ -529,3 +529,59 @@ class AuthenticationApiView(FormView):
         else:
             logger.warn('Login failed for user {} and ip {}'.format(username, self.request.META['REMOTE_ADDR']))
             return JsonError('Login failed')
+
+class GetUserApiView(FormView):
+    '''
+    View which can be used by API's fetch user data.
+    '''
+    form_class = forms.DecryptForm
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(GetUserApiView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        # just a simple debug form
+        return HttpResponse(
+            '''
+            <form method="post">
+            <input type="text" name="username">
+            <input type="submit">
+            </form>
+            '''
+        )
+
+    @method_decorator(never_cache)
+    def post(self, request, *args, **kwargs):
+        return super(FormView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        portal = form.portal
+        username = form.cleaned_data.get('username')
+
+        if username:
+            return self.get_user(portal, username)
+        else:
+            return JsonError('Missing "username" POST parameter.')
+
+    def form_invalid(self, form):
+        logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
+        return HttpResponseBadRequest('Bad signature')
+
+    def get_user(self, portal, username):
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = None
+        if user:
+            if not user.is_active:
+                return JsonError('User account is disabled')
+            else:
+                profile = user.get_profile()
+                if profile.has_access(portal):
+                    user_data = construct_user_data(profile=profile)
+                    return JsonResponse({'user': user_data})
+                else:
+                    return JsonError('No access to this portal')
+        else:
+            return JsonError('No such user. Perhaps you need to add user to the SSO server first?')

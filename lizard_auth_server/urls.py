@@ -36,9 +36,10 @@ urlpatterns = patterns(
     url(r'^i18n/', include('django.conf.urls.i18n')),
     # Private SSO URLs used for internal communication between the servers
     # Note: these are part of the "API" and thus referred to by the client: change them there as well
-    url(r'^sso/authenticate/$',  views.AuthenticationApiView.as_view(), name='lizard_auth_server.sso_authenticate'),
-    url(r'^sso/request_token/$', views.RequestTokenView.as_view(),      name='lizard_auth_server.sso_request_token'),
-    url(r'^sso/verify/$',        views.VerifyView.as_view(),            name='lizard_auth_server.sso_verify'),
+    url(r'^sso/internal/authenticate/$',  views.AuthenticationApiView.as_view(), name='lizard_auth_server.sso_authenticate'),
+    url(r'^sso/internal/get_user/$',      views.GetUserApiView.as_view(),        name='lizard_auth_server.sso_get_user'),
+    url(r'^sso/internal/request_token/$', views.RequestTokenView.as_view(),      name='lizard_auth_server.sso_request_token'),
+    url(r'^sso/internal/verify/$',        views.VerifyView.as_view(),            name='lizard_auth_server.sso_verify'),
     # Public SSO URLs for use by visitors
     # Note: these are part of the "API" and thus referred to by the client: change them there as well
     url(r'^sso/portal_action/$',   views.PortalActionView.as_view(),   name='lizard_auth_server.sso_portal_action'),

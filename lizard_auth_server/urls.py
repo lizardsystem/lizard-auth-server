@@ -19,6 +19,8 @@ def check_settings():
         raise ImproperlyConfigured('This app REALLY needs django.middleware.csrf.CsrfViewMiddleware.')
     if not getattr(settings, 'USE_TZ', False):
         raise ImproperlyConfigured('Setting USE_TZ = True in your settings is also a good idea.')
+    if getattr(settings, 'AUTH_PROFILE_MODULE') != 'lizard_auth_server.UserProfile':
+        raise ImproperlyConfigured('Ensure AUTH_PROFILE_MODULE is set to our custom UserProfile model.')
 check_settings()
 
 admin.autodiscover()
@@ -142,7 +144,7 @@ urlpatterns = patterns(
         name='lizard_auth_server.activate_step_2'
     ),
     url(
-        r'^activate/complete/$',
+        r'^activation_complete/(?P<activation_key>\w+)$',
         views.ActivationCompleteView.as_view(),
         name='lizard_auth_server.activation_complete'
     ),

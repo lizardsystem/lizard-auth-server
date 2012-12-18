@@ -106,7 +106,7 @@ class ProfileView(ViewContextMixin, TemplateView):
     @property
     def profile(self):
         if not self._profile:
-            self._profile = UserProfile.objects.fetch_for_user(self.request.user)
+            self._profile = self.request.user.get_profile()
         return self._profile
 
     @method_decorator(login_required)
@@ -252,7 +252,7 @@ class AuthorizeView(ProcessGetFormView):
             # login anyway
             return False
         # check whether the UserProfile object is related to this Portal
-        profile = UserProfile.objects.fetch_for_user(self.request.user)
+        profile = self.request.user.get_profile()
         return profile.has_access(self.token.portal)
 
     def success(self):
@@ -314,7 +314,7 @@ def construct_user_data(user=None, profile=None):
     if user is None:
         user = profile.user
     if profile is None:
-        profile = UserProfile.objects.fetch_for_user(user)
+        profile = user.get_profile()
     data = {}
     for key in SIMPLE_KEYS:
         data[key] = getattr(user, key)
@@ -343,7 +343,7 @@ class VerifyView(ProcessGetFormView):
         '''
         Returns the JSON string representation of the user object for a portal.
         '''
-        profile = UserProfile.objects.fetch_for_user(self.token.user)
+        profile = self.token.user.get_profile()
         data = construct_user_data(profile=profile)
         return simplejson.dumps(data)
 
@@ -413,10 +413,12 @@ class InviteUserCompleteView(StaffOnlyMixin, ViewContextMixin, TemplateView):
 
 class InvitationMixin(object):
     invitation = None
+    activation_key = None
 
     def dispatch(self, request, activation_key, *args, **kwargs):
+        self.activation_key = activation_key
         try:
-            self.invitation = Invitation.objects.get(activation_key=activation_key)
+            self.invitation = Invitation.objects.get(activation_key=self.activation_key)
         except Invitation.DoesNotExist:
             return self.invalid_activation_key(request)
         return super(InvitationMixin, self).dispatch(request, *args, **kwargs)
@@ -440,7 +442,7 @@ class ActivateUserView1(InvitationMixin, FormView):
         # let the model handle the rest
         self.invitation.create_user(data)
 
-        return HttpResponseRedirect(reverse('lizard_auth_server.activate_step_2', kwargs={'activation_key': self.invitation.activation_key}))
+        return HttpResponseRedirect(reverse('lizard_auth_server.activate_step_2', kwargs={'activation_key': self.activation_key}))
 
 class ActivateUserView2(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user_step_2.html'
@@ -452,20 +454,16 @@ class ActivateUserView2(InvitationMixin, FormView):
         # let the model handle the rest
         self.invitation.activate(data)
 
-        return HttpResponseRedirect(reverse('lizard_auth_server.activation_complete'))
+        return HttpResponseRedirect(reverse('lizard_auth_server.activation_complete', kwargs={'activation_key': self.activation_key}))
 
-class ActivationCompleteView(View):
+class ActivationCompleteView(InvitationMixin, TemplateView):
     template_name = 'lizard_auth_server/activation_complete.html'
     _profile = None
-
-    def get(self, request, profile_pk, *args, **kwargs):
-        self.profile_pk = int(profile_pk)
-        return super(ActivationCompleteView, self).get(request, *args, **kwargs)
 
     @property
     def profile(self):
         if not self._profile:
-            self._profile = UserProfile.objects.get(pk=self.profile_pk)
+            self._profile = self.invitation.user.get_profile()
         return self._profile
 
 #######################
@@ -522,7 +520,7 @@ class AuthenticationApiView(FormView):
             if not user.is_active:
                 return JsonError('User account is disabled')
             else:
-                profile = UserProfile.objects.fetch_for_user(user)
+                profile = user.get_profile()
                 if profile.has_access(portal):
                     user_data = construct_user_data(profile=profile)
                     return JsonResponse({'user': user_data})

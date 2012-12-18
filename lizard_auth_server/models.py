@@ -7,6 +7,7 @@ import logging
 from django.db import models
 from django.db import transaction
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 from django.db.models.query_utils import Q
 from django.db.models.loading import get_model
 from django.core.mail import send_mail
@@ -93,22 +94,12 @@ class UserProfileManager(models.Manager):
             raise AttributeError('Cant get UserProfile without user')
         return self.get(user=user)
 
-    def create_deactivated(self, activation_name, activation_email, activation_language, organisation, portals):
-        p = UserProfile()
-        p.activation_name = activation_name
-        p.activation_email = activation_email
-        p.activation_language = activation_language
-        p.organisation = organisation
-        p.save()
-        p.portals = portals
-        return p
-
 class UserProfile(models.Model):
     '''
     Note: when migrating to Django 1.5, this is the ideal candidate
     for using the new custom User model features.
     '''
-    user = models.ForeignKey(User, null=False, unique=True)
+    user = models.OneToOneField(User)
     portals = models.ManyToManyField(Portal, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
@@ -169,6 +160,13 @@ class UserProfile(models.Model):
             return True
         return self.portals.filter(pk=portal.pk).exists()
 
+# have the creation of a User trigger the creation of a Profile
+def create_user_profile(sender, user, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=user)
+
+post_save.connect(create_user_profile, sender=User)
+
 class Invitation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     email = models.EmailField(null=False, blank=False)
@@ -182,20 +180,17 @@ class Invitation(models.Model):
     is_activated = models.BooleanField(default=False)
     activated_on = models.DateTimeField(null=True, blank=True)
     user = models.ForeignKey(User, null=True, blank=True)
-    profile = models.ForeignKey(UserProfile, null=True, blank=True)
 
     def __unicode__(self):
-        if self.profile:
-            return '{}, {}'.format(self.profile.user, self.profile.email)
+        if self.user:
+            return '{}, {} (Activated)'.format(self.user, self.user.email)
         else:
             return '{}, {} (Not activated)'.format(self.name, self.email)
 
     def clean(self):
         if self.is_activated:
-            if self.activation_key:
-                raise ValidationError('Invitation is marked as activated, but there is still an activation key set.')
-            if self.profile is None:
-                raise ValidationError('Invitation is marked as activated, but its profile isnt set.')
+            if self.user is None:
+                raise ValidationError('Invitation is marked as activated, but its user isnt set.')
             if self.activated_on is None:
                 raise ValidationError('Invitation is marked as activated, but its field "activated_on" isnt set.')
 
@@ -271,14 +266,13 @@ class Invitation(models.Model):
             user = self.user
 
             # create and fill the profile
-            profile = UserProfile()
+            profile = user.get_profile()
             profile.title = data['title']
             profile.street = data['street']
-            profile.postal_code =data['postal_code']
+            profile.postal_code = data['postal_code']
             profile.town = data['town']
             profile.phone_number = data['phone_number']
             profile.mobile_phone_number = data['mobile_phone_number']
-            profile.user = user
             profile.save()
 
             # many-to-many, so save these after profile has been assigned an ID
@@ -292,12 +286,7 @@ class Invitation(models.Model):
             user.last_name = data['last_name']
             user.save()
 
-            # link the profile to the invitation so we have a trail
-            # from invitation to user
-            self.profile = profile
-
-            # clear now invalid activation key
-            self.activation_key = None
+            # set the activation flag
             self.activated_on = datetime.datetime.now(tz=pytz.UTC)
             self.is_activated = True
             self.save()

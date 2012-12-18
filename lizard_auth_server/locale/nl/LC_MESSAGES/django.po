@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-12 01:06+0100\n"
+"POT-Creation-Date: 2012-12-18 07:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,91 +29,92 @@ msgstr "Handmatig activeren"
 msgid "Shortcut URLs"
 msgstr "Snelkoppelingen"
 
-#: forms.py:41
+#: forms.py:43
 #, python-format
 msgid "The new password must be at least %d characters long."
 msgstr "Het nieuwe wachtwoord moet minimaal %d karakters lang zijn."
 
-#: forms.py:47
+#: forms.py:49
 msgid ""
 "The new password must contain at least one letter and at least one digit or "
 "punctuation character."
 msgstr "Het nieuwe wachtwoord moet minimaal een cijfer of leesteken bevatten."
 
-#: forms.py:68 templates/lizard_auth_server/profile.html:12
+#: forms.py:63 templates/lizard_auth_server/profile.html:12
 msgid "Name"
 msgstr "Naam"
 
-#: forms.py:69 forms.py:97 templates/lizard_auth_server/profile.html:16
+#: forms.py:64 forms.py:92 templates/lizard_auth_server/profile.html:16
 msgid "Email"
 msgstr "E-mail"
 
-#: forms.py:70 templates/lizard_auth_server/profile.html:24
+#: forms.py:65 templates/lizard_auth_server/profile.html:24
 msgid "Organisation"
 msgstr "Organisatie"
 
-#: forms.py:72
+#: forms.py:67
 msgid "Language"
 msgstr "Taal"
 
-#: forms.py:80
+#: forms.py:75
 msgid "Portals"
 msgstr "Portalen"
 
-#: forms.py:90 forms.py:110 forms.py:117
+# Note: already in Django
+#: forms.py:85 forms.py:105 forms.py:112
 msgid "{} is already taken."
 msgstr ""
 
 # Note: already in Django
-#: forms.py:98
+#: forms.py:93
 msgid "Username"
 msgstr ""
 
 # Note: already in Django
-#: forms.py:99
+#: forms.py:94
 msgid "New password"
 msgstr ""
 
 # Note: already in Django
-#: forms.py:100
+#: forms.py:95
 msgid "New password confirmation"
 msgstr ""
 
 # Note: already in Django
-#: forms.py:103
+#: forms.py:98
 msgid "The two password fields didn't match."
 msgstr ""
 
 # Note: already in Django
-#: forms.py:137
+#: forms.py:132
 msgid "First name"
 msgstr "Voornaam"
 
-#: forms.py:138
+#: forms.py:133
 msgid "Last name"
 msgstr "Achternaam"
 
-#: forms.py:139 templates/lizard_auth_server/profile.html:20
+#: forms.py:134 templates/lizard_auth_server/profile.html:20
 msgid "Title"
 msgstr "Titel"
 
-#: forms.py:140 templates/lizard_auth_server/profile.html:28
+#: forms.py:135 templates/lizard_auth_server/profile.html:28
 msgid "Street"
 msgstr "Straat"
 
-#: forms.py:141 templates/lizard_auth_server/profile.html:32
+#: forms.py:136 templates/lizard_auth_server/profile.html:32
 msgid "Postal code"
 msgstr "Postcode"
 
-#: forms.py:142 templates/lizard_auth_server/profile.html:36
+#: forms.py:137 templates/lizard_auth_server/profile.html:36
 msgid "Town"
 msgstr "Plaats"
 
-#: forms.py:143 templates/lizard_auth_server/profile.html:40
+#: forms.py:138 templates/lizard_auth_server/profile.html:40
 msgid "Phone number"
 msgstr "Telefoonnummer"
 
-#: forms.py:144 templates/lizard_auth_server/profile.html:44
+#: forms.py:139 templates/lizard_auth_server/profile.html:44
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
@@ -121,7 +122,7 @@ msgstr "Telefoonnummer (mobiel)"
 msgid "An unknown error occurred."
 msgstr "Onbekende fout."
 
-#: views.py:160 views.py:177 views.py:197 views.py:227
+#: views.py:160 views.py:177 views.py:227
 msgid "Communication error."
 msgstr "Communicatiefout."
 
@@ -129,7 +130,7 @@ msgstr "Communicatiefout."
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr "Token is verlopen. Ga terug naar het portaal, en log daar opnieuw in."
 
-#: views.py:424
+#: views.py:428
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 "Ongeldige activatiesleutel. Dit betekent waarschijnlijk dat het account al "
@@ -139,6 +140,7 @@ msgstr ""
 msgid "Lizard SSO"
 msgstr ""
 
+# Note: already in Django
 #: templates/admin/base_site.html:5 templates/lizard_auth_server/base.html:57
 msgid "Django administration"
 msgstr ""
@@ -178,6 +180,7 @@ msgstr ""
 msgid "Activate user"
 msgstr "Activeer gebruiker"
 
+# Note: already in Django
 #: templates/lizard_auth_server/activate_user.html:11
 #: templates/lizard_auth_server/activate_user_step_2.html:11
 #: templates/lizard_auth_server/password_change_form.html:11
@@ -206,6 +209,26 @@ msgstr "Beginwaarden"
 msgid "Complete registration"
 msgstr "Rond registratie af"
 
+#: templates/lizard_auth_server/activation_complete.html:4
+#: templates/lizard_auth_server/activation_complete.html:8
+msgid "Activation complete"
+msgstr "Activatie afgerond"
+
+# Note: already in Django
+#: templates/lizard_auth_server/activation_complete.html:9
+msgid "Your account has been activated.  You may go ahead and log in now."
+msgstr "Uw account is geactiveerd. U kunt verder gaan door in te loggen."
+
+#: templates/lizard_auth_server/activation_complete.html:10
+#: templates/lizard_auth_server/base.html:73
+#: templates/lizard_auth_server/login.html:4
+#: templates/lizard_auth_server/login.html:17
+#: templates/lizard_auth_server/login.html:22
+#: templates/lizard_auth_server/password_change_done.html:12
+#: templates/lizard_auth_server/password_reset_complete.html:10
+msgid "Log in"
+msgstr "Inloggen"
+
 #: templates/lizard_auth_server/base.html:54
 #, python-format
 msgid "Hello, %(name)s"
@@ -220,15 +243,7 @@ msgstr "Profiel"
 msgid "Log out"
 msgstr "Afmelden"
 
-#: templates/lizard_auth_server/base.html:73
-#: templates/lizard_auth_server/login.html:4
-#: templates/lizard_auth_server/login.html:17
-#: templates/lizard_auth_server/login.html:22
-#: templates/lizard_auth_server/password_change_done.html:12
-#: templates/lizard_auth_server/password_reset_complete.html:10
-msgid "Log in"
-msgstr "Inloggen"
-
+# Note: already in Django
 #: templates/lizard_auth_server/base.html:75
 #: templates/lizard_auth_server/profile.html:64
 msgid "Change password"
@@ -286,6 +301,7 @@ msgstr "Geen portalen gevonden."
 msgid "Sincerely,"
 msgstr "Met vriendelijke groet,"
 
+# Note: already in Django
 #: templates/lizard_auth_server/invitation_email.html:18
 #, python-format
 msgid "The %(site_name)s team"
@@ -301,6 +317,7 @@ msgstr "Er is een account voor u aangemaakt op %(site_name)s"
 msgid "Logged out"
 msgstr "Afmelden"
 
+# Note: already in Django
 #: templates/lizard_auth_server/logged_out.html:8
 msgid "Thanks for spending some quality time with the Web site today."
 msgstr ""
@@ -317,6 +334,7 @@ msgid ""
 "sensitive."
 msgstr ""
 
+# Note: already in Django
 #: templates/lizard_auth_server/password_change_done.html:4
 #: templates/lizard_auth_server/password_change_done.html:8
 msgid "Password change successful"

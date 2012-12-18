@@ -18,7 +18,7 @@ from lizard_auth_server import models
 
 class InvitationAdmin(admin.ModelAdmin):
     model = models.Invitation
-    list_display = ['__unicode__', 'profile', 'email', 'is_activated']
+    list_display = ['__unicode__', 'user', 'email', 'is_activated']
     readonly_fields = ['created_at', 'shortcut_urls']
     actions = ['send_new_activation_email']
     search_fields = ['name', 'email']

@@ -171,6 +171,7 @@ UI_GAUGES_SITE_ID = ''  # Staging has a separate one.
 DEFAULT_FROM_EMAIL = 'noreply@nelen-schuurmans.nl'
 EMAIL_HOST = '100-mail-d03.external-nens.local'
 
+AUTH_PROFILE_MODULE = 'lizard_auth_server.UserProfile'
 
 try:
     # Import local settings that aren't stored in svn/git.

@@ -109,9 +109,56 @@ class ProfileView(ViewContextMixin, TemplateView):
             self._profile = self.request.user.get_profile()
         return self._profile
 
+    @property
+    def all_portals(self):
+        return Portal.objects.all()
+
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
+
+class EditProfileView(FormView):
+    '''
+    Straightforward view which displays a form to have a user
+    edit his / her own profile.
+    '''
+    template_name = 'lizard_auth_server/edit_profile.html'
+    form_class = forms.EditProfileForm
+    _profile = None
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(EditProfileView, self).dispatch(request, *args, **kwargs)
+
+    @property
+    def profile(self):
+        if not self._profile:
+            self._profile = self.request.user.get_profile()
+        return self._profile
+
+    def get_initial(self):
+        return {
+            'email': self.profile.email,
+            'first_name': self.profile.first_name,
+            'last_name': self.profile.last_name,
+            'title': self.profile.title,
+            'street': self.profile.street,
+            'postal_code': self.profile.postal_code,
+            'town': self.profile.town,
+            'phone_number': self.profile.phone_number,
+            'mobile_phone_number': self.profile.mobile_phone_number
+        }
+
+    def get_form(self, form_class):
+        return form_class(user=self.request.user, **self.get_form_kwargs())
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+
+        # let the model handle the rest
+        self.profile.update_all(data)
+
+        return HttpResponseRedirect(reverse('profile'))
 
 class ErrorMessageResponse(TemplateResponse):
     '''
@@ -373,7 +420,7 @@ class VerifyView(ProcessGetFormView):
 # Invitation / registration / activation
 ########################################
 
-class InviteUserView(StaffOnlyMixin, SecurePostMixin, FormView):
+class InviteUserView(StaffOnlyMixin, FormView):
     template_name = 'lizard_auth_server/invite_user.html'
     form_class = forms.InviteUserForm
 
@@ -414,6 +461,7 @@ class InviteUserCompleteView(StaffOnlyMixin, ViewContextMixin, TemplateView):
 class InvitationMixin(object):
     invitation = None
     activation_key = None
+    error_on_already_used = True
 
     def dispatch(self, request, activation_key, *args, **kwargs):
         self.activation_key = activation_key
@@ -421,6 +469,11 @@ class InvitationMixin(object):
             self.invitation = Invitation.objects.get(activation_key=self.activation_key)
         except Invitation.DoesNotExist:
             return self.invalid_activation_key(request)
+
+        # show a semi-nice error page if the invitation was already used
+        if self.error_on_already_used and self.invitation.is_activated:
+            return self.invalid_activation_key(request)
+
         return super(InvitationMixin, self).dispatch(request, *args, **kwargs)
 
     def invalid_activation_key(self, request):
@@ -430,11 +483,6 @@ class InvitationMixin(object):
 class ActivateUserView1(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user.html'
     form_class = forms.ActivateUserForm1
-
-    def get_initial(self):
-        return {
-            'email': self.invitation.email
-        }
 
     def form_valid(self, form):
         data = form.cleaned_data
@@ -448,6 +496,11 @@ class ActivateUserView2(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user_step_2.html'
     form_class = forms.EditProfileForm
 
+    def get_initial(self):
+        return {
+            'email': self.invitation.email,
+        }
+
     def form_valid(self, form):
         data = form.cleaned_data
 
@@ -458,6 +511,7 @@ class ActivateUserView2(InvitationMixin, FormView):
 
 class ActivationCompleteView(InvitationMixin, TemplateView):
     template_name = 'lizard_auth_server/activation_complete.html'
+    error_on_already_used = False # see InvitationMixin
     _profile = None
 
     @property

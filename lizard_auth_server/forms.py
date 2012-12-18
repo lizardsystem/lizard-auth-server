@@ -89,7 +89,6 @@ class ActivateUserForm1(forms.Form):
     '''
     Form used by a user to activate his/her account.
     '''
-    email = forms.EmailField(max_length=255, label=_('Email'), required=True)
     username = forms.CharField(max_length=30, label=_('Username'), required=True)
     new_password1 = forms.CharField(label=_("New password"), widget=forms.PasswordInput)
     new_password2 = forms.CharField(label=_("New password confirmation"), widget=forms.PasswordInput)
@@ -104,13 +103,6 @@ class ActivateUserForm1(forms.Form):
         if users.exists():
             raise ValidationError(_('{} is already taken.').format(username))
         return username
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        users = User.objects.filter(email=email)
-        if users.exists():
-            raise ValidationError(_('{} is already taken.').format(email))
-        return email
 
     def clean_new_password1(self):
         password1 = self.cleaned_data.get('new_password1')
@@ -127,8 +119,9 @@ class ActivateUserForm1(forms.Form):
 
 class EditProfileForm(forms.Form):
     '''
-    Form used by a user to edit the profile or activate his/her account.
+    Form used by a user to activate his/her account.
     '''
+    email = forms.EmailField(max_length=255, label=_('Email'), required=True)
     first_name = forms.CharField(max_length=30, label=_('First name'), required=True)
     last_name = forms.CharField(max_length=30, label=_('Last name'), required=True)
     title = forms.CharField(max_length=255, label=_('Title'), required=False)
@@ -137,3 +130,27 @@ class EditProfileForm(forms.Form):
     town = forms.CharField(max_length=255, label=_('Town'), required=False)
     phone_number = forms.CharField(max_length=255, label=_('Phone number'), required=False)
     mobile_phone_number = forms.CharField(max_length=255, label=_('Mobile phone number'), required=False)
+
+    def __init__(self, user=None, *args, **kwargs):
+        super(EditProfileForm, self).__init__(*args, **kwargs)
+        self.user = user
+        self.fields.keyOrder = [
+            'email',
+            'first_name',
+            'last_name',
+            'title',
+            'street',
+            'postal_code',
+            'town',
+            'phone_number',
+            'mobile_phone_number',
+        ]
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        users = User.objects.filter(email=email)
+        if self.user:
+            users = users.exclude(pk=self.user.pk)
+        if users.exists():
+            raise ValidationError(_('{} is already taken.').format(email))
+        return email

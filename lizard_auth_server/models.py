@@ -98,6 +98,9 @@ class UserProfile(models.Model):
     '''
     Note: when migrating to Django 1.5, this is the ideal candidate
     for using the new custom User model features.
+
+    Note: this is linked via Django's user profile support. This means
+    all fields must be OPTIONAL.
     '''
     user = models.OneToOneField(User)
     portals = models.ManyToManyField(Portal, blank=True)
@@ -118,6 +121,22 @@ class UserProfile(models.Model):
             return 'UserProfile {} ({}, {})'.format(self.pk, self.user, self.user.email)
         else:
             return 'UserProfile {}'.format(self.pk)
+
+    def update_all(self, data):
+        user = self.user
+
+        user.email = data['email']
+        user.first_name = data['first_name']
+        user.last_name = data['last_name']
+        user.save()
+
+        self.title = data['title']
+        self.street = data['street']
+        self.postal_code = data['postal_code']
+        self.town = data['town']
+        self.phone_number = data['phone_number']
+        self.mobile_phone_number = data['mobile_phone_number']
+        self.save()
 
     @property
     def username(self):
@@ -170,6 +189,7 @@ post_save.connect(create_user_profile, sender=User)
 class Invitation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     email = models.EmailField(null=False, blank=False)
+    organisation = models.CharField(max_length=255, null=False, blank=False)
     language = models.CharField(max_length=16, null=False, blank=False)
     portals = models.ManyToManyField(Portal, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -247,7 +267,6 @@ class Invitation(models.Model):
                 # create the Django auth user
                 user = User.objects.create_user(
                     username=data['username'],
-                    email=data['email'],
                     password=data['new_password1']
                 )
 
@@ -266,27 +285,20 @@ class Invitation(models.Model):
             user = self.user
 
             # create and fill the profile
+            # this sets the additional attributes on the User model as well
             profile = user.get_profile()
-            profile.title = data['title']
-            profile.street = data['street']
-            profile.postal_code = data['postal_code']
-            profile.town = data['town']
-            profile.phone_number = data['phone_number']
-            profile.mobile_phone_number = data['mobile_phone_number']
-            profile.save()
+            profile.organisation = self.organisation
+            profile.update_all(data)
 
             # many-to-many, so save these after profile has been assigned an ID
             profile.portals = self.portals.all()
             profile.save()
 
-            # set the additional attributes on the user model,
-            # and mark it as active
+            # and mark the User as active
             user.is_active = True
-            user.first_name = data['first_name']
-            user.last_name = data['last_name']
             user.save()
 
-            # set the activation flag
+            # set the activation flag on the Invitation
             self.activated_on = datetime.datetime.now(tz=pytz.UTC)
             self.is_activated = True
             self.save()

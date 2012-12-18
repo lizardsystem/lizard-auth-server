@@ -130,7 +130,7 @@ urlpatterns = patterns(
         name='lizard_auth_server.invite_user'
     ),
     url(
-        r'^invite/complete/(?P<invitation_pk>\d+)$',
+        r'^invite/complete/(?P<invitation_pk>\d+)/$',
         views.InviteUserCompleteView.as_view(),
         name='lizard_auth_server.invite_user_complete'
     ),
@@ -145,9 +145,14 @@ urlpatterns = patterns(
         name='lizard_auth_server.activate_step_2'
     ),
     url(
-        r'^activation_complete/(?P<activation_key>\w+)$',
+        r'^activation_complete/(?P<activation_key>\w+)/$',
         views.ActivationCompleteView.as_view(),
         name='lizard_auth_server.activation_complete'
+    ),
+    url(
+        r'^edit_profile/$',
+        views.EditProfileView.as_view(),
+        name='lizard_auth_server.edit_profile'
     ),
 )
 

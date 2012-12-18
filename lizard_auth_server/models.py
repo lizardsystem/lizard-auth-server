@@ -89,8 +89,8 @@ class Token(models.Model):
 
 class UserProfileManager(models.Manager):
     def fetch_for_user(self, user):
-        if user is None:
-            raise AttributeError('Cant get UserProfile for user=None')
+        if not user:
+            raise AttributeError('Cant get UserProfile without user')
         return self.get(user=user)
 
     def create_deactivated(self, activation_name, activation_email, activation_language, organisation, portals):
@@ -157,6 +157,17 @@ class UserProfile(models.Model):
         Note: unrelated to account activation.
         '''
         return self.user.is_active
+
+    def has_access(self, portal):
+        '''
+        Returns True when this user has access to this portal.
+        '''
+        if not portal:
+            raise AttributeError('Need a valid Portal instance')
+        if self.user.is_staff:
+            # staff can access any site
+            return True
+        return self.portals.filter(pk=portal.pk).exists()
 
 class Invitation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)

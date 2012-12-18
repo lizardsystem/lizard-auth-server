@@ -15,6 +15,7 @@ install_requires = [
     'south',
     'requests',
     'itsdangerous',
+    'pytz',
     ],
 
 tests_require = [

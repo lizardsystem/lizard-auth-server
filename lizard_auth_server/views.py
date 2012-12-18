@@ -215,11 +215,7 @@ class LogoutRedirectView(ProcessGetFormView):
     def form_valid(self, form):
         if form.cleaned_data['action'] == 'logout':
             url = urljoin(form.portal.redirect_url, 'sso/local_logout') + '/'
-            # Use a custom redirect here as Django somehow rewrites redirects to
-            # external urls.
-            custom_redirect = HttpResponse(url, status=302)
-            custom_redirect['Location'] = url
-            return custom_redirect
+            return HttpResponseRedirect(url)
         else:
             return HttpResponseBadRequest('Unknown action')
 
@@ -320,11 +316,7 @@ class AuthorizeView(ProcessGetFormView):
         # redirect user back to the portal
         url = urljoin(self.token.portal.redirect_url, 'sso/local_login') + '/'
         url = '%s?%s' % (url, urllib.urlencode({'message': message}))
-        # Use a custom redirect here as Django somehow rewrites redirects to
-        # external urls.
-        custom_redirect = HttpResponse(url, status=302)
-        custom_redirect['Location'] = url
-        return custom_redirect
+        return HttpResponseRedirect(url)
 
     def access_denied(self):
         '''

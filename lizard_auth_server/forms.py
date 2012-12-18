@@ -27,6 +27,8 @@ class DecryptForm(forms.Form):
             new_data = URLSafeTimedSerializer(self.portal.sso_secret).loads(data['message'], max_age=300)
         except BadSignature:
             raise ValidationError('Bad signature')
+        if data['key'] != new_data['key']:
+            raise ValidationError('Public key does not match signed key')
         return new_data
 
 MIN_LENGTH = 8
@@ -58,13 +60,6 @@ class InviteUserForm(forms.Form):
     '''
     Form used by an administrator to invite a user.
     '''
-#    def __init__(self, *args, **kwargs):
-#        self.portals_queryset = kwargs['portals_queryset']
-#        kwargs.pop('portals_queryset')
-#        super(RegisterUserForm, self).__init__(*args, **kwargs)
-#        self.fields['portals'].widget = forms.CheckboxSelectMultiple()
-#        self.fields['portals'].queryset = self.portals_queryset
-
     name = forms.CharField(max_length=64, label=_('Name'), required=True)
     email = forms.EmailField(max_length=255, label=_('Email'), required=True)
     organisation = forms.CharField(max_length=255, label=_('Organisation'), required=True)

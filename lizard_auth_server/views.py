@@ -10,7 +10,7 @@ from django.conf.urls.defaults import patterns, url
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from django.views.decorators.cache import never_cache
@@ -251,12 +251,9 @@ class AuthorizeView(ProcessGetFormView):
             # extra check: should not be necessary as inactive users can't
             # login anyway
             return False
-        if self.request.user.is_staff:
-            # staff can access any site
-            return True
         # check whether the UserProfile object is related to this Portal
         profile = UserProfile.objects.fetch_for_user(self.request.user)
-        return profile.portals.filter(pk=self.token.portal.pk).exists()
+        return profile.has_access(self.token.portal)
 
     def success(self):
         params = {
@@ -309,11 +306,15 @@ class AuthorizeView(ProcessGetFormView):
         '''
         return HttpResponseRedirect(self.build_login_url())
 
-def construct_user_data(user):
+def construct_user_data(user=None, profile=None):
     '''
     Construct a dict of information about a user object,
     like first_name, permissions and organisation.
     '''
+    if user is None:
+        user = profile.user
+    if profile is None:
+        profile = UserProfile.objects.fetch_for_user(user)
     data = {}
     for key in SIMPLE_KEYS:
         data[key] = getattr(user, key)
@@ -323,7 +324,6 @@ def construct_user_data(user):
             'content_type': perm.content_type.natural_key(),
             'codename': perm.codename,
         })
-    profile = UserProfile.objects.fetch_for_user(user)
     for key in ['organisation']:
         # copy the profile data, not sure how much more we want to add
         data[key] = getattr(profile, key)
@@ -343,7 +343,8 @@ class VerifyView(ProcessGetFormView):
         '''
         Returns the JSON string representation of the user object for a portal.
         '''
-        data = construct_user_data(self.token.user)
+        profile = UserProfile.objects.fetch_for_user(self.token.user)
+        data = construct_user_data(profile=profile)
         return simplejson.dumps(data)
 
     def form_valid(self, form):
@@ -501,24 +502,32 @@ class AuthenticationApiView(FormView):
 
     @method_decorator(sensitive_variables('password'))
     def form_valid(self, form):
+        portal = form.portal
         username = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password')
 
         if username and password:
-            user = authenticate(username=username, password=password)
-            if user:
-                if not user.is_active:
-                    return JsonError('User account is disabled.')
-                else:
-                    # TODO: check user access
-                    user_data = construct_user_data(user)
-                    return JsonResponse({'user': user_data})
-            else:
-                logger.warn('Login failed for user {} and ip {}'.format(username, self.request.META['REMOTE_ADDR']))
-                return JsonError('Login failed')
+            return self.authenticate(portal, username, password)
         else:
             return JsonError('Missing "username" or "password" POST parameters.')
 
     def form_invalid(self, form):
         logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
         return HttpResponseBadRequest('Bad signature')
+
+    @method_decorator(sensitive_variables('password'))
+    def authenticate(self, portal, username, password):
+        user = django_authenticate(username=username, password=password)
+        if user:
+            if not user.is_active:
+                return JsonError('User account is disabled')
+            else:
+                profile = UserProfile.objects.fetch_for_user(user)
+                if profile.has_access(portal):
+                    user_data = construct_user_data(profile=profile)
+                    return JsonResponse({'user': user_data})
+                else:
+                    return JsonError('No access to this portal')
+        else:
+            logger.warn('Login failed for user {} and ip {}'.format(username, self.request.META['REMOTE_ADDR']))
+            return JsonError('Login failed')

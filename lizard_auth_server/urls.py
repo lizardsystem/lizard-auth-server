@@ -123,7 +123,7 @@ urlpatterns = patterns(
         },
         name='password_reset_complete'
     ),
-    # URLs for user registration
+    # URLs for user invitation / activation
     url(
         r'^invite/$',
         views.InviteUserView.as_view(),

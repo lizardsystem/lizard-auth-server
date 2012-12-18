@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-18 10:15+0100\n"
+"POT-Creation-Date: 2012-12-18 15:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -183,10 +183,10 @@ msgstr "Activeer gebruiker"
 # Note: already in Django
 #: templates/lizard_auth_server/activate_user.html:11
 #: templates/lizard_auth_server/activate_user_step_2.html:11
+#: templates/lizard_auth_server/invite_user.html:11
 #: templates/lizard_auth_server/password_change_form.html:11
 #: templates/lizard_auth_server/password_reset_confirm.html:18
 #: templates/lizard_auth_server/password_reset_form.html:11
-#: templates/lizard_auth_server/register_user.html:11
 msgid "Please correct the error below."
 msgid_plural "Please correct the errors below."
 msgstr[0] ""
@@ -199,9 +199,9 @@ msgstr "Ga door naar de volgende stap"
 
 #: templates/lizard_auth_server/activate_user.html:21
 #: templates/lizard_auth_server/activate_user_step_2.html:21
+#: templates/lizard_auth_server/invite_user.html:21
 #: templates/lizard_auth_server/login.html:22
 #: templates/lizard_auth_server/password_change_form.html:24
-#: templates/lizard_auth_server/register_user.html:21
 msgid "Reset values"
 msgstr "Beginwaarden"
 
@@ -313,6 +313,54 @@ msgstr ""
 msgid "An account has been made for you at %(site_name)s"
 msgstr "Er is een account voor u aangemaakt op %(site_name)s"
 
+#: templates/lizard_auth_server/invite_user.html:4
+#: templates/lizard_auth_server/invite_user.html:16
+msgid "Register user"
+msgstr "Registreer gebruiker"
+
+#: templates/lizard_auth_server/invite_user.html:21
+msgid "Send registration email"
+msgstr "Stuur registratie e-mail"
+
+#: templates/lizard_auth_server/invite_user_complete.html:4
+#: templates/lizard_auth_server/invite_user_complete.html:8
+msgid "Registration complete"
+msgstr "Registratie afgerond"
+
+#: templates/lizard_auth_server/invite_user_complete.html:10
+msgid ""
+"The account has been registered, and an activation email has been sent to"
+msgstr "Het account is geregisteerd, en een activatie e-mail is verstuurt naar"
+
+#: templates/lizard_auth_server/invite_user_complete.html:13
+msgid ""
+"Visit the specific portals to grant this account additional permissions:"
+msgstr ""
+"Bezoek de specifieke portalen om extra permissies toe te kennen aan dit "
+"account:"
+
+#: templates/lizard_auth_server/invite_user_complete.html:19
+msgid "No portals selected."
+msgstr "Geen portalen geselecteerd"
+
+#: templates/lizard_auth_server/invite_user_complete.html:22
+#: templates/lizard_auth_server/profile.html:66
+msgid "Actions"
+msgstr "Acties"
+
+#: templates/lizard_auth_server/invite_user_complete.html:24
+msgid "Immediately activate this account"
+msgstr "Activeer dit account handmatig"
+
+#: templates/lizard_auth_server/invite_user_complete.html:25
+msgid "Register another user"
+msgstr "Registreer nog een gebruiker"
+
+#: templates/lizard_auth_server/invite_user_complete.html:26
+#: templates/lizard_auth_server/password_change_done.html:11
+msgid "Go back to my profile"
+msgstr "Terug naar mijn profiel"
+
 #: templates/lizard_auth_server/logged_out.html:4
 msgid "Logged out"
 msgstr "Afmelden"
@@ -344,11 +392,6 @@ msgstr ""
 #: templates/lizard_auth_server/password_change_done.html:9
 msgid "Your password was changed."
 msgstr ""
-
-#: templates/lizard_auth_server/password_change_done.html:11
-#: templates/lizard_auth_server/registration_complete.html:26
-msgid "Go back to my profile"
-msgstr "Terug naar mijn profiel"
 
 # Note: already in Django
 #: templates/lizard_auth_server/password_change_form.html:4
@@ -476,11 +519,6 @@ msgstr "Dit zijn de portalen waar u toegang tot heeft:"
 msgid "All portals (staff member)."
 msgstr "Alle portalen (beheerder)."
 
-#: templates/lizard_auth_server/profile.html:66
-#: templates/lizard_auth_server/registration_complete.html:22
-msgid "Actions"
-msgstr "Acties"
-
 #: templates/lizard_auth_server/profile.html:70
 msgid "Register a new user"
 msgstr "Registreer een nieuwe gebruiker"
@@ -488,41 +526,3 @@ msgstr "Registreer een nieuwe gebruiker"
 #: templates/lizard_auth_server/profile.html:73
 msgid "Manage SSO portals"
 msgstr "Beheer SSO portalen"
-
-#: templates/lizard_auth_server/register_user.html:4
-#: templates/lizard_auth_server/register_user.html:16
-msgid "Register user"
-msgstr "Registreer gebruiker"
-
-#: templates/lizard_auth_server/register_user.html:21
-msgid "Send registration email"
-msgstr "Stuur registratie e-mail"
-
-#: templates/lizard_auth_server/registration_complete.html:4
-#: templates/lizard_auth_server/registration_complete.html:8
-msgid "Registration complete"
-msgstr "Registratie afgerond"
-
-#: templates/lizard_auth_server/registration_complete.html:10
-msgid ""
-"The account has been registered, and an activation email has been sent to"
-msgstr "Het account is geregisteerd, en een activatie e-mail is verstuurt naar"
-
-#: templates/lizard_auth_server/registration_complete.html:13
-msgid ""
-"Visit the specific portals to grant this account additional permissions:"
-msgstr ""
-"Bezoek de specifieke portalen om extra permissies toe te kennen aan dit "
-"account:"
-
-#: templates/lizard_auth_server/registration_complete.html:19
-msgid "No portals selected."
-msgstr "Geen portalen geselecteerd"
-
-#: templates/lizard_auth_server/registration_complete.html:24
-msgid "Immediately activate this account"
-msgstr "Activeer dit account handmatig"
-
-#: templates/lizard_auth_server/registration_complete.html:25
-msgid "Register another user"
-msgstr "Registreer een nieuwe gebruiker"

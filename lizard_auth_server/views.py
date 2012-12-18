@@ -374,7 +374,7 @@ class VerifyView(ProcessGetFormView):
 ########################################
 
 class InviteUserView(StaffOnlyMixin, SecurePostMixin, FormView):
-    template_name = 'lizard_auth_server/register_user.html'
+    template_name = 'lizard_auth_server/invite_user.html'
     form_class = forms.InviteUserForm
 
     def form_valid(self, form):
@@ -398,7 +398,7 @@ class InviteUserView(StaffOnlyMixin, SecurePostMixin, FormView):
         return HttpResponseRedirect(reverse('lizard_auth_server.invite_user_complete', kwargs={'invitation_pk': inv.pk}))
 
 class InviteUserCompleteView(StaffOnlyMixin, ViewContextMixin, TemplateView):
-    template_name = 'lizard_auth_server/registration_complete.html'
+    template_name = 'lizard_auth_server/invite_user_complete.html'
     _invitiation = None
 
     def get(self, request, invitation_pk, *args, **kwargs):

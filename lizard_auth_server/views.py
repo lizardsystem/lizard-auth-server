@@ -194,7 +194,7 @@ class RequestTokenView(ProcessGetFormView):
 
     def form_invalid(self, form):
         logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
-        return ErrorMessageResponse(self.request, _('Communication error.'), 400)
+        return HttpResponseBadRequest('Bad signature')
 
 class AuthorizeView(ProcessGetFormView):
     '''
@@ -365,6 +365,7 @@ class VerifyView(ProcessGetFormView):
         return HttpResponse(data)
 
     def form_invalid(self, form):
+        logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
         return HttpResponseBadRequest('Bad signature')
 
 ########################################
@@ -470,11 +471,13 @@ class ActivationCompleteView(View):
 # APIs with minimal GUI
 #######################
 
-class AuthenticationApiView(SecurePostMixin, View):
+class AuthenticationApiView(FormView):
     '''
     View which can be used by API's to authenticate a
     username / password combo.
     '''
+    form_class = forms.DecryptForm
+
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(AuthenticationApiView, self).dispatch(request, *args, **kwargs)
@@ -491,10 +494,15 @@ class AuthenticationApiView(SecurePostMixin, View):
             '''
         )
 
-    @method_decorator(sensitive_variables('password'))
+    @method_decorator(sensitive_post_parameters('password', 'old_password', 'new_password1', 'new_password2'))
+    @method_decorator(never_cache)
     def post(self, request, *args, **kwargs):
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        return super(FormView, self).post(request, *args, **kwargs)
+
+    @method_decorator(sensitive_variables('password'))
+    def form_valid(self, form):
+        username = form.cleaned_data.get('username')
+        password = form.cleaned_data.get('password')
 
         if username and password:
             user = authenticate(username=username, password=password)
@@ -502,10 +510,15 @@ class AuthenticationApiView(SecurePostMixin, View):
                 if not user.is_active:
                     return JsonError('User account is disabled.')
                 else:
+                    # TODO: check user access
                     user_data = construct_user_data(user)
                     return JsonResponse({'user': user_data})
             else:
-                logger.warn('Login failed for user {} and ip {}'.format(username, request.META['REMOTE_ADDR']))
+                logger.warn('Login failed for user {} and ip {}'.format(username, self.request.META['REMOTE_ADDR']))
                 return JsonError('Login failed')
         else:
             return JsonError('Missing "username" or "password" POST parameters.')
+
+    def form_invalid(self, form):
+        logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
+        return HttpResponseBadRequest('Bad signature')

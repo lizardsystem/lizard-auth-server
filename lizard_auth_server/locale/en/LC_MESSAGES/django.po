@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-18 07:04+0100\n"
+"POT-Creation-Date: 2012-12-18 10:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -226,7 +226,7 @@ msgid "Log out"
 msgstr ""
 
 #: templates/lizard_auth_server/base.html:75
-#: templates/lizard_auth_server/profile.html:64
+#: templates/lizard_auth_server/profile.html:68
 msgid "Change password"
 msgstr ""
 
@@ -270,7 +270,7 @@ msgid "With this account, you can access the following sites:"
 msgstr ""
 
 #: templates/lizard_auth_server/invitation_email.html:14
-#: templates/lizard_auth_server/profile.html:59
+#: templates/lizard_auth_server/profile.html:62
 msgid "No portals found."
 msgstr ""
 
@@ -424,16 +424,20 @@ msgstr ""
 msgid "You have access to the following portals:"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:62
+#: templates/lizard_auth_server/profile.html:57
+msgid "All portals (staff member)."
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:66
 #: templates/lizard_auth_server/registration_complete.html:22
 msgid "Actions"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:66
+#: templates/lizard_auth_server/profile.html:70
 msgid "Register a new user"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:67
+#: templates/lizard_auth_server/profile.html:73
 msgid "Manage SSO portals"
 msgstr ""
 

@@ -5,6 +5,9 @@ import datetime
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
+
+import pytz
+
 from lizard_auth_server.models import Token 
 
 logger = logging.getLogger(__name__)

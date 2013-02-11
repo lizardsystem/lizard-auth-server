@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ImproperlyConfigured
 
 from lizard_auth_server import views
+from lizard_auth_server import views_api
+from lizard_auth_server import views_sso
 from lizard_auth_server import forms
 
 def check_settings():
@@ -34,17 +36,20 @@ urlpatterns = patterns(
     url(r'^$', views.ProfileView.as_view(), name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    # Private SSO URLs used for internal communication between the servers
-    # Note: these are part of the "API" and thus referred to by the client: change them there as well
-    url(r'^sso/internal/authenticate/$',  views.AuthenticationApiView.as_view(), name='lizard_auth_server.sso_authenticate'),
-    url(r'^sso/internal/get_user/$',      views.GetUserApiView.as_view(),        name='lizard_auth_server.sso_get_user'),
-    url(r'^sso/internal/request_token/$', views.RequestTokenView.as_view(),      name='lizard_auth_server.sso_request_token'),
-    url(r'^sso/internal/verify/$',        views.VerifyView.as_view(),            name='lizard_auth_server.sso_verify'),
-    # Public SSO URLs for use by visitors
-    # Note: these are part of the "API" and thus referred to by the client: change them there as well
-    url(r'^sso/portal_action/$',   views.PortalActionView.as_view(),   name='lizard_auth_server.sso_portal_action'),
-    url(r'^sso/logout_redirect/$', views.LogoutRedirectView.as_view(), name='lizard_auth_server.sso_logout_redirect'),
-    url(r'^sso/authorize/$',       views.AuthorizeView.as_view(),      name='lizard_auth_server.sso_authorize'),
+    # /api/ and /sso/api/ URLs are mainly used for internal communication between the servers
+    # Note: these are referred to by lizard-auth-client: change them in both places
+    url(r'^api/authenticate_unsigned/$', views_api.AuthenticateUnsignedView.as_view(), name='lizard_auth_server.api.authenticate_unsigned'),
+    url(r'^api/authenticate/$',          views_api.AuthenticateView.as_view(),         name='lizard_auth_server.api.authenticate'),
+    url(r'^api/get_user/$',              views_api.GetUserView.as_view(),              name='lizard_auth_server.api.get_user'),
+    # SSO URLs for use by visitors
+    # Note: these are referred to by lizard-auth-client: change them in both places
+    url(r'^sso/portal_action/$',     views_sso.PortalActionView.as_view(),   name='lizard_auth_server.sso.portal_action'),
+    url(r'^sso/logout_redirect/$',   views_sso.LogoutRedirectView.as_view(), name='lizard_auth_server.sso.logout_redirect'),
+    url(r'^sso/authorize/$',         views_sso.AuthorizeView.as_view(),      name='lizard_auth_server.sso.authorize'),
+    # SSO URLs for use by other webservers
+    # Note: these are referred to by lizard-auth-client: change them in both places
+    url(r'^sso/api/request_token/$', views_sso.RequestTokenView.as_view(),   name='lizard_auth_server.sso.api.request_token'),
+    url(r'^sso/api/verify/$',        views_sso.VerifyView.as_view(),         name='lizard_auth_server.sso.api.verify'),
     # Override django-auth's default login/logout URLs
     # Note: ensure LOGIN_URL isn't defined in the settings
     url(

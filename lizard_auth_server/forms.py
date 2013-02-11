@@ -16,9 +16,11 @@ from lizard_auth_server.models import Token, Portal
 class DecryptForm(forms.Form):
     key = forms.CharField(max_length=1024)
     message = forms.CharField(max_length=8192)
-    
+
     def clean(self):
         data = super(DecryptForm, self).clean()
+        if not 'key' in data:
+            raise ValidationError('No portal key')
         try:
             self.portal = Portal.objects.get(sso_key=data['key'])
         except Portal.DoesNotExist:
@@ -47,6 +49,21 @@ def validate_password(cleaned_password):
     first_isalpha = cleaned_password[0].isalpha()
     if not is_huge and all(c.isalpha() == first_isalpha for c in cleaned_password):
         raise ValidationError(_("The new password must contain at least one letter and at least one digit or punctuation character."))
+
+class AuthenticateUnsignedForm(forms.Form):
+    key = forms.CharField(max_length=1024)
+    username = forms.CharField(max_length=128)
+    password = forms.CharField(max_length=128)
+
+    def clean(self):
+        data = super(AuthenticateUnsignedForm, self).clean()
+        if not 'key' in data:
+            raise ValidationError('No portal key')
+        try:
+            self.portal = Portal.objects.get(sso_key=data['key'])
+        except Portal.DoesNotExist:
+            raise ValidationError('Invalid portal key')
+        return data
 
 class PasswordChangeForm(auth.forms.PasswordChangeForm):
     '''Used to verify whether the new password is secure.'''

@@ -43,7 +43,7 @@ class AuthenticateUnsignedView(FormView):
             <form method="post">
             <input type="text" name="key">
             <input type="text" name="username">
-            <input type="text" name="password">
+            <input type="password" name="password">
             <input type="submit">
             </form>
             '''
@@ -103,7 +103,7 @@ class AuthenticateView(FormView):
             '''
             <form method="post">
             <input type="text" name="username">
-            <input type="text" name="password">
+            <input type="password" name="password">
             <input type="submit">
             </form>
             '''

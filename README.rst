@@ -1,7 +1,7 @@
 lizard-auth-server
 ==========================================
 
-Introduction
+Lizard-auth server is build upon django-simple-sso_.
 
-Usage, etc.
 
+.. _django-simple-sso: http://pypi.python.org/pypi/django-simple-sso

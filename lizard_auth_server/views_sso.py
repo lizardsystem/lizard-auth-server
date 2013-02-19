@@ -153,10 +153,8 @@ class AuthorizeView(ProcessGetFormView):
         if self.check_token_timeout():
             if self.request.user.is_authenticated():
                 return self.form_valid_authenticated()
-            else:
-                return self.form_valid_unauthenticated()
-        else:
-            return self.token_timeout()
+            return self.form_valid_unauthenticated()
+        return self.token_timeout()
 
     def form_invalid(self, form):
         logger.error('Error while decrypting form: {}'.format(

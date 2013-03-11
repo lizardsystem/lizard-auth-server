@@ -11,7 +11,7 @@
                 <p>{% trans "Please enter a correct username and password. Note that both fields are case-sensitive." %}</p>
             </div>
         {% endif %}
-        <form action="{% url django.contrib.auth.views.login %}" method="post" id="login-form">{% csrf_token %}
+        <form action="{{ request.get_full_path }}" method="post" id="login-form">{% csrf_token %}
             <input type="hidden" name="next" value="{{ next }}">
             <fieldset>
                 <legend>{% trans 'Log in' %}</legend>

@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 
 TOKEN_TIMEOUT = datetime.timedelta(minutes=settings.SSO_TOKEN_TIMEOUT_MINUTES)
 
+
 class ProcessGetFormView(FormMixin, View):
     '''
     A view which validates a form using GET parameters
@@ -54,6 +55,7 @@ class ProcessGetFormView(FormMixin, View):
         else:
             return self.form_invalid(form)
 
+
 class PortalActionView(ProcessGetFormView):
     '''
     View that allows portals to do some miscellaneous actions,
@@ -62,7 +64,6 @@ class PortalActionView(ProcessGetFormView):
     form_class = forms.DecryptForm
 
     def form_valid(self, form):
-        portal = form.portal
         if form.cleaned_data['action'] == 'logout':
             nextparams = {
                 'message': self.request.GET['message'],
@@ -70,15 +71,22 @@ class PortalActionView(ProcessGetFormView):
             }
             # after logout, redirect user to the LogoutRedirectView,
             # which should redirect the user back to the portal again.
-            nextparams = urllib.urlencode([('next', '%s?%s' % (reverse('lizard_auth_server.sso.logout_redirect'), urllib.urlencode(nextparams)))])
-            url = '%s?%s' % (reverse('django.contrib.auth.views.logout'), nextparams)
+            nextparams = urllib.urlencode(
+                [('next', '%s?%s' % (
+                  reverse('lizard_auth_server.sso.logout_redirect'),
+                  urllib.urlencode(nextparams))
+                  )])
+            url = '%s?%s' % (reverse('django.contrib.auth.views.logout'),
+                             nextparams)
             return HttpResponseRedirect(url)
-        else:
-            return HttpResponseBadRequest('Unknown action')
+        return HttpResponseBadRequest('Unknown action')
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
-        return ErrorMessageResponse(self.request, _('Communication error.'), 400)
+        logger.error('Error while decrypting form: {}'.format(
+                     form.errors.as_text()))
+        return ErrorMessageResponse(self.request, _('Communication error.'),
+                                    400)
+
 
 class LogoutRedirectView(ProcessGetFormView):
     '''
@@ -94,8 +102,11 @@ class LogoutRedirectView(ProcessGetFormView):
             return HttpResponseBadRequest('Unknown action')
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
-        return ErrorMessageResponse(self.request, _('Communication error.'), 400)
+        logger.error('Error while decrypting form: {}'.format(
+                     form.errors.as_text()))
+        return ErrorMessageResponse(self.request, _('Communication error.'),
+                                    400)
+
 
 class RequestTokenView(ProcessGetFormView):
     '''
@@ -114,8 +125,10 @@ class RequestTokenView(ProcessGetFormView):
         return HttpResponse(data)
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
+        logger.error('Error while decrypting form: {}'.format(
+                     form.errors.as_text()))
         return HttpResponseBadRequest('Bad signature')
+
 
 class AuthorizeView(ProcessGetFormView):
     '''
@@ -132,20 +145,22 @@ class AuthorizeView(ProcessGetFormView):
     def form_valid(self, form):
         request_token = form.cleaned_data['request_token']
         try:
-            self.token = Token.objects.get(request_token=request_token, portal=form.portal, user__isnull=True)
+            self.token = Token.objects.get(request_token=request_token,
+                                           portal=form.portal,
+                                           user__isnull=True)
         except Token.DoesNotExist:
             return HttpResponseForbidden('Invalid request token')
         if self.check_token_timeout():
             if self.request.user.is_authenticated():
                 return self.form_valid_authenticated()
-            else:
-                return self.form_valid_unauthenticated()
-        else:
-            return self.token_timeout()
+            return self.form_valid_unauthenticated()
+        return self.token_timeout()
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
-        return ErrorMessageResponse(self.request, _('Communication error.'), 400)
+        logger.error('Error while decrypting form: {}'.format(
+                     form.errors.as_text()))
+        return ErrorMessageResponse(self.request, _('Communication error.'),
+                                    400)
 
     def check_token_timeout(self):
         delta = datetime.datetime.now(tz=pytz.UTC) - self.token.created
@@ -153,7 +168,9 @@ class AuthorizeView(ProcessGetFormView):
 
     def token_timeout(self):
         self.token.delete()
-        return ErrorMessageResponse(self.request, _('Token timed out. Please return to the portal to get a fresh token.'), 403)
+        return ErrorMessageResponse(
+            self.request, _('Token timed out. Please return to the portal '
+                            'to get a fresh token.'), 403)
 
     def form_valid_authenticated(self):
         '''
@@ -161,8 +178,7 @@ class AuthorizeView(ProcessGetFormView):
         '''
         if self.has_access():
             return self.success()
-        else:
-            return self.access_denied()
+        return self.access_denied()
 
     def has_access(self):
         '''
@@ -182,7 +198,8 @@ class AuthorizeView(ProcessGetFormView):
             'auth_token': self.token.auth_token
         }
         # encrypt the tokens with the secret key of the portal
-        message = URLSafeTimedSerializer(self.token.portal.sso_secret).dumps(params)
+        message = URLSafeTimedSerializer(self.token.portal.sso_secret).dumps(
+            params)
         # link the user model to the token model, so we can return the
         # proper profile when the SSO client calls the VerifyView
         self.token.user = self.request.user
@@ -196,12 +213,8 @@ class AuthorizeView(ProcessGetFormView):
         '''
         Show a user-friendly access denied page.
         '''
-        context = RequestContext(
-            self.request,
-            {
-                'login_url': self.build_login_url()
-            }
-        )
+        context = RequestContext(self.request,
+                                 {'login_url': self.build_login_url()})
         return TemplateResponse(
             self.request,
             'lizard_auth_server/access_denied.html',
@@ -218,7 +231,9 @@ class AuthorizeView(ProcessGetFormView):
             'message': self.request.GET['message'],
             'key': self.request.GET['key'],
         }
-        params = urllib.urlencode([('next', '%s?%s' % (reverse('lizard_auth_server.sso.authorize'), urllib.urlencode(nextparams)))])
+        params = urllib.urlencode([('next', '%s?%s' % (
+                                  reverse('lizard_auth_server.sso.authorize'),
+                                  urllib.urlencode(nextparams)))])
         return '%s?%s' % (reverse('django.contrib.auth.views.login'), params)
 
     def form_valid_unauthenticated(self):
@@ -226,6 +241,7 @@ class AuthorizeView(ProcessGetFormView):
         Redirect to login page when user isn't logged in yet.
         '''
         return HttpResponseRedirect(self.build_login_url())
+
 
 def construct_user_data(user=None, profile=None):
     '''
@@ -253,6 +269,7 @@ def construct_user_data(user=None, profile=None):
         data[key] = getattr(profile, key).isoformat()
     return data
 
+
 class VerifyView(ProcessGetFormView):
     '''
     View called by the portal application to verify the Auth Token passed by
@@ -271,7 +288,8 @@ class VerifyView(ProcessGetFormView):
     def form_valid(self, form):
         auth_token = form.cleaned_data['auth_token']
         try:
-            self.token = Token.objects.get(auth_token=auth_token, user__isnull=False, portal=form.portal)
+            self.token = Token.objects.get(
+                auth_token=auth_token, user__isnull=False, portal=form.portal)
         except Token.DoesNotExist:
             return HttpResponseForbidden('Invalid auth token')
         # get some metadata about the user, so we can construct a user on the
@@ -281,11 +299,13 @@ class VerifyView(ProcessGetFormView):
             'user': user_json
         }
         # encrypt the data
-        data = URLSafeTimedSerializer(self.token.portal.sso_secret).dumps(params)
+        data = URLSafeTimedSerializer(self.token.portal.sso_secret).dumps(
+            params)
         # disable the token
         self.token.delete()
         return HttpResponse(data)
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(form.errors.as_text()))
+        logger.error('Error while decrypting form: {}'.format(
+                     form.errors.as_text()))
         return HttpResponseBadRequest('Bad signature')

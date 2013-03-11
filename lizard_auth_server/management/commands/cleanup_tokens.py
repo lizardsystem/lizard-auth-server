@@ -8,11 +8,12 @@ from django.conf import settings
 
 import pytz
 
-from lizard_auth_server.models import Token 
+from lizard_auth_server.models import Token
 
 logger = logging.getLogger(__name__)
 
 TOKEN_TIMEOUT = datetime.timedelta(minutes=settings.SSO_TOKEN_TIMEOUT_MINUTES)
+
 
 class Command(BaseCommand):
     args = ""

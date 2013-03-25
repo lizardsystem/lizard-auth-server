@@ -59,6 +59,9 @@ class Portal(models.Model):
         self.sso_key = gen_key(Portal, 'sso_key')()
         self.save()
 
+    class Meta:
+        ordering = ('name',)
+
 class TokenManager(models.Manager):
     def create_for_portal(self, portal):
         """

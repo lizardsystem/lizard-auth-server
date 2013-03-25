@@ -91,7 +91,7 @@ class InviteUserForm(forms.Form):
     portals = forms.ModelMultipleChoiceField(
         label=_('Portals'),
         required=False,
-        queryset=Portal.objects.all(),
+        queryset=Portal.objects.all().order_by('name'),
         widget=forms.CheckboxSelectMultiple()
     )
 

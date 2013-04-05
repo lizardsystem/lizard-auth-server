@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.conf.urls.defaults import include, patterns, url
 from django.conf import settings
 from django.contrib import admin
-from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ImproperlyConfigured
 
@@ -12,6 +11,7 @@ from lizard_auth_server import views
 from lizard_auth_server import views_api
 from lizard_auth_server import views_sso
 from lizard_auth_server import forms
+
 
 def check_settings():
     '''
@@ -41,6 +41,7 @@ urlpatterns = patterns(
     url(r'^api/authenticate_unsigned/$', views_api.AuthenticateUnsignedView.as_view(), name='lizard_auth_server.api.authenticate_unsigned'),
     url(r'^api/authenticate/$',          views_api.AuthenticateView.as_view(),         name='lizard_auth_server.api.authenticate'),
     url(r'^api/get_user/$',              views_api.GetUserView.as_view(),              name='lizard_auth_server.api.get_user'),
+    url(r'^api/get_users/$',             views_api.GetUsersView.as_view(),             name='lizard_auth_server.api.get_users'),
     # SSO URLs for use by visitors
     # Note: these are referred to by lizard-auth-client: change them in both places
     url(r'^sso/portal_action/$',     views_sso.PortalActionView.as_view(),   name='lizard_auth_server.sso.portal_action'),

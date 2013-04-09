@@ -120,6 +120,12 @@ class InviteUserForm(forms.Form):
             raise ValidationError(_('{} is already taken.').format(email))
         return email
 
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if " " in name:
+            raise ValidationError(_('Whitespace not allowed.'))
+        return name
+
 
 class ActivateUserForm1(forms.Form):
     '''

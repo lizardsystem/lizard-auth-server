@@ -60,6 +60,7 @@ class UserProfileAdmin(admin.ModelAdmin):
         'email'
     ]
     search_fields = ['user__first_name', 'user__last_name', 'user__email']
+    filter_horizontal = ('portals', )
 
 
 class PortalAdmin(admin.ModelAdmin):

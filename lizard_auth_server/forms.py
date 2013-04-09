@@ -10,7 +10,7 @@ from django.conf import settings
 
 from itsdangerous import URLSafeTimedSerializer, BadSignature
 
-from lizard_auth_server.models import Token, Portal
+from lizard_auth_server.models import Portal
 
 
 class DecryptForm(forms.Form):
@@ -26,7 +26,8 @@ class DecryptForm(forms.Form):
         except Portal.DoesNotExist:
             raise ValidationError('Invalid portal key')
         try:
-            new_data = URLSafeTimedSerializer(self.portal.sso_secret).loads(data['message'], max_age=300)
+            new_data = URLSafeTimedSerializer(self.portal.sso_secret).loads(
+                data['message'], max_age=300)
         except BadSignature:
             raise ValidationError('Bad signature')
         if data['key'] != new_data['key']:
@@ -36,19 +37,27 @@ class DecryptForm(forms.Form):
 MIN_LENGTH = 8
 HUGE_LENGTH = 14
 
+
 def validate_password(cleaned_password):
     if settings.DEBUG:
         return
 
     # At least MIN_LENGTH long
     if len(cleaned_password) < MIN_LENGTH:
-        raise ValidationError(_("The new password must be at least %d characters long.") % MIN_LENGTH)
+        raise ValidationError(_("The new password must be " +
+            "at least %d characters long.") % MIN_LENGTH)
 
     # At least one letter and one non-letter, unless it is a huge password
     is_huge = len(cleaned_password) > HUGE_LENGTH
     first_isalpha = cleaned_password[0].isalpha()
-    if not is_huge and all(c.isalpha() == first_isalpha for c in cleaned_password):
-        raise ValidationError(_("The new password must contain at least one letter and at least one digit or punctuation character."))
+    if not is_huge and all(
+        c.isalpha() == first_isalpha for c in cleaned_password
+    ):
+        raise ValidationError(
+            _("The new password must contain at least one letter " +
+            "and at least one digit or punctuation character.")
+        )
+
 
 class AuthenticateUnsignedForm(forms.Form):
     key = forms.CharField(max_length=1024)
@@ -65,6 +74,7 @@ class AuthenticateUnsignedForm(forms.Form):
             raise ValidationError('Invalid portal key')
         return data
 
+
 class PasswordChangeForm(auth.forms.PasswordChangeForm):
     '''Used to verify whether the new password is secure.'''
 
@@ -73,17 +83,25 @@ class PasswordChangeForm(auth.forms.PasswordChangeForm):
         validate_password(password1)
         return password1
 
+
 class InviteUserForm(forms.Form):
     '''
     Form used by an administrator to invite a user.
     '''
     name = forms.CharField(max_length=64, label=_('Name'), required=True)
     email = forms.EmailField(max_length=255, label=_('Email'), required=True)
-    organisation = forms.CharField(max_length=255, label=_('Organisation'), required=True)
+    organisation = forms.CharField(
+        max_length=255,
+        label=_('Organisation'),
+        required=True,
+    )
     language = forms.ChoiceField(
         label=_('Language'),
         required=True,
-        choices=[(lang_code, _(lang_name)) for lang_code, lang_name in settings.LANGUAGES],
+        choices=[
+            (lang_code, _(lang_name)) for lang_code, lang_name
+            in settings.LANGUAGES
+        ],
         widget=forms.RadioSelect(),
         initial='nl'
     )
@@ -102,13 +120,24 @@ class InviteUserForm(forms.Form):
             raise ValidationError(_('{} is already taken.').format(email))
         return email
 
+
 class ActivateUserForm1(forms.Form):
     '''
     Form used by a user to activate his/her account.
     '''
-    username = forms.CharField(max_length=30, label=_('Username'), required=True)
-    new_password1 = forms.CharField(label=_("New password"), widget=forms.PasswordInput)
-    new_password2 = forms.CharField(label=_("New password confirmation"), widget=forms.PasswordInput)
+    username = forms.CharField(
+        max_length=30,
+        label=_('Username'),
+        required=True
+    )
+    new_password1 = forms.CharField(
+        label=_("New password"),
+        widget=forms.PasswordInput
+    )
+    new_password2 = forms.CharField(
+        label=_("New password confirmation"),
+        widget=forms.PasswordInput
+    )
 
     error_messages = {
         'password_mismatch': _("The two password fields didn't match."),
@@ -134,19 +163,40 @@ class ActivateUserForm1(forms.Form):
                 raise ValidationError(self.error_messages['password_mismatch'])
         return password2
 
+
 class EditProfileForm(forms.Form):
     '''
     Form used by a user to activate his/her account.
     '''
     email = forms.EmailField(max_length=255, label=_('Email'), required=True)
-    first_name = forms.CharField(max_length=30, label=_('First name'), required=True)
-    last_name = forms.CharField(max_length=30, label=_('Last name'), required=True)
+    first_name = forms.CharField(
+        max_length=30,
+        label=_('First name'),
+        required=True
+    )
+    last_name = forms.CharField(
+        max_length=30,
+        label=_('Last name'),
+        required=True
+    )
     title = forms.CharField(max_length=255, label=_('Title'), required=False)
     street = forms.CharField(max_length=255, label=_('Street'), required=False)
-    postal_code = forms.CharField(max_length=255, label=_('Postal code'), required=False)
+    postal_code = forms.CharField(
+        max_length=255,
+        label=_('Postal code'),
+        required=False
+    )
     town = forms.CharField(max_length=255, label=_('Town'), required=False)
-    phone_number = forms.CharField(max_length=255, label=_('Phone number'), required=False)
-    mobile_phone_number = forms.CharField(max_length=255, label=_('Mobile phone number'), required=False)
+    phone_number = forms.CharField(
+        max_length=255,
+        label=_('Phone number'),
+        required=False
+    )
+    mobile_phone_number = forms.CharField(
+        max_length=255,
+        label=_('Mobile phone number'),
+        required=False
+    )
 
     def __init__(self, user=None, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)

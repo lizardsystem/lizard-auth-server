@@ -93,7 +93,7 @@ class InviteUserForm(forms.Form):
     organisation = forms.CharField(
         max_length=255,
         label=_('Organisation'),
-        required=True,
+        required=False,
     )
     language = forms.ChoiceField(
         label=_('Language'),

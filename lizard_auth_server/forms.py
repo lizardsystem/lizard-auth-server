@@ -88,7 +88,15 @@ class InviteUserForm(forms.Form):
     '''
     Form used by an administrator to invite a user.
     '''
-    name = forms.CharField(max_length=64, label=_('Name'), required=True)
+    # Whitespace is allowed in `name` (it's only used in the invitation email).
+    name = forms.CharField(
+        max_length=64,
+        label=_('Name'),
+        required=True,
+        help_text=_(
+            'For the purpose of an invitation email (not the username)'
+        ),
+    )
     email = forms.EmailField(max_length=255, label=_('Email'), required=True)
     organisation = forms.CharField(
         max_length=255,
@@ -120,17 +128,12 @@ class InviteUserForm(forms.Form):
             raise ValidationError(_('{} is already taken.').format(email))
         return email
 
-    def clean_name(self):
-        name = self.cleaned_data.get('name')
-        if " " in name:
-            raise ValidationError(_('Whitespace not allowed.'))
-        return name
-
 
 class ActivateUserForm1(forms.Form):
     '''
     Form used by a user to activate his/her account.
     '''
+    # Do not allow whitespace in `username` (problematic with Django admin).
     username = forms.CharField(
         max_length=30,
         label=_('Username'),
@@ -151,6 +154,8 @@ class ActivateUserForm1(forms.Form):
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
+        if " " in username:
+            raise ValidationError(_('Whitespace not allowed.'))
         users = User.objects.filter(username=username)
         if users.exists():
             raise ValidationError(_('{} is already taken.').format(username))

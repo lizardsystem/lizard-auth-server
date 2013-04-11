@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-09 15:40+0200\n"
+"POT-Creation-Date: 2013-04-11 12:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,79 +36,83 @@ msgstr ""
 msgid "The new password must contain at least one letter "
 msgstr ""
 
-#: forms.py:91 templates/lizard_auth_server/profile.html:12
+#: forms.py:94 templates/lizard_auth_server/profile.html:12
 msgid "Name"
 msgstr ""
 
-#: forms.py:92 forms.py:177 templates/lizard_auth_server/profile.html:16
+#: forms.py:97
+msgid "For the purpose of an invitation email (not the username)"
+msgstr ""
+
+#: forms.py:100 forms.py:182 templates/lizard_auth_server/profile.html:16
 msgid "Email"
 msgstr ""
 
-#: forms.py:95 templates/lizard_auth_server/profile.html:24
+#: forms.py:103 templates/lizard_auth_server/profile.html:24
 msgid "Organisation"
 msgstr ""
 
-#: forms.py:99
+#: forms.py:107
 msgid "Language"
 msgstr ""
 
-#: forms.py:110
+#: forms.py:118
 msgid "Portals"
 msgstr ""
 
-#: forms.py:120 forms.py:156 forms.py:228
+#: forms.py:128 forms.py:161 forms.py:233
 msgid "{} is already taken."
 msgstr ""
 
-#: forms.py:126
-msgid "Whitespace not allowed."
-msgstr ""
-
-#: forms.py:136
+#: forms.py:139
 msgid "Username"
 msgstr ""
 
-#: forms.py:140
+#: forms.py:143
 msgid "New password"
 msgstr ""
 
-#: forms.py:144
+#: forms.py:147
 msgid "New password confirmation"
 msgstr ""
 
-#: forms.py:149
+#: forms.py:152
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: forms.py:180
-msgid "First name"
+#: forms.py:158
+msgid "Whitespace not allowed."
 msgstr ""
 
 #: forms.py:185
+msgid "First name"
+msgstr ""
+
+#: forms.py:190
 msgid "Last name"
 msgstr ""
 
-#: forms.py:188 templates/lizard_auth_server/profile.html:20
+#: forms.py:193 templates/lizard_auth_server/profile.html:20
 msgid "Title"
 msgstr ""
 
-#: forms.py:189 templates/lizard_auth_server/profile.html:28
+#: forms.py:194 templates/lizard_auth_server/profile.html:28
 msgid "Street"
 msgstr ""
 
-#: forms.py:192 templates/lizard_auth_server/profile.html:32
+#: forms.py:197 templates/lizard_auth_server/profile.html:32
 msgid "Postal code"
 msgstr ""
 
-#: forms.py:195 templates/lizard_auth_server/profile.html:36
+#: forms.py:200 templates/lizard_auth_server/profile.html:36
 msgid "Town"
 msgstr ""
 
-#: forms.py:198 templates/lizard_auth_server/profile.html:40
+#: forms.py:203 templates/lizard_auth_server/profile.html:40
 msgid "Phone number"
 msgstr ""
 
-#: forms.py:203 templates/lizard_auth_server/profile.html:44
+#: forms.py:208 templates/lizard_auth_server/profile.html:44
 msgid "Mobile phone number"
 msgstr ""
 

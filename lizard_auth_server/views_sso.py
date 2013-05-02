@@ -28,7 +28,6 @@ import pytz
 
 from lizard_auth_server import forms
 from lizard_auth_server.models import Token
-from lizard_auth_server.utils import SIMPLE_KEYS
 from lizard_auth_server.views import ErrorMessageResponse
 
 logger = logging.getLogger(__name__)
@@ -253,7 +252,7 @@ def construct_user_data(user=None, profile=None):
     if profile is None:
         profile = user.get_profile()
     data = {}
-    for key in SIMPLE_KEYS:
+    for key in ['pk', 'username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff', 'is_superuser']:
         data[key] = getattr(user, key)
     data['permissions'] = []
     for perm in user.user_permissions.select_related('content_type').all():

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-11 12:04+0200\n"
+"POT-Creation-Date: 2013-05-02 13:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,12 +28,15 @@ msgstr ""
 msgid "Shortcut URLs"
 msgstr ""
 
-#: forms.py:47
-msgid "The new password must be "
+#: forms.py:46
+#, python-format
+msgid "The new password must be at least %d characters long."
 msgstr ""
 
-#: forms.py:57
-msgid "The new password must contain at least one letter "
+#: forms.py:58
+msgid ""
+"The new password must contain at least two numeric digits, one uppercase and "
+"one lowercase character."
 msgstr ""
 
 #: forms.py:94 templates/lizard_auth_server/profile.html:12
@@ -124,11 +127,11 @@ msgstr ""
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 
-#: views_sso.py:87 views_sso.py:107 views_sso.py:162
+#: views_sso.py:86 views_sso.py:106 views_sso.py:161
 msgid "Communication error."
 msgstr ""
 
-#: views_sso.py:172
+#: views_sso.py:171
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr ""
 

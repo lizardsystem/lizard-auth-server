@@ -35,7 +35,6 @@ class DecryptForm(forms.Form):
         return new_data
 
 MIN_LENGTH = 8
-HUGE_LENGTH = 14
 
 
 def validate_password(cleaned_password):
@@ -44,18 +43,19 @@ def validate_password(cleaned_password):
 
     # At least MIN_LENGTH long
     if len(cleaned_password) < MIN_LENGTH:
-        raise ValidationError(_("The new password must be " +
-            "at least %d characters long.") % MIN_LENGTH)
+        raise ValidationError(_("The new password must be at least %d characters long.") % MIN_LENGTH)
 
-    # At least one letter and one non-letter, unless it is a huge password
-    is_huge = len(cleaned_password) > HUGE_LENGTH
-    first_isalpha = cleaned_password[0].isalpha()
-    if not is_huge and all(
-        c.isalpha() == first_isalpha for c in cleaned_password
-    ):
+    # Character requirements...
+    digits = 0
+    uppers = 0
+    lowers = 0
+    for char in cleaned_password:
+        if char.isdigit(): digits += 1
+        if char.islower(): uppers += 1
+        if char.isupper(): lowers += 1
+    if digits < 2 or uppers < 1 or lowers < 1:
         raise ValidationError(
-            _("The new password must contain at least one letter " +
-            "and at least one digit or punctuation character.")
+            _("The new password must contain at least two numeric digits, one uppercase and one lowercase character.")
         )
 
 

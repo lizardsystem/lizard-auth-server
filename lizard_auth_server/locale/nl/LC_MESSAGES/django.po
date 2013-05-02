@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-11 12:04+0200\n"
+"POT-Creation-Date: 2013-05-02 13:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,14 +29,18 @@ msgstr "Handmatig activeren"
 msgid "Shortcut URLs"
 msgstr "Snelkoppelingen"
 
-#: forms.py:47
-#, fuzzy
-msgid "The new password must be "
+#: forms.py:46
+#, python-format
+msgid "The new password must be at least %d characters long."
 msgstr "Het nieuwe wachtwoord moet minimaal %d karakters lang zijn."
 
-#: forms.py:57
-msgid "The new password must contain at least one letter "
-msgstr "Het nieuwe wachtwoord moet minstens een letter bevatten"
+#: forms.py:58
+msgid ""
+"The new password must contain at least two numeric digits, one uppercase and "
+"one lowercase character."
+msgstr ""
+"Het nieuwe wachtwoord moet minstens twee cijfers, een hoofdletter en een "
+"kleine letter bevatten."
 
 #: forms.py:94 templates/lizard_auth_server/profile.html:12
 msgid "Name"
@@ -134,11 +138,11 @@ msgstr ""
 "Ongeldige activatiesleutel. Dit betekent waarschijnlijk dat het account al "
 "geactiveerd is."
 
-#: views_sso.py:87 views_sso.py:107 views_sso.py:162
+#: views_sso.py:86 views_sso.py:106 views_sso.py:161
 msgid "Communication error."
 msgstr "Communicatiefout."
 
-#: views_sso.py:172
+#: views_sso.py:171
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr "Token is verlopen. Ga terug naar het portaal, en log daar opnieuw in."
 
@@ -545,9 +549,3 @@ msgstr "Registreer een nieuwe gebruiker"
 #: templates/lizard_auth_server/profile.html:84
 msgid "Manage SSO portals"
 msgstr "Beheer SSO portalen"
-
-#~ msgid ""
-#~ "The new password must contain at least one letter and at least one digit "
-#~ "or punctuation character."
-#~ msgstr ""
-#~ "Het nieuwe wachtwoord moet minimaal een cijfer of leesteken bevatten."

@@ -84,6 +84,15 @@ class PasswordChangeForm(auth.forms.PasswordChangeForm):
         return password1
 
 
+class SetPasswordForm(auth.forms.SetPasswordForm):
+    '''Used to verify whether the new password is secure.'''
+
+    def clean_new_password1(self):
+        password1 = self.cleaned_data.get('new_password1')
+        validate_password(password1)
+        return password1
+
+
 class InviteUserForm(forms.Form):
     '''
     Form used by an administrator to invite a user.

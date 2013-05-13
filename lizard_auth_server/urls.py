@@ -117,7 +117,8 @@ urlpatterns = patterns(
         r'^reset/(?P<uidb36>[0-9A-Za-z]{1,13})-(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         'django.contrib.auth.views.password_reset_confirm',
         {
-            'template_name': 'lizard_auth_server/password_reset_confirm.html'
+            'template_name': 'lizard_auth_server/password_reset_confirm.html',
+            'set_password_form': forms.SetPasswordForm
         },
         name='password_reset_confirm'
     ),

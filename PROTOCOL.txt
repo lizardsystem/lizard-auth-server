@@ -3,6 +3,8 @@ web browser, the 'server' is the Django website (uses
 lizard_auth_client), and the 'sso server' is the SSO server
 (lizard_auth_server).
 
+METHOD 1: A NORMAL USER AND A WEB BROWSER
+
 1. User wants to login, either by clicking on a Login button or by visiting some
    page that is @login_required that redirects the client. Client visits /accounts/login/
    The URL to return to is stored on the _session_ as 'sso_after_login_next'.
@@ -45,3 +47,27 @@ lizard_auth_client), and the 'sso server' is the SSO server
 For our purposes (adding roles and organizations to this code), it is
 sufficient and save to add data about organizations and roles in the
 JSON returned in step 8, and to process it if available in step 9.
+
+METHOD 2: PROGRAMMATICALLY
+
+Client's README also mentions a method that goes like:
+
+from lizard_auth_client import client as auth_client
+try:
+  user_data = auth_client.sso_authenticate_django('username', 'password')
+except auth_client.AutheticationFailed as ex:
+  return some_error_handler('Auth failed')
+except auth_client.CommunicationError as ex:
+  return some_error_handler('Temporary comm error')
+except:
+  return some_error_handler('Other error')
+
+Or even:
+
+user_data = auth_client.sso_authenticate(
+    'http://url.tld', 'key', 'secret' 'username', 'password')
+
+So how does that work? It uses the fact that the SSO server has a
+_private URL_ (used in some of the above steps as well) that is
+assumed to be secure and not available from the scary Internet.
+

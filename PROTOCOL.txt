@@ -1,0 +1,47 @@
+There are three parties in the protocol, the 'client' is the user's
+web browser, the 'server' is the Django website (uses
+lizard_auth_client), and the 'sso server' is the SSO server
+(lizard_auth_server).
+
+1. User wants to login, either by clicking on a Login button or by visiting some
+   page that is @login_required that redirects the client. Client visits /accounts/login/
+   The URL to return to is stored on the _session_ as 'sso_after_login_next'.
+
+2. /accounts/login/ maps to lizard_auth_client.views.LoginView. This
+  gets a request token from the server by calling /sso/api/request_token
+  on it using requests, also applying some itsdangerous magic.
+
+3. The SSO server creates a Token, which is tied to a portal and
+  consists of two random 64 keys: a request token and an auth token. The
+  request token is returned.
+
+4. LoginView now redirects to /sso/authorize/ on the SSO server, passing along
+  and encrypted version of the request token. In short, /sso/authorize is told
+  someone is coming before they are sent there.
+
+5. User arrives at sso-server's AuthorizeView. User isn't logged in yet, so not
+   authorized to be here, and gets redirected to the SSO server's login view (which
+   is simply Django's) with a next parameter going back to the AuthorizeView.
+
+6. After a successful login, user returns to the AuthorizeView. The
+   Token is retrieved from the database using the request token. If
+   it's found and not timed out yet, the User is tied to the token,
+   and a redirect back to the portal follows. The redirect URL is
+   found by combining the portal's redirect_url with /sso/local_login/
+   and a signed message with both the request and the auth token are
+   passed along.
+
+7. User arrives at /sso/local_login, which is lizard_auth_client.views.LocalLoginView.
+   This calls verify_auth_token(), which sends a request to the SSO server asking it
+   what it knows about this auth token (/sso/api/verify/);
+
+8. On the SSO server, views_sso.VerifyView checks the auth_token and if it is good,
+   a JSON representation of the user is returned, of the form { 'user': user_json }.
+
+9. LocalLoginView uses this to construct a user, save him to the
+   database and log him.
+
+
+For our purposes (adding roles and organizations to this code), it is
+sufficient and save to add data about organizations and roles in the
+JSON returned in step 8, and to process it if available in step 9.

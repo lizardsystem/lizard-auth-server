@@ -50,6 +50,11 @@ class UserProfileF(factory.Factory):
 
 
 class TestUserProfile(TestCase):
+    def test_organisation_can_return_none(self):
+        user = UserF.create()
+        profile = models.UserProfile.objects.fetch_for_user(user)
+        self.assertEquals(profile.organisation, None)
+
     def test_without_setup_all_organisation_roles_empty(self):
         profile = models.UserProfile()
         self.assertEquals(

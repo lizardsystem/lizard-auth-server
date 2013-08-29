@@ -9,12 +9,6 @@ from django.contrib import messages
 from lizard_auth_server import models
 
 
-#class PortalForm(forms.ModelForm):
-#    sso_secret = forms.CharField(initial='test')
-#
-#    class Meta:
-#        model = models.Portal
-
 class InvitationAdmin(admin.ModelAdmin):
     model = models.Invitation
     list_display = ['__unicode__', 'user', 'email', 'is_activated']
@@ -71,3 +65,6 @@ admin.site.register(models.Portal, PortalAdmin)
 admin.site.register(models.Token)
 admin.site.register(models.Invitation, InvitationAdmin)
 admin.site.register(models.UserProfile, UserProfileAdmin)
+admin.site.register(models.Role)
+admin.site.register(models.Organisation)
+admin.site.register(models.OrganisationRole)

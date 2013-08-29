@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import datetime
 import logging
+import uuid
 
 from django.db import models
 from django.db import transaction
@@ -50,10 +51,10 @@ class Portal(models.Model):
     sso_key = models.CharField(max_length=64, unique=True, default=gen_key('Portal', 'sso_key'), help_text='String used to identify the SSO client.')
     redirect_url = models.CharField(max_length=255, help_text='URL used in the SSO redirection.')
     visit_url = models.CharField(max_length=255, help_text='URL used in the UI to refer to this portal.')
-    
+
     def __unicode__(self):
         return '{} ({})'.format(self.name, self.visit_url)
-    
+
     def rotate_keys(self):
         self.sso_secret = gen_key(Portal, 'sso_secret')()
         self.sso_key = gen_key(Portal, 'sso_key')()
@@ -109,13 +110,14 @@ class UserProfile(models.Model):
     portals = models.ManyToManyField(Portal, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
-    organisation = models.CharField(max_length=255, null=True, blank=True, default='')
+    organisations = models.ManyToManyField("Organisation", blank=True, null=True)
     title = models.CharField(max_length=255, null=True, blank=True, default='')
     street = models.CharField(max_length=255, null=True, blank=True, default='')
     postal_code = models.CharField(max_length=255, null=True, blank=True, default='')
     town = models.CharField(max_length=255, null=True, blank=True, default='')
     phone_number = models.CharField(max_length=255, null=True, blank=True, default='')
     mobile_phone_number = models.CharField(max_length=255, null=True, blank=True, default='')
+    roles = models.ManyToManyField("OrganisationRole", blank=True, null=True)
 
     objects = UserProfileManager()
 
@@ -160,6 +162,18 @@ class UserProfile(models.Model):
     @property
     def email(self):
         return self.user.email
+
+    @property
+    def organisation(self):
+        """Return the name of one of this user's organisations, or None.
+
+        For backward compatibility. Instead of many Organisation objects, a
+        user used to have a single organisation string."""
+        organisations = list(self.organisations.all())
+        if organisations:
+            return organisations[0].name
+        else:
+            return None
 
     @property
     def is_active(self):
@@ -236,7 +250,7 @@ class Invitation(models.Model):
         self._rotate_activation_key()
 
         ### send this user an email containing the key
-        # build a render context for the email template 
+        # build a render context for the email template
         expiration_date = datetime.datetime.now(tz=pytz.UTC) + datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
         ctx_dict = {
             'name': self.name,
@@ -305,3 +319,47 @@ class Invitation(models.Model):
             self.activated_on = datetime.datetime.now(tz=pytz.UTC)
             self.is_activated = True
             self.save()
+
+
+def create_new_uuid():
+    return uuid.uuid4().hex
+
+
+class Role(models.Model):
+    unique_id = models.CharField(
+        max_length=32, unique=True, default=create_new_uuid)
+    code = models.CharField(max_length=255, null=False, blank=False)
+    name = models.CharField(max_length=255, null=False, blank=False)
+    external_description = models.TextField()
+    internal_description = models.TextField()
+    portal = models.ForeignKey(Portal)
+
+    class Meta:
+        unique_together = (('name', 'portal'), )
+
+    def __unicode__(self):
+        return self.name
+
+
+class Organisation(models.Model):
+    name = models.CharField(
+        max_length=255, null=False, blank=False, unique=True)
+    unique_id = models.CharField(
+        max_length=32, unique=True, default=create_new_uuid)
+    roles = models.ManyToManyField(
+        Role, through='OrganisationRole', blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class OrganisationRole(models.Model):
+    organisation = models.ForeignKey(Organisation)
+    role = models.ForeignKey(Role)
+    for_all_users = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = (('organisation', 'role'), )
+
+    def __unicode__(self):
+        return "{role} in {org}".format(role=self.role, org=self.organisation)

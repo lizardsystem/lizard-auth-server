@@ -59,7 +59,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'NAME': os.path.join(BUILDOUT_DIR, 'var', 'sqlite', 'test.db'),
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': b'django.db.backends.sqlite3',
         'USER': 'buildout',
         'PASSWORD': 'buildout',
         'HOST': '',
@@ -123,7 +123,7 @@ SITE_NAME = 'sso.lizard.net'
 
 ROOT_URLCONF = 'lizard_auth_server.urls'
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = b'django_nose.NoseTestSuiteRunner'
 
 CACHES = {
     'default': {
@@ -165,6 +165,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    'django_extensions',
 )
 
 # TODO: add gauges ID here. Generate one separately for the staging, too.

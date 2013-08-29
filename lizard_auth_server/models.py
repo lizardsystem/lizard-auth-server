@@ -24,6 +24,7 @@ from lizard_auth_server.utils import gen_secret_key
 
 logger = logging.getLogger(__name__)
 
+
 def gen_key(model, field):
     """
     Helper function to give a unique default value to the selected
@@ -85,7 +86,9 @@ class TokenManager(models.Manager):
         request_token = gen_secret_key(64)
         auth_token = gen_secret_key(64)
         # check unique constraints
-        while self.filter(Q(request_token=request_token) | Q(auth_token=auth_token)).exists():
+        while self.filter(
+            Q(request_token=request_token) |
+            Q(auth_token=auth_token)).exists():
             request_token = gen_secret_key(64)
             auth_token = gen_secret_key(64)
         return self.create(
@@ -103,15 +106,18 @@ class Token(models.Model):
     request_token = models.CharField(max_length=64, unique=True)
     auth_token = models.CharField(max_length=64, unique=True)
     user = models.ForeignKey(User, null=True)
-    created = models.DateTimeField(default=(lambda: datetime.datetime.now(tz=pytz.UTC)))
+    created = models.DateTimeField(
+        default=lambda: datetime.datetime.now(tz=pytz.UTC))
 
     objects = TokenManager()
+
 
 class UserProfileManager(models.Manager):
     def fetch_for_user(self, user):
         if not user:
             raise AttributeError('Cant get UserProfile without user')
         return self.get(user=user)
+
 
 class UserProfile(models.Model):
     '''
@@ -125,20 +131,26 @@ class UserProfile(models.Model):
     portals = models.ManyToManyField(Portal, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
-    organisations = models.ManyToManyField("Organisation", blank=True, null=True)
+    organisations = models.ManyToManyField(
+        "Organisation", blank=True, null=True)
     title = models.CharField(max_length=255, null=True, blank=True, default='')
-    street = models.CharField(max_length=255, null=True, blank=True, default='')
-    postal_code = models.CharField(max_length=255, null=True, blank=True, default='')
+    street = models.CharField(
+        max_length=255, null=True, blank=True, default='')
+    postal_code = models.CharField(
+        max_length=255, null=True, blank=True, default='')
     town = models.CharField(max_length=255, null=True, blank=True, default='')
-    phone_number = models.CharField(max_length=255, null=True, blank=True, default='')
-    mobile_phone_number = models.CharField(max_length=255, null=True, blank=True, default='')
+    phone_number = models.CharField(
+        max_length=255, null=True, blank=True, default='')
+    mobile_phone_number = models.CharField(
+        max_length=255, null=True, blank=True, default='')
     roles = models.ManyToManyField("OrganisationRole", blank=True, null=True)
 
     objects = UserProfileManager()
 
     def __unicode__(self):
         if self.user:
-            return 'UserProfile {} ({}, {})'.format(self.pk, self.user, self.user.email)
+            return 'UserProfile {} ({}, {})'.format(
+                self.pk, self.user, self.user.email)
         else:
             return 'UserProfile {}'.format(self.pk)
 
@@ -230,6 +242,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 post_save.connect(create_user_profile, sender=User)
 
+
 class Invitation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     email = models.EmailField(null=False, blank=False)
@@ -237,9 +250,12 @@ class Invitation(models.Model):
     language = models.CharField(max_length=16, null=False, blank=False)
     portals = models.ManyToManyField(Portal, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    activation_key = models.CharField(max_length=64, null=True, blank=True, unique=True)
+    activation_key = models.CharField(
+        max_length=64, null=True, blank=True, unique=True)
     activation_key_date = models.DateTimeField(null=True, blank=True,
-        help_text='Date on which the activation key was generated. Used for expiration.'
+        help_text=(
+            'Date on which the activation key was generated. '
+            'Used for expiration.')
     )
     is_activated = models.BooleanField(default=False)
     activated_on = models.DateTimeField(null=True, blank=True)
@@ -254,9 +270,13 @@ class Invitation(models.Model):
     def clean(self):
         if self.is_activated:
             if self.user is None:
-                raise ValidationError('Invitation is marked as activated, but its user isnt set.')
+                raise ValidationError(
+                    'Invitation is marked as activated, but its '
+                    'user isnt set.')
             if self.activated_on is None:
-                raise ValidationError('Invitation is marked as activated, but its field "activated_on" isnt set.')
+                raise ValidationError(
+                    'Invitation is marked as activated, but its '
+                    'field "activated_on" isnt set.')
 
     def _rotate_activation_key(self):
         if self.is_activated:
@@ -278,7 +298,10 @@ class Invitation(models.Model):
 
         ### send this user an email containing the key
         # build a render context for the email template
-        expiration_date = datetime.datetime.now(tz=pytz.UTC) + datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
+        expiration_date = (
+            datetime.datetime.now(tz=pytz.UTC) +
+            datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS))
+
         ctx_dict = {
             'name': self.name,
             'activation_key': self.activation_key,
@@ -294,10 +317,12 @@ class Invitation(models.Model):
         translation.activate(self.language)
 
         # render the email subject and message using Django's templating
-        subject = render_to_string('lizard_auth_server/invitation_email_subject.txt', ctx_dict)
+        subject = render_to_string(
+            'lizard_auth_server/invitation_email_subject.txt', ctx_dict)
         # ensure email subject doesn't contain newlines
         subject = ''.join(subject.splitlines())
-        message = render_to_string('lizard_auth_server/invitation_email.html', ctx_dict)
+        message = render_to_string(
+            'lizard_auth_server/invitation_email.html', ctx_dict)
 
         # switch language back
         translation.activate(old_lang)
@@ -322,7 +347,9 @@ class Invitation(models.Model):
                 self.user = user
                 self.save()
             else:
-                logger.warn('this invitation already has a user linked to it: {}'.format(user))
+                logger.warn(
+                    'this invitation already has a user linked to it: {}'
+                    .format(user))
 
     def activate(self, data):
         with transaction.commit_on_success():

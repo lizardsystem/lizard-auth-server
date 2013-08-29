@@ -268,10 +268,10 @@ def construct_user_data(user=None, profile=None):
 
     for key in ['organisation']:
         # For backward compatibility, if the user has at least one
-        # organization, send then name of one of them.
-        organizations = list(profile.organisations.all())
-        if organizations:
-            data[key] = organizations[0].name
+        # organisation, send then name of one of them.
+        organisations = list(profile.organisations.all())
+        if organisations:
+            data[key] = organisations[0].name
         else:
             data[key] = ''
 

@@ -11,12 +11,12 @@ class Migration(DataMigration):
         "Write your forwards methods here."
 
         # In the old situation, UserProfiles had a string
-        # 'organization'.
+        # 'organisation'.
 
-        # Now we have 'organizations', a separate model with a
+        # Now we have 'organisations', a separate model with a
         # ManyToMany relation For all the users who have an
-        # organization string but no Organizations, we create an
-        # Organization if necessary, and add it to them.
+        # organisation string but no Organisations, we create an
+        # Organisation if necessary, and add it to them.
 
         organisations = dict()
 

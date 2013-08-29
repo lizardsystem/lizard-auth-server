@@ -44,8 +44,8 @@ METHOD 1: A NORMAL USER AND A WEB BROWSER
    database and log him.
 
 
-For our purposes (adding roles and organizations to this code), it is
-sufficient and save to add data about organizations and roles in the
+For our purposes (adding roles and organisations to this code), it is
+sufficient and save to add data about organisations and roles in the
 JSON returned in step 8, and to process it if available in step 9.
 
 METHOD 2: PROGRAMMATICALLY

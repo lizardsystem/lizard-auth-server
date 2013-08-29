@@ -266,18 +266,12 @@ def construct_user_data(user=None, profile=None):
             'codename': perm.codename,
         })
 
-    for key in ['organisation']:
-        # For backward compatibility, if the user has at least one
-        # organisation, send then name of one of them.
-        organisations = list(profile.organisations.all())
-        if organisations:
-            data[key] = organisations[0].name
-        else:
-            data[key] = ''
+    # For backward compatibility, if the user has at least one
+    # organisation, send then name of one of them.
+    data['organisation'] = profile.organisation
 
-    for key in ['created_at']:
-        # datetimes should be serialized to an iso8601 string
-        data[key] = getattr(profile, key).isoformat()
+    # datetimes should be serialized to an iso8601 string
+    data['created_at'] = profile.created_at.isoformat()
 
     return data
 

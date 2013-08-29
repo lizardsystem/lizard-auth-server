@@ -42,15 +42,28 @@ def gen_key(model, field):
         return key
     return _genkey
 
+
 class Portal(models.Model):
     """
     A portal. If secret/key change, the portal website has to be updated too!
     """
-    name = models.CharField(max_length=255, null=False, blank=False, help_text='Name used to refer to this portal.')
-    sso_secret = models.CharField(max_length=64, unique=True, default=gen_key('Portal', 'sso_secret'), help_text='Secret shared between SSO client and server to sign/encrypt communication.')
-    sso_key = models.CharField(max_length=64, unique=True, default=gen_key('Portal', 'sso_key'), help_text='String used to identify the SSO client.')
-    redirect_url = models.CharField(max_length=255, help_text='URL used in the SSO redirection.')
-    visit_url = models.CharField(max_length=255, help_text='URL used in the UI to refer to this portal.')
+    name = models.CharField(
+        max_length=255, null=False, blank=False,
+        help_text='Name used to refer to this portal.')
+    sso_secret = models.CharField(
+        max_length=64, unique=True,
+        default=gen_key('Portal', 'sso_secret'),
+        help_text='Secret shared between SSO client and '
+        'server to sign/encrypt communication.')
+    sso_key = models.CharField(
+        max_length=64, unique=True, default=gen_key('Portal', 'sso_key'),
+        help_text='String used to identify the SSO client.')
+    redirect_url = models.CharField(
+        max_length=255,
+        help_text='URL used in the SSO redirection.')
+    visit_url = models.CharField(
+        max_length=255,
+        help_text='URL used in the UI to refer to this portal.')
 
     def __unicode__(self):
         return '{} ({})'.format(self.name, self.visit_url)
@@ -62,6 +75,7 @@ class Portal(models.Model):
 
     class Meta:
         ordering = ('name',)
+
 
 class TokenManager(models.Manager):
     def create_for_portal(self, portal):
@@ -79,6 +93,7 @@ class TokenManager(models.Manager):
             request_token=request_token,
             auth_token=auth_token,
         )
+
 
 class Token(models.Model):
     """
@@ -195,6 +210,19 @@ class UserProfile(models.Model):
             # staff can access any site
             return True
         return self.portals.filter(pk=portal.pk).exists()
+
+    def all_organisation_roles(self):
+        """Return a queryset of OrganisationRoles that apply to this profile.
+
+        There are two ways for a UserProfile to have a role in an
+        organisation: either be a member of the organisation and role
+        that everyone in the organisation has, or it must be
+        explicitly in this user's roles."""
+
+        return OrganisationRole.objects.filter(
+            models.Q(organisation__userprofile=self, for_all_users=True) |
+            models.Q(userprofile=self))
+
 
 # have the creation of a User trigger the creation of a Profile
 def create_user_profile(sender, instance, created, **kwargs):

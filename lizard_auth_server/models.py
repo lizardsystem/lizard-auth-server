@@ -185,7 +185,7 @@ class UserProfile(models.Model):
         For backward compatibility. Instead of many Organisation objects, a
         user used to have a single organisation string."""
         try:
-            return self.organisations.all()[0:1].get().name
+            return self.organisations.all().order_by('id')[0:1].get().name
         except Organisation.DoesNotExist:
             return None
 

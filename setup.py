@@ -16,6 +16,7 @@ install_requires = [
     'requests',
     'itsdangerous',
     'pytz',
+    'factory_boy >= 1.3.0',
     ],
 
 tests_require = [

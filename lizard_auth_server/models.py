@@ -368,6 +368,15 @@ class Role(models.Model):
     def __unicode__(self):
         return self.name
 
+    def as_dict(self):
+        return {
+            'unique_id': self.unique_id,
+            'code': self.code,
+            'name': self.name,
+            'external_description': self.external_description,
+            'internal_description': self.internal_description
+            }
+
 
 class Organisation(models.Model):
     name = models.CharField(
@@ -379,6 +388,12 @@ class Organisation(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def as_dict(self):
+        return {
+            'name': self.name,
+            'unique_id': self.unique_id
+            }
 
 
 class OrganisationRole(models.Model):

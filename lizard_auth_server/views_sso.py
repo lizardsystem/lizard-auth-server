@@ -245,14 +245,19 @@ class AuthorizeView(ProcessGetFormView):
 def construct_user_data(user=None, profile=None):
     '''
     Construct a dict of information about a user object,
-    like first_name, permissions and organisation.
+    like first_name, and permissions.
+
+    Older versions of this server did not send information about
+    roles, and only a single organisation name. Older clients still
+    expect that, so we need to stay backward compatible.
     '''
     if user is None:
         user = profile.user
     if profile is None:
         profile = user.get_profile()
     data = {}
-    for key in ['pk', 'username', 'first_name', 'last_name', 'email', 'is_active', 'is_staff', 'is_superuser']:
+    for key in ['pk', 'username', 'first_name', 'last_name',
+                'email', 'is_active', 'is_staff', 'is_superuser']:
         data[key] = getattr(user, key)
     data['permissions'] = []
     for perm in user.user_permissions.select_related('content_type').all():
@@ -260,12 +265,54 @@ def construct_user_data(user=None, profile=None):
             'content_type': perm.content_type.natural_key(),
             'codename': perm.codename,
         })
+
     for key in ['organisation']:
-        # copy the profile data, not sure how much more we want to add
-        data[key] = getattr(profile, key)
+        # For backward compatibility, if the user has at least one
+        # organization, send then name of one of them.
+        organizations = list(profile.organisations.all())
+        if organizations:
+            data[key] = organizations[0].name
+        else:
+            data[key] = ''
+
     for key in ['created_at']:
         # datetimes should be serialized to an iso8601 string
         data[key] = getattr(profile, key).isoformat()
+
+    return data
+
+
+def construct_organisation_role_dict(organisation_roles):
+    """Return a dict with three elements: organisations, roles, and
+    organisation-roles.
+
+    organisation_roles is an iterable of OrganisationRoles.
+
+    """
+    data = {
+        'organisations': [],
+        'roles': [],
+        'organisation_roles': []
+        }
+
+    organisations_seen = set()
+    roles_seen = set()
+
+    for organisation_role in organisation_roles:
+        organisation = organisation_role.organisation
+        role = organisation_role.role
+
+        if role.unique_id not in roles_seen:
+            roles_seen.add(role.unique_id)
+            data['roles'].append(role.as_dict())
+
+        if organisation.unique_id not in organisations_seen:
+            organisations_seen.add(organisation.unique_id)
+            data['organisations'].append(organisation.as_dict())
+
+        data['organisation_roles'].append(
+            [organisation.unique_id, role.unique_id])
+
     return data
 
 
@@ -284,6 +331,12 @@ class VerifyView(ProcessGetFormView):
         data = construct_user_data(profile=profile)
         return simplejson.dumps(data)
 
+    def get_organisation_roles_json(self):
+        profile = self.token.user.get_profile()
+        data = construct_organisation_role_dict(
+            profile.all_organisation_roles())
+        return simplejson.dumps(data)
+
     def form_valid(self, form):
         auth_token = form.cleaned_data['auth_token']
         try:
@@ -293,9 +346,9 @@ class VerifyView(ProcessGetFormView):
             return HttpResponseForbidden('Invalid auth token')
         # get some metadata about the user, so we can construct a user on the
         # SSO client
-        user_json = self.get_user_json()
         params = {
-            'user': user_json
+            'user': self.get_user_json(),
+            'roles': self.get_organisation_roles_json()
         }
         # encrypt the data
         data = URLSafeTimedSerializer(self.token.portal.sso_secret).dumps(

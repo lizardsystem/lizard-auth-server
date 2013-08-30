@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import datetime
 import logging
+import uuid
 
 from django.db import models
 from django.db import transaction
@@ -23,6 +24,7 @@ from lizard_auth_server.utils import gen_secret_key
 
 logger = logging.getLogger(__name__)
 
+
 def gen_key(model, field):
     """
     Helper function to give a unique default value to the selected
@@ -41,19 +43,32 @@ def gen_key(model, field):
         return key
     return _genkey
 
+
 class Portal(models.Model):
     """
     A portal. If secret/key change, the portal website has to be updated too!
     """
-    name = models.CharField(max_length=255, null=False, blank=False, help_text='Name used to refer to this portal.')
-    sso_secret = models.CharField(max_length=64, unique=True, default=gen_key('Portal', 'sso_secret'), help_text='Secret shared between SSO client and server to sign/encrypt communication.')
-    sso_key = models.CharField(max_length=64, unique=True, default=gen_key('Portal', 'sso_key'), help_text='String used to identify the SSO client.')
-    redirect_url = models.CharField(max_length=255, help_text='URL used in the SSO redirection.')
-    visit_url = models.CharField(max_length=255, help_text='URL used in the UI to refer to this portal.')
-    
+    name = models.CharField(
+        max_length=255, null=False, blank=False,
+        help_text='Name used to refer to this portal.')
+    sso_secret = models.CharField(
+        max_length=64, unique=True,
+        default=gen_key('Portal', 'sso_secret'),
+        help_text='Secret shared between SSO client and '
+        'server to sign/encrypt communication.')
+    sso_key = models.CharField(
+        max_length=64, unique=True, default=gen_key('Portal', 'sso_key'),
+        help_text='String used to identify the SSO client.')
+    redirect_url = models.CharField(
+        max_length=255,
+        help_text='URL used in the SSO redirection.')
+    visit_url = models.CharField(
+        max_length=255,
+        help_text='URL used in the UI to refer to this portal.')
+
     def __unicode__(self):
         return '{} ({})'.format(self.name, self.visit_url)
-    
+
     def rotate_keys(self):
         self.sso_secret = gen_key(Portal, 'sso_secret')()
         self.sso_key = gen_key(Portal, 'sso_key')()
@@ -61,6 +76,7 @@ class Portal(models.Model):
 
     class Meta:
         ordering = ('name',)
+
 
 class TokenManager(models.Manager):
     def create_for_portal(self, portal):
@@ -70,7 +86,9 @@ class TokenManager(models.Manager):
         request_token = gen_secret_key(64)
         auth_token = gen_secret_key(64)
         # check unique constraints
-        while self.filter(Q(request_token=request_token) | Q(auth_token=auth_token)).exists():
+        while self.filter(
+            Q(request_token=request_token) |
+            Q(auth_token=auth_token)).exists():
             request_token = gen_secret_key(64)
             auth_token = gen_secret_key(64)
         return self.create(
@@ -78,6 +96,7 @@ class TokenManager(models.Manager):
             request_token=request_token,
             auth_token=auth_token,
         )
+
 
 class Token(models.Model):
     """
@@ -87,15 +106,18 @@ class Token(models.Model):
     request_token = models.CharField(max_length=64, unique=True)
     auth_token = models.CharField(max_length=64, unique=True)
     user = models.ForeignKey(User, null=True)
-    created = models.DateTimeField(default=(lambda: datetime.datetime.now(tz=pytz.UTC)))
+    created = models.DateTimeField(
+        default=lambda: datetime.datetime.now(tz=pytz.UTC))
 
     objects = TokenManager()
+
 
 class UserProfileManager(models.Manager):
     def fetch_for_user(self, user):
         if not user:
             raise AttributeError('Cant get UserProfile without user')
         return self.get(user=user)
+
 
 class UserProfile(models.Model):
     '''
@@ -109,19 +131,26 @@ class UserProfile(models.Model):
     portals = models.ManyToManyField(Portal, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
-    organisation = models.CharField(max_length=255, null=True, blank=True, default='')
+    organisations = models.ManyToManyField(
+        "Organisation", blank=True, null=True)
     title = models.CharField(max_length=255, null=True, blank=True, default='')
-    street = models.CharField(max_length=255, null=True, blank=True, default='')
-    postal_code = models.CharField(max_length=255, null=True, blank=True, default='')
+    street = models.CharField(
+        max_length=255, null=True, blank=True, default='')
+    postal_code = models.CharField(
+        max_length=255, null=True, blank=True, default='')
     town = models.CharField(max_length=255, null=True, blank=True, default='')
-    phone_number = models.CharField(max_length=255, null=True, blank=True, default='')
-    mobile_phone_number = models.CharField(max_length=255, null=True, blank=True, default='')
+    phone_number = models.CharField(
+        max_length=255, null=True, blank=True, default='')
+    mobile_phone_number = models.CharField(
+        max_length=255, null=True, blank=True, default='')
+    roles = models.ManyToManyField("OrganisationRole", blank=True, null=True)
 
     objects = UserProfileManager()
 
     def __unicode__(self):
         if self.user:
-            return 'UserProfile {} ({}, {})'.format(self.pk, self.user, self.user.email)
+            return 'UserProfile {} ({}, {})'.format(
+                self.pk, self.user, self.user.email)
         else:
             return 'UserProfile {}'.format(self.pk)
 
@@ -162,6 +191,17 @@ class UserProfile(models.Model):
         return self.user.email
 
     @property
+    def organisation(self):
+        """Return the name of one of this user's organisations, or None.
+
+        For backward compatibility. Instead of many Organisation objects, a
+        user used to have a single organisation string."""
+        try:
+            return self.organisations.all().order_by('id')[0:1].get().name
+        except Organisation.DoesNotExist:
+            return None
+
+    @property
     def is_active(self):
         '''
         Returns True when the account is active, meaning the User has not been
@@ -182,12 +222,26 @@ class UserProfile(models.Model):
             return True
         return self.portals.filter(pk=portal.pk).exists()
 
+    def all_organisation_roles(self):
+        """Return a queryset of OrganisationRoles that apply to this profile.
+
+        There are two ways for a UserProfile to have a role in an
+        organisation: either be a member of the organisation and role
+        that everyone in the organisation has, or it must be
+        explicitly in this user's roles."""
+
+        return OrganisationRole.objects.filter(
+            models.Q(organisation__userprofile=self, for_all_users=True) |
+            models.Q(userprofile=self))
+
+
 # have the creation of a User trigger the creation of a Profile
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
 
 post_save.connect(create_user_profile, sender=User)
+
 
 class Invitation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
@@ -196,9 +250,12 @@ class Invitation(models.Model):
     language = models.CharField(max_length=16, null=False, blank=False)
     portals = models.ManyToManyField(Portal, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    activation_key = models.CharField(max_length=64, null=True, blank=True, unique=True)
+    activation_key = models.CharField(
+        max_length=64, null=True, blank=True, unique=True)
     activation_key_date = models.DateTimeField(null=True, blank=True,
-        help_text='Date on which the activation key was generated. Used for expiration.'
+        help_text=(
+            'Date on which the activation key was generated. '
+            'Used for expiration.')
     )
     is_activated = models.BooleanField(default=False)
     activated_on = models.DateTimeField(null=True, blank=True)
@@ -213,9 +270,13 @@ class Invitation(models.Model):
     def clean(self):
         if self.is_activated:
             if self.user is None:
-                raise ValidationError('Invitation is marked as activated, but its user isnt set.')
+                raise ValidationError(
+                    'Invitation is marked as activated, but its '
+                    'user isnt set.')
             if self.activated_on is None:
-                raise ValidationError('Invitation is marked as activated, but its field "activated_on" isnt set.')
+                raise ValidationError(
+                    'Invitation is marked as activated, but its '
+                    'field "activated_on" isnt set.')
 
     def _rotate_activation_key(self):
         if self.is_activated:
@@ -236,8 +297,11 @@ class Invitation(models.Model):
         self._rotate_activation_key()
 
         ### send this user an email containing the key
-        # build a render context for the email template 
-        expiration_date = datetime.datetime.now(tz=pytz.UTC) + datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
+        # build a render context for the email template
+        expiration_date = (
+            datetime.datetime.now(tz=pytz.UTC) +
+            datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS))
+
         ctx_dict = {
             'name': self.name,
             'activation_key': self.activation_key,
@@ -253,10 +317,12 @@ class Invitation(models.Model):
         translation.activate(self.language)
 
         # render the email subject and message using Django's templating
-        subject = render_to_string('lizard_auth_server/invitation_email_subject.txt', ctx_dict)
+        subject = render_to_string(
+            'lizard_auth_server/invitation_email_subject.txt', ctx_dict)
         # ensure email subject doesn't contain newlines
         subject = ''.join(subject.splitlines())
-        message = render_to_string('lizard_auth_server/invitation_email.html', ctx_dict)
+        message = render_to_string(
+            'lizard_auth_server/invitation_email.html', ctx_dict)
 
         # switch language back
         translation.activate(old_lang)
@@ -281,7 +347,9 @@ class Invitation(models.Model):
                 self.user = user
                 self.save()
             else:
-                logger.warn('this invitation already has a user linked to it: {}'.format(user))
+                logger.warn(
+                    'this invitation already has a user linked to it: {}'
+                    .format(user))
 
     def activate(self, data):
         with transaction.commit_on_success():
@@ -305,3 +373,62 @@ class Invitation(models.Model):
             self.activated_on = datetime.datetime.now(tz=pytz.UTC)
             self.is_activated = True
             self.save()
+
+
+def create_new_uuid():
+    return uuid.uuid4().hex
+
+
+class Role(models.Model):
+    unique_id = models.CharField(
+        max_length=32, unique=True, default=create_new_uuid)
+    code = models.CharField(max_length=255, null=False, blank=False)
+    name = models.CharField(max_length=255, null=False, blank=False)
+    external_description = models.TextField()
+    internal_description = models.TextField()
+    portal = models.ForeignKey(Portal)
+
+    class Meta:
+        unique_together = (('name', 'portal'), )
+
+    def __unicode__(self):
+        return self.name
+
+    def as_dict(self):
+        return {
+            'unique_id': self.unique_id,
+            'code': self.code,
+            'name': self.name,
+            'external_description': self.external_description,
+            'internal_description': self.internal_description
+            }
+
+
+class Organisation(models.Model):
+    name = models.CharField(
+        max_length=255, null=False, blank=False, unique=True)
+    unique_id = models.CharField(
+        max_length=32, unique=True, default=create_new_uuid)
+    roles = models.ManyToManyField(
+        Role, through='OrganisationRole', blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+    def as_dict(self):
+        return {
+            'name': self.name,
+            'unique_id': self.unique_id
+            }
+
+
+class OrganisationRole(models.Model):
+    organisation = models.ForeignKey(Organisation)
+    role = models.ForeignKey(Role)
+    for_all_users = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = (('organisation', 'role'), )
+
+    def __unicode__(self):
+        return "{role} in {org}".format(role=self.role, org=self.organisation)

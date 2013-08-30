@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.1 (unreleased)
+0.1 (2013-08-30)
 ----------------
 
 - Initial project structure created with nensskel 1.30.dev0.

@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 0.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Bug fix: only pass organisation-roles belonging to the current
+  portal
 
 
 0.1 (2013-08-30)

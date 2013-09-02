@@ -222,7 +222,7 @@ class UserProfile(models.Model):
             return True
         return self.portals.filter(pk=portal.pk).exists()
 
-    def all_organisation_roles(self):
+    def all_organisation_roles(self, portal):
         """Return a queryset of OrganisationRoles that apply to this profile.
 
         There are two ways for a UserProfile to have a role in an
@@ -232,7 +232,8 @@ class UserProfile(models.Model):
 
         return OrganisationRole.objects.filter(
             models.Q(organisation__userprofile=self, for_all_users=True) |
-            models.Q(userprofile=self))
+            models.Q(userprofile=self)).filter(
+            role__portal=portal)
 
 
 # have the creation of a User trigger the creation of a Profile
@@ -392,7 +393,7 @@ class Role(models.Model):
         unique_together = (('name', 'portal'), )
 
     def __unicode__(self):
-        return self.name
+        return '{name} on {portal}'.format(name=self.name, portal=self.portal)
 
     def as_dict(self):
         return {

@@ -328,7 +328,7 @@ class VerifyView(ProcessGetFormView):
     def get_organisation_roles_json(self):
         profile = self.token.user.get_profile()
         data = construct_organisation_role_dict(
-            profile.all_organisation_roles())
+            profile.all_organisation_roles(form.portal))
         return simplejson.dumps(data)
 
     def form_valid(self, form):

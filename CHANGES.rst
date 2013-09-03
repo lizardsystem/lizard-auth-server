@@ -2,8 +2,8 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.3 (unreleased)
-----------------
+0.2.1 (2013-09-03)
+------------------
 
 - Failed to check in a crucial change.
 

@@ -325,10 +325,10 @@ class VerifyView(ProcessGetFormView):
         data = construct_user_data(profile=profile)
         return simplejson.dumps(data)
 
-    def get_organisation_roles_json(self):
+    def get_organisation_roles_json(self, portal):
         profile = self.token.user.get_profile()
         data = construct_organisation_role_dict(
-            profile.all_organisation_roles(form.portal))
+            profile.all_organisation_roles(portal))
         return simplejson.dumps(data)
 
     def form_valid(self, form):
@@ -342,7 +342,7 @@ class VerifyView(ProcessGetFormView):
         # SSO client
         params = {
             'user': self.get_user_json(),
-            'roles': self.get_organisation_roles_json()
+            'roles': self.get_organisation_roles_json(form.portal)
         }
         # encrypt the data
         data = URLSafeTimedSerializer(self.token.portal.sso_secret).dumps(

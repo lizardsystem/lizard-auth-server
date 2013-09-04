@@ -2,8 +2,8 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.3 (unreleased)
-----------------
+0.2.2 (2013-09-04)
+------------------
 
 - Fix bug that caused activation to fail (organisations not saved
   correctly).

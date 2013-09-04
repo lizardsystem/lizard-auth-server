@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 0.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix bug that caused activation to fail (organisations not saved
+  correctly).
 
 
 0.2.1 (2013-09-03)

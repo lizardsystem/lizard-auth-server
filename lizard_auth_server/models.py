@@ -359,10 +359,13 @@ class Invitation(models.Model):
             # create and fill the profile
             # this sets the additional attributes on the User model as well
             profile = user.get_profile()
-            profile.organisation = self.organisation
             profile.update_all(data)
 
             # many-to-many, so save these after profile has been assigned an ID
+            organisation, created = Organisation.objects.get_or_create(
+                name=self.organisation)
+            profile.organisations.add(organisation)
+
             profile.portals = self.portals.all()
             profile.save()
 

@@ -290,8 +290,8 @@ def construct_organisation_role_dict(organisation_roles):
     # UserProfile.all_organisation_roles() does not...
 
     organisation_roles = set(organisation_roles)
-    organisations = set([obj.organisation for obj in organisation_roles])
-    roles = set([obj.role for obj in organisation_roles])
+    organisations = set(obj.organisation for obj in organisation_roles)
+    roles = set(obj.role for obj in organisation_roles)
 
     data['organisation_roles'] = [
         [obj.organisation.unique_id, obj.role.unique_id]

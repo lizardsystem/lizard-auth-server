@@ -2,8 +2,8 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.3 (unreleased)
-----------------
+0.2.3 (2013-10-08)
+------------------
 
 - Fix bug that caused lizard-auth-server to return non-distinct
   organisation_roles (issue3).

@@ -230,10 +230,11 @@ class UserProfile(models.Model):
         that everyone in the organisation has, or it must be
         explicitly in this user's roles."""
 
+        # TODO: understand/improve this query - why is distinct() needed?
         return OrganisationRole.objects.filter(
             models.Q(organisation__userprofile=self, for_all_users=True) |
             models.Q(userprofile=self)).filter(
-            role__portal=portal)
+            role__portal=portal).distinct()
 
 
 # have the creation of a User trigger the creation of a Profile

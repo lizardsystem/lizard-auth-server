@@ -1,27 +1,27 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import datetime
-import urllib
-import logging
 from urlparse import urljoin
+import datetime
+import logging
+import urllib
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.views.decorators.cache import never_cache
-from django.views.generic.edit import FormMixin
-from django.utils.translation import ugettext as _
 from django.http import (
     HttpResponse,
-    HttpResponseForbidden,
     HttpResponseBadRequest,
+    HttpResponseForbidden,
     HttpResponseRedirect
 )
-from django.utils import simplejson
-from django.utils.decorators import method_decorator
-from django.views.generic.base import View
 from django.template.context import RequestContext
 from django.template.response import TemplateResponse
+from django.utils import simplejson
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
+from django.views.decorators.cache import never_cache
+from django.views.generic.base import View
+from django.views.generic.edit import FormMixin
 
 from itsdangerous import URLSafeTimedSerializer
 import pytz
@@ -277,35 +277,28 @@ def construct_user_data(user=None, profile=None):
 
 
 def construct_organisation_role_dict(organisation_roles):
-    """Return a dict with three elements: organisations, roles, and
-    organisation-roles.
+    """Return a dict with 3 keys: organisations, roles, and organisation_roles.
 
-    organisation_roles is an iterable of OrganisationRoles.
+    Args:
+        organisation_roles: an iterable of OrganisationRoles.
 
     """
-    data = {
-        'organisations': [],
-        'roles': [],
-        'organisation_roles': []
-        }
+    data = {}
 
-    organisations_seen = set()
-    roles_seen = set()
+    # Defensive programming: make sure we have a unique set of
+    # organisation_roles. At the moment of writing, models.
+    # UserProfile.all_organisation_roles() does not...
 
-    for organisation_role in organisation_roles:
-        organisation = organisation_role.organisation
-        role = organisation_role.role
+    organisation_roles = set(organisation_roles)
+    organisations = set(obj.organisation for obj in organisation_roles)
+    roles = set(obj.role for obj in organisation_roles)
 
-        if role.unique_id not in roles_seen:
-            roles_seen.add(role.unique_id)
-            data['roles'].append(role.as_dict())
-
-        if organisation.unique_id not in organisations_seen:
-            organisations_seen.add(organisation.unique_id)
-            data['organisations'].append(organisation.as_dict())
-
-        data['organisation_roles'].append(
-            [organisation.unique_id, role.unique_id])
+    data['organisation_roles'] = [
+        [obj.organisation.unique_id, obj.role.unique_id]
+        for obj in organisation_roles
+        ]
+    data['organisations'] = [obj.as_dict() for obj in organisations]
+    data['roles'] = [obj.as_dict() for obj in roles]
 
     return data
 

@@ -54,12 +54,16 @@ class UserProfileAdmin(admin.ModelAdmin):
         'email'
     ]
     search_fields = ['user__first_name', 'user__last_name', 'user__email']
-    filter_horizontal = ('portals', )
+    filter_horizontal = ('portals', 'organisations')
 
 
 class PortalAdmin(admin.ModelAdmin):
     model = models.Portal
 #    form = PortalForm
+
+
+class OrganisationRoleAdmin(admin.ModelAdmin):
+    ordering = ('role__portal', 'organisation', 'role')
 
 admin.site.register(models.Portal, PortalAdmin)
 admin.site.register(models.Token)
@@ -67,4 +71,4 @@ admin.site.register(models.Invitation, InvitationAdmin)
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Role)
 admin.site.register(models.Organisation)
-admin.site.register(models.OrganisationRole)
+admin.site.register(models.OrganisationRole, OrganisationRoleAdmin)

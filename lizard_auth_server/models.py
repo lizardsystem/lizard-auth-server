@@ -436,4 +436,9 @@ class OrganisationRole(models.Model):
         unique_together = (('organisation', 'role'), )
 
     def __unicode__(self):
-        return "{role} in {org}".format(role=self.role, org=self.organisation)
+        if self.for_all_users:
+            return "{role} for everybody in {org}".format(
+                role=self.role, org=self.organisation)
+        else:
+            return "{role} in {org}".format(
+                role=self.role, org=self.organisation)

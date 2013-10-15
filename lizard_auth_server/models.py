@@ -394,6 +394,7 @@ class Role(models.Model):
     portal = models.ForeignKey(Portal)
 
     class Meta:
+        ordering = ['portal', 'name']
         unique_together = (('name', 'portal'), )
 
     def __unicode__(self):
@@ -416,6 +417,9 @@ class Organisation(models.Model):
         max_length=32, unique=True, default=create_new_uuid)
     roles = models.ManyToManyField(
         Role, through='OrganisationRole', blank=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name

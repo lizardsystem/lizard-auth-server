@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 0.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- More convenient Django Admin screens.
 
 
 0.2.3 (2013-10-08)

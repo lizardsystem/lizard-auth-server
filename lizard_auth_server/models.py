@@ -394,6 +394,7 @@ class Role(models.Model):
     portal = models.ForeignKey(Portal)
 
     class Meta:
+        ordering = ['portal', 'name']
         unique_together = (('name', 'portal'), )
 
     def __unicode__(self):
@@ -417,6 +418,9 @@ class Organisation(models.Model):
     roles = models.ManyToManyField(
         Role, through='OrganisationRole', blank=True)
 
+    class Meta:
+        ordering = ['name']
+
     def __unicode__(self):
         return self.name
 
@@ -436,4 +440,9 @@ class OrganisationRole(models.Model):
         unique_together = (('organisation', 'role'), )
 
     def __unicode__(self):
-        return "{role} in {org}".format(role=self.role, org=self.organisation)
+        if self.for_all_users:
+            return "{role} for everybody in {org}".format(
+                role=self.role, org=self.organisation)
+        else:
+            return "{role} in {org}".format(
+                role=self.role, org=self.organisation)

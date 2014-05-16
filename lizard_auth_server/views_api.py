@@ -17,7 +17,8 @@ from django.views.decorators.debug import sensitive_variables
 from django.views.generic.edit import FormView
 
 from lizard_auth_server import forms
-from lizard_auth_server.http import JsonResponse, JsonError
+from lizard_auth_server.http import JsonError, JsonResponse
+from lizard_auth_server.models import UserProfile
 from lizard_auth_server.views_sso import construct_user_data
 
 logger = logging.getLogger(__name__)
@@ -81,7 +82,10 @@ class AuthenticateUnsignedView(FormView):
             if not user.is_active:
                 return JsonError('User account is disabled')
             else:
-                profile = user.get_profile()
+                try:
+                    profile = user.get_profile()
+                except UserProfile.DoesNotExist:
+                    return JsonError('No access to this portal')
                 if profile.has_access(portal):
                     user_data = construct_user_data(profile=profile)
                     return JsonResponse({'user': user_data})
@@ -150,7 +154,10 @@ class AuthenticateView(FormView):
             if not user.is_active:
                 return JsonError('User account is disabled')
             else:
-                profile = user.get_profile()
+                try:
+                    profile = user.get_profile()
+                except UserProfile.DoesNotExist:
+                    return JsonError('No access to this portal')
                 if profile.has_access(portal):
                     user_data = construct_user_data(profile=profile)
                     return JsonResponse({'user': user_data})
@@ -212,7 +219,10 @@ class GetUserView(FormView):
             if not user.is_active:
                 return JsonError('User account is disabled')
             else:
-                profile = user.get_profile()
+                try:
+                    profile = user.get_profile()
+                except UserProfile.DoesNotExist:
+                    return JsonError('No access to this portal')
                 if profile.has_access(portal):
                     user_data = construct_user_data(profile=profile)
                     return JsonResponse({'user': user_data})
@@ -251,7 +261,10 @@ class GetUsersView(FormView):
     def get_users(self, portal):
         user_data = []
         for user in User.objects.select_related('userprofile'):
-            profile = user.get_profile()
+            try:
+                profile = user.get_profile()
+            except UserProfile.DoesNotExist:
+                continue
             if profile.has_access(portal):
                 user_data.append(construct_user_data(profile=profile))
         return JsonResponse({'users': user_data})

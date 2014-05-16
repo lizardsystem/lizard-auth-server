@@ -27,7 +27,7 @@ from itsdangerous import URLSafeTimedSerializer
 import pytz
 
 from lizard_auth_server import forms
-from lizard_auth_server.models import Token
+from lizard_auth_server.models import Token, UserProfile
 from lizard_auth_server.views import ErrorMessageResponse
 
 logger = logging.getLogger(__name__)
@@ -188,7 +188,10 @@ class AuthorizeView(ProcessGetFormView):
             # login anyway
             return False
         # check whether the UserProfile object is related to this Portal
-        profile = self.request.user.get_profile()
+        try:
+            profile = self.request.user.get_profile()
+        except UserProfile.DoesNotExist:
+            return False
         return profile.has_access(self.token.portal)
 
     def success(self):

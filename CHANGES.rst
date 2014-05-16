@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.2.5 (unreleased)
+0.2.5 (2014-05-16)
 ------------------
 
 - Bug fix: do not crash on profile-less users.

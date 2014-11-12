@@ -5,7 +5,7 @@
 {% blocktrans %}An account has been created for you at {{ site_name }}.{% endblocktrans %}
 
 {% trans "Please go to the following page and fill in your details, to activate your account:" %}
-{{ site_public_url_prefix }}{% url lizard_auth_server.activate activation_key=activation_key %}
+{{ site_public_url_prefix }}{% url "lizard_auth_server.activate" activation_key=activation_key %}
 
 {% trans "With this account, you can access the following sites:" %}
 {% for portal in invitation.portals.all %}

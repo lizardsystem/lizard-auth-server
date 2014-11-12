@@ -10,7 +10,7 @@
             {{ error_message }}
         </p>
         <p>
-            {% url index as index_url %}
+            {% url "index" as index_url %}
             {% blocktrans %}<a href="{{ index_url }}">Back to the home page</a>{% endblocktrans %}
         </p>
     </div>

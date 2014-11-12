@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.utils import simplejson as json
+import json
+
 from django.http import HttpResponse
+
 
 def JsonResponse(data, already_serialized=False):
     if isinstance(data, dict):
@@ -16,6 +18,7 @@ def JsonResponse(data, already_serialized=False):
         data if already_serialized else json.dumps(data),
         content_type='application/json'
     )
+
 
 def JsonError(error_string):
     data = {

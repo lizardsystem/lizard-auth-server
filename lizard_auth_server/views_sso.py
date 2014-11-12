@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from urlparse import urljoin
 import datetime
+import json
 import logging
 import urllib
 
@@ -16,7 +17,6 @@ from django.http import (
 )
 from django.template.context import RequestContext
 from django.template.response import TemplateResponse
-from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import never_cache
@@ -319,13 +319,13 @@ class VerifyView(ProcessGetFormView):
         '''
         profile = self.token.user.get_profile()
         data = construct_user_data(profile=profile)
-        return simplejson.dumps(data)
+        return json.dumps(data)
 
     def get_organisation_roles_json(self, portal):
         profile = self.token.user.get_profile()
         data = construct_organisation_role_dict(
             profile.all_organisation_roles(portal))
-        return simplejson.dumps(data)
+        return json.dumps(data)
 
     def form_valid(self, form):
         auth_token = form.cleaned_data['auth_token']

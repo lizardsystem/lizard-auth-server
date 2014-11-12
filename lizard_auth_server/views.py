@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import logging
 
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -22,6 +21,7 @@ from lizard_auth_server.models import Portal, Invitation
 
 logger = logging.getLogger(__name__)
 
+
 class ViewContextMixin(object):
     '''
     Adds the view object to the template context.
@@ -34,6 +34,7 @@ class ViewContextMixin(object):
             'view': self
         }
 
+
 class StaffOnlyMixin(object):
     '''
     Ensures access by staff members (user.is_staff is True) only to all
@@ -44,6 +45,7 @@ class StaffOnlyMixin(object):
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         return super(StaffOnlyMixin, self).dispatch(request, *args, **kwargs)
+
 
 class ErrorMessageResponse(TemplateResponse):
     '''
@@ -69,6 +71,7 @@ class ErrorMessageResponse(TemplateResponse):
 # Invitation / registration / activation / profile
 ##################################################
 
+
 class ProfileView(ViewContextMixin, TemplateView):
     '''
     Straightforward view which displays a user's profile.
@@ -89,6 +92,7 @@ class ProfileView(ViewContextMixin, TemplateView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
+
 
 class EditProfileView(FormView):
     '''
@@ -133,6 +137,7 @@ class EditProfileView(FormView):
 
         return HttpResponseRedirect(reverse('profile'))
 
+
 class InviteUserView(StaffOnlyMixin, FormView):
     template_name = 'lizard_auth_server/invite_user.html'
     form_class = forms.InviteUserForm
@@ -155,7 +160,11 @@ class InviteUserView(StaffOnlyMixin, FormView):
 
         inv.send_new_activation_email()
 
-        return HttpResponseRedirect(reverse('lizard_auth_server.invite_user_complete', kwargs={'invitation_pk': inv.pk}))
+        return HttpResponseRedirect(
+            reverse(
+                'lizard_auth_server.invite_user_complete',
+                kwargs={'invitation_pk': inv.pk}))
+
 
 class InviteUserCompleteView(StaffOnlyMixin, ViewContextMixin, TemplateView):
     template_name = 'lizard_auth_server/invite_user_complete.html'
@@ -163,13 +172,15 @@ class InviteUserCompleteView(StaffOnlyMixin, ViewContextMixin, TemplateView):
 
     def get(self, request, invitation_pk, *args, **kwargs):
         self.invitation_pk = int(invitation_pk)
-        return super(InviteUserCompleteView, self).get(request, *args, **kwargs)
+        return super(
+            InviteUserCompleteView, self).get(request, *args, **kwargs)
 
     @property
     def invitiation(self):
         if not self._invitiation:
             self._invitiation = Invitation.objects.get(pk=self.invitation_pk)
         return self._invitiation
+
 
 class InvitationMixin(object):
     invitation = None
@@ -179,7 +190,8 @@ class InvitationMixin(object):
     def dispatch(self, request, activation_key, *args, **kwargs):
         self.activation_key = activation_key
         try:
-            self.invitation = Invitation.objects.get(activation_key=self.activation_key)
+            self.invitation = Invitation.objects.get(
+                activation_key=self.activation_key)
         except Invitation.DoesNotExist:
             return self.invalid_activation_key(request)
 
@@ -190,8 +202,14 @@ class InvitationMixin(object):
         return super(InvitationMixin, self).dispatch(request, *args, **kwargs)
 
     def invalid_activation_key(self, request):
-        logger.warn('invalid activation key used by {}'.format(request.META['REMOTE_ADDR']))
-        return ErrorMessageResponse(request, _('Invalid activation key. Perhaps this account was already activated?'), 404)
+        logger.warn(
+            'invalid activation key used by {}'
+            .format(request.META['REMOTE_ADDR']))
+        return ErrorMessageResponse(
+            request,
+            _('Invalid activation key. Perhaps this account '
+              'was already activated?'), 404)
+
 
 class ActivateUserView1(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user.html'
@@ -203,7 +221,11 @@ class ActivateUserView1(InvitationMixin, FormView):
         # let the model handle the rest
         self.invitation.create_user(data)
 
-        return HttpResponseRedirect(reverse('lizard_auth_server.activate_step_2', kwargs={'activation_key': self.activation_key}))
+        return HttpResponseRedirect(
+            reverse(
+                'lizard_auth_server.activate_step_2',
+                kwargs={'activation_key': self.activation_key}))
+
 
 class ActivateUserView2(InvitationMixin, FormView):
     template_name = 'lizard_auth_server/activate_user_step_2.html'
@@ -220,11 +242,15 @@ class ActivateUserView2(InvitationMixin, FormView):
         # let the model handle the rest
         self.invitation.activate(data)
 
-        return HttpResponseRedirect(reverse('lizard_auth_server.activation_complete', kwargs={'activation_key': self.activation_key}))
+        return HttpResponseRedirect(
+            reverse(
+                'lizard_auth_server.activation_complete',
+                kwargs={'activation_key': self.activation_key}))
+
 
 class ActivationCompleteView(InvitationMixin, TemplateView):
     template_name = 'lizard_auth_server/activation_complete.html'
-    error_on_already_used = False # see InvitationMixin
+    error_on_already_used = False  # see InvitationMixin
     _profile = None
 
     @property

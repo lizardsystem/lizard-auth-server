@@ -30,18 +30,18 @@ class TestConstructOrganisationRoleDict(TestCase):
             organisation=org, role=role)
 
         self.assertEquals(
-            views_sso.construct_organisation_role_dict([orgrole]),
-            {'organisations': [{
-                        'name': 'testorg',
-                        'unique_id': u_org
-                        }],
-             'roles': [{
-                        'unique_id': u_role,
-                        'code': 'testrole',
-                        'name': 'Testrole',
-                        'external_description': 'The best role ever',
-                        'internal_description': 'Except for our competitors'}
-                        ],
-             'organisation_roles': [
+            views_sso.construct_organisation_role_dict([orgrole]), {
+                'organisations': [{
+                    'name': 'testorg',
+                    'unique_id': u_org
+                }],
+                'roles': [{
+                    'unique_id': u_role,
+                    'code': 'testrole',
+                    'name': 'Testrole',
+                    'external_description': 'The best role ever',
+                    'internal_description': 'Except for our competitors'
+                }],
+                'organisation_roles': [
                     [u_org, u_role]
-                    ]})
+                ]})

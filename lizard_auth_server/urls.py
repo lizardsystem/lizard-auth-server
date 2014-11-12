@@ -17,12 +17,20 @@ def check_settings():
     '''
     Ensure settings are valid, to offer some extra security.
     '''
-    if not 'django.middleware.csrf.CsrfViewMiddleware' in settings.MIDDLEWARE_CLASSES:
-        raise ImproperlyConfigured('This app REALLY needs django.middleware.csrf.CsrfViewMiddleware.')
+    if not ('django.middleware.csrf.CsrfViewMiddleware'
+            in settings.MIDDLEWARE_CLASSES):
+        raise ImproperlyConfigured(
+            'This app REALLY needs django.middleware.csrf.CsrfViewMiddleware.')
     if not getattr(settings, 'USE_TZ', False):
-        raise ImproperlyConfigured('Setting USE_TZ = True in your settings is also a good idea.')
-    if getattr(settings, 'AUTH_PROFILE_MODULE') != 'lizard_auth_server.UserProfile':
-        raise ImproperlyConfigured('Ensure AUTH_PROFILE_MODULE is set to our custom UserProfile model.')
+        raise ImproperlyConfigured(
+            'Setting USE_TZ = True in your settings is also a good idea.')
+    if (getattr(settings, 'AUTH_PROFILE_MODULE') !=
+            'lizard_auth_server.UserProfile'):
+        raise ImproperlyConfigured(
+            'Ensure AUTH_PROFILE_MODULE is set to our custom '
+            'UserProfile model.')
+
+
 check_settings()
 
 admin.autodiscover()
@@ -36,39 +44,56 @@ urlpatterns = patterns(
     url(r'^$', views.ProfileView.as_view(), name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    # /api/ and /sso/api/ URLs are mainly used for internal communication between the servers
-    # Note: these are referred to by lizard-auth-client: change them in both places
-    url(r'^api/authenticate_unsigned/$', views_api.AuthenticateUnsignedView.as_view(), name='lizard_auth_server.api.authenticate_unsigned'),
-    url(r'^api/authenticate/$',          views_api.AuthenticateView.as_view(),         name='lizard_auth_server.api.authenticate'),
-    url(r'^api/get_user/$',              views_api.GetUserView.as_view(),              name='lizard_auth_server.api.get_user'),
-    url(r'^api/get_users/$',             views_api.GetUsersView.as_view(),             name='lizard_auth_server.api.get_users'),
-    # SSO URLs for use by visitors
-    # Note: these are referred to by lizard-auth-client: change them in both places
-    url(r'^sso/portal_action/$',     views_sso.PortalActionView.as_view(),   name='lizard_auth_server.sso.portal_action'),
-    url(r'^sso/logout_redirect/$',   views_sso.LogoutRedirectView.as_view(), name='lizard_auth_server.sso.logout_redirect'),
-    url(r'^sso/authorize/$',         views_sso.AuthorizeView.as_view(),      name='lizard_auth_server.sso.authorize'),
-    # SSO URLs for use by other webservers
-    # Note: these are referred to by lizard-auth-client: change them in both places
-    url(r'^sso/api/request_token/$', views_sso.RequestTokenView.as_view(),   name='lizard_auth_server.sso.api.request_token'),
-    url(r'^sso/api/verify/$',        views_sso.VerifyView.as_view(),         name='lizard_auth_server.sso.api.verify'),
+
+    # /api/ and /sso/api/ URLs are mainly used for internal
+    # communication between the servers Note: these are referred to by
+    # lizard-auth-client: change them in both places
+    url(r'^api/authenticate_unsigned/$',
+        views_api.AuthenticateUnsignedView.as_view(),
+        name='lizard_auth_server.api.authenticate_unsigned'),
+    url(r'^api/authenticate/$',
+        views_api.AuthenticateView.as_view(),
+        name='lizard_auth_server.api.authenticate'),
+    url(r'^api/get_user/$',
+        views_api.GetUserView.as_view(),
+        name='lizard_auth_server.api.get_user'),
+    url(r'^api/get_users/$',
+        views_api.GetUsersView.as_view(),
+        name='lizard_auth_server.api.get_users'),
+
+    # SSO URLs for use by visitors Note: these are referred to by
+    # lizard-auth-client: change them in both places
+    url(r'^sso/portal_action/$',
+        views_sso.PortalActionView.as_view(),
+        name='lizard_auth_server.sso.portal_action'),
+    url(r'^sso/logout_redirect/$',
+        views_sso.LogoutRedirectView.as_view(),
+        name='lizard_auth_server.sso.logout_redirect'),
+    url(r'^sso/authorize/$',
+        views_sso.AuthorizeView.as_view(),
+        name='lizard_auth_server.sso.authorize'),
+
+    # SSO URLs for use by other webservers Note: these are referred to
+    # by lizard-auth-client: change them in both places
+    url(r'^sso/api/request_token/$',
+        views_sso.RequestTokenView.as_view(),
+        name='lizard_auth_server.sso.api.request_token'),
+    url(r'^sso/api/verify/$',
+        views_sso.VerifyView.as_view(),
+        name='lizard_auth_server.sso.api.verify'),
+
     # Override django-auth's default login/logout URLs
     # Note: ensure LOGIN_URL isn't defined in the settings
-    url(
-        r'^accounts/login/$',
+    url(r'^accounts/login/$',
         'django.contrib.auth.views.login',
-        {
-            'template_name': 'lizard_auth_server/login.html'
-        },
-        name='login'
-    ),
-    url(
-        r'^accounts/logout/$',
+        {'template_name': 'lizard_auth_server/login.html'},
+        name='login'),
+    url(r'^accounts/logout/$',
         'django.contrib.auth.views.logout',
         {
             'template_name': 'lizard_auth_server/logged_out.html'
         },
-        name='logout'
-    ),
+        name='logout'),
     # Override django-auth's default profile URL
     # Note: ensure LOGIN_URL_REDIRECT isn't defined in the settings
     url(
@@ -99,12 +124,13 @@ urlpatterns = patterns(
         'django.contrib.auth.views.password_reset',
         {
             'template_name': 'lizard_auth_server/password_reset_form.html',
-            'email_template_name': 'lizard_auth_server/password_reset_email.html',
-            'subject_template_name': 'lizard_auth_server/password_reset_subject.txt'
+            'email_template_name':
+            'lizard_auth_server/password_reset_email.html',
+            'subject_template_name':
+            'lizard_auth_server/password_reset_subject.txt'
             # TODO can't configure email language somehow
         },
-        name='password_reset'
-    ),
+        name='password_reset'),
     url(
         r'^password_reset/done/$',
         'django.contrib.auth.views.password_reset_done',
@@ -114,7 +140,8 @@ urlpatterns = patterns(
         name='password_reset_done'
     ),
     url(
-        r'^reset/(?P<uidb36>[0-9A-Za-z]{1,13})-(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        r'^reset/(?P<uidb36>[0-9A-Za-z]{1,13})-'
+        r'(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         'django.contrib.auth.views.password_reset_confirm',
         {
             'template_name': 'lizard_auth_server/password_reset_confirm.html',

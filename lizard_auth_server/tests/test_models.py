@@ -6,14 +6,16 @@ from django.test import TestCase
 from lizard_auth_server import models
 
 
-class UserF(factory.Factory):
-    FACTORY_FOR = User
+class UserF(factory.DjangoModelFactory):
+    class Meta:
+        model = User
 
     username = factory.Sequence(lambda n: 'testuser{0}'.format(n))
 
 
 class PortalF(factory.DjangoModelFactory):
-    FACTORY_FOR = models.Portal
+    class Meta:
+        model = models.Portal
 
     name = 'Some portal'
     redirect_url = 'http://www.lizard.net/'
@@ -21,8 +23,10 @@ class PortalF(factory.DjangoModelFactory):
 
 
 class RoleF(factory.DjangoModelFactory):
-    FACTORY_FOR = models.Role
-    FACTORY_DJANGO_GET_OR_CREATE = ('name', 'code')
+    class Meta:
+        model = models.Role
+        django_get_or_create = ('name', 'code')
+
     unique_id = factory.LazyAttribute(lambda role: models.create_new_uuid())
 
     name = 'Some role'
@@ -35,15 +39,16 @@ class RoleF(factory.DjangoModelFactory):
 
 
 class OrganisationF(factory.DjangoModelFactory):
-    FACTORY_FOR = models.Organisation
+    class Meta:
+        model = models.Organisation
 
-    name = 'Organisatienaam'
     unique_id = factory.LazyAttribute(lambda org: models.create_new_uuid())
 
 
-class UserProfileF(factory.Factory):
-    FACTORY_FOR = models.UserProfile
-    FACTORY_DJANGO_GET_OR_CREATE = ('user',)
+class UserProfileF(factory.DjangoModelFactory):
+    class Meta:
+        model = models.UserProfile
+        django_get_or_create = ('user',)
 
     user = factory.SubFactory(UserF)
     organisation = factory.SubFactory(OrganisationF)

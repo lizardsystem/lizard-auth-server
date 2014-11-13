@@ -87,8 +87,8 @@ class TokenManager(models.Manager):
         auth_token = gen_secret_key(64)
         # check unique constraints
         while self.filter(
-            Q(request_token=request_token) |
-            Q(auth_token=auth_token)).exists():
+                Q(request_token=request_token) |
+                Q(auth_token=auth_token)).exists():
             request_token = gen_secret_key(64)
             auth_token = gen_secret_key(64)
         return self.create(
@@ -254,8 +254,8 @@ class Invitation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     activation_key = models.CharField(
         max_length=64, null=True, blank=True, unique=True)
-    activation_key_date = models.DateTimeField(null=True, blank=True,
-        help_text=(
+    activation_key_date = models.DateTimeField(
+        null=True, blank=True, help_text=(
             'Date on which the activation key was generated. '
             'Used for expiration.')
     )

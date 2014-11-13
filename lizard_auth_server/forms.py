@@ -43,19 +43,25 @@ def validate_password(cleaned_password):
 
     # At least MIN_LENGTH long
     if len(cleaned_password) < MIN_LENGTH:
-        raise ValidationError(_("The new password must be at least %d characters long.") % MIN_LENGTH)
+        raise ValidationError(
+            _("The new password must be at least %d characters long.")
+            % MIN_LENGTH)
 
     # Character requirements...
     digits = 0
     uppers = 0
     lowers = 0
     for char in cleaned_password:
-        if char.isdigit(): digits += 1
-        if char.islower(): uppers += 1
-        if char.isupper(): lowers += 1
+        if char.isdigit():
+            digits += 1
+        if char.islower():
+            uppers += 1
+        if char.isupper():
+            lowers += 1
     if digits < 2 or uppers < 1 or lowers < 1:
         raise ValidationError(
-            _("The new password must contain at least two numeric digits, one uppercase and one lowercase character.")
+            _("The new password must contain at least two numeric digits, "
+              "one uppercase and one lowercase character.")
         )
 
 

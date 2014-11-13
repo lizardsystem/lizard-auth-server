@@ -81,7 +81,7 @@
             <li><a href="{% url "lizard_auth_server.invite_user" %}">{% trans 'Register a new user' %}</a></li>
             {% endif %}
             {% if user.is_superuser %}
-            <li><a href="{% url "admin":lizard_auth_server_portal_changelist %}">{% trans 'Manage SSO portals' %}</a></li>
+            <li><a href="{% url "admin:lizard_auth_server_portal_changelist" %}">{% trans 'Manage SSO portals' %}</a></li>
             {% endif %}
         </ul>
     </div>

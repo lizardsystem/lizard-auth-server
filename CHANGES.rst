@@ -5,7 +5,10 @@ Changelog of lizard-auth-server
 0.2.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add an internal API call that returns all organisations, so that
+  they can be added to clients before any user of that organisation
+  has logged in (lizard_auth_client has a synchronise_organisations()
+  function).
 
 
 0.2.5 (2014-05-16)
@@ -62,4 +65,3 @@ Changelog of lizard-auth-server
   VerifyView, along with information about the user. This is ignored
   by old versions of lizard_auth_client but can be used by a new
   version to construct the same information at the Portal side.
-

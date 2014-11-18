@@ -278,13 +278,11 @@ class GetOrganisationsView(FormView):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        logger.debug("Hier, request.POST = {}".format(request.POST))
         return super(GetOrganisationsView, self).dispatch(
             request, *args, **kwargs)
 
     @method_decorator(never_cache)
     def post(self, request, *args, **kwargs):
-        logger.debug("It was actually a post")
         return super(GetOrganisationsView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):

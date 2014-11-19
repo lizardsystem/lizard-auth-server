@@ -210,18 +210,35 @@ class UserProfile(models.Model):
         return self.portals.filter(pk=portal.pk).exists()
 
     def all_organisation_roles(self, portal):
-        """Return a queryset of OrganisationRoles that apply to this profile.
+        """Return a QuerySet of OrganisationRoles that apply to this profile
+        on this portal.
 
-        There are two ways for a UserProfile to have a role in an
-        organisation: either be a member of the organisation and role
-        that everyone in the organisation has, or it must be
-        explicitly in this user's roles."""
+        There are three ways for a UserProfile to have a role in an
+        organisation:
+        - This profile has the organisationrole explicitly in its roles.
+        - Be a member of the organisation, and the OrganisationRole has
+          "for_all_users" checked
+        - This user is part of a UserGroup that has this Role
+          in its roles.
+        """
 
-        # TODO: understand/improve this query - why is distinct() needed?
+        # Role explicitly in the profile's roles
+        q_explicit = models.Q(userprofile=self, role__portal=portal)
+
+        # Organisationrole is for all users in the organisation, and
+        # this user is in it
+        q_organisation = models.Q(
+            organisation__userprofile=self,
+            for_all_users=True,
+            role__portal=portal)
+
+        # The user is in a UserGroup that has this role
+        q_usergroup = models.Q(
+            role__usergroup__user_profiles=self,
+            role__portal=portal)
+
         return OrganisationRole.objects.filter(
-            models.Q(organisation__userprofile=self, for_all_users=True) |
-            models.Q(userprofile=self)).filter(
-            role__portal=portal).distinct()
+            q_explicit | q_organisation | q_usergroup).distinct()
 
 
 # have the creation of a User trigger the creation of a Profile
@@ -433,3 +450,17 @@ class OrganisationRole(models.Model):
         else:
             return "{role} in {org}".format(
                 role=self.role, org=self.organisation)
+
+
+class UserGroup(models.Model):
+    """Group of user profiles with roles. To make it easier to give
+    someone a bunch of common roles.
+    """
+
+    name = models.CharField(max_length=100)
+    organisation = models.ForeignKey(Organisation)
+    user_profiles = models.ManyToManyField(UserProfile)
+    roles = models.ManyToManyField(Role)
+
+    class Meta:
+        unique_together = ('name', 'organisation')

@@ -148,3 +148,46 @@ class TestUserProfile(TestCase):
             len(list(profile.all_organisation_roles(portal2))), 2)
         self.assertEquals(
             len(list(profile.all_organisation_roles(portal3))), 0)
+
+    def test_user_doesnt_have_role_if_not_in_group(self):
+        portal = PortalF.create()
+        user = UserF.create(username='newuser3')
+        org = OrganisationF.create()
+        role = RoleF.create(portal=portal)
+
+        models.OrganisationRole.objects.create(
+            organisation=org, role=role, for_all_users=False)
+
+        profile = models.UserProfile.objects.fetch_for_user(user)
+
+        usergroup = models.UserGroup.objects.create(
+            name="Test user group.",
+            organisation=org)
+        usergroup.roles.add(role)
+        # But don't add user.
+
+        orgroles = list(profile.all_organisation_roles(portal))
+        self.assertEquals(orgroles, [])
+
+    def test_user_has_role_from_usergroup(self):
+        portal = PortalF.create()
+        user = UserF.create(username='newuser3')
+        org = OrganisationF.create()
+        role = RoleF.create(portal=portal)
+
+        orgrole = models.OrganisationRole.objects.create(
+            organisation=org, role=role, for_all_users=False)
+
+        profile = models.UserProfile.objects.fetch_for_user(user)
+
+        usergroup = models.UserGroup.objects.create(
+            name="Test user group.",
+            organisation=org)
+
+        usergroup.user_profiles.add(profile)
+        usergroup.roles.add(role)
+
+        orgroles = list(profile.all_organisation_roles(portal))
+
+        self.assertEquals(len(orgroles), 1)
+        self.assertEquals(orgroles[0].pk, orgrole.pk)

@@ -5,7 +5,9 @@ Changelog of lizard-auth-server
 0.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Add UserGroups. A UserGroup can be assigned a number of roles on portals,
+  and UserProfiles in the group then have those roles. Quicker way to give
+  someone a bunch of roles.
 
 
 0.3 (2014-11-19)

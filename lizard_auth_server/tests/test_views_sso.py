@@ -17,9 +17,9 @@ class TestConstructOrganisationRoleDict(TestCase):
         u_org = uuid.uuid4().hex
         u_role = uuid.uuid4().hex
 
-        org = test_models.OrganisationF.build(
+        org = test_models.OrganisationF.create(
             name='testorg', unique_id=u_org)
-        role = test_models.RoleF.build(
+        role = test_models.RoleF.create(
             unique_id=u_role,
             code='testrole',
             name='Testrole',
@@ -28,6 +28,7 @@ class TestConstructOrganisationRoleDict(TestCase):
 
         orgrole = models.OrganisationRole(
             organisation=org, role=role)
+        orgrole.save()
 
         self.assertEquals(
             views_sso.construct_organisation_role_dict([orgrole]), {

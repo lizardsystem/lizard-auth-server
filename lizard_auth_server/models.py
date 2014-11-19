@@ -10,7 +10,6 @@ from django.db import transaction
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.db.models.query_utils import Q
-from django.db.models.loading import get_model
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -25,23 +24,12 @@ from lizard_auth_server.utils import gen_secret_key
 logger = logging.getLogger(__name__)
 
 
-def gen_key(model, field):
-    """
-    Helper function to give a unique default value to the selected
-    field in a model.
-    """
-    def _genkey():
-        if isinstance(model, basestring):
-            ModelClass = get_model('lizard_auth_server', model)
-            if not ModelClass:
-                raise Exception('Unknown model {}'.format(model))
-        else:
-            ModelClass = model
-        key = gen_secret_key(64)
-        while ModelClass.objects.filter(**{field: key}).exists():
-            key = gen_secret_key(64)
-        return key
-    return _genkey
+def gen_key():
+    return gen_secret_key(64)
+
+
+def current_time_utc():
+    return datetime.datetime.now(tz=pytz.UTC)
 
 
 class Portal(models.Model):
@@ -53,11 +41,11 @@ class Portal(models.Model):
         help_text='Name used to refer to this portal.')
     sso_secret = models.CharField(
         max_length=64, unique=True,
-        default=gen_key('Portal', 'sso_secret'),
+        default=gen_key,
         help_text='Secret shared between SSO client and '
         'server to sign/encrypt communication.')
     sso_key = models.CharField(
-        max_length=64, unique=True, default=gen_key('Portal', 'sso_key'),
+        max_length=64, unique=True, default=gen_key,
         help_text='String used to identify the SSO client.')
     redirect_url = models.CharField(
         max_length=255,
@@ -70,8 +58,8 @@ class Portal(models.Model):
         return '{} ({})'.format(self.name, self.visit_url)
 
     def rotate_keys(self):
-        self.sso_secret = gen_key(Portal, 'sso_secret')()
-        self.sso_key = gen_key(Portal, 'sso_key')()
+        self.sso_secret = gen_key()
+        self.sso_key = gen_key()
         self.save()
 
     class Meta:
@@ -106,8 +94,7 @@ class Token(models.Model):
     request_token = models.CharField(max_length=64, unique=True)
     auth_token = models.CharField(max_length=64, unique=True)
     user = models.ForeignKey(User, null=True)
-    created = models.DateTimeField(
-        default=lambda: datetime.datetime.now(tz=pytz.UTC))
+    created = models.DateTimeField(default=current_time_utc)
 
     objects = TokenManager()
 
@@ -285,7 +272,7 @@ class Invitation(models.Model):
             raise Exception('user is already activated')
 
         # generate a new activation key
-        self.activation_key = gen_key(Invitation, 'activation_key')()
+        self.activation_key = gen_key()
 
         # update key date so we can check for expiration
         self.activation_key_date = datetime.datetime.now(tz=pytz.UTC)

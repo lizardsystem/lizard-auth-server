@@ -155,7 +155,6 @@ MIDDLEWARE_CLASSES = (
 
 INSTALLED_APPS = (
     'lizard_auth_server',
-    'south',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

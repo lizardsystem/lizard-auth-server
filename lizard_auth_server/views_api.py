@@ -18,7 +18,7 @@ from django.views.generic.edit import FormView
 
 from lizard_auth_server import forms
 from lizard_auth_server.http import JsonError, JsonResponse
-from lizard_auth_server.models import UserProfile
+from lizard_auth_server import models
 from lizard_auth_server.views_sso import construct_user_data
 
 logger = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ class AuthenticateUnsignedView(FormView):
             else:
                 try:
                     profile = user.get_profile()
-                except UserProfile.DoesNotExist:
+                except models.UserProfile.DoesNotExist:
                     return JsonError('No access to this portal')
                 if profile.has_access(portal):
                     user_data = construct_user_data(profile=profile)
@@ -156,7 +156,7 @@ class AuthenticateView(FormView):
             else:
                 try:
                     profile = user.get_profile()
-                except UserProfile.DoesNotExist:
+                except models.UserProfile.DoesNotExist:
                     return JsonError('No access to this portal')
                 if profile.has_access(portal):
                     user_data = construct_user_data(profile=profile)
@@ -221,7 +221,7 @@ class GetUserView(FormView):
             else:
                 try:
                     profile = user.get_profile()
-                except UserProfile.DoesNotExist:
+                except models.UserProfile.DoesNotExist:
                     return JsonError('No access to this portal')
                 if profile.has_access(portal):
                     user_data = construct_user_data(profile=profile)
@@ -247,7 +247,7 @@ class GetUsersView(FormView):
 
     @method_decorator(never_cache)
     def post(self, request, *args, **kwargs):
-        return super(FormView, self).post(request, *args, **kwargs)
+        return super(GetUsersView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         return self.get_users(form.portal)
@@ -263,8 +263,40 @@ class GetUsersView(FormView):
         for user in User.objects.select_related('userprofile'):
             try:
                 profile = user.get_profile()
-            except UserProfile.DoesNotExist:
+            except models.UserProfile.DoesNotExist:
                 continue
             if profile.has_access(portal):
                 user_data.append(construct_user_data(profile=profile))
         return JsonResponse({'users': user_data})
+
+
+class GetOrganisationsView(FormView):
+    '''
+    View that can be used by APIs to fetch all users of a portal.
+    '''
+    form_class = forms.DecryptForm
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(GetOrganisationsView, self).dispatch(
+            request, *args, **kwargs)
+
+    @method_decorator(never_cache)
+    def post(self, request, *args, **kwargs):
+        return super(GetOrganisationsView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        return JsonResponse(self.get_organisations(form.portal))
+
+    def form_invalid(self, form):
+        logger.error(
+            'Error while decrypting form: {}'.format(form.errors.as_text())
+        )
+        return HttpResponseBadRequest('Bad signature')
+
+    def get_organisations(self, portal):
+        return {
+            'success': True,
+            'organisations': [
+                organisation.as_dict()
+                for organisation in models.Organisation.objects.all()]}

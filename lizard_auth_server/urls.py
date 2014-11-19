@@ -60,6 +60,9 @@ urlpatterns = patterns(
     url(r'^api/get_users/$',
         views_api.GetUsersView.as_view(),
         name='lizard_auth_server.api.get_users'),
+    url(r'^api/get_organisations/$',
+        views_api.GetOrganisationsView.as_view(),
+        name='lizard_auth_server.api.get_organisations'),
 
     # SSO URLs for use by visitors Note: these are referred to by
     # lizard-auth-client: change them in both places

@@ -5,10 +5,10 @@ Changelog of lizard-auth-server
 0.2.6 (unreleased)
 ------------------
 
-- Add an internal API call that returns all organisations, so that
+- Added an internal API call that returns all organisations, so that
   they can be added to clients before any user of that organisation
-  has logged in (lizard_auth_client has a synchronise_organisations()
-  function).
+  has logged in (lizard_auth_client has a
+  ``synchronise_organisations()`` function).
 
 
 0.2.5 (2014-05-16)

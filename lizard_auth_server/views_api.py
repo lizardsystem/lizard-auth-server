@@ -272,7 +272,7 @@ class GetUsersView(FormView):
 
 class GetOrganisationsView(FormView):
     '''
-    View which can be used by API's to fetch all users of a portal.
+    View that can be used by APIs to fetch all users of a portal.
     '''
     form_class = forms.DecryptForm
 

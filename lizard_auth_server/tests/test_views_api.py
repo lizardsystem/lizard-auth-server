@@ -27,4 +27,5 @@ class TestGetOrganisationsView(TestCase):
         organisations = self.view.get_organisations(portal)['organisations']
 
         self.assertEquals(len(organisations), 1)
-        organisations[0]['unique_id'] = organisation.unique_id
+        self.assertEquals(
+            organisations[0]['unique_id'], organisation.unique_id)

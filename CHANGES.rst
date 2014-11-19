@@ -2,8 +2,8 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.2.6 (unreleased)
-------------------
+0.3 (2014-11-19)
+----------------
 
 - Added an internal API call that returns all organisations, so that
   they can be added to clients before any user of that organisation

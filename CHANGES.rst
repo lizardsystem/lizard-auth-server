@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 0.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Added support for login on custom domains.
 
 
 0.3 (2014-11-19)

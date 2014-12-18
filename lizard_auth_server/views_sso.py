@@ -151,6 +151,8 @@ class AuthorizeView(ProcessGetFormView):
             return HttpResponseForbidden('Invalid request token')
         if self.check_token_timeout():
             if self.request.user.is_authenticated():
+                self.next = form.cleaned_data.get('next',
+                    self.token.portal.redirect_url)
                 return self.form_valid_authenticated()
             return self.form_valid_unauthenticated()
         return self.token_timeout()
@@ -207,7 +209,7 @@ class AuthorizeView(ProcessGetFormView):
         self.token.user = self.request.user
         self.token.save()
         # redirect user back to the portal
-        url = urljoin(self.token.portal.redirect_url, 'sso/local_login') + '/'
+        url = urljoin(self.next, 'sso/local_login') + '/'
         url = '%s?%s' % (url, urllib.urlencode({'message': message}))
         return HttpResponseRedirect(url)
 

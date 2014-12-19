@@ -324,9 +324,7 @@ def get_next(form):
 
 
 def domain_match(domain, pattern):
-    if len(domain) < len(pattern):
-        return False
-    return (domain[-len(pattern):] == pattern)
+    return domain.endswith(pattern)
 
 
 class VerifyView(ProcessGetFormView):

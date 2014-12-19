@@ -318,7 +318,15 @@ def get_next(form):
     netloc = urlparse(next)[1]
     if netloc == '':
         return urljoin(portal_redirect, next)
+    if not domain_match(netloc, form.portal.allowed_domain):
+        return portal_redirect
     return next
+
+
+def domain_match(domain, pattern):
+    if len(domain) < len(pattern):
+        return False
+    return (domain[-len(pattern):] == pattern)
 
 
 class VerifyView(ProcessGetFormView):

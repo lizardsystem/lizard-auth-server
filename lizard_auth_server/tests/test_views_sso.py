@@ -1,6 +1,7 @@
 import uuid
 
-from django.test import TestCase
+from django.test import TestCase, Client
+from itsdangerous import URLSafeTimedSerializer
 
 from . import test_models
 from lizard_auth_server import models
@@ -45,3 +46,69 @@ class TestConstructOrganisationRoleDict(TestCase):
                 'organisation_roles': [
                     [u_org, u_role]
                 ]})
+
+class TestLoginRedirect(TestCase):
+    def setUp(self):
+        self.username = 'me'
+        self.password = 'your_mommie'
+        self.key = 'secret_key'
+        redirect = 'http://default.portal.net'
+        allowed_domain = 'custom.net'
+
+        self.client = Client()
+
+        self.portal = test_models.PortalF.create(
+            sso_key = self.key,
+            redirect_url = redirect,
+            allowed_domain = allowed_domain
+        )
+        user = test_models.UserF.create(username=self.username)
+        user.set_password(self.password)
+        user.save()
+
+        org = test_models.OrganisationF.create(name='Some org')
+        role = test_models.RoleF.create(portal=self.portal)
+
+        models.OrganisationRole.objects.create(
+            organisation=org, role=role, for_all_users=True)
+
+        profile = models.UserProfile.objects.fetch_for_user(user)
+        profile.organisations.add(org)
+        profile.portals.add(self.portal)
+
+    def authorize(self, next, redirect):
+        request_token = 'request_token'
+        auth_token = 'auth_token'
+
+        token = test_models.TokenF.create(request_token=request_token,
+            auth_token=auth_token, portal=self.portal)
+        
+        msg = {'request_token': request_token, 'key': self.key, 'next': next}
+        message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
+        params = {'key': self.key, 'message': message}
+        response = self.client.get('/sso/authorize/', params)
+        self.assertEquals(response.status_code, 302)
+
+        msg = {'request_token': request_token, 'auth_token': auth_token}
+        message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
+        expec = '{}{}?message={}'.format(redirect, '/sso/local_login/', message)
+        self.assertEquals(response.url, expec)
+
+        token.delete()
+
+    def test_login_redirect(self):
+        params = {
+            'username': self.username,
+            'password': self.password,
+            'next': '/sso/authorize'
+        }
+        response = self.client.post('/accounts/login/', params)
+
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.url, 'http://testserver/sso/authorize')
+
+        self.authorize(None, self.portal.redirect_url)
+        self.authorize('/', self.portal.redirect_url)
+        self.authorize('/this_is_fine.html', self.portal.redirect_url)
+        self.authorize('http://bad.com/wrong.aspx', self.portal.redirect_url)
+        self.authorize('http://very.custom.net/ok', 'http://very.custom.net')

@@ -318,9 +318,10 @@ def get_next(form):
     netloc = urlparse(next)[1]
     if netloc == '':
         return urljoin(portal_redirect, next)
-    if not domain_match(netloc, form.portal.allowed_domain):
-        return portal_redirect
-    return next
+    if form.portal.allowed_domain != '' \
+            and domain_match(netloc, form.portal.allowed_domain):
+        return next
+    return portal_redirect
 
 
 def domain_match(domain, pattern):

@@ -18,8 +18,9 @@ class PortalF(factory.DjangoModelFactory):
         model = models.Portal
 
     name = 'Some portal'
-    redirect_url = 'http://www.lizard.net/'
-    visit_url = 'http://www.lizard.net/'
+    redirect_url = 'http://default.portal.net/'
+    visit_url = 'http://www.portal.net/'
+    allowed_domain = ''
 
 
 class RoleF(factory.DjangoModelFactory):
@@ -35,6 +36,14 @@ class RoleF(factory.DjangoModelFactory):
     external_description = 'Buitenkant'
     internal_description = 'Binnenkant'
 
+    portal = factory.SubFactory(PortalF)
+
+
+class TokenF(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Token
+
+    request_token = 'Hard to guess token'
     portal = factory.SubFactory(PortalF)
 
 

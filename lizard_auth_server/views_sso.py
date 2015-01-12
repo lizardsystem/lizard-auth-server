@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from urlparse import urljoin
+try:
+    from urlparse import urljoin, urlparse
+    from urllib import urlencode
+except ImportError:
+    from urllib.parse import urljoin, urlparse, urlencode
 import datetime
 import json
 import logging
-import urllib
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -70,10 +73,10 @@ class PortalActionView(ProcessGetFormView):
             }
             # after logout, redirect user to the LogoutRedirectView,
             # which should redirect the user back to the portal again.
-            nextparams = urllib.urlencode(
+            nextparams = urlencode(
                 [('next', '%s?%s' % (
                   reverse('lizard_auth_server.sso.logout_redirect'),
-                  urllib.urlencode(nextparams))
+                  urlencode(nextparams))
                   )])
             url = '%s?%s' % (reverse('django.contrib.auth.views.logout'),
                              nextparams)
@@ -95,7 +98,7 @@ class LogoutRedirectView(ProcessGetFormView):
 
     def form_valid(self, form):
         if form.cleaned_data['action'] == 'logout':
-            url = urljoin(form.portal.redirect_url, 'sso/local_logout') + '/'
+            url = urljoin(get_next(form), 'sso/local_logout') + '/'
             return HttpResponseRedirect(url)
         else:
             return HttpResponseBadRequest('Unknown action')
@@ -151,6 +154,7 @@ class AuthorizeView(ProcessGetFormView):
             return HttpResponseForbidden('Invalid request token')
         if self.check_token_timeout():
             if self.request.user.is_authenticated():
+                self.next = get_next(form)
                 return self.form_valid_authenticated()
             return self.form_valid_unauthenticated()
         return self.token_timeout()
@@ -207,8 +211,8 @@ class AuthorizeView(ProcessGetFormView):
         self.token.user = self.request.user
         self.token.save()
         # redirect user back to the portal
-        url = urljoin(self.token.portal.redirect_url, 'sso/local_login') + '/'
-        url = '%s?%s' % (url, urllib.urlencode({'message': message}))
+        url = urljoin(self.next, 'sso/local_login') + '/'
+        url = '%s?%s' % (url, urlencode({'message': message}))
         return HttpResponseRedirect(url)
 
     def access_denied(self):
@@ -233,9 +237,9 @@ class AuthorizeView(ProcessGetFormView):
             'message': self.request.GET['message'],
             'key': self.request.GET['key'],
         }
-        params = urllib.urlencode([('next', '%s?%s' % (
+        params = urlencode([('next', '%s?%s' % (
                                   reverse('lizard_auth_server.sso.authorize'),
-                                  urllib.urlencode(nextparams)))])
+                                  urlencode(nextparams)))])
         return '%s?%s' % (reverse('django.contrib.auth.views.login'), params)
 
     def form_valid_unauthenticated(self):
@@ -304,6 +308,24 @@ def construct_organisation_role_dict(organisation_roles):
     data['roles'] = [obj.as_dict() for obj in roles]
 
     return data
+
+
+def get_next(form):
+    portal_redirect = form.portal.redirect_url
+    next = form.cleaned_data.get('next', None)
+    if next is None:
+        return portal_redirect
+    netloc = urlparse(next)[1]
+    if netloc == '':
+        return urljoin(portal_redirect, next)
+    if form.portal.allowed_domain != '' \
+            and domain_match(netloc, form.portal.allowed_domain):
+        return next
+    return portal_redirect
+
+
+def domain_match(domain, pattern):
+    return domain.endswith(pattern)
 
 
 class VerifyView(ProcessGetFormView):

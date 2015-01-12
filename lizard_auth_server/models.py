@@ -59,6 +59,10 @@ class Portal(models.Model):
     sso_key = models.CharField(
         max_length=64, unique=True, default=gen_key('Portal', 'sso_key'),
         help_text='String used to identify the SSO client.')
+    allowed_domain = models.CharField(
+        max_length=255,
+        default='',
+        help_text='Allowed domain pattern for redirects using the ''next'' parameter.')
     redirect_url = models.CharField(
         max_length=255,
         help_text='URL used in the SSO redirection.')

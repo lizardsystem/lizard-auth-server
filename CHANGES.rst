@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.5 (unreleased)
+0.5 (2015-04-17)
 ----------------
 
 - Compatibility with django 1.6: uidb64 instead of uidb36 hashed user IDs in

@@ -8,6 +8,9 @@ Changelog of lizard-auth-server
 - Compatibility with django 1.6: uidb64 instead of uidb36 hashed user IDs in
   password reset form. Password reset was broken after our move to django 1.6.
 
+  See
+  https://docs.djangoproject.com/en/1.6/releases/1.6/#django-contrib-auth-password-reset-uses-base-64-encoding-of-user-pk
+
 
 0.4 (2015-01-12)
 ----------------

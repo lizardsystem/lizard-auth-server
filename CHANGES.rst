@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 0.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Compatibility with django 1.6: uidb64 instead of uidb36 hashed user IDs in
+  password reset form. Password reset was broken after our move to django 1.6.
 
 
 0.4 (2015-01-12)

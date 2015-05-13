@@ -5,22 +5,24 @@
 
 {% block container %}
 <div class="content">
-    {% if form.errors %}
-        <div class="alert alert-block fade in">
-            <a class="close" data-dismiss="alert" href="#">×</a>
-            <p>{% blocktrans count form.errors.items|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}</p>
-        </div>
-    {% endif %}
-    <form action="" method="post">{% csrf_token %}
-        <fieldset>
-            <legend>{% trans 'Register user' %}</legend>
-            {% for field in form %}
-                {% include 'lizard_auth_server/form_field.html' %}
-            {% endfor %}
-            <div class="actions">
-                <input type="submit" class="btn btn-primary" value="{% trans 'Send registration email' %}">&nbsp;<button type="reset" class="btn">{% trans 'Reset values' %}</button>
+    <div class="row">
+        <h3>{% trans 'Register user' %}</h3>
+        {% if form.errors %}
+            <div class="alert alert-block fade in">
+                <a class="close" data-dismiss="alert" href="#">×</a>
+                <p>{% blocktrans count form.errors.items|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}</p>
             </div>
-        </fieldset>
-    </form>
+        {% endif %}
+        <form action="" method="post">{% csrf_token %}
+            <fieldset>
+                {% for field in form %}
+                    {% include 'lizard_auth_server/form_field.html' %}
+                {% endfor %}
+                <div class="actions">
+                    <input type="submit" class="btn btn-primary" value="{% trans 'Send registration email' %}">&nbsp;<button type="reset" class="btn">{% trans 'Reset values' %}</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
 </div>
 {% endblock %}

@@ -3,13 +3,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Open Water ID &mdash; {% block subtitle %}{% endblock subtitle %}</title>
+    <title>Lizard SSO - Open Water ID &mdash; {% block subtitle %}{% endblock subtitle %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- Le styles -->
     <link rel="shortcut icon" href="{{ STATIC_URL }}lizard_auth_server/favicon.ico">
-    <link href="{{ STATIC_URL }}lizard_auth_server/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}lizard_auth_server/bootstrap/bootstrap.paper.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}lizard_auth_server/style.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -20,49 +21,49 @@
     <!--[if lt IE 9]>
     <script src="{{ STATIC_URL }}html5shiv/html5shiv.js"></script>
     <![endif]-->
-    <script src="{{ STATIC_URL }}lizard_auth_server/jquery/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="{{ STATIC_URL }}lizard_auth_server/bootstrap/bootstrap.min.js"></script>
   </head>
   <body>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+    <nav class="navbar navbar-fixed-top navbar-lizard">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{% url "index" %}">Lizard SSO</a>
+          <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="{% url "index" %}">Open Water ID</a>
-          <div class="nav-collapse pull-right">
-            <ul class="nav">
-                <li class="divider-vertical"></li>
-                {% get_current_language as LANGUAGE_CODE %}
-                {% get_available_languages as LANGUAGES %}
-                {% for lang in LANGUAGES %}
-                <li class="btn-group">
-                    <form action="/i18n/setlang/" method="post" class="form-inline modal-form">{% csrf_token %}
-                      <input name="next" type="hidden" value="{{ request.get_full_path }}" />
-                      <input name="language" type="hidden" value="{{ lang.0 }}" />
-                      <button type="submit"
-                              class="btn {% ifequal LANGUAGE_CODE lang.0 %}active{% endifequal %}"
-                      >{{ lang.0|language_name_local }}</button>
-                    </form>
-                </li>
-                {% endfor %}
-                {% if user.is_authenticated %}
-                <li class="divider-vertical"></li>
-                <li><p class="navbar-text">{% blocktrans with user.username as name %}Hello, {{ name }}{% endblocktrans %}</p></li>
-                <li><a href="{% url "profile" %}">{% trans "Profile" %}</a></li>
-                {% if user.is_staff %}
-                <li><a href="{% url "admin:index" %}">{% trans "Django administration" %}</a></li>
-                {% endif %}
-                <li><a href="{% url "django.contrib.auth.views.logout" %}">{% trans 'Log out' %}</a></li>
-                {% endif %}
-            </ul>
-          </div>
+          </button>
         </div>
-      </div>
-    </div>
+        <div class="navbar-collapse collapse">
+          <ul class="navbar-nav navbar-left">
+              {% get_current_language as LANGUAGE_CODE %}
+              {% get_available_languages as LANGUAGES %}
+              {% for lang in LANGUAGES %}
+              <li class="btn-group">
+                  <form action="/i18n/setlang/" method="post" class="navbar-form">{% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.get_full_path }}" />
+                    <input name="language" type="hidden" value="{{ lang.0 }}" />
+                    <button type="submit"
+                            class="btn btn-default {% ifequal LANGUAGE_CODE lang.0 %}active{% endifequal %}"
+                    >{{ lang.0|language_name_local }}</button>
+                  </form>
+              </li>
+              {% endfor %}
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+              {% if user.is_authenticated %}
+              <li><p class="navbar-text">{% blocktrans with user.username as name %}Hello, {{ name }}{% endblocktrans %}</p></li>
+              <li><a href="{% url "profile" %}">{% trans "Profile" %}</a></li>
+              {% if user.is_staff %}
+              <li><a href="{% url "admin:index" %}">{% trans "Django administration" %}</a></li>
+              {% endif %}
+              <li><a href="{% url "django.contrib.auth.views.logout" %}">{% trans 'Log out' %}</a></li>
+              {% endif %}
+          </ul>
+        </div> <!-- collapse -->
+      </div> <!-- container-fluid -->
+    </nav>
     <div class="container">
     {% block container %}
         <div class="content">

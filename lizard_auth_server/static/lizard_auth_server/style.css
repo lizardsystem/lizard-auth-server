@@ -1,0 +1,17 @@
+.navbar-lizard {
+	background: #16a085;
+	color: white;
+}
+
+.navbar a,
+.navbar-header a,
+.navbar-nav a {
+	color: white;
+}
+
+.nav > li > a:focus,
+.nav > li > a:active,
+.nav > li > a:hover {
+    text-decoration: none;
+    background-color: #48c9b0;
+}

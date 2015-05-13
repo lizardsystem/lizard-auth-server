@@ -47,3 +47,8 @@ old
 
 # Local settings
 lizard_auth_server/local*.py
+
+# vagrant stuff
+dev
+.vagrant
+Vagrantfile

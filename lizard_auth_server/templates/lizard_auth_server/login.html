@@ -16,7 +16,20 @@
             <fieldset>
                 <legend>{% trans 'Log in' %}</legend>
                 {% for field in form %}
-                    {% include 'lizard_auth_server/form_field.html' %}
+                {% if field.html_name == "username" %}
+                    <div class="clearfix">
+                        <label for="id_username">Username:</label>
+                        <div class="controls">
+
+                            <input id="id_username" autofocus maxlength="254" name="username" type="text">
+
+
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    {% else %}
+                        {% include 'lizard_auth_server/form_field.html' %}
+                    {% endif %}
                 {% endfor %}
                 <div class="actions">
                     <input type="submit" class="btn btn-primary" value="{% trans 'Log in' %}">&nbsp;<button type="reset" class="btn">{% trans 'Reset values' %}</button>

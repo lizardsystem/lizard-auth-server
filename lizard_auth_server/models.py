@@ -137,9 +137,7 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True, editable=False)
     organisations = models.ManyToManyField(
         "Organisation", blank=True, null=True)
-
-    billable_organisation = models.ForeignKey(Organisation, null=True)
-
+    billable_organisation = models.ForeignKey(Organisation, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True, default='')
     street = models.CharField(
         max_length=255, null=True, blank=True, default='')

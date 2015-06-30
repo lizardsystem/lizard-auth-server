@@ -300,3 +300,58 @@ class GetOrganisationsView(FormView):
             'organisations': [
                 organisation.as_dict()
                 for organisation in models.Organisation.objects.all()]}
+
+
+class GetBillableOrganisationView(FormView):
+    '''
+    View that can be used by APIs to fetch all users of a portal.
+    '''
+    form_class = forms.DecryptForm
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(GetBillableOrganisationView, self). \
+            dispatch(request, *args, **kwargs)
+
+    @method_decorator(never_cache)
+    def post(self, request, *args, **kwargs):
+        return super(GetBillableOrganisationView, self). \
+            post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # portal = form.portal
+        try:
+            posted_username = form.cleaned_data.get('username')
+        except KeyError:
+            return JsonError('Missing "username" POST parameter.')
+        try:
+            found_user = User.objects.get(username=posted_username)
+        except User.DoesNotExist:
+            return JsonError("Could not find User instance for username '%s'" % \
+                posted_username)
+        try:
+            return self.get_billable_organisation(found_user)
+        except:
+            return JsonError(
+                "Could not get the billable organisation for username '%s'" % \
+                posted_username)
+
+
+    def form_invalid(self, form):
+        logger.error(
+            'Error while decrypting form: {}'.format(form.errors.as_text())
+        )
+        return HttpResponseBadRequest('Bad signature')
+
+    def get_billable_organisation(self, user):
+        try:
+            billable_org = user.billable_organisation
+            success = True
+            msg = "Everything went OK."
+        except AttributeError:
+            billable_org = None
+            success = False
+            msg = "The user '%s' does not have a billable_organisation"
+        return {
+            'success': success,
+            'billable_organisation': billable_org}

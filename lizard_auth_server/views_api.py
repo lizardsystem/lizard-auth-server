@@ -319,7 +319,6 @@ class GetBillableOrganisationView(FormView):
             post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        # portal = form.portal
         try:
             posted_username = form.cleaned_data.get('username')
         except KeyError:
@@ -336,7 +335,6 @@ class GetBillableOrganisationView(FormView):
                 "Could not get the billable organisation for username '%s'" % \
                 posted_username)
 
-
     def form_invalid(self, form):
         logger.error(
             'Error while decrypting form: {}'.format(form.errors.as_text())
@@ -344,14 +342,25 @@ class GetBillableOrganisationView(FormView):
         return HttpResponseBadRequest('Bad signature')
 
     def get_billable_organisation(self, user):
+        """
+        This returns the billable org for a passed-in user. It also returns some
+        metadata about the server-side processing of this API request.
+        """
         try:
             billable_org = user.billable_organisation
             success = True
-            msg = "Everything went OK."
+            message = "Everything went OK."
         except AttributeError:
             billable_org = None
             success = False
-            msg = "The user '%s' does not have a billable_organisation"
+            message = "The user '%s' does not have a billable_organisation"
+        except Exception as err:
+            billable_org = None
+            success = False
+            message = "There wan an unexpected error while retrieving the " \
+                      "billable organisation for %s: '%s'" % \
+                      (user.username, str(err))
         return {
             'success': success,
-            'billable_organisation': billable_org}
+            'billable_organisation': billable_org,
+            'message': message}

@@ -450,3 +450,19 @@ class OrganisationRole(models.Model):
         else:
             return "{role} in {org}".format(
                 role=self.role, org=self.organisation)
+
+    def as_dict(self):
+        """
+        """
+        org = Organisation.objects.get(id=self.organisation.id)
+        role = Role.objects.get(id=self.role.id)
+        portal = Portal.objects.get(id=role.portal.id)
+
+        return {
+            "for_all_users": self.for_all_users,
+            "portal_name": portal.name,
+            "organisation_name": org.name,
+            "organisation_uuid": org.unique_id,
+            "role_name": role.name,
+            "role_code": role.code,
+            "role_uuid": role.unique_id}

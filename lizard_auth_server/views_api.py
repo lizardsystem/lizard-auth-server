@@ -300,3 +300,121 @@ class GetOrganisationsView(FormView):
             'organisations': [
                 organisation.as_dict()
                 for organisation in models.Organisation.objects.all()]}
+
+
+class GetRolesView(FormView):
+    """
+    View that can be used to get
+    """
+    # return JsonResponse({"message": "Ik ben een apennootjes-eetfabriek, Jk."})
+
+    form_class = forms.DecryptForm
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(GetRolesView, self).dispatch(
+            request, *args, **kwargs)
+
+    @method_decorator(never_cache)
+    def post(self, request, *args, **kwargs):
+        return super(GetRolesView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        return JsonResponse(self.get_roles(form.portal))
+
+    def form_invalid(self, form):
+        logger.error(
+            'Error while decrypting roles form: {}'.format(form.errors.as_text())
+        )
+        return HttpResponseBadRequest('Bad signature')
+
+    def get_roles(self, portal):
+        roles = [
+            role.as_dict()
+            for role in models.Role.objects.all()
+            if role.portal == portal]
+        # roles = 'rolletjes!!!'
+        return {
+            'success': True,
+            'message': 'Received roles OK (portal=%s)' % portal,
+            'roles': roles}
+
+
+class GetOrganisationRolesView(FormView):
+    """
+    View that can be used to get m
+    """
+    form_class = forms.DecryptForm
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(GetOrganisationRolesView, self).dispatch(
+            request, *args, **kwargs)
+
+    @method_decorator(never_cache)
+    def post(self, request, *args, **kwargs):
+        return super(GetOrganisationRolesView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        return JsonResponse(self.get_organisation_roles(form.portal))
+
+    def form_invalid(self, form):
+        logger.error(
+            'Error while decrypting roles form: {}'.format(form.errors.as_text())
+        )
+        return HttpResponseBadRequest('Bad signature')
+
+    def get_organisation_roles(self, portal):
+        """
+        """
+        organisation_roles = [
+            organisation_role.as_dict()
+            for organisation_role in models.OrganisationRole.objects.all()]
+
+        return {
+            'success': True,
+            'message': 'Received organisation_roles OK (portal=%s)' % portal,
+            'organisation_roles': organisation_roles}
+
+class GetUserOrganisationRolesView(FormView):
+    """
+    View that can be used to respond with serialized UserOrganisationRoles.
+    """
+    form_class = forms.DecryptForm
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(GetUserOrganisationRolesView, self).dispatch(
+            request, *args, **kwargs)
+
+    @method_decorator(never_cache)
+    def post(self, request, *args, **kwargs):
+        return super(GetUserOrganisationRolesView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        portal = form.portal
+        username = form.cleaned_data.get('username')
+        if username:
+            return JsonResponse(self.get_user_organisation_roles(portal, username))
+        else:
+            return JsonError('Missing "username" POST parameter.')
+
+    def form_invalid(self, form):
+        logger.error(
+            'Error while decrypting roles form: {}'.format(form.errors.as_text())
+        )
+        return HttpResponseBadRequest('Bad signature')
+
+    def get_user_organisation_roles(self, portal, username):
+        """
+        Return the serialized model instances.
+        """
+        up = models.UserProfile.objects.get(user__username=username)
+        uor_qs = up.roles.get_queryset()
+        uor_list = filter(lambda uord: uord['portal_name'] == portal.name, \
+                          [uor.as_dict() for uor in uor_qs.all()])
+        return {
+            "success": True,
+            "user_organisation_roles_data": uor_list,
+            "message": 'Received user_organisation_roles OK (portal=%s)'
+                        % portal}

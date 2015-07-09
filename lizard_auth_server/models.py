@@ -451,14 +451,6 @@ class OrganisationRole(models.Model):
             return "{role} in {org}".format(
                 role=self.role, org=self.organisation)
 
-    # def as_dict(self):
-    #     return {
-    #         "organisation_name": self.organisation.name,
-    #         "organisation_uuid": self.organisation.unique_id,
-    #         "role_name": self.role.name,
-    #         "role_code": self.role.code,
-    #         "role_uuid": self.role.unique_id}
-
     def as_dict(self):
         return {
             "organisation": self.organisation.as_dict(),

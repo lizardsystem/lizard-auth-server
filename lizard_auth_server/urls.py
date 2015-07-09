@@ -68,10 +68,6 @@ urlpatterns = patterns(
         views_api.RolesView.as_view(),
         name='lizard_auth_server.api.roles'),
 
-    url(r'^api/organisation_roles/$',
-        views_api.OrganisationRolesView.as_view(),
-        name='lizard_auth_server.api.organisation_roles'),
-
     url(r'^api/user_organisation_roles/$',
         views_api.UserOrganisationRolesView.as_view(),
         name='lizard_auth_server.api.user_organisation_roles'),

@@ -296,28 +296,23 @@ class GetOrganisationsView(FormView):
 
     def get_organisations(self, portal):
         return {
-            'success': True,
             'organisations': [
                 organisation.as_dict()
                 for organisation in models.Organisation.objects.all()]}
 
-
 class RolesView(FormView):
     """
-    View that can be used to get
+    View that can be used to respond with serialized Roles.
     """
-    # return JsonResponse({"message": "Ik ben een apennootjes-eetfabriek, Jk."})
-
     form_class = forms.DecryptForm
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(GetRolesView, self).dispatch(
+        return super(RolesView, self).dispatch(
             request, *args, **kwargs)
 
-    @method_decorator(never_cache)
     def post(self, request, *args, **kwargs):
-        return super(GetRolesView, self).post(request, *args, **kwargs)
+        return super(RolesView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         return JsonResponse(self.get_roles(form.portal))
@@ -329,52 +324,9 @@ class RolesView(FormView):
         return HttpResponseBadRequest('Bad signature')
 
     def get_roles(self, portal):
-        roles = [
-            role.as_dict()
-            for role in models.Role.objects.all()
-            if role.portal == portal]
-        # roles = 'rolletjes!!!'
-        return {
-            'success': True,
-            'message': 'Received roles OK (portal=%s)' % portal,
-            'roles': roles}
-
-
-class OrganisationRolesView(FormView):
-    """
-    View that can be used to get m
-    """
-    form_class = forms.DecryptForm
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(GetOrganisationRolesView, self).dispatch(
-            request, *args, **kwargs)
-
-    @method_decorator(never_cache)
-    def post(self, request, *args, **kwargs):
-        return super(GetOrganisationRolesView, self).post(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        return JsonResponse(self.get_organisation_roles(form.portal))
-
-    def form_invalid(self, form):
-        logger.error(
-            'Error while decrypting roles form: {}'.format(form.errors.as_text())
-        )
-        return HttpResponseBadRequest('Bad signature')
-
-    def get_organisation_roles(self, portal):
-        """
-        """
-        organisation_roles = [
-            organisation_role.as_dict()
-            for organisation_role in models.OrganisationRole.objects.all()]
-
-        return {
-            'success': True,
-            'message': 'Received organisation_roles OK (portal=%s)' % portal,
-            'organisation_roles': organisation_roles}
+        return {"roles": [role.as_dict()
+                          for role in models.Role.objects.all()
+                          if role.portal == portal]}
 
 
 class UserOrganisationRolesView(FormView):
@@ -385,12 +337,11 @@ class UserOrganisationRolesView(FormView):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(GetUserOrganisationRolesView, self).dispatch(
+        return super(UserOrganisationRolesView, self).dispatch(
             request, *args, **kwargs)
 
-    @method_decorator(never_cache)
     def post(self, request, *args, **kwargs):
-        return super(GetUserOrganisationRolesView, self).post(request, *args, **kwargs)
+        return super(UserOrganisationRolesView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         portal = form.portal
@@ -410,12 +361,7 @@ class UserOrganisationRolesView(FormView):
         """
         Return the serialized model instances.
         """
-        up = models.UserProfile.objects.get(user__username=username)
-        uor_qs = up.roles.get_queryset()
-        uor_list = filter(lambda uord: uord['portal_name'] == portal.name, \
-                          [uor.as_dict() for uor in uor_qs.all()])
-        return {
-            "success": True,
-            "user_organisation_roles_data": uor_list,
-            "message": 'Received user_organisation_roles OK (portal=%s)'
-                        % portal}
+        user_profile = models.UserProfile.objects.get(user__username=username)
+        return {"user_organisation_roles_data": [
+                    uor.as_dict() for uor in
+                    user_profile.all_organisation_roles(portal)]}

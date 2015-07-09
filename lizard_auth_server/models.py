@@ -452,17 +452,12 @@ class OrganisationRole(models.Model):
                 role=self.role, org=self.organisation)
 
     def as_dict(self):
-        """
-        """
-        org = Organisation.objects.get(id=self.organisation.id)
-        role = Role.objects.get(id=self.role.id)
-        portal = Portal.objects.get(id=role.portal.id)
 
         return {
             "for_all_users": self.for_all_users,
-            "portal_name": portal.name,
-            "organisation_name": org.name,
-            "organisation_uuid": org.unique_id,
-            "role_name": role.name,
-            "role_code": role.code,
-            "role_uuid": role.unique_id}
+            "portal_name": self.role.portal.name,
+            "organisation_name": self.organisation.name,
+            "organisation_uuid": self.organisation.unique_id,
+            "role_name": self.role.name,
+            "role_code": self.role.code,
+            "role_uuid": self.role.unique_id}

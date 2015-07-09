@@ -302,7 +302,7 @@ class GetOrganisationsView(FormView):
                 for organisation in models.Organisation.objects.all()]}
 
 
-class GetRolesView(FormView):
+class RolesView(FormView):
     """
     View that can be used to get
     """
@@ -340,7 +340,7 @@ class GetRolesView(FormView):
             'roles': roles}
 
 
-class GetOrganisationRolesView(FormView):
+class OrganisationRolesView(FormView):
     """
     View that can be used to get m
     """
@@ -376,7 +376,8 @@ class GetOrganisationRolesView(FormView):
             'message': 'Received organisation_roles OK (portal=%s)' % portal,
             'organisation_roles': organisation_roles}
 
-class GetUserOrganisationRolesView(FormView):
+
+class UserOrganisationRolesView(FormView):
     """
     View that can be used to respond with serialized UserOrganisationRoles.
     """

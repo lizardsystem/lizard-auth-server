@@ -452,7 +452,6 @@ class OrganisationRole(models.Model):
                 role=self.role, org=self.organisation)
 
     def as_dict(self):
-
         return {
             "for_all_users": self.for_all_users,
             "portal_name": self.role.portal.name,

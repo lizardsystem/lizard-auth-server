@@ -324,9 +324,8 @@ class RolesView(FormView):
         return HttpResponseBadRequest('Bad signature')
 
     def get_roles(self, portal):
-        return {"roles": [role.as_dict()
-                          for role in models.Role.objects.all()
-                          if role.portal == portal]}
+        return {"roles": [role.as_dict() for role in
+                          models.Role.objects.filter(portal=portal)]}
 
 
 class UserOrganisationRolesView(FormView):

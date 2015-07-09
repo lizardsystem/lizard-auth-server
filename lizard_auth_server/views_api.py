@@ -300,6 +300,7 @@ class GetOrganisationsView(FormView):
                 organisation.as_dict()
                 for organisation in models.Organisation.objects.all()]}
 
+
 class RolesView(FormView):
     """
     View that can be used to respond with serialized Roles.
@@ -310,9 +311,6 @@ class RolesView(FormView):
     def dispatch(self, request, *args, **kwargs):
         return super(RolesView, self).dispatch(
             request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return super(RolesView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         return JsonResponse(self.get_roles(form.portal))
@@ -338,9 +336,6 @@ class UserOrganisationRolesView(FormView):
     def dispatch(self, request, *args, **kwargs):
         return super(UserOrganisationRolesView, self).dispatch(
             request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return super(UserOrganisationRolesView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         portal = form.portal

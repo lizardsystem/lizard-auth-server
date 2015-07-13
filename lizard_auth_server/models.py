@@ -450,3 +450,9 @@ class OrganisationRole(models.Model):
         else:
             return "{role} in {org}".format(
                 role=self.role, org=self.organisation)
+
+    def as_dict(self):
+        return {
+            "organisation": self.organisation.as_dict(),
+            "role": self.role.as_dict()
+        }

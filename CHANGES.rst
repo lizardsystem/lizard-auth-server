@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.6 (unreleased)
+0.6 (2015-07-14)
 ----------------
 
 - New API endpoints: get_roles, get_user_organisation_roles.

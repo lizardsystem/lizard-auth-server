@@ -62,7 +62,9 @@ class Portal(models.Model):
     allowed_domain = models.CharField(
         max_length=255,
         default='',
-        help_text='Allowed domain pattern for redirects using the ''next'' parameter.')
+        help_text=(
+            'Allowed domain suffix for redirects using the next parameter. '
+            'Multiple, whitespace-separated suffixes may be specified.'))
     redirect_url = models.CharField(
         max_length=255,
         help_text='URL used in the SSO redirection.')

@@ -237,9 +237,12 @@ class AuthorizeView(ProcessGetFormView):
             'message': self.request.GET['message'],
             'key': self.request.GET['key'],
         }
-        params = urlencode([('next', '%s?%s' % (
-                                  reverse('lizard_auth_server.sso.authorize'),
-                                  urlencode(nextparams)))])
+        params = urlencode([(
+            'next',
+            '%s?%s' % (
+                reverse('lizard_auth_server.sso.authorize'),
+                urlencode(nextparams))
+        )])
         return '%s?%s' % (reverse('django.contrib.auth.views.login'), params)
 
     def form_valid_unauthenticated(self):

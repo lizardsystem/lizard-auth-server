@@ -327,8 +327,20 @@ def get_next(form):
     return portal_redirect
 
 
-def domain_match(domain, pattern):
-    return domain.endswith(pattern)
+def domain_match(domain, suffix):
+    """Test if `domain` ends with `suffix`.
+
+    Args:
+       domain (str): a domain name.
+       suffix (str): a string the domain name should end with. Multiple
+         suffixes are possible and should be separated by whitespace,
+         for example: 'lizard.net ddsc.nl'.
+
+    Returns:
+       bool: True if domain ends with the specified suffix, False otherwise.
+
+    """
+    return domain.endswith(tuple(suffix.split()))
 
 
 class VerifyView(ProcessGetFormView):

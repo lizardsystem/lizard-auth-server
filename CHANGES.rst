@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.7 (unreleased)
+0.7 (2015-08-26)
 ----------------
 
 - The "allowed domain" setting for a site can now include multiple

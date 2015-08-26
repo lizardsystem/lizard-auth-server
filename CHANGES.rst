@@ -7,6 +7,10 @@ Changelog of lizard-auth-server
 
 - The "allowed domain" setting for a site can now include multiple
   space-separated patterns.
+  [byrman]
+
+- Upgraded the test setup so that coverage is now also reported. We're at 56%.
+  [reinout]
 
 
 0.6 (2015-07-14)

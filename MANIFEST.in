@@ -1,4 +1,5 @@
-# Include docs in the root.
-include *.rst
-# Include everything in our project directory.
-graft lizard_auth_server
+recursive-include lizard_auth_server *
+recursive-include doc/source *
+include *
+exclude .installed.cfg
+global-exclude *.pyc

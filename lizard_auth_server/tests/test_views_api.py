@@ -10,12 +10,10 @@ class TestGetOrganisationsView(TestCase):
         self.view = views_api.GetOrganisationsView()
 
     def test_empty(self):
-        response = self.view.get_organisations(None)
+        result = self.view.get_organisations(None)
         self.assertEquals(
-            response,
-            {
-                'success': True,
-                'organisations': []})
+            result,
+            {'organisations': []})
 
     def test_with_role(self):
         portal = test_models.PortalF.create()

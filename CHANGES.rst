@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 0.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- The "allowed domain" setting for a site can now include multiple
+  space-separated patterns.
 
 
 0.6 (2015-07-14)

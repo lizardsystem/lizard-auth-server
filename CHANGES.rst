@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.8 (unreleased)
+0.8 (2015-09-18)
 ----------------
 
 - Showing all organizations for a user.

@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 0.8 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Showing all organizations for a user.
+  [remco]
 
 
 0.7 (2015-08-26)

@@ -21,8 +21,8 @@
                     <td>{{ view.profile.title }}</td>
                 </tr>
                 <tr>
-                    <th>{% trans 'Organisation' %}</th>
-                    <td>{{ view.profile.organisation }}</td>
+                    <th>{% trans 'Organisations' %}</th>
+                    <td>{{ view.profile.organisations.all|join:", " }}</td>
                 </tr>
                 <tr>
                     <th>{% trans 'Street' %}</th>

@@ -77,14 +77,14 @@ class TestLoginRedirect(TestCase):
         profile.organisations.add(org)
         profile.portals.add(self.portal)
 
-    def authorize_and_check_redirect(self, next, redirect):
+    def authorize_and_check_redirect(self, domain, redirect):
         request_token = 'request_token'
         auth_token = 'auth_token'
 
         token = test_models.TokenF.create(request_token=request_token,
             auth_token=auth_token, portal=self.portal)
 
-        msg = {'request_token': request_token, 'key': self.key, 'next': next}
+        msg = {'request_token': request_token, 'key': self.key, 'domain': domain}
         message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
         params = {'key': self.key, 'message': message}
         response = self.client.get('/sso/authorize/', params)
@@ -113,7 +113,6 @@ class TestLoginRedirect(TestCase):
         self.authorize_and_check_redirect('/this_is_fine.html', self.portal.redirect_url)
         self.authorize_and_check_redirect('http://bad.com/wrong.aspx', self.portal.redirect_url)
         self.authorize_and_check_redirect('http://very.custom.net/ok', 'http://very.custom.net')
-        self.authorize_and_check_redirect('very.custom.net/ok', self.portal.redirect_url)
         self.portal.allowed_domain = ''
         self.portal.save()
         self.authorize_and_check_redirect('http://very.custom.net/nok', self.portal.redirect_url)

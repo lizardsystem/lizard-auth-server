@@ -5,7 +5,13 @@ Changelog of lizard-auth-server
 0.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- The parameter to redirect to a different domain is now called ``domain``
+  instead of ``next``. ``next`` is already used by django itself and it
+  interferes too much.
+
+  The ``next`` parameter is still supported if it starts with ``http`` for
+  temporary backwards compatibility.
+  [reinout]
 
 
 0.8 (2015-09-18)

@@ -47,6 +47,7 @@ class TestConstructOrganisationRoleDict(TestCase):
                     [u_org, u_role]
                 ]})
 
+
 class TestLoginRedirect(TestCase):
     def setUp(self):
         self.username = 'me'
@@ -82,7 +83,7 @@ class TestLoginRedirect(TestCase):
 
         token = test_models.TokenF.create(request_token=request_token,
             auth_token=auth_token, portal=self.portal)
-        
+
         msg = {'request_token': request_token, 'key': self.key, 'next': next}
         message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
         params = {'key': self.key, 'message': message}

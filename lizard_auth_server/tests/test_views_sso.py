@@ -77,7 +77,7 @@ class TestLoginRedirect(TestCase):
         profile.organisations.add(org)
         profile.portals.add(self.portal)
 
-    def authorize(self, next, redirect):
+    def authorize_and_check_redirect(self, next, redirect):
         request_token = 'request_token'
         auth_token = 'auth_token'
 
@@ -108,11 +108,11 @@ class TestLoginRedirect(TestCase):
         self.assertEquals(response.status_code, 302)
         self.assertEquals(response.url, 'http://testserver/sso/authorize')
 
-        self.authorize(None, self.portal.redirect_url)
-        self.authorize('/', self.portal.redirect_url)
-        self.authorize('/this_is_fine.html', self.portal.redirect_url)
-        self.authorize('http://bad.com/wrong.aspx', self.portal.redirect_url)
-        self.authorize('http://very.custom.net/ok', 'http://very.custom.net')
+        self.authorize_and_check_redirect(None, self.portal.redirect_url)
+        self.authorize_and_check_redirect('/', self.portal.redirect_url)
+        self.authorize_and_check_redirect('/this_is_fine.html', self.portal.redirect_url)
+        self.authorize_and_check_redirect('http://bad.com/wrong.aspx', self.portal.redirect_url)
+        self.authorize_and_check_redirect('http://very.custom.net/ok', 'http://very.custom.net')
         self.portal.allowed_domain = ''
         self.portal.save()
-        self.authorize('http://very.custom.net/nok', self.portal.redirect_url)
+        self.authorize_and_check_redirect('http://very.custom.net/nok', self.portal.redirect_url)

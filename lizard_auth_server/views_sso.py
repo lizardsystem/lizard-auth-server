@@ -98,7 +98,7 @@ class LogoutRedirectView(ProcessGetFormView):
 
     def form_valid(self, form):
         if form.cleaned_data['action'] == 'logout':
-            url = urljoin(get_next(form), 'sso/local_logout') + '/'
+            url = urljoin(get_domain(form), 'sso/local_logout') + '/'
             return HttpResponseRedirect(url)
         else:
             return HttpResponseBadRequest('Unknown action')
@@ -154,7 +154,7 @@ class AuthorizeView(ProcessGetFormView):
             return HttpResponseForbidden('Invalid request token')
         if self.check_token_timeout():
             if self.request.user.is_authenticated():
-                self.next = get_next(form)
+                self.domain = get_domain(form)
                 return self.form_valid_authenticated()
             return self.form_valid_unauthenticated()
         return self.token_timeout()
@@ -211,7 +211,7 @@ class AuthorizeView(ProcessGetFormView):
         self.token.user = self.request.user
         self.token.save()
         # redirect user back to the portal
-        url = urljoin(self.next, 'sso/local_login') + '/'
+        url = urljoin(self.domain, 'sso/local_login') + '/'
         url = '%s?%s' % (url, urlencode({'message': message}))
         return HttpResponseRedirect(url)
 
@@ -313,17 +313,35 @@ def construct_organisation_role_dict(organisation_roles):
     return data
 
 
-def get_next(form):
+def get_domain(form):
+    """Return domain for the redirect back to the site.
+
+    Normally, the ``redirect_url`` is used. If your server is known under
+    several domains, you can pass a ``domain`` GET parameter.
+
+    Note: the domain can also have an extra path element, so
+    http://some.where/something is allowed, if needed.
+
+    """
     portal_redirect = form.portal.redirect_url
+    domain = form.cleaned_data.get('domain', None)
+
+    # BBB, previously the "next" parameter was used, but django itself also
+    # uses it, leading to conflicts. IF "next" starts with "http", we use it
+    # and otherwise we omit it.
     next = form.cleaned_data.get('next', None)
-    if next is None:
+    if next:
+        if next.startswith('http'):  # Includes https :-)
+            domain = next
+
+    if domain is None:
         return portal_redirect
-    netloc = urlparse(next)[1]
+    netloc = urlparse(domain)[1]
     if netloc == '':
-        return urljoin(portal_redirect, next)
+        return urljoin(portal_redirect, domain)
     if form.portal.allowed_domain != '' \
             and domain_match(netloc, form.portal.allowed_domain):
-        return next
+        return domain
     return portal_redirect
 
 

@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-0.9 (unreleased)
+1.0 (2015-09-24)
 ----------------
 
 - The parameter to redirect to a different domain is now called ``domain``

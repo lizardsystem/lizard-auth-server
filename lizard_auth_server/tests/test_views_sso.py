@@ -113,6 +113,7 @@ class TestLoginRedirect(TestCase):
         self.authorize_and_check_redirect('/this_is_fine.html', self.portal.redirect_url)
         self.authorize_and_check_redirect('http://bad.com/wrong.aspx', self.portal.redirect_url)
         self.authorize_and_check_redirect('http://very.custom.net/ok', 'http://very.custom.net')
+        self.authorize_and_check_redirect('very.custom.net/ok', self.portal.redirect_url)
         self.portal.allowed_domain = ''
         self.portal.save()
         self.authorize_and_check_redirect('http://very.custom.net/nok', self.portal.redirect_url)

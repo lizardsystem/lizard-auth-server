@@ -201,8 +201,8 @@ class InvitationMixin(object):
 
     def invalid_activation_key(self, request):
         logger.warn(
-            'invalid activation key used by {}'
-            .format(request.META['REMOTE_ADDR']))
+            'invalid activation key used by %s',
+            request.META['REMOTE_ADDR'])
         return ErrorMessageResponse(
             request,
             _('Invalid activation key. Perhaps this account '

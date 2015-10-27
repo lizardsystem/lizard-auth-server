@@ -70,7 +70,7 @@ class AuthenticateUnsignedView(FormView):
             )
 
     def form_invalid(self, form):
-        logger.error('Error in posted form: {}'.format(form.errors.as_text()))
+        logger.error('Error in posted form: %s', form.errors.as_text())
         return HttpResponseBadRequest('Bad input')
 
     @method_decorator(sensitive_variables('password'))
@@ -90,9 +90,8 @@ class AuthenticateUnsignedView(FormView):
                 else:
                     return JsonError('No access to this portal')
         else:
-            logger.warn('Login failed for user {} and ip {}'.format(
-                username, self.request.META['REMOTE_ADDR']
-            ))
+            logger.warn('Login failed for user %s and ip %s',
+                        username, self.request.META['REMOTE_ADDR'])
             return JsonError('Login failed')
 
 
@@ -140,9 +139,8 @@ class AuthenticateView(FormView):
             )
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(
-            form.errors.as_text()
-        ))
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     @method_decorator(sensitive_variables('password'))
@@ -162,9 +160,8 @@ class AuthenticateView(FormView):
                 else:
                     return JsonError('No access to this portal')
         else:
-            logger.warn('Login failed for user {} and ip {}'.format(
-                username, self.request.META['REMOTE_ADDR']
-            ))
+            logger.warn('Login failed for user %s and ip %s',
+                        username, self.request.META['REMOTE_ADDR'])
             return JsonError('Login failed')
 
 
@@ -203,9 +200,8 @@ class GetUserView(FormView):
             return JsonError('Missing "username" POST parameter.')
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(
-            form.errors.as_text()
-        ))
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     def get_user(self, portal, username):
@@ -251,9 +247,8 @@ class GetUsersView(FormView):
         return self.get_users(form.portal)
 
     def form_invalid(self, form):
-        logger.error(
-            'Error while decrypting form: {}'.format(form.errors.as_text())
-        )
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     def get_users(self, portal):
@@ -287,9 +282,8 @@ class GetOrganisationsView(FormView):
         return JsonResponse(self.get_organisations(form.portal))
 
     def form_invalid(self, form):
-        logger.error(
-            'Error while decrypting form: {}'.format(form.errors.as_text())
-        )
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     def get_organisations(self, portal):
@@ -315,9 +309,8 @@ class RolesView(FormView):
 
     def form_invalid(self, form):
         logger.error(
-            'Error while decrypting roles form: {}'.format(
+            'Error while decrypting roles form: %s',
                 form.errors.as_text())
-        )
         return HttpResponseBadRequest('Bad signature')
 
     def get_roles(self, portal):
@@ -346,10 +339,8 @@ class UserOrganisationRolesView(FormView):
             return JsonError('Missing "username" POST parameter.')
 
     def form_invalid(self, form):
-        logger.error(
-            'Error while decrypting roles form: {}'.format(
-                form.errors.as_text())
-        )
+        logger.error('Error while decrypting roles form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     def get_user_organisation_roles(self, portal, username):

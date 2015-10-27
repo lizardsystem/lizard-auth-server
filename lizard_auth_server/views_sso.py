@@ -32,8 +32,6 @@ except ImportError:
     from urllib.parse import urljoin, urlparse, urlencode
 
 
-
-
 logger = logging.getLogger(__name__)
 
 TOKEN_TIMEOUT = datetime.timedelta(minutes=settings.SSO_TOKEN_TIMEOUT_MINUTES)
@@ -85,9 +83,10 @@ class PortalActionView(ProcessGetFormView):
         return HttpResponseBadRequest('Unknown action')
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(
-                     form.errors.as_text()))
-        return ErrorMessageResponse(self.request, _('Communication error.'),
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
+        return ErrorMessageResponse(self.request,
+                                    _('Communication error.'),
                                     400)
 
 
@@ -105,9 +104,10 @@ class LogoutRedirectView(ProcessGetFormView):
             return HttpResponseBadRequest('Unknown action')
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(
-                     form.errors.as_text()))
-        return ErrorMessageResponse(self.request, _('Communication error.'),
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
+        return ErrorMessageResponse(self.request,
+                                    _('Communication error.'),
                                     400)
 
 
@@ -128,8 +128,8 @@ class RequestTokenView(ProcessGetFormView):
         return HttpResponse(data)
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(
-                     form.errors.as_text()))
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
 
@@ -161,9 +161,10 @@ class AuthorizeView(ProcessGetFormView):
         return self.token_timeout()
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(
-                     form.errors.as_text()))
-        return ErrorMessageResponse(self.request, _('Communication error.'),
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
+        return ErrorMessageResponse(self.request,
+                                    _('Communication error.'),
                                     400)
 
     def check_token_timeout(self):
@@ -404,6 +405,6 @@ class VerifyView(ProcessGetFormView):
         return HttpResponse(data)
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(
-                     form.errors.as_text()))
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')

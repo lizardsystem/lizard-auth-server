@@ -353,8 +353,8 @@ class Invitation(models.Model):
                 self.save()
             else:
                 logger.warn(
-                    'this invitation already has a user linked to it: {}'
-                    .format(user))
+                    'This invitation already has a user linked to it: %s',
+                    user)
 
     def activate(self, data):
         with transaction.commit_on_success():

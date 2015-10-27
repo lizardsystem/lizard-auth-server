@@ -11,10 +11,9 @@ cache:
    - eggs
    - $HOME/.local
 install:
-  - ls -l /usr/lib/python2.7/dist-packages/
   - deactivate
   - python bootstrap.py
-  - bin/buildout
+  - bin/buildout -v
 script:
   - bin/test
 after_success:

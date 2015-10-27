@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.template.context import RequestContext
+from django.template.response import TemplateResponse
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
+from django.views.generic.base import TemplateView
+from django.views.generic.edit import FormView
+from lizard_auth_server import forms
+from lizard_auth_server.models import Invitation
+from lizard_auth_server.models import Portal
 
 import logging
 
-from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
-from django.views.generic.edit import FormView
-from django.utils.translation import ugettext as _
-from django.http import (
-    HttpResponseRedirect
-)
-from django.utils.decorators import method_decorator
-from django.views.generic.base import TemplateView
-from django.template.context import RequestContext
-from django.template.response import TemplateResponse
-
-from lizard_auth_server import forms
-from lizard_auth_server.models import Portal, Invitation
 
 logger = logging.getLogger(__name__)
 

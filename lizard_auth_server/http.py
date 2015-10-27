@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.http import HttpResponse
 
 import json
-
-from django.http import HttpResponse
 
 
 def JsonResponse(data, already_serialized=False):

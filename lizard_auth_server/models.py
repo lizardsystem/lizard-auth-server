@@ -1,25 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.db import models
+from django.db import transaction
+from django.db.models.loading import get_model
+from django.db.models.query_utils import Q
+from django.db.models.signals import post_save
+from django.template.loader import render_to_string
+from django.utils import translation
+from lizard_auth_server.utils import gen_secret_key
 
 import datetime
 import logging
-import uuid
-
-from django.db import models
-from django.db import transaction
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.db.models.query_utils import Q
-from django.db.models.loading import get_model
-from django.core.mail import send_mail
-from django.conf import settings
-from django.template.loader import render_to_string
-from django.utils import translation
-from django.core.exceptions import ValidationError
-
 import pytz
-
-from lizard_auth_server.utils import gen_secret_key
+import uuid
 
 
 logger = logging.getLogger(__name__)

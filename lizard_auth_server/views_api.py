@@ -1,25 +1,23 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-import logging
-
 from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.auth.models import User
-from django.http import (
-    HttpResponse,
-    HttpResponseBadRequest,
-)
+from django.http import HttpResponse
+from django.http import HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.debug import sensitive_variables
 from django.views.generic.edit import FormView
-
 from lizard_auth_server import forms
-from lizard_auth_server.http import JsonError, JsonResponse
 from lizard_auth_server import models
+from lizard_auth_server.http import JsonError
+from lizard_auth_server.http import JsonResponse
 from lizard_auth_server.views_sso import construct_user_data
+
+import logging
+
 
 logger = logging.getLogger(__name__)
 

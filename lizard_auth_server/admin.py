@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy, ugettext as _
-from django.core.urlresolvers import reverse
 from django.contrib import messages
-
+from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
 from lizard_auth_server import models
 
 

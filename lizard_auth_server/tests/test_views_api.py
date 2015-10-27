@@ -1,8 +1,8 @@
 from django.test import TestCase
-
-from . import test_models
 from lizard_auth_server import models
 from lizard_auth_server import views_api
+
+from . import test_models
 
 
 class TestGetOrganisationsView(TestCase):

@@ -1,11 +1,12 @@
 import uuid
 
-from django.test import TestCase, Client
+from django.test import Client
+from django.test import TestCase
 from itsdangerous import URLSafeTimedSerializer
-
-from . import test_models
 from lizard_auth_server import models
 from lizard_auth_server import views_sso
+
+from . import test_models
 
 
 class TestConstructOrganisationRoleDict(TestCase):

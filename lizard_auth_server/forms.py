@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from django import forms
-from django.forms import ValidationError
-from django.contrib import auth
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
 from django.conf import settings
-
-from itsdangerous import URLSafeTimedSerializer, BadSignature
-
+from django.contrib import auth
+from django.contrib.auth.models import User
+from django.forms import ValidationError
+from django.utils.translation import ugettext_lazy as _
+from itsdangerous import BadSignature
+from itsdangerous import URLSafeTimedSerializer
 from lizard_auth_server.models import Portal
 
 

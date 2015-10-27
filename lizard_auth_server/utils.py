@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-from random import SystemRandom
 from django.conf import settings
+from random import SystemRandom
+
 import string
+
 
 random = SystemRandom()
 KEY_CHARACTERS = string.letters + string.digits

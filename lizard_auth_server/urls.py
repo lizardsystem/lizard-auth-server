@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-from django.conf.urls import include, patterns, url
 from django.conf import settings
+from django.conf.urls import include
+from django.conf.urls import patterns
+from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ImproperlyConfigured
-
+from lizard_auth_server import forms
 from lizard_auth_server import views
 from lizard_auth_server import views_api
 from lizard_auth_server import views_sso
-from lizard_auth_server import forms
 
 
 def check_settings():

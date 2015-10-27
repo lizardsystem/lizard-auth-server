@@ -19,7 +19,7 @@ class DecryptForm(forms.Form):
 
     def clean(self):
         data = super(DecryptForm, self).clean()
-        if not 'key' in data:
+        if 'key' not in data:
             raise ValidationError('No portal key')
         try:
             self.portal = Portal.objects.get(sso_key=data['key'])
@@ -72,7 +72,7 @@ class AuthenticateUnsignedForm(forms.Form):
 
     def clean(self):
         data = super(AuthenticateUnsignedForm, self).clean()
-        if not 'key' in data:
+        if 'key' not in data:
             raise ValidationError('No portal key')
         try:
             self.portal = Portal.objects.get(sso_key=data['key'])

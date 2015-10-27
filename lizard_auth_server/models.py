@@ -304,7 +304,7 @@ class Invitation(models.Model):
         # generate a fresh key
         self._rotate_activation_key()
 
-        ### send this user an email containing the key
+        # send this user an email containing the key
         # build a render context for the email template
         expiration_date = (
             datetime.datetime.now(tz=pytz.UTC) +

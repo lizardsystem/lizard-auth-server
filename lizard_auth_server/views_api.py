@@ -317,7 +317,8 @@ class RolesView(FormView):
 
     def form_invalid(self, form):
         logger.error(
-            'Error while decrypting roles form: {}'.format(form.errors.as_text())
+            'Error while decrypting roles form: {}'.format(
+                form.errors.as_text())
         )
         return HttpResponseBadRequest('Bad signature')
 
@@ -341,13 +342,15 @@ class UserOrganisationRolesView(FormView):
         portal = form.portal
         username = form.cleaned_data.get('username')
         if username:
-            return JsonResponse(self.get_user_organisation_roles(portal, username))
+            return JsonResponse(self.get_user_organisation_roles(
+                portal, username))
         else:
             return JsonError('Missing "username" POST parameter.')
 
     def form_invalid(self, form):
         logger.error(
-            'Error while decrypting roles form: {}'.format(form.errors.as_text())
+            'Error while decrypting roles form: {}'.format(
+                form.errors.as_text())
         )
         return HttpResponseBadRequest('Bad signature')
 
@@ -357,5 +360,5 @@ class UserOrganisationRolesView(FormView):
         """
         user_profile = models.UserProfile.objects.get(user__username=username)
         return {"user_organisation_roles_data": [
-                    uor.as_dict() for uor in
-                    user_profile.all_organisation_roles(portal)]}
+            uor.as_dict() for uor in
+            user_profile.all_organisation_roles(portal)]}

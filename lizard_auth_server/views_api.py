@@ -23,11 +23,11 @@ logger = logging.getLogger(__name__)
 
 
 class AuthenticateUnsignedView(FormView):
-    '''
+    """
     View which can be used by API's to authenticate a
     username / password combo.
     Unsigned edition, so it can be used from GeoServer.
-    '''
+    """
     form_class = forms.AuthenticateUnsignedForm
 
     @method_decorator(csrf_exempt)
@@ -39,14 +39,14 @@ class AuthenticateUnsignedView(FormView):
     def get(self, request, *args, **kwargs):
         # just a simple debug form
         return HttpResponse(
-            '''
+            """
             <form method="post">
             <input type="text" name="key">
             <input type="text" name="username">
             <input type="password" name="password">
             <input type="submit">
             </form>
-            '''
+            """
         )
 
     @method_decorator(sensitive_post_parameters(
@@ -96,10 +96,10 @@ class AuthenticateUnsignedView(FormView):
 
 
 class AuthenticateView(FormView):
-    '''
+    """
     View which can be used by API's to authenticate a
     username / password combo.
-    '''
+    """
     form_class = forms.DecryptForm
 
     @method_decorator(csrf_exempt)
@@ -109,13 +109,13 @@ class AuthenticateView(FormView):
     def get(self, request, *args, **kwargs):
         # just a simple debug form
         return HttpResponse(
-            '''
+            """
             <form method="post">
             <input type="text" name="username">
             <input type="password" name="password">
             <input type="submit">
             </form>
-            '''
+            """
         )
 
     @method_decorator(sensitive_post_parameters(
@@ -166,9 +166,9 @@ class AuthenticateView(FormView):
 
 
 class GetUserView(FormView):
-    '''
+    """
     View which can be used by API's to fetch user data.
-    '''
+    """
     form_class = forms.DecryptForm
 
     @method_decorator(csrf_exempt)
@@ -178,12 +178,12 @@ class GetUserView(FormView):
     def get(self, request, *args, **kwargs):
         # just a simple debug form
         return HttpResponse(
-            '''
+            """
             <form method="post">
             <input type="text" name="username">
             <input type="submit">
             </form>
-            '''
+            """
         )
 
     @method_decorator(never_cache)
@@ -230,9 +230,9 @@ class GetUserView(FormView):
 
 
 class GetUsersView(FormView):
-    '''
+    """
     View which can be used by API's to fetch all users of a portal.
-    '''
+    """
     form_class = forms.DecryptForm
 
     @method_decorator(csrf_exempt)
@@ -264,9 +264,9 @@ class GetUsersView(FormView):
 
 
 class GetOrganisationsView(FormView):
-    '''
+    """
     View that can be used by APIs to fetch all users of a portal.
-    '''
+    """
     form_class = forms.DecryptForm
 
     @method_decorator(csrf_exempt)

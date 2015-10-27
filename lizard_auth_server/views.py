@@ -21,11 +21,11 @@ logger = logging.getLogger(__name__)
 
 
 class ViewContextMixin(object):
-    '''
+    """
     Adds the view object to the template context.
 
     Ensure this is first in the inheritance list!
-    '''
+    """
     def get_context_data(self, **kwargs):
         return {
             'params': kwargs,
@@ -34,21 +34,21 @@ class ViewContextMixin(object):
 
 
 class StaffOnlyMixin(object):
-    '''
+    """
     Ensures access by staff members (user.is_staff is True) only to all
     HTTP methods.
 
     Ensure this is first in the inheritance list!
-    '''
+    """
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         return super(StaffOnlyMixin, self).dispatch(request, *args, **kwargs)
 
 
 class ErrorMessageResponse(TemplateResponse):
-    '''
+    """
     Display a slightly more user-friendly error message.
-    '''
+    """
     def __init__(self, request, error_message=None, status=500):
         if not error_message:
             error_message = _('An unknown error occurred.')
@@ -71,9 +71,9 @@ class ErrorMessageResponse(TemplateResponse):
 
 
 class ProfileView(ViewContextMixin, TemplateView):
-    '''
+    """
     Straightforward view which displays a user's profile.
-    '''
+    """
     template_name = 'lizard_auth_server/profile.html'
     _profile = None
 
@@ -93,10 +93,10 @@ class ProfileView(ViewContextMixin, TemplateView):
 
 
 class EditProfileView(FormView):
-    '''
+    """
     Straightforward view which displays a form to have a user
     edit his / her own profile.
-    '''
+    """
     template_name = 'lizard_auth_server/edit_profile.html'
     form_class = forms.EditProfileForm
     _profile = None

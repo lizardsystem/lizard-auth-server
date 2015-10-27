@@ -38,12 +38,12 @@ TOKEN_TIMEOUT = datetime.timedelta(minutes=settings.SSO_TOKEN_TIMEOUT_MINUTES)
 
 
 class ProcessGetFormView(FormMixin, View):
-    '''
+    """
     A view which validates a form using GET parameters
     instead of POST.
 
     See Django's ProcessFormView.
-    '''
+    """
     def get_form(self, form_class):
         return form_class(self.request.GET)
 
@@ -58,10 +58,10 @@ class ProcessGetFormView(FormMixin, View):
 
 
 class PortalActionView(ProcessGetFormView):
-    '''
+    """
     View that allows portals to do some miscellaneous actions,
     like logging out.
-    '''
+    """
     form_class = forms.DecryptForm
 
     def form_valid(self, form):
@@ -91,9 +91,9 @@ class PortalActionView(ProcessGetFormView):
 
 
 class LogoutRedirectView(ProcessGetFormView):
-    '''
+    """
     View that redirects the user to the logout page of the portal.
-    '''
+    """
     form_class = forms.DecryptForm
 
     def form_valid(self, form):
@@ -112,10 +112,10 @@ class LogoutRedirectView(ProcessGetFormView):
 
 
 class RequestTokenView(ProcessGetFormView):
-    '''
+    """
     Request Token Request view called by the portal application to obtain a
     one-time Request Token.
-    '''
+    """
     form_class = forms.DecryptForm
 
     def form_valid(self, form):
@@ -134,7 +134,7 @@ class RequestTokenView(ProcessGetFormView):
 
 
 class AuthorizeView(ProcessGetFormView):
-    '''
+    """
     The portal get's redirected to this view with the `request_token` obtained
     by the Request Token Request by the portal application beforehand.
 
@@ -142,7 +142,7 @@ class AuthorizeView(ProcessGetFormView):
     that user has the necessary rights.
 
     If the user is not logged in, the user is prompted to log in.
-    '''
+    """
     form_class = forms.DecryptForm
 
     def form_valid(self, form):
@@ -178,17 +178,17 @@ class AuthorizeView(ProcessGetFormView):
                             'to get a fresh token.'), 403)
 
     def form_valid_authenticated(self):
-        '''
+        """
         Called then login succeeded.
-        '''
+        """
         if self.has_access():
             return self.success()
         return self.access_denied()
 
     def has_access(self):
-        '''
+        """
         Check whether the user has access to the portal.
-        '''
+        """
         if not self.request.user.is_active:
             # extra check: should not be necessary as inactive users can't
             # login anyway
@@ -218,9 +218,9 @@ class AuthorizeView(ProcessGetFormView):
         return HttpResponseRedirect(url)
 
     def access_denied(self):
-        '''
+        """
         Show a user-friendly access denied page.
-        '''
+        """
         context = RequestContext(self.request,
                                  {'login_url': self.build_login_url()})
         return TemplateResponse(
@@ -231,10 +231,10 @@ class AuthorizeView(ProcessGetFormView):
         )
 
     def build_login_url(self):
-        '''
+        """
         Store the authorize view (most likely the current view) as
         "next" page for a login page.
-        '''
+        """
         nextparams = {
             'message': self.request.GET['message'],
             'key': self.request.GET['key'],
@@ -248,21 +248,21 @@ class AuthorizeView(ProcessGetFormView):
         return '%s?%s' % (reverse('django.contrib.auth.views.login'), params)
 
     def form_valid_unauthenticated(self):
-        '''
+        """
         Redirect to login page when user isn't logged in yet.
-        '''
+        """
         return HttpResponseRedirect(self.build_login_url())
 
 
 def construct_user_data(user=None, profile=None):
-    '''
+    """
     Construct a dict of information about a user object,
     like first_name, and permissions.
 
     Older versions of this server did not send information about
     roles, and only a single organisation name. Older clients still
     expect that, so we need to stay backward compatible.
-    '''
+    """
     if user is None:
         user = profile.user
     if profile is None:
@@ -364,16 +364,16 @@ def domain_match(domain, suffix):
 
 
 class VerifyView(ProcessGetFormView):
-    '''
+    """
     View called by the portal application to verify the Auth Token passed by
     the portal request as GET parameter with the server application
-    '''
+    """
     form_class = forms.DecryptForm
 
     def get_user_json(self):
-        '''
+        """
         Returns the JSON string representation of the user object for a portal.
-        '''
+        """
         profile = self.token.user.get_profile()
         data = construct_user_data(profile=profile)
         return json.dumps(data)

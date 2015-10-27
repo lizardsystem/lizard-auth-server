@@ -58,7 +58,6 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 class PortalAdmin(admin.ModelAdmin):
     model = models.Portal
-#    form = PortalForm
 
 
 class OrganisationRoleAdmin(admin.ModelAdmin):

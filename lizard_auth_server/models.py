@@ -136,13 +136,13 @@ class UserProfileManager(models.Manager):
 
 
 class UserProfile(models.Model):
-    '''
+    """
     Note: when migrating to Django 1.5, this is the ideal candidate
     for using the new custom User model features.
 
     Note: this is linked via Django's user profile support. This means
     all fields must be OPTIONAL.
-    '''
+    """
     user = models.OneToOneField(
         User)
     portals = models.ManyToManyField(
@@ -251,18 +251,18 @@ class UserProfile(models.Model):
 
     @property
     def is_active(self):
-        '''
+        """
         Returns True when the account is active, meaning the User has not been
         deactivated by an admin.
 
         Note: unrelated to account activation.
-        '''
+        """
         return self.user.is_active
 
     def has_access(self, portal):
-        '''
+        """
         Returns True when this user has access to this portal.
-        '''
+        """
         if not portal:
             raise AttributeError('Need a valid Portal instance')
         if self.user.is_staff:

@@ -14,9 +14,9 @@ from lizard_auth_server import views_sso
 
 
 def check_settings():
-    '''
+    """
     Ensure settings are valid, to offer some extra security.
-    '''
+    """
     if not ('django.middleware.csrf.CsrfViewMiddleware'
             in settings.MIDDLEWARE_CLASSES):
         raise ImproperlyConfigured(

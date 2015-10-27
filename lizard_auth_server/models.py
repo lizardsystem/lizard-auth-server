@@ -46,15 +46,20 @@ class Portal(models.Model):
     A portal. If secret/key change, the portal website has to be updated too!
     """
     name = models.CharField(
-        max_length=255, null=False, blank=False,
+        max_length=255,
+        null=False,
+        blank=False,
         help_text='Name used to refer to this portal.')
     sso_secret = models.CharField(
-        max_length=64, unique=True,
+        max_length=64,
+        unique=True,
         default=gen_key('Portal', 'sso_secret'),
         help_text='Secret shared between SSO client and '
         'server to sign/encrypt communication.')
     sso_key = models.CharField(
-        max_length=64, unique=True, default=gen_key('Portal', 'sso_key'),
+        max_length=64,
+        unique=True,
+        default=gen_key('Portal', 'sso_key'),
         help_text='String used to identify the SSO client.')
     allowed_domain = models.CharField(
         max_length=255,
@@ -105,10 +110,17 @@ class Token(models.Model):
     """
     An auth token used to authenticate a user.
     """
-    portal = models.ForeignKey(Portal)
-    request_token = models.CharField(max_length=64, unique=True)
-    auth_token = models.CharField(max_length=64, unique=True)
-    user = models.ForeignKey(User, null=True)
+    portal = models.ForeignKey(
+        Portal)
+    request_token = models.CharField(
+        max_length=64,
+        unique=True)
+    auth_token = models.CharField(
+        max_length=64,
+        unique=True)
+    user = models.ForeignKey(
+        User,
+        null=True)
     created = models.DateTimeField(
         default=lambda: datetime.datetime.now(tz=pytz.UTC))
 
@@ -116,6 +128,7 @@ class Token(models.Model):
 
 
 class UserProfileManager(models.Manager):
+
     def fetch_for_user(self, user):
         if not user:
             raise AttributeError('Cant get UserProfile without user')
@@ -130,23 +143,55 @@ class UserProfile(models.Model):
     Note: this is linked via Django's user profile support. This means
     all fields must be OPTIONAL.
     '''
-    user = models.OneToOneField(User)
-    portals = models.ManyToManyField(Portal, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    updated_at = models.DateTimeField(auto_now=True, editable=False)
+    user = models.OneToOneField(
+        User)
+    portals = models.ManyToManyField(
+        Portal,
+        blank=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        editable=False)
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        editable=False)
     organisations = models.ManyToManyField(
-        "Organisation", blank=True, null=True)
-    title = models.CharField(max_length=255, null=True, blank=True, default='')
+        "Organisation",
+        blank=True,
+        null=True)
+    title = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        default='')
     street = models.CharField(
-        max_length=255, null=True, blank=True, default='')
+        max_length=255,
+        null=True,
+        blank=True,
+        default='')
     postal_code = models.CharField(
-        max_length=255, null=True, blank=True, default='')
-    town = models.CharField(max_length=255, null=True, blank=True, default='')
+        max_length=255,
+        null=True,
+        blank=True,
+        default='')
+    town = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        default='')
     phone_number = models.CharField(
-        max_length=255, null=True, blank=True, default='')
+        max_length=255,
+        null=True,
+        blank=True,
+        default='')
     mobile_phone_number = models.CharField(
-        max_length=255, null=True, blank=True, default='')
-    roles = models.ManyToManyField("OrganisationRole", blank=True, null=True)
+        max_length=255,
+        null=True,
+        blank=True,
+        default='')
+    roles = models.ManyToManyField(
+        "OrganisationRole",
+        blank=True,
+        null=True)
 
     objects = UserProfileManager()
 
@@ -249,22 +294,48 @@ post_save.connect(create_user_profile, sender=User)
 
 
 class Invitation(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False)
-    email = models.EmailField(null=False, blank=False)
-    organisation = models.CharField(max_length=255, null=False, blank=False)
-    language = models.CharField(max_length=16, null=False, blank=False)
-    portals = models.ManyToManyField(Portal, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    name = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False)
+    email = models.EmailField(
+        null=False,
+        blank=False)
+    organisation = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False)
+    language = models.CharField(
+        max_length=16,
+        null=False,
+        blank=False)
+    portals = models.ManyToManyField(
+        Portal,
+        blank=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        editable=False)
     activation_key = models.CharField(
-        max_length=64, null=True, blank=True, unique=True)
+        max_length=64,
+        null=True,
+        blank=True,
+        unique=True)
     activation_key_date = models.DateTimeField(
-        null=True, blank=True, help_text=(
+        null=True,
+        blank=True,
+        help_text=(
             'Date on which the activation key was generated. '
             'Used for expiration.')
     )
-    is_activated = models.BooleanField(default=False)
-    activated_on = models.DateTimeField(null=True, blank=True)
-    user = models.ForeignKey(User, null=True, blank=True)
+    is_activated = models.BooleanField(
+        default=False)
+    activated_on = models.DateTimeField(
+        null=True,
+        blank=True)
+    user = models.ForeignKey(
+        User,
+        null=True,
+        blank=True)
 
     def __unicode__(self):
         if self.user:
@@ -389,12 +460,21 @@ def create_new_uuid():
 
 class Role(models.Model):
     unique_id = models.CharField(
-        max_length=32, unique=True, default=create_new_uuid)
-    code = models.CharField(max_length=255, null=False, blank=False)
-    name = models.CharField(max_length=255, null=False, blank=False)
+        max_length=32,
+        unique=True,
+        default=create_new_uuid)
+    code = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False)
+    name = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False)
     external_description = models.TextField()
     internal_description = models.TextField()
-    portal = models.ForeignKey(Portal)
+    portal = models.ForeignKey(
+        Portal)
 
     class Meta:
         ordering = ['portal', 'name']
@@ -415,11 +495,18 @@ class Role(models.Model):
 
 class Organisation(models.Model):
     name = models.CharField(
-        max_length=255, null=False, blank=False, unique=True)
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=True)
     unique_id = models.CharField(
-        max_length=32, unique=True, default=create_new_uuid)
+        max_length=32,
+        unique=True,
+        default=create_new_uuid)
     roles = models.ManyToManyField(
-        Role, through='OrganisationRole', blank=True)
+        Role,
+        through='OrganisationRole',
+        blank=True)
 
     class Meta:
         ordering = ['name']
@@ -435,9 +522,12 @@ class Organisation(models.Model):
 
 
 class OrganisationRole(models.Model):
-    organisation = models.ForeignKey(Organisation)
-    role = models.ForeignKey(Role)
-    for_all_users = models.BooleanField(default=False)
+    organisation = models.ForeignKey(
+        Organisation)
+    role = models.ForeignKey(
+        Role)
+    for_all_users = models.BooleanField(
+        default=False)
 
     class Meta:
         unique_together = (('organisation', 'role'), )

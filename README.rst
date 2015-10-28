@@ -26,7 +26,8 @@ The workflow follows the django simple sso workflow_.
 Updating translations
 ---------------------
 
-Go to the ``lizard_auth_server`` subdirectory and run makemessages::
+Go to the ``lizard_auth_server`` subdirectory and run makemessages and upload
+the catalog to transifex::
 
     $ cd lizard_auth_server
     $ ../bin/django makemessages --all

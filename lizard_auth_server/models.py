@@ -86,7 +86,7 @@ class Portal(models.Model):
     class Meta:
         ordering = ('name',)
         verbose_name = _('portal')
-        verbose_names = _('portals')
+        verbose_name_plural = _('portals')
 
 
 class TokenManager(models.Manager):
@@ -132,7 +132,7 @@ class Token(models.Model):
 
     class Meta:
         verbose_name = _('authentication token')
-        verbose_names = _('authentication tokens')
+        verbose_name_plural = _('authentication tokens')
 
 
 class UserProfileManager(models.Manager):
@@ -205,7 +205,7 @@ class UserProfile(models.Model):
 
     class Meta:
         verbose_name = _('user profile')
-        verbose_names = _('user profiles')
+        verbose_name_plural = _('user profiles')
 
     def __unicode__(self):
         if self.user:
@@ -351,7 +351,7 @@ class Invitation(models.Model):
 
     class Meta:
         verbose_name = _('invitation')
-        verbose_names = _('invitation')
+        verbose_name_plural = _('invitation')
 
     def __unicode__(self):
         if self.user:
@@ -496,7 +496,7 @@ class Role(models.Model):
         ordering = ['portal', 'name']
         unique_together = (('name', 'portal'), )
         verbose_name = _('role')
-        verbose_names = _('role')
+        verbose_name_plural = _('role')
 
     def __unicode__(self):
         return '{name} on {portal}'.format(name=self.name, portal=self.portal)
@@ -529,7 +529,7 @@ class Organisation(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = _('organisation')
-        verbose_names = _('organisations')
+        verbose_name_plural = _('organisations')
 
     def __unicode__(self):
         return self.name
@@ -552,7 +552,7 @@ class OrganisationRole(models.Model):
     class Meta:
         unique_together = (('organisation', 'role'), )
         verbose_name = _('organisation role')
-        verbose_names = _('organisation roles')
+        verbose_name_plural = _('organisation roles')
 
     def __unicode__(self):
         if self.for_all_users:

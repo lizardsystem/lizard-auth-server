@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-02 13:58+0200\n"
+"POT-Creation-Date: 2015-10-28 09:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,15 +16,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: admin.py:36
+#: admin.py:29
 msgid "Resend the activation email, with a new key"
 msgstr ""
 
-#: admin.py:47
+#: admin.py:40
 msgid "Activate manually"
 msgstr ""
 
-#: admin.py:49
+#: admin.py:42
 msgid "Shortcut URLs"
 msgstr ""
 
@@ -33,89 +33,89 @@ msgstr ""
 msgid "The new password must be at least %d characters long."
 msgstr ""
 
-#: forms.py:58
+#: forms.py:62
 msgid ""
 "The new password must contain at least two numeric digits, one uppercase and "
 "one lowercase character."
 msgstr ""
 
-#: forms.py:94 templates/lizard_auth_server/profile.html:12
+#: forms.py:108 templates/lizard_auth_server/profile.html:12
 msgid "Name"
 msgstr ""
 
-#: forms.py:97
+#: forms.py:111
 msgid "For the purpose of an invitation email (not the username)"
 msgstr ""
 
-#: forms.py:100 forms.py:182 templates/lizard_auth_server/profile.html:16
+#: forms.py:114 forms.py:196 templates/lizard_auth_server/profile.html:16
 msgid "Email"
 msgstr ""
 
-#: forms.py:103 templates/lizard_auth_server/profile.html:24
+#: forms.py:117
 msgid "Organisation"
 msgstr ""
 
-#: forms.py:107
+#: forms.py:121
 msgid "Language"
 msgstr ""
 
-#: forms.py:118
+#: forms.py:132
 msgid "Portals"
 msgstr ""
 
-#: forms.py:128 forms.py:161 forms.py:233
+#: forms.py:142 forms.py:175 forms.py:247
 msgid "{} is already taken."
 msgstr ""
 
-#: forms.py:139
+#: forms.py:153
 msgid "Username"
 msgstr ""
 
-#: forms.py:143
+#: forms.py:157
 msgid "New password"
 msgstr ""
 
-#: forms.py:147
+#: forms.py:161
 msgid "New password confirmation"
 msgstr ""
 
-#: forms.py:152
+#: forms.py:166
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: forms.py:158
+#: forms.py:172
 msgid "Whitespace not allowed."
 msgstr ""
 
-#: forms.py:185
+#: forms.py:199
 msgid "First name"
 msgstr ""
 
-#: forms.py:190
+#: forms.py:204
 msgid "Last name"
 msgstr ""
 
-#: forms.py:193 templates/lizard_auth_server/profile.html:20
+#: forms.py:207 templates/lizard_auth_server/profile.html:20
 msgid "Title"
 msgstr ""
 
-#: forms.py:194 templates/lizard_auth_server/profile.html:28
+#: forms.py:208 templates/lizard_auth_server/profile.html:28
 msgid "Street"
 msgstr ""
 
-#: forms.py:197 templates/lizard_auth_server/profile.html:32
+#: forms.py:211 templates/lizard_auth_server/profile.html:32
 msgid "Postal code"
 msgstr ""
 
-#: forms.py:200 templates/lizard_auth_server/profile.html:36
+#: forms.py:214 templates/lizard_auth_server/profile.html:36
 msgid "Town"
 msgstr ""
 
-#: forms.py:203 templates/lizard_auth_server/profile.html:40
+#: forms.py:217 templates/lizard_auth_server/profile.html:40
 msgid "Phone number"
 msgstr ""
 
-#: forms.py:208 templates/lizard_auth_server/profile.html:44
+#: forms.py:222 templates/lizard_auth_server/profile.html:44
 msgid "Mobile phone number"
 msgstr ""
 
@@ -123,15 +123,15 @@ msgstr ""
 msgid "An unknown error occurred."
 msgstr ""
 
-#: views.py:194
+#: views.py:208
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 
-#: views_sso.py:86 views_sso.py:106 views_sso.py:161
+#: views_sso.py:89 views_sso.py:110 views_sso.py:167
 msgid "Communication error."
 msgstr ""
 
-#: views_sso.py:171
+#: views_sso.py:177
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr ""
 
@@ -468,6 +468,10 @@ msgstr ""
 #: templates/lizard_auth_server/profile.html:4
 #: templates/lizard_auth_server/profile.html:8
 msgid "Your profile"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:24
+msgid "Organisations"
 msgstr ""
 
 #: templates/lizard_auth_server/profile.html:48

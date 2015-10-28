@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-02 13:58+0200\n"
+"POT-Creation-Date: 2015-10-28 09:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: admin.py:36
+#: admin.py:29
 msgid "Resend the activation email, with a new key"
 msgstr "Stuur een nieuwe activatie e-mail, met een nieuwe sleutel"
 
-#: admin.py:47
+#: admin.py:40
 msgid "Activate manually"
 msgstr "Handmatig activeren"
 
-#: admin.py:49
+#: admin.py:42
 msgid "Shortcut URLs"
 msgstr "Snelkoppelingen"
 
@@ -34,7 +34,7 @@ msgstr "Snelkoppelingen"
 msgid "The new password must be at least %d characters long."
 msgstr "Het nieuwe wachtwoord moet minimaal %d karakters lang zijn."
 
-#: forms.py:58
+#: forms.py:62
 msgid ""
 "The new password must contain at least two numeric digits, one uppercase and "
 "one lowercase character."
@@ -42,89 +42,89 @@ msgstr ""
 "Het nieuwe wachtwoord moet minstens twee cijfers, een hoofdletter en een "
 "kleine letter bevatten."
 
-#: forms.py:94 templates/lizard_auth_server/profile.html:12
+#: forms.py:108 templates/lizard_auth_server/profile.html:12
 msgid "Name"
 msgstr "Naam"
 
-#: forms.py:97
+#: forms.py:111
 msgid "For the purpose of an invitation email (not the username)"
 msgstr "T.b.v. de aanhef in een e-mail (niet de gebruikersnaam)"
 
-#: forms.py:100 forms.py:182 templates/lizard_auth_server/profile.html:16
+#: forms.py:114 forms.py:196 templates/lizard_auth_server/profile.html:16
 msgid "Email"
 msgstr "E-mail"
 
-#: forms.py:103 templates/lizard_auth_server/profile.html:24
+#: forms.py:117
 msgid "Organisation"
 msgstr "Organisatie"
 
-#: forms.py:107
+#: forms.py:121
 msgid "Language"
 msgstr "Taal"
 
-#: forms.py:118
+#: forms.py:132
 msgid "Portals"
 msgstr "Portalen"
 
 # Note: already in Django
-#: forms.py:128 forms.py:161 forms.py:233
+#: forms.py:142 forms.py:175 forms.py:247
 msgid "{} is already taken."
 msgstr ""
 
 # Note: already in Django
-#: forms.py:139
+#: forms.py:153
 msgid "Username"
 msgstr ""
 
 # Note: already in Django
-#: forms.py:143
+#: forms.py:157
 msgid "New password"
 msgstr ""
 
 # Note: already in Django
-#: forms.py:147
+#: forms.py:161
 msgid "New password confirmation"
 msgstr ""
 
 # Note: already in Django
-#: forms.py:152
+#: forms.py:166
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: forms.py:158
+#: forms.py:172
 msgid "Whitespace not allowed."
 msgstr "Spaties niet toegestaan."
 
 # Note: already in Django
-#: forms.py:185
+#: forms.py:199
 msgid "First name"
 msgstr "Voornaam"
 
-#: forms.py:190
+#: forms.py:204
 msgid "Last name"
 msgstr "Achternaam"
 
-#: forms.py:193 templates/lizard_auth_server/profile.html:20
+#: forms.py:207 templates/lizard_auth_server/profile.html:20
 msgid "Title"
 msgstr "Titel"
 
-#: forms.py:194 templates/lizard_auth_server/profile.html:28
+#: forms.py:208 templates/lizard_auth_server/profile.html:28
 msgid "Street"
 msgstr "Straat"
 
-#: forms.py:197 templates/lizard_auth_server/profile.html:32
+#: forms.py:211 templates/lizard_auth_server/profile.html:32
 msgid "Postal code"
 msgstr "Postcode"
 
-#: forms.py:200 templates/lizard_auth_server/profile.html:36
+#: forms.py:214 templates/lizard_auth_server/profile.html:36
 msgid "Town"
 msgstr "Plaats"
 
-#: forms.py:203 templates/lizard_auth_server/profile.html:40
+#: forms.py:217 templates/lizard_auth_server/profile.html:40
 msgid "Phone number"
 msgstr "Telefoonnummer"
 
-#: forms.py:208 templates/lizard_auth_server/profile.html:44
+#: forms.py:222 templates/lizard_auth_server/profile.html:44
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
@@ -132,17 +132,17 @@ msgstr "Telefoonnummer (mobiel)"
 msgid "An unknown error occurred."
 msgstr "Onbekende fout."
 
-#: views.py:194
+#: views.py:208
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 "Ongeldige activatiesleutel. Dit betekent waarschijnlijk dat het account al "
 "geactiveerd is."
 
-#: views_sso.py:86 views_sso.py:106 views_sso.py:161
+#: views_sso.py:89 views_sso.py:110 views_sso.py:167
 msgid "Communication error."
 msgstr "Communicatiefout."
 
-#: views_sso.py:171
+#: views_sso.py:177
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr "Token is verlopen. Ga terug naar het portaal, en log daar opnieuw in."
 
@@ -521,6 +521,11 @@ msgstr ""
 #: templates/lizard_auth_server/profile.html:8
 msgid "Your profile"
 msgstr "Uw profiel"
+
+#: templates/lizard_auth_server/profile.html:24
+#, fuzzy
+msgid "Organisations"
+msgstr "Organisatie"
 
 #: templates/lizard_auth_server/profile.html:48
 msgid "Created at"

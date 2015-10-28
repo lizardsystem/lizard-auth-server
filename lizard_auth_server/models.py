@@ -537,7 +537,7 @@ class Role(models.Model):
         ordering = ['portal', 'name']
         unique_together = (('name', 'portal'), )
         verbose_name = _('role')
-        verbose_name_plural = _('role')
+        verbose_name_plural = _('roles')
 
     def __unicode__(self):
         return '{name} on {portal}'.format(name=self.name, portal=self.portal)

@@ -11,6 +11,12 @@ Changelog of lizard-auth-server
   inspired by Plone.
   [reinout]
 
+- Huge translation update. Everything is marked as translatable. Models and
+  fields now have translatable names. Translation is set up to use
+  https://translations.lizard.net, with instructions in the
+  ``README.rst``. And... everything has been translated into Dutch.
+  [reinout]
+
 
 1.0 (2015-09-24)
 ----------------

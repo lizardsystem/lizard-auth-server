@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 11:36+0100\n"
-"PO-Revision-Date: 2015-10-28 10:37+0000\n"
+"POT-Creation-Date: 2015-10-28 12:12+0100\n"
+"PO-Revision-Date: 2015-10-28 11:13+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -348,8 +348,8 @@ msgstr "Token is verlopen. Ga terug naar het portaal, en log daar opnieuw in."
 msgid "Lizard SSO"
 msgstr "Lizard SSO"
 
-#: templates/admin/base_site.html:10
-msgid "Django administration pages"
+#: templates/admin/base_site.html:10 templates/lizard_auth_server/base.html:57
+msgid "Django administration"
 msgstr "Django administratiepagina's"
 
 #: templates/lizard_auth_server/access_denied.html:4
@@ -357,11 +357,11 @@ msgstr "Django administratiepagina's"
 msgid "Access denied"
 msgstr "Geen toegang"
 
-#: templates/lizard_auth_server/access_denied.html:11
+#: templates/lizard_auth_server/access_denied.html:10
 msgid "You do not have access to this portal."
 msgstr "U heeft geen toegang tot dit portaal."
 
-#: templates/lizard_auth_server/access_denied.html:16
+#: templates/lizard_auth_server/access_denied.html:15
 #, python-format
 msgid ""
 "<a href=\"%(login_url)s\">Log in with another account</a>, which does have "
@@ -370,7 +370,7 @@ msgstr ""
 "<a href=\"%(login_url)s\">Log in met een andere gebruiker</a>, die w&egrave;"
 "l toegang heeft."
 
-#: templates/lizard_auth_server/access_denied.html:20
+#: templates/lizard_auth_server/access_denied.html:19
 #, python-format
 msgid ""
 "<a href=\"%(profile_url)s\">Check your profile</a>, to see which portals are "
@@ -442,10 +442,6 @@ msgstr "Hallo, %(name)s"
 #: templates/lizard_auth_server/base.html:55
 msgid "Profile"
 msgstr "Profiel"
-
-#: templates/lizard_auth_server/base.html:57
-msgid "Django administration"
-msgstr "Django-administratie"
 
 #: templates/lizard_auth_server/base.html:59
 #: templates/lizard_auth_server/base.html:74

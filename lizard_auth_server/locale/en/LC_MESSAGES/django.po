@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 11:36+0100\n"
+"POT-Creation-Date: 2015-10-28 12:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -334,8 +334,8 @@ msgstr ""
 msgid "Lizard SSO"
 msgstr ""
 
-#: templates/admin/base_site.html:10
-msgid "Django administration pages"
+#: templates/admin/base_site.html:10 templates/lizard_auth_server/base.html:57
+msgid "Django administration"
 msgstr ""
 
 #: templates/lizard_auth_server/access_denied.html:4
@@ -343,18 +343,18 @@ msgstr ""
 msgid "Access denied"
 msgstr ""
 
-#: templates/lizard_auth_server/access_denied.html:11
+#: templates/lizard_auth_server/access_denied.html:10
 msgid "You do not have access to this portal."
 msgstr ""
 
-#: templates/lizard_auth_server/access_denied.html:16
+#: templates/lizard_auth_server/access_denied.html:15
 #, python-format
 msgid ""
 "<a href=\"%(login_url)s\">Log in with another account</a>, which does have "
 "access to this portal."
 msgstr ""
 
-#: templates/lizard_auth_server/access_denied.html:20
+#: templates/lizard_auth_server/access_denied.html:19
 #, python-format
 msgid ""
 "<a href=\"%(profile_url)s\">Check your profile</a>, to see which portals are "
@@ -423,10 +423,6 @@ msgstr ""
 
 #: templates/lizard_auth_server/base.html:55
 msgid "Profile"
-msgstr ""
-
-#: templates/lizard_auth_server/base.html:57
-msgid "Django administration"
 msgstr ""
 
 #: templates/lizard_auth_server/base.html:59

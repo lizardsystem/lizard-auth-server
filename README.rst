@@ -8,13 +8,15 @@ lizard-auth-server
 .. image:: https://coveralls.io/repos/lizardsystem/lizard-auth-server/badge.svg?branch=master&service=github
   :target: https://coveralls.io/github/lizardsystem/lizard-auth-server?branch=master
 
-
 Lizard auth server is build upon django-simple-sso_.
+
+It is installed as https://sso.lizard.net, see https://github.com/nens/sso/
+
 
 Workflow
 ---------
 
-Thie workflow follows the django simple sso workflow_.
+The workflow follows the django simple sso workflow_.
 
 
 .. _django-simple-sso: http://pypi.python.org/pypi/django-simple-sso

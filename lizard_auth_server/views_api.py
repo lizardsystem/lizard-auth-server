@@ -253,7 +253,7 @@ class GetUsersView(FormView):
 
     def get_users(self, portal):
         user_data = []
-        for user in User.objects.select_related('userprofile'):
+        for user in User.objects.select_related('user_profile'):
             try:
                 profile = user.get_profile()
             except models.UserProfile.DoesNotExist:

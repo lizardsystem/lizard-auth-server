@@ -21,7 +21,9 @@
         </ul>
         <p>{% trans 'Actions' %}</p>
         <ul>
-            <li><a href="{% url "lizard_auth_server.activate" activation_key=view.invitiation.activation_key %}">{% trans 'Immediately activate this account' %}</a></li>
+            <li><a href="{% url 'lizard_auth_server.activate' activation_key=view.invitiation.activation_key %}">
+                {% trans 'Immediately activate this account' %}
+            </a></li>
             <li><a href="{% url "lizard_auth_server.invite_user" %}">{% trans 'Register another user' %}</a></li>
             <li><a href="{% url "profile" %}">{% trans 'Go back to my profile' %}</a></li>
         </ul>

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 12:12+0100\n"
-"PO-Revision-Date: 2015-10-28 11:13+0000\n"
+"POT-Creation-Date: 2015-10-28 12:20+0100\n"
+"PO-Revision-Date: 2015-10-28 11:21+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -478,9 +478,8 @@ msgid "An error occurred"
 msgstr "Er heeft zich een fout voorgedaan"
 
 #: templates/lizard_auth_server/error_message.html:14
-#, python-format
-msgid "<a href=\"%(index_url)s\">Back to the home page</a>"
-msgstr "<a href=\"%(index_url)s\">Terug naar de voorpagina</a>"
+msgid "Back to the home page"
+msgstr "Terug naar de beginpagina"
 
 #: templates/lizard_auth_server/invitation_email.html:3
 #, python-format
@@ -559,15 +558,15 @@ msgstr "Geen portalen geselecteerd"
 msgid "Actions"
 msgstr "Acties"
 
-#: templates/lizard_auth_server/invite_user_complete.html:24
+#: templates/lizard_auth_server/invite_user_complete.html:25
 msgid "Immediately activate this account"
 msgstr "Activeer dit account handmatig"
 
-#: templates/lizard_auth_server/invite_user_complete.html:25
+#: templates/lizard_auth_server/invite_user_complete.html:27
 msgid "Register another user"
 msgstr "Registreer nog een gebruiker"
 
-#: templates/lizard_auth_server/invite_user_complete.html:26
+#: templates/lizard_auth_server/invite_user_complete.html:28
 #: templates/lizard_auth_server/password_change_done.html:11
 msgid "Go back to my profile"
 msgstr "Terug naar mijn profiel"
@@ -577,8 +576,8 @@ msgid "Logged out"
 msgstr "Afmelden"
 
 #: templates/lizard_auth_server/logged_out.html:8
-msgid "Thanks for spending some quality time with the Web site today."
-msgstr "Bedankt dat je de site vandaag hebt gebruikt."
+msgid "You have been logged out."
+msgstr "U bent uitgelogd."
 
 #: templates/lizard_auth_server/logged_out.html:9
 msgid "Log in again"
@@ -706,7 +705,7 @@ msgid "Organisations"
 msgstr "Organisaties"
 
 #: templates/lizard_auth_server/profile.html:48
-msgid "Created at"
+msgid "Created on"
 msgstr "Aangemaakt op"
 
 #: templates/lizard_auth_server/profile.html:55

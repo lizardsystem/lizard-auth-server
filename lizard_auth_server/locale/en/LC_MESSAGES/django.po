@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 12:12+0100\n"
+"POT-Creation-Date: 2015-10-28 12:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -460,8 +460,7 @@ msgid "An error occurred"
 msgstr ""
 
 #: templates/lizard_auth_server/error_message.html:14
-#, python-format
-msgid "<a href=\"%(index_url)s\">Back to the home page</a>"
+msgid "Back to the home page"
 msgstr ""
 
 #: templates/lizard_auth_server/invitation_email.html:3
@@ -537,15 +536,15 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: templates/lizard_auth_server/invite_user_complete.html:24
+#: templates/lizard_auth_server/invite_user_complete.html:25
 msgid "Immediately activate this account"
 msgstr ""
 
-#: templates/lizard_auth_server/invite_user_complete.html:25
+#: templates/lizard_auth_server/invite_user_complete.html:27
 msgid "Register another user"
 msgstr ""
 
-#: templates/lizard_auth_server/invite_user_complete.html:26
+#: templates/lizard_auth_server/invite_user_complete.html:28
 #: templates/lizard_auth_server/password_change_done.html:11
 msgid "Go back to my profile"
 msgstr ""
@@ -555,7 +554,7 @@ msgid "Logged out"
 msgstr ""
 
 #: templates/lizard_auth_server/logged_out.html:8
-msgid "Thanks for spending some quality time with the Web site today."
+msgid "You have been logged out."
 msgstr ""
 
 #: templates/lizard_auth_server/logged_out.html:9
@@ -670,7 +669,7 @@ msgid "Organisations"
 msgstr ""
 
 #: templates/lizard_auth_server/profile.html:48
-msgid "Created at"
+msgid "Created on"
 msgstr ""
 
 #: templates/lizard_auth_server/profile.html:55

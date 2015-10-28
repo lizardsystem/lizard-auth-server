@@ -166,7 +166,8 @@ class UserProfile(models.Model):
     """
     user = models.OneToOneField(
         User,
-        verbose_name=_('user'))
+        verbose_name=_('user'),
+        related_name='user_profile')
     portals = models.ManyToManyField(
         Portal,
         verbose_name=_('portals'),
@@ -389,12 +390,10 @@ class Invitation(models.Model):
     class Meta:
         verbose_name = _('invitation')
         verbose_name_plural = _('invitation')
+        ordering = ['is_activated', '-created_at', 'email']
 
     def __unicode__(self):
-        if self.user:
-            return '{}, {} (Activated)'.format(self.user, self.user.email)
-        else:
-            return '{}, {} (Not activated)'.format(self.name, self.email)
+        return "invitation for %s" % self.email
 
     def clean(self):
         if self.is_activated:

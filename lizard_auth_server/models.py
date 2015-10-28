@@ -124,9 +124,11 @@ class Token(models.Model):
         Portal,
         verbose_name=_('portal'))
     request_token = models.CharField(
+        verbose_name=_('request token'),
         max_length=64,
         unique=True)
     auth_token = models.CharField(
+        verbose_name=_('auth token'),
         max_length=64,
         unique=True)
     user = models.ForeignKey(
@@ -134,6 +136,7 @@ class Token(models.Model):
         verbose_name=_('user'),
         null=True)
     created = models.DateTimeField(
+        verbose_name=_('created on'),
         default=lambda: datetime.datetime.now(tz=pytz.UTC))
 
     objects = TokenManager()
@@ -147,7 +150,7 @@ class UserProfileManager(models.Manager):
 
     def fetch_for_user(self, user):
         if not user:
-            raise AttributeError('Cant get UserProfile without user')
+            raise AttributeError("Can't get UserProfile without user")
         return self.get(user=user)
 
 
@@ -160,52 +163,65 @@ class UserProfile(models.Model):
     all fields must be OPTIONAL.
     """
     user = models.OneToOneField(
-        User)
+        User,
+        verbose_name=_('user'))
     portals = models.ManyToManyField(
         Portal,
+        verbose_name=_('portals'),
         blank=True)
     created_at = models.DateTimeField(
+        verbose_name=_('created on'),
+        # Grrrrrr. "it has been created AT the factory ON 1 october"
         auto_now_add=True,
         editable=False)
     updated_at = models.DateTimeField(
+        verbose_name=_('updated on'),
         auto_now=True,
         editable=False)
     organisations = models.ManyToManyField(
         "Organisation",
+        verbose_name=_('organisations'),
         blank=True,
         null=True)
     title = models.CharField(
+        verbose_name=_('title'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     street = models.CharField(
+        verbose_name=_('street'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     postal_code = models.CharField(
+        verbose_name=_('postal code'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     town = models.CharField(
+        verbose_name=_('town'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     phone_number = models.CharField(
+        verbose_name=_('phone number'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     mobile_phone_number = models.CharField(
+        verbose_name=_('mobile phone number'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     roles = models.ManyToManyField(
         "OrganisationRole",
+        verbose_name=_('roles'),
         blank=True,
         null=True)
 
@@ -315,32 +331,40 @@ post_save.connect(create_user_profile, sender=User)
 
 class Invitation(models.Model):
     name = models.CharField(
+        verbose_name=_('name'),
         max_length=255,
         null=False,
         blank=False)
     email = models.EmailField(
+        verbose_name=_('e-mail'),
         null=False,
         blank=False)
     organisation = models.CharField(
+        verbose_name=_('organisation'),
         max_length=255,
         null=False,
         blank=False)
     language = models.CharField(
+        verbose_name=_('language'),
         max_length=16,
         null=False,
         blank=False)
     portals = models.ManyToManyField(
         Portal,
+        verbose_name=_('portals'),
         blank=True)
     created_at = models.DateTimeField(
+        verbose_name=_('created on'),
         auto_now_add=True,
         editable=False)
     activation_key = models.CharField(
+        verbose_name=_('activation key'),
         max_length=64,
         null=True,
         blank=True,
         unique=True)
     activation_key_date = models.DateTimeField(
+        verbose_name=_('activation key date'),
         null=True,
         blank=True,
         help_text=(
@@ -348,8 +372,10 @@ class Invitation(models.Model):
             'Used for expiration.')
     )
     is_activated = models.BooleanField(
+        verbose_name=_('is activated'),
         default=False)
     activated_on = models.DateTimeField(
+        verbose_name=_('activated on'),
         null=True,
         blank=True)
     user = models.ForeignKey(
@@ -485,19 +511,24 @@ def create_new_uuid():
 
 class Role(models.Model):
     unique_id = models.CharField(
+        verbose_name=_('unique id'),
         max_length=32,
         unique=True,
         default=create_new_uuid)
     code = models.CharField(
+        verbose_name=_('code'),
         max_length=255,
         null=False,
         blank=False)
     name = models.CharField(
+        verbose_name=_('name'),
         max_length=255,
         null=False,
         blank=False)
-    external_description = models.TextField()
-    internal_description = models.TextField()
+    external_description = models.TextField(
+        verbose_name=_('external description'))
+    internal_description = models.TextField(
+        verbose_name=_('internal description'))
     portal = models.ForeignKey(
         Portal,
         verbose_name=_('portal'))
@@ -523,17 +554,20 @@ class Role(models.Model):
 
 class Organisation(models.Model):
     name = models.CharField(
+        verbose_name=_('name'),
         max_length=255,
         null=False,
         blank=False,
         unique=True)
     unique_id = models.CharField(
+        verbose_name=_('unique id'),
         max_length=32,
         unique=True,
         default=create_new_uuid)
     roles = models.ManyToManyField(
         Role,
         through='OrganisationRole',
+        verbose_name=_('roles'),
         blank=True)
 
     class Meta:
@@ -559,6 +593,7 @@ class OrganisationRole(models.Model):
         Role,
         verbose_name=_('role'))
     for_all_users = models.BooleanField(
+        verbose_name=_('for all users'),
         default=False)
 
     class Meta:

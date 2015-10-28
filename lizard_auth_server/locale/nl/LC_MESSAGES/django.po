@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 11:00+0100\n"
-"PO-Revision-Date: 2015-10-28 10:00+0000\n"
+"POT-Creation-Date: 2015-10-28 11:13+0100\n"
+"PO-Revision-Date: 2015-10-28 10:15+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -123,7 +123,7 @@ msgstr "Telefoonnummer"
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
-#: models.py:50
+#: models.py:50 models.py:334 models.py:524 models.py:557
 msgid "name"
 msgstr "naam"
 
@@ -147,55 +147,143 @@ msgstr "redirect-url"
 msgid "visit url"
 msgstr "bezoek-url"
 
-#: models.py:94 models.py:125 models.py:503
+#: models.py:94 models.py:125 models.py:534
 msgid "portal"
 msgstr "portaal"
 
-#: models.py:95
+#: models.py:95 models.py:170 models.py:354
 msgid "portals"
 msgstr "portalen"
 
-#: models.py:134 models.py:357
+#: models.py:127
+msgid "request token"
+msgstr "token van het request"
+
+#: models.py:131
+msgid "auth token"
+msgstr "authenticatie token"
+
+#: models.py:136 models.py:167 models.py:383
 msgid "user"
 msgstr "gebruiker"
 
-#: models.py:142
+#: models.py:139 models.py:173 models.py:357
+msgid "created on"
+msgstr "aangemaakt op"
+
+#: models.py:145
 msgid "authentication token"
 msgstr "authenticatieteken"
 
-#: models.py:143
+#: models.py:146
 msgid "authentication tokens"
 msgstr "authenticatietekens"
 
-#: models.py:215
-msgid "user profile"
-msgstr "gebruikersprofiel"
+#: models.py:178
+msgid "updated on"
+msgstr "geüpdated op"
 
-#: models.py:216
-msgid "user profiles"
-msgstr "gebruikersprofielen"
-
-#: models.py:362 models.py:363
-msgid "invitation"
-msgstr "uitnodiging"
-
-#: models.py:508 models.py:509 models.py:560
-msgid "role"
-msgstr "rol"
-
-#: models.py:541 models.py:557
-msgid "organisation"
-msgstr "organisatie"
-
-#: models.py:542
+#: models.py:183 models.py:576
 msgid "organisations"
 msgstr "organisaties"
 
-#: models.py:566
+#: models.py:187
+msgid "title"
+msgstr "titel"
+
+#: models.py:193
+msgid "street"
+msgstr "straat"
+
+#: models.py:199
+msgid "postal code"
+msgstr "postcode"
+
+#: models.py:205
+msgid "town"
+msgstr "plaats"
+
+#: models.py:211
+msgid "phone number"
+msgstr "telefoonnummer"
+
+#: models.py:217
+msgid "mobile phone number"
+msgstr "mobiele telefoonnummer"
+
+#: models.py:224 models.py:570
+msgid "roles"
+msgstr "rollen"
+
+#: models.py:231
+msgid "user profile"
+msgstr "gebruikersprofiel"
+
+#: models.py:232
+msgid "user profiles"
+msgstr "gebruikersprofielen"
+
+#: models.py:339
+msgid "e-mail"
+msgstr "e-mail"
+
+#: models.py:343 models.py:575 models.py:591
+msgid "organisation"
+msgstr "organisatie"
+
+#: models.py:348
+msgid "language"
+msgstr "taal"
+
+#: models.py:361
+msgid "activation key"
+msgstr "activatiecode"
+
+#: models.py:367
+msgid "activation key date"
+msgstr "datum van de activatiecode"
+
+#: models.py:375
+msgid "is activated"
+msgstr "is geactiveerd"
+
+#: models.py:378
+msgid "activated on"
+msgstr "geactiveerd op"
+
+#: models.py:388 models.py:389
+msgid "invitation"
+msgstr "uitnodiging"
+
+#: models.py:514 models.py:563
+msgid "unique id"
+msgstr "uniek ID"
+
+#: models.py:519
+msgid "code"
+msgstr "code"
+
+#: models.py:529
+msgid "external description"
+msgstr "omschrijving voor externen"
+
+#: models.py:531
+msgid "internal description"
+msgstr "interne omschrijving"
+
+#: models.py:539 models.py:540 models.py:594
+msgid "role"
+msgstr "rol"
+
+#: models.py:596
+msgid "for all users"
+msgstr "voor alle gebruikers"
+
+#: models.py:601
 msgid "organisation role"
 msgstr "organisatierol"
 
-#: models.py:567
+#: models.py:602
 msgid "organisation roles"
 msgstr "organisatierollen"
 

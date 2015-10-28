@@ -171,6 +171,7 @@ class UserProfile(models.Model):
     portals = models.ManyToManyField(
         Portal,
         verbose_name=_('portals'),
+        related_name='user_profiles',
         blank=True)
     created_at = models.DateTimeField(
         verbose_name=_('created on'),

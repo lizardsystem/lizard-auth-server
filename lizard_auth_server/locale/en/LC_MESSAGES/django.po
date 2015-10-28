@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 10:41+0100\n"
+"POT-Creation-Date: 2015-10-28 11:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -143,7 +143,7 @@ msgstr ""
 msgid "visit url"
 msgstr ""
 
-#: models.py:94
+#: models.py:94 models.py:125 models.py:503
 msgid "portal"
 msgstr ""
 
@@ -151,43 +151,47 @@ msgstr ""
 msgid "portals"
 msgstr ""
 
-#: models.py:140
+#: models.py:134 models.py:357
+msgid "user"
+msgstr ""
+
+#: models.py:142
 msgid "authentication token"
 msgstr ""
 
-#: models.py:141
+#: models.py:143
 msgid "authentication tokens"
 msgstr ""
 
-#: models.py:213
+#: models.py:215
 msgid "user profile"
 msgstr ""
 
-#: models.py:214
+#: models.py:216
 msgid "user profiles"
 msgstr ""
 
-#: models.py:359 models.py:360
+#: models.py:362 models.py:363
 msgid "invitation"
 msgstr ""
 
-#: models.py:504 models.py:505
+#: models.py:508 models.py:509 models.py:560
 msgid "role"
 msgstr ""
 
-#: models.py:537
+#: models.py:541 models.py:557
 msgid "organisation"
 msgstr ""
 
-#: models.py:538
+#: models.py:542
 msgid "organisations"
 msgstr ""
 
-#: models.py:560
+#: models.py:566
 msgid "organisation role"
 msgstr ""
 
-#: models.py:561
+#: models.py:567
 msgid "organisation roles"
 msgstr ""
 

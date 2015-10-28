@@ -47,37 +47,37 @@ class Portal(models.Model):
     A portal. If secret/key change, the portal website has to be updated too!
     """
     name = models.CharField(
-        _('name'),
+        verbose_name=_('name'),
         max_length=255,
         null=False,
         blank=False,
         help_text='Name used to refer to this portal.')
     sso_secret = models.CharField(
-        _('shared secret'),
+        verbose_name=_('shared secret'),
         max_length=64,
         unique=True,
         default=gen_key('Portal', 'sso_secret'),
         help_text='Secret shared between SSO client and '
         'server to sign/encrypt communication.')
     sso_key = models.CharField(
-        _('identifying key'),
+        verbose_name=_('identifying key'),
         max_length=64,
         unique=True,
         default=gen_key('Portal', 'sso_key'),
         help_text='String used to identify the SSO client.')
     allowed_domain = models.CharField(
-        _('allowed domain(s)'),
+        verbose_name=_('allowed domain(s)'),
         max_length=255,
         default='',
         help_text=(
             'Allowed domain suffix for redirects using the next parameter. '
             'Multiple, whitespace-separated suffixes may be specified.'))
     redirect_url = models.CharField(
-        _('redirect url'),
+        verbose_name=_('redirect url'),
         max_length=255,
         help_text='URL used in the SSO redirection.')
     visit_url = models.CharField(
-        _('visit url'),
+        verbose_name=_('visit url'),
         max_length=255,
         help_text='URL used in the UI to refer to this portal.')
 
@@ -121,7 +121,8 @@ class Token(models.Model):
     An auth token used to authenticate a user.
     """
     portal = models.ForeignKey(
-        Portal)
+        Portal,
+        verbose_name=_('portal'))
     request_token = models.CharField(
         max_length=64,
         unique=True)
@@ -130,6 +131,7 @@ class Token(models.Model):
         unique=True)
     user = models.ForeignKey(
         User,
+        verbose_name=_('user'),
         null=True)
     created = models.DateTimeField(
         default=lambda: datetime.datetime.now(tz=pytz.UTC))
@@ -352,6 +354,7 @@ class Invitation(models.Model):
         blank=True)
     user = models.ForeignKey(
         User,
+        verbose_name=_('user'),
         null=True,
         blank=True)
 
@@ -496,7 +499,8 @@ class Role(models.Model):
     external_description = models.TextField()
     internal_description = models.TextField()
     portal = models.ForeignKey(
-        Portal)
+        Portal,
+        verbose_name=_('portal'))
 
     class Meta:
         ordering = ['portal', 'name']
@@ -549,9 +553,11 @@ class Organisation(models.Model):
 
 class OrganisationRole(models.Model):
     organisation = models.ForeignKey(
-        Organisation)
+        Organisation,
+        verbose_name=_('organisation'))
     role = models.ForeignKey(
-        Role)
+        Role,
+        verbose_name=_('role'))
     for_all_users = models.BooleanField(
         default=False)
 

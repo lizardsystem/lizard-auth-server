@@ -82,7 +82,7 @@ class Portal(models.Model):
         help_text=_('URL used in the UI to refer to this portal.'))
 
     def __unicode__(self):
-        return '{} ({})'.format(self.name, self.visit_url)
+        return self.name
 
     def rotate_keys(self):
         self.sso_secret = gen_key(Portal, 'sso_secret')()
@@ -135,6 +135,7 @@ class Token(models.Model):
         User,
         verbose_name=_('user'),
         null=True)
+    # ^^^ TODO: user seems to be complete unused [comment by Reinout 2015-10-28]
     created = models.DateTimeField(
         verbose_name=_('created on'),
         default=lambda: datetime.datetime.now(tz=pytz.UTC))
@@ -144,6 +145,7 @@ class Token(models.Model):
     class Meta:
         verbose_name = _('authentication token')
         verbose_name_plural = _('authentication tokens')
+        ordering = ('-created',)
 
 
 class UserProfileManager(models.Manager):
@@ -230,11 +232,11 @@ class UserProfile(models.Model):
     class Meta:
         verbose_name = _('user profile')
         verbose_name_plural = _('user profiles')
+        ordering = ['user__username']
 
     def __unicode__(self):
         if self.user:
-            return 'UserProfile {} ({}, {})'.format(
-                self.pk, self.user, self.user.email)
+            return self.user
         else:
             return 'UserProfile {}'.format(self.pk)
 

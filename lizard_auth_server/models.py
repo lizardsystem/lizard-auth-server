@@ -532,6 +532,7 @@ class Role(models.Model):
         verbose_name=_('internal description'))
     portal = models.ForeignKey(
         Portal,
+        related_name='roles',
         verbose_name=_('portal'))
 
     class Meta:

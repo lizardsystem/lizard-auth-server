@@ -11,6 +11,7 @@ from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from django.template.loader import render_to_string
 from django.utils import translation
+from django.utils.translation import ugettext_lazy as _
 from lizard_auth_server.utils import gen_secret_key
 
 import datetime
@@ -84,9 +85,12 @@ class Portal(models.Model):
 
     class Meta:
         ordering = ('name',)
+        verbose_name = _('portal')
+        verbose_names = _('portals')
 
 
 class TokenManager(models.Manager):
+
     def create_for_portal(self, portal):
         """
         Create a new token for a portal object.
@@ -125,6 +129,10 @@ class Token(models.Model):
         default=lambda: datetime.datetime.now(tz=pytz.UTC))
 
     objects = TokenManager()
+
+    class Meta:
+        verbose_name = _('authentication token')
+        verbose_names = _('authentication tokens')
 
 
 class UserProfileManager(models.Manager):
@@ -194,6 +202,10 @@ class UserProfile(models.Model):
         null=True)
 
     objects = UserProfileManager()
+
+    class Meta:
+        verbose_name = _('user profile')
+        verbose_names = _('user profiles')
 
     def __unicode__(self):
         if self.user:
@@ -337,6 +349,10 @@ class Invitation(models.Model):
         null=True,
         blank=True)
 
+    class Meta:
+        verbose_name = _('invitation')
+        verbose_names = _('invitation')
+
     def __unicode__(self):
         if self.user:
             return '{}, {} (Activated)'.format(self.user, self.user.email)
@@ -479,6 +495,8 @@ class Role(models.Model):
     class Meta:
         ordering = ['portal', 'name']
         unique_together = (('name', 'portal'), )
+        verbose_name = _('role')
+        verbose_names = _('role')
 
     def __unicode__(self):
         return '{name} on {portal}'.format(name=self.name, portal=self.portal)
@@ -510,6 +528,8 @@ class Organisation(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = _('organisation')
+        verbose_names = _('organisations')
 
     def __unicode__(self):
         return self.name
@@ -531,6 +551,8 @@ class OrganisationRole(models.Model):
 
     class Meta:
         unique_together = (('organisation', 'role'), )
+        verbose_name = _('organisation role')
+        verbose_names = _('organisation roles')
 
     def __unicode__(self):
         if self.for_all_users:

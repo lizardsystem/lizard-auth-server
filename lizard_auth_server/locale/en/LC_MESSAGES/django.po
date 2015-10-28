@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 09:30+0100\n"
+"POT-Creation-Date: 2015-10-28 10:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -117,6 +117,54 @@ msgstr ""
 
 #: forms.py:222 templates/lizard_auth_server/profile.html:44
 msgid "Mobile phone number"
+msgstr ""
+
+#: models.py:88
+msgid "portal"
+msgstr ""
+
+#: models.py:89
+msgid "portals"
+msgstr ""
+
+#: models.py:134
+msgid "authentication token"
+msgstr ""
+
+#: models.py:135
+msgid "authentication tokens"
+msgstr ""
+
+#: models.py:207
+msgid "user profile"
+msgstr ""
+
+#: models.py:208
+msgid "user profiles"
+msgstr ""
+
+#: models.py:353 models.py:354
+msgid "invitation"
+msgstr ""
+
+#: models.py:498 models.py:499
+msgid "role"
+msgstr ""
+
+#: models.py:531
+msgid "organisation"
+msgstr ""
+
+#: models.py:532
+msgid "organisations"
+msgstr ""
+
+#: models.py:554
+msgid "organisation role"
+msgstr ""
+
+#: models.py:555
+msgid "organisation roles"
 msgstr ""
 
 #: views.py:54

@@ -31,7 +31,8 @@ the catalog to transifex::
 
     $ cd lizard_auth_server
     $ ../bin/django makemessages --all
-    $ bin/translations upload_catalog
+    $ cd ..
+    $ bin/transifex upload_catalog
 
 Then update the NL translation on
 https://translations.lizard.net/projects/p/lizardsystem/resource/lizard-auth-server/

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 09:30+0100\n"
-"PO-Revision-Date: 2015-10-28 09:15+0000\n"
+"POT-Creation-Date: 2015-10-28 10:28+0100\n"
+"PO-Revision-Date: 2015-10-28 09:30+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -122,6 +122,54 @@ msgstr "Telefoonnummer"
 #: forms.py:222 templates/lizard_auth_server/profile.html:44
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
+
+#: models.py:88
+msgid "portal"
+msgstr "portaal"
+
+#: models.py:89
+msgid "portals"
+msgstr "portalen"
+
+#: models.py:134
+msgid "authentication token"
+msgstr "authenticatieteken"
+
+#: models.py:135
+msgid "authentication tokens"
+msgstr "authenticatietekens"
+
+#: models.py:207
+msgid "user profile"
+msgstr "gebruikersprofiel"
+
+#: models.py:208
+msgid "user profiles"
+msgstr "gebruikersprofielen"
+
+#: models.py:353 models.py:354
+msgid "invitation"
+msgstr "uitnodiging"
+
+#: models.py:498 models.py:499
+msgid "role"
+msgstr "rol"
+
+#: models.py:531
+msgid "organisation"
+msgstr "organisatie"
+
+#: models.py:532
+msgid "organisations"
+msgstr "organisaties"
+
+#: models.py:554
+msgid "organisation role"
+msgstr "organisatierol"
+
+#: models.py:555
+msgid "organisation roles"
+msgstr "organisatierollen"
 
 #: views.py:54
 msgid "An unknown error occurred."

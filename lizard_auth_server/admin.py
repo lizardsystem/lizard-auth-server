@@ -63,7 +63,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     search_fields = ['user__first_name', 'user__last_name', 'user__email']
     list_filter = ['portals', 'organisations']
 
-    filter_horizontal = ('portals', 'organisations')
+    filter_horizontal = ('portals', 'organisations', 'roles')
     readonly_fields = [
         'created_at',
         'updated_at',

@@ -58,6 +58,8 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 class PortalAdmin(admin.ModelAdmin):
     model = models.Portal
+    search_fields = ['name', 'visit_url', 'allowed_domain']
+    list_display = ['name', 'visit_url', 'allowed_domain']
 
 
 class OrganisationRoleAdmin(admin.ModelAdmin):

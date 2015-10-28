@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 16:40+0100\n"
+"POT-Creation-Date: 2015-10-28 17:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,19 +28,27 @@ msgstr ""
 msgid "Shortcut URLs"
 msgstr ""
 
-#: admin.py:57 models.py:237
+#: admin.py:57 models.py:240
 msgid "user profile"
 msgstr ""
 
-#: admin.py:93 admin.py:144
+#: admin.py:83
+msgid "Dates"
+msgstr ""
+
+#: admin.py:87
+msgid "Personal data"
+msgstr ""
+
+#: admin.py:115 admin.py:166
 msgid "number of user profiles"
 msgstr ""
 
-#: admin.py:102 admin.py:155
+#: admin.py:124 admin.py:177
 msgid "number of roles"
 msgstr ""
 
-#: admin.py:108 models.py:94 models.py:125 models.py:539
+#: admin.py:130 models.py:94 models.py:125 models.py:542
 msgid "portal"
 msgstr ""
 
@@ -135,7 +143,7 @@ msgstr ""
 msgid "Mobile phone number"
 msgstr ""
 
-#: models.py:50 models.py:340 models.py:528 models.py:562
+#: models.py:50 models.py:343 models.py:531 models.py:565
 msgid "name"
 msgstr ""
 
@@ -186,7 +194,7 @@ msgstr ""
 msgid "URL used in the UI to refer to this portal."
 msgstr ""
 
-#: models.py:95 models.py:173 models.py:360
+#: models.py:95 models.py:174 models.py:363
 msgid "portals"
 msgstr ""
 
@@ -198,11 +206,11 @@ msgstr ""
 msgid "auth token"
 msgstr ""
 
-#: models.py:136 models.py:169 models.py:389
+#: models.py:136 models.py:169 models.py:392
 msgid "user"
 msgstr ""
 
-#: models.py:140 models.py:177 models.py:363
+#: models.py:140 models.py:191 models.py:366
 msgid "created on"
 msgstr ""
 
@@ -214,115 +222,115 @@ msgstr ""
 msgid "authentication tokens"
 msgstr ""
 
-#: models.py:182
-msgid "updated on"
-msgstr ""
-
-#: models.py:187 models.py:581
+#: models.py:179 models.py:584
 msgid "organisations"
 msgstr ""
 
-#: models.py:192
-msgid "title"
-msgstr ""
-
-#: models.py:198
-msgid "street"
-msgstr ""
-
-#: models.py:204
-msgid "postal code"
-msgstr ""
-
-#: models.py:210
-msgid "town"
-msgstr ""
-
-#: models.py:216
-msgid "phone number"
-msgstr ""
-
-#: models.py:222
-msgid "mobile phone number"
-msgstr ""
-
-#: models.py:230 models.py:545 models.py:575
+#: models.py:186 models.py:548 models.py:578
 msgid "roles"
 msgstr ""
 
-#: models.py:238
+#: models.py:196
+msgid "updated on"
+msgstr ""
+
+#: models.py:201
+msgid "title"
+msgstr ""
+
+#: models.py:207
+msgid "street"
+msgstr ""
+
+#: models.py:213
+msgid "postal code"
+msgstr ""
+
+#: models.py:219
+msgid "town"
+msgstr ""
+
+#: models.py:225
+msgid "phone number"
+msgstr ""
+
+#: models.py:231
+msgid "mobile phone number"
+msgstr ""
+
+#: models.py:241
 msgid "user profiles"
 msgstr ""
 
-#: models.py:345
+#: models.py:348
 msgid "e-mail"
 msgstr ""
 
-#: models.py:349 models.py:580 models.py:596
+#: models.py:352 models.py:583 models.py:599
 msgid "organisation"
 msgstr ""
 
-#: models.py:354
+#: models.py:357
 msgid "language"
 msgstr ""
 
-#: models.py:367
+#: models.py:370
 msgid "activation key"
 msgstr ""
 
-#: models.py:373
+#: models.py:376
 msgid "activation key date"
 msgstr ""
 
-#: models.py:377
+#: models.py:380
 msgid "Date on which the activation key was generated. Used for expiration."
 msgstr ""
 
-#: models.py:381
+#: models.py:384
 msgid "is activated"
 msgstr ""
 
-#: models.py:384
+#: models.py:387
 msgid "activated on"
 msgstr ""
 
-#: models.py:394 models.py:395
+#: models.py:397 models.py:398
 msgid "invitation"
 msgstr ""
 
-#: models.py:518 models.py:568
+#: models.py:521 models.py:571
 msgid "unique id"
 msgstr ""
 
-#: models.py:523
+#: models.py:526
 msgid "code"
 msgstr ""
 
-#: models.py:533
+#: models.py:536
 msgid "external description"
 msgstr ""
 
-#: models.py:535
+#: models.py:538
 msgid "internal description"
 msgstr ""
 
-#: models.py:544 models.py:599
+#: models.py:547 models.py:602
 msgid "role"
 msgstr ""
 
-#: models.py:601
+#: models.py:604
 msgid "for all users"
 msgstr ""
 
-#: models.py:606
+#: models.py:609
 msgid "organisation role"
 msgstr ""
 
-#: models.py:607
+#: models.py:610
 msgid "organisation roles"
 msgstr ""
 
-#: models.py:611
+#: models.py:614
 msgid "{role} for everybody in {org}"
 msgstr ""
 

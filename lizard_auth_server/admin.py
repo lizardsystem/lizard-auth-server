@@ -188,6 +188,8 @@ class TokenAdmin(admin.ModelAdmin):
 class OrganisationRoleAdmin(admin.ModelAdmin):
     ordering = ('role__portal', 'organisation', 'role')
     list_display = ['__unicode__', 'role', 'organisation']
+    list_filter = ['role']
+    search_fields = ['organisation__name', 'role__name', 'role__portal__name']
 
 
 admin.site.register(models.Portal, PortalAdmin)

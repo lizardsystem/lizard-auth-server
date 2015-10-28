@@ -82,7 +82,7 @@ class Portal(models.Model):
         help_text=_('URL used in the UI to refer to this portal.'))
 
     def __unicode__(self):
-        return '{} ({})'.format(self.name, self.visit_url)
+        return self.name
 
     def rotate_keys(self):
         self.sso_secret = gen_key(Portal, 'sso_secret')()
@@ -135,6 +135,7 @@ class Token(models.Model):
         User,
         verbose_name=_('user'),
         null=True)
+    # ^^^ TODO: user seems to be complete unused [comment by Reinout 2015-10-28]
     created = models.DateTimeField(
         verbose_name=_('created on'),
         default=lambda: datetime.datetime.now(tz=pytz.UTC))
@@ -144,6 +145,7 @@ class Token(models.Model):
     class Meta:
         verbose_name = _('authentication token')
         verbose_name_plural = _('authentication tokens')
+        ordering = ('-created',)
 
 
 class UserProfileManager(models.Manager):
@@ -164,10 +166,12 @@ class UserProfile(models.Model):
     """
     user = models.OneToOneField(
         User,
-        verbose_name=_('user'))
+        verbose_name=_('user'),
+        related_name='user_profile')
     portals = models.ManyToManyField(
         Portal,
         verbose_name=_('portals'),
+        related_name='user_profiles',
         blank=True)
     created_at = models.DateTimeField(
         verbose_name=_('created on'),
@@ -181,6 +185,7 @@ class UserProfile(models.Model):
     organisations = models.ManyToManyField(
         "Organisation",
         verbose_name=_('organisations'),
+        related_name='user_profiles',
         blank=True,
         null=True)
     title = models.CharField(
@@ -221,6 +226,7 @@ class UserProfile(models.Model):
         default='')
     roles = models.ManyToManyField(
         "OrganisationRole",
+        related_name='user_profiles',
         verbose_name=_('roles'),
         blank=True,
         null=True)
@@ -230,11 +236,11 @@ class UserProfile(models.Model):
     class Meta:
         verbose_name = _('user profile')
         verbose_name_plural = _('user profiles')
+        ordering = ['user__username']
 
     def __unicode__(self):
         if self.user:
-            return 'UserProfile {} ({}, {})'.format(
-                self.pk, self.user, self.user.email)
+            return self.user
         else:
             return 'UserProfile {}'.format(self.pk)
 
@@ -316,8 +322,8 @@ class UserProfile(models.Model):
 
         # TODO: understand/improve this query - why is distinct() needed?
         return OrganisationRole.objects.filter(
-            models.Q(organisation__userprofile=self, for_all_users=True) |
-            models.Q(userprofile=self)).filter(
+            models.Q(organisation__user_profiles=self, for_all_users=True) |
+            models.Q(user_profiles=self)).filter(
             role__portal=portal).distinct()
 
 
@@ -387,12 +393,10 @@ class Invitation(models.Model):
     class Meta:
         verbose_name = _('invitation')
         verbose_name_plural = _('invitation')
+        ordering = ['is_activated', '-created_at', 'email']
 
     def __unicode__(self):
-        if self.user:
-            return '{}, {} (Activated)'.format(self.user, self.user.email)
-        else:
-            return '{}, {} (Not activated)'.format(self.name, self.email)
+        return "invitation for %s" % self.email
 
     def clean(self):
         if self.is_activated:
@@ -531,6 +535,7 @@ class Role(models.Model):
         verbose_name=_('internal description'))
     portal = models.ForeignKey(
         Portal,
+        related_name='roles',
         verbose_name=_('portal'))
 
     class Meta:
@@ -603,7 +608,7 @@ class OrganisationRole(models.Model):
 
     def __unicode__(self):
         if self.for_all_users:
-            return "{role} for everybody in {org}".format(
+            return _("{role} for everybody in {org}").format(
                 role=self.role, org=self.organisation)
         else:
             return "{role} in {org}".format(

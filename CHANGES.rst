@@ -17,6 +17,10 @@ Changelog of lizard-auth-server
   ``README.rst``. And... everything has been translated into Dutch.
   [reinout]
 
+- Huge admin update for the changelist pages. Better sorting, more columns,
+  more search, more filtering, more links to related objects.
+  [reinout]
+
 
 1.0 (2015-09-24)
 ----------------

@@ -47,31 +47,37 @@ class Portal(models.Model):
     A portal. If secret/key change, the portal website has to be updated too!
     """
     name = models.CharField(
+        _('name'),
         max_length=255,
         null=False,
         blank=False,
         help_text='Name used to refer to this portal.')
     sso_secret = models.CharField(
+        _('shared secret'),
         max_length=64,
         unique=True,
         default=gen_key('Portal', 'sso_secret'),
         help_text='Secret shared between SSO client and '
         'server to sign/encrypt communication.')
     sso_key = models.CharField(
+        _('identifying key'),
         max_length=64,
         unique=True,
         default=gen_key('Portal', 'sso_key'),
         help_text='String used to identify the SSO client.')
     allowed_domain = models.CharField(
+        _('allowed domain(s)'),
         max_length=255,
         default='',
         help_text=(
             'Allowed domain suffix for redirects using the next parameter. '
             'Multiple, whitespace-separated suffixes may be specified.'))
     redirect_url = models.CharField(
+        _('redirect url'),
         max_length=255,
         help_text='URL used in the SSO redirection.')
     visit_url = models.CharField(
+        _('visit url'),
         max_length=255,
         help_text='URL used in the UI to refer to this portal.')
 

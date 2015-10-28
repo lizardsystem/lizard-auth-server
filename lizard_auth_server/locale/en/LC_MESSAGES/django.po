@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 10:28+0100\n"
+"POT-Creation-Date: 2015-10-28 10:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,51 +119,75 @@ msgstr ""
 msgid "Mobile phone number"
 msgstr ""
 
-#: models.py:88
+#: models.py:50
+msgid "name"
+msgstr ""
+
+#: models.py:56
+msgid "shared secret"
+msgstr ""
+
+#: models.py:63
+msgid "identifying key"
+msgstr ""
+
+#: models.py:69
+msgid "allowed domain(s)"
+msgstr ""
+
+#: models.py:76
+msgid "redirect url"
+msgstr ""
+
+#: models.py:80
+msgid "visit url"
+msgstr ""
+
+#: models.py:94
 msgid "portal"
 msgstr ""
 
-#: models.py:89
+#: models.py:95
 msgid "portals"
 msgstr ""
 
-#: models.py:134
+#: models.py:140
 msgid "authentication token"
 msgstr ""
 
-#: models.py:135
+#: models.py:141
 msgid "authentication tokens"
 msgstr ""
 
-#: models.py:207
+#: models.py:213
 msgid "user profile"
 msgstr ""
 
-#: models.py:208
+#: models.py:214
 msgid "user profiles"
 msgstr ""
 
-#: models.py:353 models.py:354
+#: models.py:359 models.py:360
 msgid "invitation"
 msgstr ""
 
-#: models.py:498 models.py:499
+#: models.py:504 models.py:505
 msgid "role"
 msgstr ""
 
-#: models.py:531
+#: models.py:537
 msgid "organisation"
 msgstr ""
 
-#: models.py:532
+#: models.py:538
 msgid "organisations"
 msgstr ""
 
-#: models.py:554
+#: models.py:560
 msgid "organisation role"
 msgstr ""
 
-#: models.py:555
+#: models.py:561
 msgid "organisation roles"
 msgstr ""
 

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 10:28+0100\n"
-"PO-Revision-Date: 2015-10-28 09:30+0000\n"
+"POT-Creation-Date: 2015-10-28 10:41+0100\n"
+"PO-Revision-Date: 2015-10-28 09:43+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -123,51 +123,75 @@ msgstr "Telefoonnummer"
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
-#: models.py:88
+#: models.py:50
+msgid "name"
+msgstr "naam"
+
+#: models.py:56
+msgid "shared secret"
+msgstr "gedeelde geheime string"
+
+#: models.py:63
+msgid "identifying key"
+msgstr "identificatie-string"
+
+#: models.py:69
+msgid "allowed domain(s)"
+msgstr "toegestaan domein(en)"
+
+#: models.py:76
+msgid "redirect url"
+msgstr "redirect-url"
+
+#: models.py:80
+msgid "visit url"
+msgstr "bezoek-url"
+
+#: models.py:94
 msgid "portal"
 msgstr "portaal"
 
-#: models.py:89
+#: models.py:95
 msgid "portals"
 msgstr "portalen"
 
-#: models.py:134
+#: models.py:140
 msgid "authentication token"
 msgstr "authenticatieteken"
 
-#: models.py:135
+#: models.py:141
 msgid "authentication tokens"
 msgstr "authenticatietekens"
 
-#: models.py:207
+#: models.py:213
 msgid "user profile"
 msgstr "gebruikersprofiel"
 
-#: models.py:208
+#: models.py:214
 msgid "user profiles"
 msgstr "gebruikersprofielen"
 
-#: models.py:353 models.py:354
+#: models.py:359 models.py:360
 msgid "invitation"
 msgstr "uitnodiging"
 
-#: models.py:498 models.py:499
+#: models.py:504 models.py:505
 msgid "role"
 msgstr "rol"
 
-#: models.py:531
+#: models.py:537
 msgid "organisation"
 msgstr "organisatie"
 
-#: models.py:532
+#: models.py:538
 msgid "organisations"
 msgstr "organisaties"
 
-#: models.py:554
+#: models.py:560
 msgid "organisation role"
 msgstr "organisatierol"
 
-#: models.py:555
+#: models.py:561
 msgid "organisation roles"
 msgstr "organisatierollen"
 

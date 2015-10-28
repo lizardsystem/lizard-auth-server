@@ -79,6 +79,13 @@ class PortalAdmin(admin.ModelAdmin):
     list_display = ['name', 'visit_url', 'allowed_domain']
 
 
+class RoleAdmin(admin.ModelAdmin):
+    model = models.Role
+    search_fields = ['name', 'portal', 'external_description', 'internal_description']
+    list_display = ['portal', 'name', 'internal_description']
+    list_filter = ['portal']
+
+
 class TokenAdmin(admin.ModelAdmin):
     model = models.Token
     search_fields = ['portal__name', 'portal__visit_url', 'portal__allowed_domain']
@@ -88,10 +95,11 @@ class TokenAdmin(admin.ModelAdmin):
 class OrganisationRoleAdmin(admin.ModelAdmin):
     ordering = ('role__portal', 'organisation', 'role')
 
+
 admin.site.register(models.Portal, PortalAdmin)
 admin.site.register(models.Token, TokenAdmin)
 admin.site.register(models.Invitation, InvitationAdmin)
 admin.site.register(models.UserProfile, UserProfileAdmin)
-admin.site.register(models.Role)
+admin.site.register(models.Role, RoleAdmin)
 admin.site.register(models.Organisation)
 admin.site.register(models.OrganisationRole, OrganisationRoleAdmin)

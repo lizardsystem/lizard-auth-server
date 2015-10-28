@@ -134,8 +134,8 @@ class Token(models.Model):
     user = models.ForeignKey(
         User,
         verbose_name=_('user'),
+        blank=True,
         null=True)
-    # ^^^ TODO: user seems to be complete unused [comment by Reinout 2015-10-28]
     created = models.DateTimeField(
         verbose_name=_('created on'),
         default=lambda: datetime.datetime.now(tz=pytz.UTC))

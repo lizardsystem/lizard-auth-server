@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-02 13:58+0200\n"
+"POT-Creation-Date: 2015-10-28 12:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,15 +16,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: admin.py:36
+#: admin.py:29
 msgid "Resend the activation email, with a new key"
 msgstr ""
 
-#: admin.py:47
+#: admin.py:40
 msgid "Activate manually"
 msgstr ""
 
-#: admin.py:49
+#: admin.py:42
 msgid "Shortcut URLs"
 msgstr ""
 
@@ -33,113 +33,308 @@ msgstr ""
 msgid "The new password must be at least %d characters long."
 msgstr ""
 
-#: forms.py:58
+#: forms.py:62
 msgid ""
 "The new password must contain at least two numeric digits, one uppercase and "
 "one lowercase character."
 msgstr ""
 
-#: forms.py:94 templates/lizard_auth_server/profile.html:12
+#: forms.py:108 templates/lizard_auth_server/profile.html:12
 msgid "Name"
 msgstr ""
 
-#: forms.py:97
+#: forms.py:111
 msgid "For the purpose of an invitation email (not the username)"
 msgstr ""
 
-#: forms.py:100 forms.py:182 templates/lizard_auth_server/profile.html:16
+#: forms.py:114 forms.py:196 templates/lizard_auth_server/profile.html:16
 msgid "Email"
 msgstr ""
 
-#: forms.py:103 templates/lizard_auth_server/profile.html:24
+#: forms.py:117
 msgid "Organisation"
 msgstr ""
 
-#: forms.py:107
+#: forms.py:121
 msgid "Language"
 msgstr ""
 
-#: forms.py:118
+#: forms.py:132
 msgid "Portals"
 msgstr ""
 
-#: forms.py:128 forms.py:161 forms.py:233
+#: forms.py:142 forms.py:175 forms.py:247
 msgid "{} is already taken."
 msgstr ""
 
-#: forms.py:139
+#: forms.py:153
 msgid "Username"
 msgstr ""
 
-#: forms.py:143
+#: forms.py:157
 msgid "New password"
 msgstr ""
 
-#: forms.py:147
+#: forms.py:161
 msgid "New password confirmation"
 msgstr ""
 
-#: forms.py:152
+#: forms.py:166
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: forms.py:158
+#: forms.py:172
 msgid "Whitespace not allowed."
 msgstr ""
 
-#: forms.py:185
+#: forms.py:199
 msgid "First name"
 msgstr ""
 
-#: forms.py:190
+#: forms.py:204
 msgid "Last name"
 msgstr ""
 
-#: forms.py:193 templates/lizard_auth_server/profile.html:20
+#: forms.py:207 templates/lizard_auth_server/profile.html:20
 msgid "Title"
 msgstr ""
 
-#: forms.py:194 templates/lizard_auth_server/profile.html:28
+#: forms.py:208 templates/lizard_auth_server/profile.html:28
 msgid "Street"
 msgstr ""
 
-#: forms.py:197 templates/lizard_auth_server/profile.html:32
+#: forms.py:211 templates/lizard_auth_server/profile.html:32
 msgid "Postal code"
 msgstr ""
 
-#: forms.py:200 templates/lizard_auth_server/profile.html:36
+#: forms.py:214 templates/lizard_auth_server/profile.html:36
 msgid "Town"
 msgstr ""
 
-#: forms.py:203 templates/lizard_auth_server/profile.html:40
+#: forms.py:217 templates/lizard_auth_server/profile.html:40
 msgid "Phone number"
 msgstr ""
 
-#: forms.py:208 templates/lizard_auth_server/profile.html:44
+#: forms.py:222 templates/lizard_auth_server/profile.html:44
 msgid "Mobile phone number"
+msgstr ""
+
+#: models.py:50 models.py:334 models.py:524 models.py:557
+msgid "name"
+msgstr ""
+
+#: models.py:54
+msgid "Name used to refer to this portal."
+msgstr ""
+
+#: models.py:56
+msgid "shared secret"
+msgstr ""
+
+#: models.py:60
+msgid ""
+"Secret shared between SSO client and server to sign/encrypt communication."
+msgstr ""
+
+#: models.py:63
+msgid "identifying key"
+msgstr ""
+
+#: models.py:67
+msgid "String used to identify the SSO client."
+msgstr ""
+
+#: models.py:69
+msgid "allowed domain(s)"
+msgstr ""
+
+#: models.py:73
+msgid ""
+"Allowed domain suffix for redirects using the next parameter. Multiple, "
+"whitespace-separated suffixes may be specified."
+msgstr ""
+
+#: models.py:76
+msgid "redirect url"
+msgstr ""
+
+#: models.py:78
+msgid "URL used in the SSO redirection."
+msgstr ""
+
+#: models.py:80
+msgid "visit url"
+msgstr ""
+
+#: models.py:82
+msgid "URL used in the UI to refer to this portal."
+msgstr ""
+
+#: models.py:94 models.py:125 models.py:534
+msgid "portal"
+msgstr ""
+
+#: models.py:95 models.py:170 models.py:354
+msgid "portals"
+msgstr ""
+
+#: models.py:127
+msgid "request token"
+msgstr ""
+
+#: models.py:131
+msgid "auth token"
+msgstr ""
+
+#: models.py:136 models.py:167 models.py:383
+msgid "user"
+msgstr ""
+
+#: models.py:139 models.py:173 models.py:357
+msgid "created on"
+msgstr ""
+
+#: models.py:145
+msgid "authentication token"
+msgstr ""
+
+#: models.py:146
+msgid "authentication tokens"
+msgstr ""
+
+#: models.py:178
+msgid "updated on"
+msgstr ""
+
+#: models.py:183 models.py:576
+msgid "organisations"
+msgstr ""
+
+#: models.py:187
+msgid "title"
+msgstr ""
+
+#: models.py:193
+msgid "street"
+msgstr ""
+
+#: models.py:199
+msgid "postal code"
+msgstr ""
+
+#: models.py:205
+msgid "town"
+msgstr ""
+
+#: models.py:211
+msgid "phone number"
+msgstr ""
+
+#: models.py:217
+msgid "mobile phone number"
+msgstr ""
+
+#: models.py:224 models.py:540 models.py:570
+msgid "roles"
+msgstr ""
+
+#: models.py:231
+msgid "user profile"
+msgstr ""
+
+#: models.py:232
+msgid "user profiles"
+msgstr ""
+
+#: models.py:339
+msgid "e-mail"
+msgstr ""
+
+#: models.py:343 models.py:575 models.py:591
+msgid "organisation"
+msgstr ""
+
+#: models.py:348
+msgid "language"
+msgstr ""
+
+#: models.py:361
+msgid "activation key"
+msgstr ""
+
+#: models.py:367
+msgid "activation key date"
+msgstr ""
+
+#: models.py:371
+msgid "Date on which the activation key was generated. Used for expiration."
+msgstr ""
+
+#: models.py:375
+msgid "is activated"
+msgstr ""
+
+#: models.py:378
+msgid "activated on"
+msgstr ""
+
+#: models.py:388 models.py:389
+msgid "invitation"
+msgstr ""
+
+#: models.py:514 models.py:563
+msgid "unique id"
+msgstr ""
+
+#: models.py:519
+msgid "code"
+msgstr ""
+
+#: models.py:529
+msgid "external description"
+msgstr ""
+
+#: models.py:531
+msgid "internal description"
+msgstr ""
+
+#: models.py:539 models.py:594
+msgid "role"
+msgstr ""
+
+#: models.py:596
+msgid "for all users"
+msgstr ""
+
+#: models.py:601
+msgid "organisation role"
+msgstr ""
+
+#: models.py:602
+msgid "organisation roles"
 msgstr ""
 
 #: views.py:54
 msgid "An unknown error occurred."
 msgstr ""
 
-#: views.py:194
+#: views.py:208
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 
-#: views_sso.py:86 views_sso.py:106 views_sso.py:161
+#: views_sso.py:89 views_sso.py:110 views_sso.py:167
 msgid "Communication error."
 msgstr ""
 
-#: views_sso.py:171
+#: views_sso.py:177
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr ""
 
-#: templates/admin/base_site.html:5
+#: templates/admin/base_site.html:7
 msgid "Lizard SSO"
 msgstr ""
 
-#: templates/admin/base_site.html:5 templates/lizard_auth_server/base.html:57
+#: templates/admin/base_site.html:10 templates/lizard_auth_server/base.html:57
 msgid "Django administration"
 msgstr ""
 
@@ -148,18 +343,18 @@ msgstr ""
 msgid "Access denied"
 msgstr ""
 
-#: templates/lizard_auth_server/access_denied.html:11
+#: templates/lizard_auth_server/access_denied.html:10
 msgid "You do not have access to this portal."
 msgstr ""
 
-#: templates/lizard_auth_server/access_denied.html:16
+#: templates/lizard_auth_server/access_denied.html:15
 #, python-format
 msgid ""
 "<a href=\"%(login_url)s\">Log in with another account</a>, which does have "
 "access to this portal."
 msgstr ""
 
-#: templates/lizard_auth_server/access_denied.html:20
+#: templates/lizard_auth_server/access_denied.html:19
 #, python-format
 msgid ""
 "<a href=\"%(profile_url)s\">Check your profile</a>, to see which portals are "
@@ -265,8 +460,7 @@ msgid "An error occurred"
 msgstr ""
 
 #: templates/lizard_auth_server/error_message.html:14
-#, python-format
-msgid "<a href=\"%(index_url)s\">Back to the home page</a>"
+msgid "Back to the home page"
 msgstr ""
 
 #: templates/lizard_auth_server/invitation_email.html:3
@@ -342,15 +536,15 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: templates/lizard_auth_server/invite_user_complete.html:24
+#: templates/lizard_auth_server/invite_user_complete.html:25
 msgid "Immediately activate this account"
 msgstr ""
 
-#: templates/lizard_auth_server/invite_user_complete.html:25
+#: templates/lizard_auth_server/invite_user_complete.html:27
 msgid "Register another user"
 msgstr ""
 
-#: templates/lizard_auth_server/invite_user_complete.html:26
+#: templates/lizard_auth_server/invite_user_complete.html:28
 #: templates/lizard_auth_server/password_change_done.html:11
 msgid "Go back to my profile"
 msgstr ""
@@ -360,7 +554,7 @@ msgid "Logged out"
 msgstr ""
 
 #: templates/lizard_auth_server/logged_out.html:8
-msgid "Thanks for spending some quality time with the Web site today."
+msgid "You have been logged out."
 msgstr ""
 
 #: templates/lizard_auth_server/logged_out.html:9
@@ -470,8 +664,12 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
+#: templates/lizard_auth_server/profile.html:24
+msgid "Organisations"
+msgstr ""
+
 #: templates/lizard_auth_server/profile.html:48
-msgid "Created at"
+msgid "Created on"
 msgstr ""
 
 #: templates/lizard_auth_server/profile.html:55

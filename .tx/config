@@ -1,0 +1,8 @@
+[main]
+host = https://translations.lizard.net
+type = PO
+
+[lizardsystem.lizard-auth-server]
+file_filter = lizard_auth_server/locale/<lang>/LC_MESSAGES/django.po
+source_file = lizard_auth_server/locale/en/LC_MESSAGES/django.po
+source_lang = en

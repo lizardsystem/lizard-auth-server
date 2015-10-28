@@ -12,11 +12,12 @@ install_requires = [
     'Django >= 1.6, < 1.7',
     'django-extensions',
     'django-nose',
-    'south',
-    'requests',
+    'factory_boy >= 2.4.0',
     'itsdangerous',
     'pytz',
-    'factory_boy >= 2.4.0',
+    'requests',
+    'south',
+    'translations',
     ],
 
 tests_require = [

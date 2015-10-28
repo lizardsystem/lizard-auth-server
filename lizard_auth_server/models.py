@@ -11,6 +11,7 @@ from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from django.template.loader import render_to_string
 from django.utils import translation
+from django.utils.translation import ugettext_lazy as _
 from lizard_auth_server.utils import gen_secret_key
 
 import datetime
@@ -46,33 +47,39 @@ class Portal(models.Model):
     A portal. If secret/key change, the portal website has to be updated too!
     """
     name = models.CharField(
+        verbose_name=_('name'),
         max_length=255,
         null=False,
         blank=False,
-        help_text='Name used to refer to this portal.')
+        help_text=_('Name used to refer to this portal.'))
     sso_secret = models.CharField(
+        verbose_name=_('shared secret'),
         max_length=64,
         unique=True,
         default=gen_key('Portal', 'sso_secret'),
-        help_text='Secret shared between SSO client and '
-        'server to sign/encrypt communication.')
+        help_text=_('Secret shared between SSO client and '
+                    'server to sign/encrypt communication.'))
     sso_key = models.CharField(
+        verbose_name=_('identifying key'),
         max_length=64,
         unique=True,
         default=gen_key('Portal', 'sso_key'),
-        help_text='String used to identify the SSO client.')
+        help_text=_('String used to identify the SSO client.'))
     allowed_domain = models.CharField(
+        verbose_name=_('allowed domain(s)'),
         max_length=255,
         default='',
-        help_text=(
+        help_text=_(
             'Allowed domain suffix for redirects using the next parameter. '
             'Multiple, whitespace-separated suffixes may be specified.'))
     redirect_url = models.CharField(
+        verbose_name=_('redirect url'),
         max_length=255,
-        help_text='URL used in the SSO redirection.')
+        help_text=_('URL used in the SSO redirection.'))
     visit_url = models.CharField(
+        verbose_name=_('visit url'),
         max_length=255,
-        help_text='URL used in the UI to refer to this portal.')
+        help_text=_('URL used in the UI to refer to this portal.'))
 
     def __unicode__(self):
         return '{} ({})'.format(self.name, self.visit_url)
@@ -84,9 +91,12 @@ class Portal(models.Model):
 
     class Meta:
         ordering = ('name',)
+        verbose_name = _('portal')
+        verbose_name_plural = _('portals')
 
 
 class TokenManager(models.Manager):
+
     def create_for_portal(self, portal):
         """
         Create a new token for a portal object.
@@ -111,27 +121,36 @@ class Token(models.Model):
     An auth token used to authenticate a user.
     """
     portal = models.ForeignKey(
-        Portal)
+        Portal,
+        verbose_name=_('portal'))
     request_token = models.CharField(
+        verbose_name=_('request token'),
         max_length=64,
         unique=True)
     auth_token = models.CharField(
+        verbose_name=_('auth token'),
         max_length=64,
         unique=True)
     user = models.ForeignKey(
         User,
+        verbose_name=_('user'),
         null=True)
     created = models.DateTimeField(
+        verbose_name=_('created on'),
         default=lambda: datetime.datetime.now(tz=pytz.UTC))
 
     objects = TokenManager()
+
+    class Meta:
+        verbose_name = _('authentication token')
+        verbose_name_plural = _('authentication tokens')
 
 
 class UserProfileManager(models.Manager):
 
     def fetch_for_user(self, user):
         if not user:
-            raise AttributeError('Cant get UserProfile without user')
+            raise AttributeError("Can't get UserProfile without user")
         return self.get(user=user)
 
 
@@ -144,56 +163,73 @@ class UserProfile(models.Model):
     all fields must be OPTIONAL.
     """
     user = models.OneToOneField(
-        User)
+        User,
+        verbose_name=_('user'))
     portals = models.ManyToManyField(
         Portal,
+        verbose_name=_('portals'),
         blank=True)
     created_at = models.DateTimeField(
+        verbose_name=_('created on'),
+        # Grrrrrr. "it has been created AT the factory ON 1 october"
         auto_now_add=True,
         editable=False)
     updated_at = models.DateTimeField(
+        verbose_name=_('updated on'),
         auto_now=True,
         editable=False)
     organisations = models.ManyToManyField(
         "Organisation",
+        verbose_name=_('organisations'),
         blank=True,
         null=True)
     title = models.CharField(
+        verbose_name=_('title'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     street = models.CharField(
+        verbose_name=_('street'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     postal_code = models.CharField(
+        verbose_name=_('postal code'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     town = models.CharField(
+        verbose_name=_('town'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     phone_number = models.CharField(
+        verbose_name=_('phone number'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     mobile_phone_number = models.CharField(
+        verbose_name=_('mobile phone number'),
         max_length=255,
         null=True,
         blank=True,
         default='')
     roles = models.ManyToManyField(
         "OrganisationRole",
+        verbose_name=_('roles'),
         blank=True,
         null=True)
 
     objects = UserProfileManager()
+
+    class Meta:
+        verbose_name = _('user profile')
+        verbose_name_plural = _('user profiles')
 
     def __unicode__(self):
         if self.user:
@@ -295,47 +331,62 @@ post_save.connect(create_user_profile, sender=User)
 
 class Invitation(models.Model):
     name = models.CharField(
+        verbose_name=_('name'),
         max_length=255,
         null=False,
         blank=False)
     email = models.EmailField(
+        verbose_name=_('e-mail'),
         null=False,
         blank=False)
     organisation = models.CharField(
+        verbose_name=_('organisation'),
         max_length=255,
         null=False,
         blank=False)
     language = models.CharField(
+        verbose_name=_('language'),
         max_length=16,
         null=False,
         blank=False)
     portals = models.ManyToManyField(
         Portal,
+        verbose_name=_('portals'),
         blank=True)
     created_at = models.DateTimeField(
+        verbose_name=_('created on'),
         auto_now_add=True,
         editable=False)
     activation_key = models.CharField(
+        verbose_name=_('activation key'),
         max_length=64,
         null=True,
         blank=True,
         unique=True)
     activation_key_date = models.DateTimeField(
+        verbose_name=_('activation key date'),
         null=True,
         blank=True,
-        help_text=(
+        help_text=_(
             'Date on which the activation key was generated. '
             'Used for expiration.')
     )
     is_activated = models.BooleanField(
+        verbose_name=_('is activated'),
         default=False)
     activated_on = models.DateTimeField(
+        verbose_name=_('activated on'),
         null=True,
         blank=True)
     user = models.ForeignKey(
         User,
+        verbose_name=_('user'),
         null=True,
         blank=True)
+
+    class Meta:
+        verbose_name = _('invitation')
+        verbose_name_plural = _('invitation')
 
     def __unicode__(self):
         if self.user:
@@ -348,11 +399,11 @@ class Invitation(models.Model):
             if self.user is None:
                 raise ValidationError(
                     'Invitation is marked as activated, but its '
-                    'user isnt set.')
+                    'user is not set.')
             if self.activated_on is None:
                 raise ValidationError(
                     'Invitation is marked as activated, but its '
-                    'field "activated_on" isnt set.')
+                    'field "activated_on" is not set.')
 
     def _rotate_activation_key(self):
         if self.is_activated:
@@ -460,25 +511,33 @@ def create_new_uuid():
 
 class Role(models.Model):
     unique_id = models.CharField(
+        verbose_name=_('unique id'),
         max_length=32,
         unique=True,
         default=create_new_uuid)
     code = models.CharField(
+        verbose_name=_('code'),
         max_length=255,
         null=False,
         blank=False)
     name = models.CharField(
+        verbose_name=_('name'),
         max_length=255,
         null=False,
         blank=False)
-    external_description = models.TextField()
-    internal_description = models.TextField()
+    external_description = models.TextField(
+        verbose_name=_('external description'))
+    internal_description = models.TextField(
+        verbose_name=_('internal description'))
     portal = models.ForeignKey(
-        Portal)
+        Portal,
+        verbose_name=_('portal'))
 
     class Meta:
         ordering = ['portal', 'name']
         unique_together = (('name', 'portal'), )
+        verbose_name = _('role')
+        verbose_name_plural = _('roles')
 
     def __unicode__(self):
         return '{name} on {portal}'.format(name=self.name, portal=self.portal)
@@ -495,21 +554,26 @@ class Role(models.Model):
 
 class Organisation(models.Model):
     name = models.CharField(
+        verbose_name=_('name'),
         max_length=255,
         null=False,
         blank=False,
         unique=True)
     unique_id = models.CharField(
+        verbose_name=_('unique id'),
         max_length=32,
         unique=True,
         default=create_new_uuid)
     roles = models.ManyToManyField(
         Role,
         through='OrganisationRole',
+        verbose_name=_('roles'),
         blank=True)
 
     class Meta:
         ordering = ['name']
+        verbose_name = _('organisation')
+        verbose_name_plural = _('organisations')
 
     def __unicode__(self):
         return self.name
@@ -523,14 +587,19 @@ class Organisation(models.Model):
 
 class OrganisationRole(models.Model):
     organisation = models.ForeignKey(
-        Organisation)
+        Organisation,
+        verbose_name=_('organisation'))
     role = models.ForeignKey(
-        Role)
+        Role,
+        verbose_name=_('role'))
     for_all_users = models.BooleanField(
+        verbose_name=_('for all users'),
         default=False)
 
     class Meta:
         unique_together = (('organisation', 'role'), )
+        verbose_name = _('organisation role')
+        verbose_name_plural = _('organisation roles')
 
     def __unicode__(self):
         if self.for_all_users:

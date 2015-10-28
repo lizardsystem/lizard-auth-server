@@ -2,5 +2,12 @@
 {% load i18n %}
 
 {% block branding %}
-<h1 id="site-name"><a class="brand" href="/">{% trans 'Lizard SSO' %} {% trans 'Django administration' %}</a></h1>
+<h1 id="site-name">
+  <a class="brand" href="/">
+    {% trans 'Lizard SSO' %}
+  </a>
+  <span style="font-size: 80%;">
+    {% trans 'Django administration' %}
+  </span>
+</h1>
 {% endblock %}

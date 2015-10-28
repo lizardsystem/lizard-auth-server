@@ -105,16 +105,22 @@ class RoleAdmin(admin.ModelAdmin):
 class OrganisationAdmin(admin.ModelAdmin):
     model = models.Organisation
     search_fields = ['name']
-    list_display = ['name', 'num_user_profiles']
+    list_display = ['name', 'num_user_profiles', 'num_roles']
 
     def get_queryset(self, request):
         queryset = super(OrganisationAdmin, self).get_queryset(request)
-        return queryset.annotate(user_profiles_count=Count('user_profiles'))
+        return queryset.annotate(user_profiles_count=Count('user_profiles'),
+                                 roles_count=Count('roles', distinct=True))
 
     def num_user_profiles(self, obj):
         return obj.user_profiles_count
     num_user_profiles.short_description = ugettext_lazy('number of user profiles')
     num_user_profiles.admin_order_field = 'user_profiles_count'
+
+    def num_roles(self, obj):
+        return obj.roles_count
+    num_roles.short_description = ugettext_lazy('number of roles')
+    num_roles.admin_order_field = 'roles_count'
 
 
 class TokenAdmin(admin.ModelAdmin):

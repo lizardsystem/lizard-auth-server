@@ -121,9 +121,15 @@ class OrganisationAdmin(admin.ModelAdmin):
     num_user_profiles.allow_tags = True
 
     def num_roles(self, obj):
-        return obj.roles_count
+        count = obj.roles_count
+        if not count:
+            return count
+        url = reverse('admin:lizard_auth_server_organisationrole_changelist')
+        url += '?organisation__id__exact={}'.format(obj.id)
+        return '<a href="{}">&rarr; {}</a>'.format(url, count)
     num_roles.short_description = ugettext_lazy('number of roles')
     num_roles.admin_order_field = 'roles_count'
+    num_roles.allow_tags = True
 
 
 class TokenAdmin(admin.ModelAdmin):
@@ -134,6 +140,7 @@ class TokenAdmin(admin.ModelAdmin):
 
 class OrganisationRoleAdmin(admin.ModelAdmin):
     ordering = ('role__portal', 'organisation', 'role')
+    list_display = ['__unicode__', 'role', 'organisation']
 
 
 admin.site.register(models.Portal, PortalAdmin)

@@ -606,7 +606,7 @@ class OrganisationRole(models.Model):
 
     def __unicode__(self):
         if self.for_all_users:
-            return "{role} for everybody in {org}".format(
+            return _("{role} for everybody in {org}").format(
                 role=self.role, org=self.organisation)
         else:
             return "{role} in {org}".format(

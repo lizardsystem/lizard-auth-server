@@ -51,35 +51,35 @@ class Portal(models.Model):
         max_length=255,
         null=False,
         blank=False,
-        help_text='Name used to refer to this portal.')
+        help_text=_('Name used to refer to this portal.'))
     sso_secret = models.CharField(
         verbose_name=_('shared secret'),
         max_length=64,
         unique=True,
         default=gen_key('Portal', 'sso_secret'),
-        help_text='Secret shared between SSO client and '
-        'server to sign/encrypt communication.')
+        help_text=_('Secret shared between SSO client and '
+                    'server to sign/encrypt communication.'))
     sso_key = models.CharField(
         verbose_name=_('identifying key'),
         max_length=64,
         unique=True,
         default=gen_key('Portal', 'sso_key'),
-        help_text='String used to identify the SSO client.')
+        help_text=_('String used to identify the SSO client.'))
     allowed_domain = models.CharField(
         verbose_name=_('allowed domain(s)'),
         max_length=255,
         default='',
-        help_text=(
+        help_text=_(
             'Allowed domain suffix for redirects using the next parameter. '
             'Multiple, whitespace-separated suffixes may be specified.'))
     redirect_url = models.CharField(
         verbose_name=_('redirect url'),
         max_length=255,
-        help_text='URL used in the SSO redirection.')
+        help_text=_('URL used in the SSO redirection.'))
     visit_url = models.CharField(
         verbose_name=_('visit url'),
         max_length=255,
-        help_text='URL used in the UI to refer to this portal.')
+        help_text=_('URL used in the UI to refer to this portal.'))
 
     def __unicode__(self):
         return '{} ({})'.format(self.name, self.visit_url)
@@ -367,7 +367,7 @@ class Invitation(models.Model):
         verbose_name=_('activation key date'),
         null=True,
         blank=True,
-        help_text=(
+        help_text=_(
             'Date on which the activation key was generated. '
             'Used for expiration.')
     )
@@ -399,11 +399,11 @@ class Invitation(models.Model):
             if self.user is None:
                 raise ValidationError(
                     'Invitation is marked as activated, but its '
-                    'user isnt set.')
+                    'user is not set.')
             if self.activated_on is None:
                 raise ValidationError(
                     'Invitation is marked as activated, but its '
-                    'field "activated_on" isnt set.')
+                    'field "activated_on" is not set.')
 
     def _rotate_activation_key(self):
         if self.is_activated:

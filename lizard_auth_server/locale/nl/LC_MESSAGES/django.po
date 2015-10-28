@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 11:13+0100\n"
-"PO-Revision-Date: 2015-10-28 10:15+0000\n"
+"POT-Creation-Date: 2015-10-28 11:20+0100\n"
+"PO-Revision-Date: 2015-10-28 10:28+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -127,25 +127,58 @@ msgstr "Telefoonnummer (mobiel)"
 msgid "name"
 msgstr "naam"
 
+#: models.py:54
+msgid "Name used to refer to this portal."
+msgstr "Naam waaronder dit portaal bekend staat."
+
 #: models.py:56
 msgid "shared secret"
 msgstr "gedeelde geheime string"
+
+#: models.py:60
+msgid ""
+"Secret shared between SSO client and server to sign/encrypt communication."
+msgstr ""
+"De geheime code die tussen de SSO client en SSO server gedeeld wordt om de "
+"communicatie te ondertekenen en te versleutelen."
 
 #: models.py:63
 msgid "identifying key"
 msgstr "identificatie-string"
 
+#: models.py:67
+msgid "String used to identify the SSO client."
+msgstr "Code die gebruikt wordt om de SSO client te identificeren."
+
 #: models.py:69
 msgid "allowed domain(s)"
 msgstr "toegestaan domein(en)"
+
+#: models.py:73
+msgid ""
+"Allowed domain suffix for redirects using the next parameter. Multiple, "
+"whitespace-separated suffixes may be specified."
+msgstr ""
+"Na het inloggen wordt de gebruiker ge-redirect naar de site. De domeinnaam "
+"moet eindigen met wat hier is ingevuld. Meerdere domeinnamen kan je invoeren "
+"door ze met spaties te scheiden."
 
 #: models.py:76
 msgid "redirect url"
 msgstr "redirect-url"
 
+#: models.py:78
+msgid "URL used in the SSO redirection."
+msgstr "URL die standaard voor het redirecten gebruikt wordt."
+
 #: models.py:80
 msgid "visit url"
 msgstr "bezoek-url"
+
+#: models.py:82
+msgid "URL used in the UI to refer to this portal."
+msgstr ""
+"URL van het portal zelf waarnaar we kunnen linken vanuit overzichtspagina's."
 
 #: models.py:94 models.py:125 models.py:534
 msgid "portal"
@@ -211,7 +244,7 @@ msgstr "telefoonnummer"
 msgid "mobile phone number"
 msgstr "mobiele telefoonnummer"
 
-#: models.py:224 models.py:570
+#: models.py:224 models.py:540 models.py:570
 msgid "roles"
 msgstr "rollen"
 
@@ -243,6 +276,12 @@ msgstr "activatiecode"
 msgid "activation key date"
 msgstr "datum van de activatiecode"
 
+#: models.py:371
+msgid "Date on which the activation key was generated. Used for expiration."
+msgstr ""
+"Datum waarop de activatiecode is gegenereerd. Wordt gebruikt om de code "
+"automatisch te laten verlopen."
+
 #: models.py:375
 msgid "is activated"
 msgstr "is geactiveerd"
@@ -271,7 +310,7 @@ msgstr "omschrijving voor externen"
 msgid "internal description"
 msgstr "interne omschrijving"
 
-#: models.py:539 models.py:540 models.py:594
+#: models.py:539 models.py:594
 msgid "role"
 msgstr "rol"
 

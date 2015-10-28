@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 11:13+0100\n"
+"POT-Creation-Date: 2015-10-28 11:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -123,24 +123,51 @@ msgstr ""
 msgid "name"
 msgstr ""
 
+#: models.py:54
+msgid "Name used to refer to this portal."
+msgstr ""
+
 #: models.py:56
 msgid "shared secret"
+msgstr ""
+
+#: models.py:60
+msgid ""
+"Secret shared between SSO client and server to sign/encrypt communication."
 msgstr ""
 
 #: models.py:63
 msgid "identifying key"
 msgstr ""
 
+#: models.py:67
+msgid "String used to identify the SSO client."
+msgstr ""
+
 #: models.py:69
 msgid "allowed domain(s)"
+msgstr ""
+
+#: models.py:73
+msgid ""
+"Allowed domain suffix for redirects using the next parameter. Multiple, "
+"whitespace-separated suffixes may be specified."
 msgstr ""
 
 #: models.py:76
 msgid "redirect url"
 msgstr ""
 
+#: models.py:78
+msgid "URL used in the SSO redirection."
+msgstr ""
+
 #: models.py:80
 msgid "visit url"
+msgstr ""
+
+#: models.py:82
+msgid "URL used in the UI to refer to this portal."
 msgstr ""
 
 #: models.py:94 models.py:125 models.py:534
@@ -207,7 +234,7 @@ msgstr ""
 msgid "mobile phone number"
 msgstr ""
 
-#: models.py:224 models.py:570
+#: models.py:224 models.py:540 models.py:570
 msgid "roles"
 msgstr ""
 
@@ -239,6 +266,10 @@ msgstr ""
 msgid "activation key date"
 msgstr ""
 
+#: models.py:371
+msgid "Date on which the activation key was generated. Used for expiration."
+msgstr ""
+
 #: models.py:375
 msgid "is activated"
 msgstr ""
@@ -267,7 +298,7 @@ msgstr ""
 msgid "internal description"
 msgstr ""
 
-#: models.py:539 models.py:540 models.py:594
+#: models.py:539 models.py:594
 msgid "role"
 msgstr ""
 

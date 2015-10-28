@@ -226,6 +226,7 @@ class UserProfile(models.Model):
         default='')
     roles = models.ManyToManyField(
         "OrganisationRole",
+        related_name='user_profiles',
         verbose_name=_('roles'),
         blank=True,
         null=True)
@@ -321,8 +322,8 @@ class UserProfile(models.Model):
 
         # TODO: understand/improve this query - why is distinct() needed?
         return OrganisationRole.objects.filter(
-            models.Q(organisation__userprofile=self, for_all_users=True) |
-            models.Q(userprofile=self)).filter(
+            models.Q(organisation__user_profiles=self, for_all_users=True) |
+            models.Q(user_profiles=self)).filter(
             role__portal=portal).distinct()
 
 

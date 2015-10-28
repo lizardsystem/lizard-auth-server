@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 12:20+0100\n"
-"PO-Revision-Date: 2015-10-28 11:21+0000\n"
+"POT-Creation-Date: 2015-10-28 16:40+0100\n"
+"PO-Revision-Date: 2015-10-28 15:41+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,17 +18,33 @@ msgstr ""
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: admin.py:29
+#: admin.py:33
 msgid "Resend the activation email, with a new key"
 msgstr "Stuur een nieuwe activatie e-mail, met een nieuwe sleutel"
 
-#: admin.py:40
+#: admin.py:44
 msgid "Activate manually"
 msgstr "Handmatig activeren"
 
-#: admin.py:42
+#: admin.py:46
 msgid "Shortcut URLs"
 msgstr "Snelkoppelingen"
+
+#: admin.py:57 models.py:237
+msgid "user profile"
+msgstr "gebruikersprofiel"
+
+#: admin.py:93 admin.py:144
+msgid "number of user profiles"
+msgstr "Aantal gebruikersprofielen"
+
+#: admin.py:102 admin.py:155
+msgid "number of roles"
+msgstr "Aantal rollen"
+
+#: admin.py:108 models.py:94 models.py:125 models.py:539
+msgid "portal"
+msgstr "portaal"
 
 #: forms.py:46
 #, python-format
@@ -123,7 +139,7 @@ msgstr "Telefoonnummer"
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
-#: models.py:50 models.py:334 models.py:524 models.py:557
+#: models.py:50 models.py:340 models.py:528 models.py:562
 msgid "name"
 msgstr "naam"
 
@@ -180,11 +196,7 @@ msgid "URL used in the UI to refer to this portal."
 msgstr ""
 "URL van het portal zelf waarnaar we kunnen linken vanuit overzichtspagina's."
 
-#: models.py:94 models.py:125 models.py:534
-msgid "portal"
-msgstr "portaal"
-
-#: models.py:95 models.py:170 models.py:354
+#: models.py:95 models.py:173 models.py:360
 msgid "portals"
 msgstr "portalen"
 
@@ -196,135 +208,135 @@ msgstr "token van het request"
 msgid "auth token"
 msgstr "authenticatie token"
 
-#: models.py:136 models.py:167 models.py:383
+#: models.py:136 models.py:169 models.py:389
 msgid "user"
 msgstr "gebruiker"
 
-#: models.py:139 models.py:173 models.py:357
+#: models.py:140 models.py:177 models.py:363
 msgid "created on"
 msgstr "aangemaakt op"
 
-#: models.py:145
+#: models.py:146
 msgid "authentication token"
 msgstr "authenticatieteken"
 
-#: models.py:146
+#: models.py:147
 msgid "authentication tokens"
 msgstr "authenticatietekens"
 
-#: models.py:178
+#: models.py:182
 msgid "updated on"
 msgstr "geüpdated op"
 
-#: models.py:183 models.py:576
+#: models.py:187 models.py:581
 msgid "organisations"
 msgstr "organisaties"
 
-#: models.py:187
+#: models.py:192
 msgid "title"
 msgstr "titel"
 
-#: models.py:193
+#: models.py:198
 msgid "street"
 msgstr "straat"
 
-#: models.py:199
+#: models.py:204
 msgid "postal code"
 msgstr "postcode"
 
-#: models.py:205
+#: models.py:210
 msgid "town"
 msgstr "plaats"
 
-#: models.py:211
+#: models.py:216
 msgid "phone number"
 msgstr "telefoonnummer"
 
-#: models.py:217
+#: models.py:222
 msgid "mobile phone number"
 msgstr "mobiele telefoonnummer"
 
-#: models.py:224 models.py:540 models.py:570
+#: models.py:230 models.py:545 models.py:575
 msgid "roles"
 msgstr "rollen"
 
-#: models.py:231
-msgid "user profile"
-msgstr "gebruikersprofiel"
-
-#: models.py:232
+#: models.py:238
 msgid "user profiles"
 msgstr "gebruikersprofielen"
 
-#: models.py:339
+#: models.py:345
 msgid "e-mail"
 msgstr "e-mail"
 
-#: models.py:343 models.py:575 models.py:591
+#: models.py:349 models.py:580 models.py:596
 msgid "organisation"
 msgstr "organisatie"
 
-#: models.py:348
+#: models.py:354
 msgid "language"
 msgstr "taal"
 
-#: models.py:361
+#: models.py:367
 msgid "activation key"
 msgstr "activatiecode"
 
-#: models.py:367
+#: models.py:373
 msgid "activation key date"
 msgstr "datum van de activatiecode"
 
-#: models.py:371
+#: models.py:377
 msgid "Date on which the activation key was generated. Used for expiration."
 msgstr ""
 "Datum waarop de activatiecode is gegenereerd. Wordt gebruikt om de code "
 "automatisch te laten verlopen."
 
-#: models.py:375
+#: models.py:381
 msgid "is activated"
 msgstr "is geactiveerd"
 
-#: models.py:378
+#: models.py:384
 msgid "activated on"
 msgstr "geactiveerd op"
 
-#: models.py:388 models.py:389
+#: models.py:394 models.py:395
 msgid "invitation"
 msgstr "uitnodiging"
 
-#: models.py:514 models.py:563
+#: models.py:518 models.py:568
 msgid "unique id"
 msgstr "uniek ID"
 
-#: models.py:519
+#: models.py:523
 msgid "code"
 msgstr "code"
 
-#: models.py:529
+#: models.py:533
 msgid "external description"
 msgstr "omschrijving voor externen"
 
-#: models.py:531
+#: models.py:535
 msgid "internal description"
 msgstr "interne omschrijving"
 
-#: models.py:539 models.py:594
+#: models.py:544 models.py:599
 msgid "role"
 msgstr "rol"
 
-#: models.py:596
+#: models.py:601
 msgid "for all users"
 msgstr "voor alle gebruikers"
 
-#: models.py:601
+#: models.py:606
 msgid "organisation role"
 msgstr "organisatierol"
 
-#: models.py:602
+#: models.py:607
 msgid "organisation roles"
 msgstr "organisatierollen"
+
+#: models.py:611
+msgid "{role} for everybody in {org}"
+msgstr "{role} voor iedereen in {org}"
 
 #: views.py:54
 msgid "An unknown error occurred."

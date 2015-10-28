@@ -79,11 +79,26 @@ class PortalAdmin(admin.ModelAdmin):
     list_display = ['name', 'visit_url', 'allowed_domain']
 
 
+class RelevantPortalFilter(admin.SimpleListFilter):
+    title = _('portal')
+    parameter_name = 'portal'
+
+    def lookups(self, request, model_admin):
+        return models.Portal.objects.filter(
+            roles__isnull=False).distinct().values_list(
+            'id', 'name')
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        return queryset.filter(portal=self.value())
+
+
 class RoleAdmin(admin.ModelAdmin):
     model = models.Role
     search_fields = ['name', 'portal', 'external_description', 'internal_description']
     list_display = ['portal', 'name', 'internal_description']
-    list_filter = ['portal']
+    list_filter = [RelevantPortalFilter]
 
 
 class TokenAdmin(admin.ModelAdmin):

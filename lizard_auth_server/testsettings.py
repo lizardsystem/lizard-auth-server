@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 import os
-import tempfile
 
 
 SETTINGS_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -13,8 +12,10 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
-        'simple':  {'format': '%(levelname)s %(message)s'},
-        'verbose': {'format': '%(asctime)s %(name)s %(levelname)s\n%(message)s'}
+        'simple':  {
+            'format': '%(levelname)s %(message)s'},
+        'verbose': {
+            'format': '%(asctime)s %(name)s %(levelname)s\n%(message)s'}
     },
     'handlers': {
         'console': {
@@ -32,19 +33,19 @@ LOGGING = {
             'class': 'django.utils.log.NullHandler',
             'level': 'DEBUG'
         }
-   },
-   'loggers': {
-       '': {
-           'handlers': ['console'],
-           'level': 'DEBUG',
-           'propagate': True
-       },
-       'django.db.backends': {
-           'handlers': ['null'],
-           'level': 'DEBUG',
-           'propagate': False
-       }
-   }
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'django.db.backends': {
+            'handlers': ['null'],
+            'level': 'DEBUG',
+            'propagate': False
+        }
+    }
 }
 
 DEBUG = True
@@ -115,8 +116,8 @@ SSO_TOKEN_TIMEOUT_MINUTES = 30
 # Invitation / activation
 # Activation keys expire after this timedelta
 ACCOUNT_ACTIVATION_DAYS = 7
-# Prefix used to generate absolute links to this site. Note: should NOT end with a slash.
-# Used in emails.
+# Prefix used to generate absolute links to this site. Note: should NOT end
+# with a slash.  Used in emails.
 SITE_PUBLIC_URL_PREFIX = 'http://127.0.0.1:8001'
 # Name of this site, for use in email subjects et cetera
 SITE_NAME = 'sso.lizard.net'

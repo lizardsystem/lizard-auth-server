@@ -5,7 +5,11 @@ Changelog of lizard-auth-server
 1.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Internal change: sorting the imports with ``bin/isort
+  lizard_auth_server/*py`` now (and thus with ``.isort.cfg``). Note: the
+  imports aren't grouped in the regular 3 "pep8" groups. This is an experiment
+  inspired by Plone.
+  [reinout]
 
 
 1.0 (2015-09-24)

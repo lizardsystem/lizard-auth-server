@@ -1,35 +1,33 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-import logging
-
 from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.auth.models import User
-from django.http import (
-    HttpResponse,
-    HttpResponseBadRequest,
-)
+from django.http import HttpResponse
+from django.http import HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.debug import sensitive_variables
 from django.views.generic.edit import FormView
-
 from lizard_auth_server import forms
-from lizard_auth_server.http import JsonError, JsonResponse
 from lizard_auth_server import models
+from lizard_auth_server.http import JsonError
+from lizard_auth_server.http import JsonResponse
 from lizard_auth_server.views_sso import construct_user_data
+
+import logging
+
 
 logger = logging.getLogger(__name__)
 
 
 class AuthenticateUnsignedView(FormView):
-    '''
+    """
     View which can be used by API's to authenticate a
     username / password combo.
     Unsigned edition, so it can be used from GeoServer.
-    '''
+    """
     form_class = forms.AuthenticateUnsignedForm
 
     @method_decorator(csrf_exempt)
@@ -41,14 +39,14 @@ class AuthenticateUnsignedView(FormView):
     def get(self, request, *args, **kwargs):
         # just a simple debug form
         return HttpResponse(
-            '''
+            """
             <form method="post">
             <input type="text" name="key">
             <input type="text" name="username">
             <input type="password" name="password">
             <input type="submit">
             </form>
-            '''
+            """
         )
 
     @method_decorator(sensitive_post_parameters(
@@ -72,7 +70,7 @@ class AuthenticateUnsignedView(FormView):
             )
 
     def form_invalid(self, form):
-        logger.error('Error in posted form: {}'.format(form.errors.as_text()))
+        logger.error('Error in posted form: %s', form.errors.as_text())
         return HttpResponseBadRequest('Bad input')
 
     @method_decorator(sensitive_variables('password'))
@@ -92,17 +90,16 @@ class AuthenticateUnsignedView(FormView):
                 else:
                     return JsonError('No access to this portal')
         else:
-            logger.warn('Login failed for user {} and ip {}'.format(
-                username, self.request.META['REMOTE_ADDR']
-            ))
+            logger.warn('Login failed for user %s and ip %s',
+                        username, self.request.META['REMOTE_ADDR'])
             return JsonError('Login failed')
 
 
 class AuthenticateView(FormView):
-    '''
+    """
     View which can be used by API's to authenticate a
     username / password combo.
-    '''
+    """
     form_class = forms.DecryptForm
 
     @method_decorator(csrf_exempt)
@@ -112,13 +109,13 @@ class AuthenticateView(FormView):
     def get(self, request, *args, **kwargs):
         # just a simple debug form
         return HttpResponse(
-            '''
+            """
             <form method="post">
             <input type="text" name="username">
             <input type="password" name="password">
             <input type="submit">
             </form>
-            '''
+            """
         )
 
     @method_decorator(sensitive_post_parameters(
@@ -142,9 +139,8 @@ class AuthenticateView(FormView):
             )
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(
-            form.errors.as_text()
-        ))
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     @method_decorator(sensitive_variables('password'))
@@ -164,16 +160,15 @@ class AuthenticateView(FormView):
                 else:
                     return JsonError('No access to this portal')
         else:
-            logger.warn('Login failed for user {} and ip {}'.format(
-                username, self.request.META['REMOTE_ADDR']
-            ))
+            logger.warn('Login failed for user %s and ip %s',
+                        username, self.request.META['REMOTE_ADDR'])
             return JsonError('Login failed')
 
 
 class GetUserView(FormView):
-    '''
+    """
     View which can be used by API's to fetch user data.
-    '''
+    """
     form_class = forms.DecryptForm
 
     @method_decorator(csrf_exempt)
@@ -183,12 +178,12 @@ class GetUserView(FormView):
     def get(self, request, *args, **kwargs):
         # just a simple debug form
         return HttpResponse(
-            '''
+            """
             <form method="post">
             <input type="text" name="username">
             <input type="submit">
             </form>
-            '''
+            """
         )
 
     @method_decorator(never_cache)
@@ -205,9 +200,8 @@ class GetUserView(FormView):
             return JsonError('Missing "username" POST parameter.')
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: {}'.format(
-            form.errors.as_text()
-        ))
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     def get_user(self, portal, username):
@@ -236,9 +230,9 @@ class GetUserView(FormView):
 
 
 class GetUsersView(FormView):
-    '''
+    """
     View which can be used by API's to fetch all users of a portal.
-    '''
+    """
     form_class = forms.DecryptForm
 
     @method_decorator(csrf_exempt)
@@ -253,9 +247,8 @@ class GetUsersView(FormView):
         return self.get_users(form.portal)
 
     def form_invalid(self, form):
-        logger.error(
-            'Error while decrypting form: {}'.format(form.errors.as_text())
-        )
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     def get_users(self, portal):
@@ -271,9 +264,9 @@ class GetUsersView(FormView):
 
 
 class GetOrganisationsView(FormView):
-    '''
+    """
     View that can be used by APIs to fetch all users of a portal.
-    '''
+    """
     form_class = forms.DecryptForm
 
     @method_decorator(csrf_exempt)
@@ -289,9 +282,8 @@ class GetOrganisationsView(FormView):
         return JsonResponse(self.get_organisations(form.portal))
 
     def form_invalid(self, form):
-        logger.error(
-            'Error while decrypting form: {}'.format(form.errors.as_text())
-        )
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     def get_organisations(self, portal):
@@ -317,8 +309,8 @@ class RolesView(FormView):
 
     def form_invalid(self, form):
         logger.error(
-            'Error while decrypting roles form: {}'.format(form.errors.as_text())
-        )
+            'Error while decrypting roles form: %s',
+                form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     def get_roles(self, portal):
@@ -341,14 +333,14 @@ class UserOrganisationRolesView(FormView):
         portal = form.portal
         username = form.cleaned_data.get('username')
         if username:
-            return JsonResponse(self.get_user_organisation_roles(portal, username))
+            return JsonResponse(self.get_user_organisation_roles(
+                portal, username))
         else:
             return JsonError('Missing "username" POST parameter.')
 
     def form_invalid(self, form):
-        logger.error(
-            'Error while decrypting roles form: {}'.format(form.errors.as_text())
-        )
+        logger.error('Error while decrypting roles form: %s',
+                     form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     def get_user_organisation_roles(self, portal, username):
@@ -357,5 +349,5 @@ class UserOrganisationRolesView(FormView):
         """
         user_profile = models.UserProfile.objects.get(user__username=username)
         return {"user_organisation_roles_data": [
-                    uor.as_dict() for uor in
-                    user_profile.all_organisation_roles(portal)]}
+            uor.as_dict() for uor in
+            user_profile.all_organisation_roles(portal)]}

@@ -1,11 +1,12 @@
 import uuid
 
-from django.test import TestCase, Client
+from django.test import Client
+from django.test import TestCase
 from itsdangerous import URLSafeTimedSerializer
-
-from . import test_models
 from lizard_auth_server import models
 from lizard_auth_server import views_sso
+
+from . import test_models
 
 
 class TestConstructOrganisationRoleDict(TestCase):
@@ -59,9 +60,9 @@ class TestLoginRedirect(TestCase):
         self.client = Client()
 
         self.portal = test_models.PortalF.create(
-            sso_key = self.key,
-            redirect_url = redirect,
-            allowed_domain = allowed_domain
+            sso_key=self.key,
+            redirect_url=redirect,
+            allowed_domain=allowed_domain
         )
         user = test_models.UserF.create(username=self.username)
         user.set_password(self.password)
@@ -82,9 +83,12 @@ class TestLoginRedirect(TestCase):
         auth_token = 'auth_token'
 
         token = test_models.TokenF.create(request_token=request_token,
-            auth_token=auth_token, portal=self.portal)
+                                          auth_token=auth_token,
+                                          portal=self.portal)
 
-        msg = {'request_token': request_token, 'key': self.key, 'domain': domain}
+        msg = {'request_token': request_token,
+               'key': self.key,
+               'domain': domain}
         message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
         params = {'key': self.key, 'message': message}
         response = self.client.get('/sso/authorize/', params)
@@ -92,7 +96,9 @@ class TestLoginRedirect(TestCase):
 
         msg = {'request_token': request_token, 'auth_token': auth_token}
         message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
-        expec = '{}{}?message={}'.format(redirect, '/sso/local_login/', message)
+        expec = '{}{}?message={}'.format(redirect,
+                                         '/sso/local_login/',
+                                         message)
         self.assertEquals(response.url, expec)
 
         token.delete()
@@ -110,9 +116,13 @@ class TestLoginRedirect(TestCase):
 
         self.authorize_and_check_redirect(None, self.portal.redirect_url)
         self.authorize_and_check_redirect('/', self.portal.redirect_url)
-        self.authorize_and_check_redirect('/this_is_fine.html', self.portal.redirect_url)
-        self.authorize_and_check_redirect('http://bad.com/wrong.aspx', self.portal.redirect_url)
-        self.authorize_and_check_redirect('http://very.custom.net/ok', 'http://very.custom.net')
+        self.authorize_and_check_redirect('/this_is_fine.html',
+                                          self.portal.redirect_url)
+        self.authorize_and_check_redirect('http://bad.com/wrong.aspx',
+                                          self.portal.redirect_url)
+        self.authorize_and_check_redirect('http://very.custom.net/ok',
+                                          'http://very.custom.net')
         self.portal.allowed_domain = ''
         self.portal.save()
-        self.authorize_and_check_redirect('http://very.custom.net/nok', self.portal.redirect_url)
+        self.authorize_and_check_redirect('http://very.custom.net/nok',
+                                          self.portal.redirect_url)

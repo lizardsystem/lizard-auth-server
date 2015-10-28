@@ -12,8 +12,8 @@ cache:
    - $HOME/.local
 install:
   - deactivate
-  - python bootstrap.py
-  - bin/buildout
+  - /usr/bin/python2.7 bootstrap.py
+  - bin/buildout -v
 script:
   - bin/test
 after_success:

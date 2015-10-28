@@ -1,33 +1,31 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.template.context import RequestContext
+from django.template.response import TemplateResponse
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
+from django.views.generic.base import TemplateView
+from django.views.generic.edit import FormView
+from lizard_auth_server import forms
+from lizard_auth_server.models import Invitation
+from lizard_auth_server.models import Portal
 
 import logging
 
-from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
-from django.views.generic.edit import FormView
-from django.utils.translation import ugettext as _
-from django.http import (
-    HttpResponseRedirect
-)
-from django.utils.decorators import method_decorator
-from django.views.generic.base import TemplateView
-from django.template.context import RequestContext
-from django.template.response import TemplateResponse
-
-from lizard_auth_server import forms
-from lizard_auth_server.models import Portal, Invitation
 
 logger = logging.getLogger(__name__)
 
 
 class ViewContextMixin(object):
-    '''
+    """
     Adds the view object to the template context.
 
     Ensure this is first in the inheritance list!
-    '''
+    """
     def get_context_data(self, **kwargs):
         return {
             'params': kwargs,
@@ -36,21 +34,21 @@ class ViewContextMixin(object):
 
 
 class StaffOnlyMixin(object):
-    '''
+    """
     Ensures access by staff members (user.is_staff is True) only to all
     HTTP methods.
 
     Ensure this is first in the inheritance list!
-    '''
+    """
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         return super(StaffOnlyMixin, self).dispatch(request, *args, **kwargs)
 
 
 class ErrorMessageResponse(TemplateResponse):
-    '''
+    """
     Display a slightly more user-friendly error message.
-    '''
+    """
     def __init__(self, request, error_message=None, status=500):
         if not error_message:
             error_message = _('An unknown error occurred.')
@@ -73,9 +71,9 @@ class ErrorMessageResponse(TemplateResponse):
 
 
 class ProfileView(ViewContextMixin, TemplateView):
-    '''
+    """
     Straightforward view which displays a user's profile.
-    '''
+    """
     template_name = 'lizard_auth_server/profile.html'
     _profile = None
 
@@ -95,10 +93,10 @@ class ProfileView(ViewContextMixin, TemplateView):
 
 
 class EditProfileView(FormView):
-    '''
+    """
     Straightforward view which displays a form to have a user
     edit his / her own profile.
-    '''
+    """
     template_name = 'lizard_auth_server/edit_profile.html'
     form_class = forms.EditProfileForm
     _profile = None
@@ -203,8 +201,8 @@ class InvitationMixin(object):
 
     def invalid_activation_key(self, request):
         logger.warn(
-            'invalid activation key used by {}'
-            .format(request.META['REMOTE_ADDR']))
+            'invalid activation key used by %s',
+            request.META['REMOTE_ADDR'])
         return ErrorMessageResponse(
             request,
             _('Invalid activation key. Perhaps this account '

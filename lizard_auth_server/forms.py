@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from django import forms
-from django.forms import ValidationError
-from django.contrib import auth
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
 from django.conf import settings
-
-from itsdangerous import URLSafeTimedSerializer, BadSignature
-
+from django.contrib import auth
+from django.contrib.auth.models import User
+from django.forms import ValidationError
+from django.utils.translation import ugettext_lazy as _
+from itsdangerous import BadSignature
+from itsdangerous import URLSafeTimedSerializer
 from lizard_auth_server.models import Portal
+
+
+MIN_LENGTH = 8
 
 
 class DecryptForm(forms.Form):
@@ -19,7 +20,7 @@ class DecryptForm(forms.Form):
 
     def clean(self):
         data = super(DecryptForm, self).clean()
-        if not 'key' in data:
+        if 'key' not in data:
             raise ValidationError('No portal key')
         try:
             self.portal = Portal.objects.get(sso_key=data['key'])
@@ -33,8 +34,6 @@ class DecryptForm(forms.Form):
         if data['key'] != new_data['key']:
             raise ValidationError('Public key does not match signed key')
         return new_data
-
-MIN_LENGTH = 8
 
 
 def validate_password(cleaned_password):
@@ -72,7 +71,7 @@ class AuthenticateUnsignedForm(forms.Form):
 
     def clean(self):
         data = super(AuthenticateUnsignedForm, self).clean()
-        if not 'key' in data:
+        if 'key' not in data:
             raise ValidationError('No portal key')
         try:
             self.portal = Portal.objects.get(sso_key=data['key'])
@@ -82,7 +81,7 @@ class AuthenticateUnsignedForm(forms.Form):
 
 
 class PasswordChangeForm(auth.forms.PasswordChangeForm):
-    '''Used to verify whether the new password is secure.'''
+    """Used to verify whether the new password is secure."""
 
     def clean_new_password1(self):
         password1 = self.cleaned_data.get('new_password1')
@@ -91,7 +90,7 @@ class PasswordChangeForm(auth.forms.PasswordChangeForm):
 
 
 class SetPasswordForm(auth.forms.SetPasswordForm):
-    '''Used to verify whether the new password is secure.'''
+    """Used to verify whether the new password is secure."""
 
     def clean_new_password1(self):
         password1 = self.cleaned_data.get('new_password1')
@@ -100,9 +99,9 @@ class SetPasswordForm(auth.forms.SetPasswordForm):
 
 
 class InviteUserForm(forms.Form):
-    '''
+    """
     Form used by an administrator to invite a user.
-    '''
+    """
     # Whitespace is allowed in `name` (it's only used in the invitation email).
     name = forms.CharField(
         max_length=64,
@@ -145,9 +144,9 @@ class InviteUserForm(forms.Form):
 
 
 class ActivateUserForm1(forms.Form):
-    '''
+    """
     Form used by a user to activate his/her account.
-    '''
+    """
     # Do not allow whitespace in `username` (problematic with Django admin).
     username = forms.CharField(
         max_length=30,
@@ -191,9 +190,9 @@ class ActivateUserForm1(forms.Form):
 
 
 class EditProfileForm(forms.Form):
-    '''
+    """
     Form used by a user to activate his/her account.
-    '''
+    """
     email = forms.EmailField(max_length=255, label=_('Email'), required=True)
     first_name = forms.CharField(
         max_length=30,

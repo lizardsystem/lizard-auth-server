@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.http import HttpResponse
 
 import json
-
-from django.http import HttpResponse
 
 
 def JsonResponse(data, already_serialized=False):
     if isinstance(data, dict):
-        if not 'success' in data:
+        if 'success' not in data:
             if 'error' in data:
                 data['success'] = False
             else:

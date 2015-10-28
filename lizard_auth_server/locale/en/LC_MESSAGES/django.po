@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 11:20+0100\n"
+"POT-Creation-Date: 2015-10-28 11:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -330,12 +330,12 @@ msgstr ""
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr ""
 
-#: templates/admin/base_site.html:5
+#: templates/admin/base_site.html:7
 msgid "Lizard SSO"
 msgstr ""
 
-#: templates/admin/base_site.html:5 templates/lizard_auth_server/base.html:57
-msgid "Django administration"
+#: templates/admin/base_site.html:10
+msgid "Django administration pages"
 msgstr ""
 
 #: templates/lizard_auth_server/access_denied.html:4
@@ -423,6 +423,10 @@ msgstr ""
 
 #: templates/lizard_auth_server/base.html:55
 msgid "Profile"
+msgstr ""
+
+#: templates/lizard_auth_server/base.html:57
+msgid "Django administration"
 msgstr ""
 
 #: templates/lizard_auth_server/base.html:59

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 11:20+0100\n"
-"PO-Revision-Date: 2015-10-28 10:28+0000\n"
+"POT-Creation-Date: 2015-10-28 11:36+0100\n"
+"PO-Revision-Date: 2015-10-28 10:37+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -344,13 +344,13 @@ msgstr "Communicatiefout."
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr "Token is verlopen. Ga terug naar het portaal, en log daar opnieuw in."
 
-#: templates/admin/base_site.html:5
+#: templates/admin/base_site.html:7
 msgid "Lizard SSO"
 msgstr "Lizard SSO"
 
-#: templates/admin/base_site.html:5 templates/lizard_auth_server/base.html:57
-msgid "Django administration"
-msgstr "Django-administratie"
+#: templates/admin/base_site.html:10
+msgid "Django administration pages"
+msgstr "Django administratiepagina's"
 
 #: templates/lizard_auth_server/access_denied.html:4
 #: templates/lizard_auth_server/access_denied.html:8
@@ -442,6 +442,10 @@ msgstr "Hallo, %(name)s"
 #: templates/lizard_auth_server/base.html:55
 msgid "Profile"
 msgstr "Profiel"
+
+#: templates/lizard_auth_server/base.html:57
+msgid "Django administration"
+msgstr "Django-administratie"
 
 #: templates/lizard_auth_server/base.html:59
 #: templates/lizard_auth_server/base.html:74

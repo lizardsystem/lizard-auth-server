@@ -184,6 +184,7 @@ class UserProfile(models.Model):
     organisations = models.ManyToManyField(
         "Organisation",
         verbose_name=_('organisations'),
+        related_name='user_profiles',
         blank=True,
         null=True)
     title = models.CharField(

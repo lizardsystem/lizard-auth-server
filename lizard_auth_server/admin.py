@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from django.contrib import messages
 from django.core.urlresolvers import reverse
+from django.db.models import Count
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from lizard_auth_server import models
@@ -101,6 +102,21 @@ class RoleAdmin(admin.ModelAdmin):
     list_filter = [RelevantPortalFilter]
 
 
+class OrganisationAdmin(admin.ModelAdmin):
+    model = models.Organisation
+    search_fields = ['name']
+    list_display = ['name', 'num_user_profiles']
+
+    def get_queryset(self, request):
+        queryset = super(OrganisationAdmin, self).get_queryset(request)
+        return queryset.annotate(user_profiles_count=Count('user_profiles'))
+
+    def num_user_profiles(self, obj):
+        return obj.user_profiles_count
+    num_user_profiles.short_description = ugettext_lazy('number of user profiles')
+    num_user_profiles.admin_order_field = 'user_profiles_count'
+
+
 class TokenAdmin(admin.ModelAdmin):
     model = models.Token
     search_fields = ['portal__name', 'portal__visit_url', 'portal__allowed_domain']
@@ -116,5 +132,5 @@ admin.site.register(models.Token, TokenAdmin)
 admin.site.register(models.Invitation, InvitationAdmin)
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Role, RoleAdmin)
-admin.site.register(models.Organisation)
+admin.site.register(models.Organisation, OrganisationAdmin)
 admin.site.register(models.OrganisationRole, OrganisationRoleAdmin)

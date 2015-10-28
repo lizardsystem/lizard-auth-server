@@ -168,11 +168,25 @@ class UserProfile(models.Model):
         User,
         verbose_name=_('user'),
         related_name='user_profile')
+
     portals = models.ManyToManyField(
         Portal,
         verbose_name=_('portals'),
         related_name='user_profiles',
         blank=True)
+    organisations = models.ManyToManyField(
+        "Organisation",
+        verbose_name=_('organisations'),
+        related_name='user_profiles',
+        blank=True,
+        null=True)
+    roles = models.ManyToManyField(
+        "OrganisationRole",
+        related_name='user_profiles',
+        verbose_name=_('roles'),
+        blank=True,
+        null=True)
+
     created_at = models.DateTimeField(
         verbose_name=_('created on'),
         # Grrrrrr. "it has been created AT the factory ON 1 october"
@@ -182,12 +196,7 @@ class UserProfile(models.Model):
         verbose_name=_('updated on'),
         auto_now=True,
         editable=False)
-    organisations = models.ManyToManyField(
-        "Organisation",
-        verbose_name=_('organisations'),
-        related_name='user_profiles',
-        blank=True,
-        null=True)
+
     title = models.CharField(
         verbose_name=_('title'),
         max_length=255,
@@ -224,12 +233,6 @@ class UserProfile(models.Model):
         null=True,
         blank=True,
         default='')
-    roles = models.ManyToManyField(
-        "OrganisationRole",
-        related_name='user_profiles',
-        verbose_name=_('roles'),
-        blank=True,
-        null=True)
 
     objects = UserProfileManager()
 

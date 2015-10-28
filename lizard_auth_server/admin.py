@@ -71,6 +71,28 @@ class UserProfileAdmin(admin.ModelAdmin):
         'last_name',
         'email'
     ]
+    fieldsets = (
+        (None, {
+            'fields': ['user',
+                       'first_name',
+                       'last_name',
+                       'portals',
+                       'organisations',
+                       'roles',
+                   ]}),
+        (ugettext_lazy('Dates'), {
+            'fields': ['created_at',
+                       'updated_at',
+                   ]}),
+        (ugettext_lazy('Personal data'), {
+            'fields': ['title',
+                       'street',
+                       'postal_code',
+                       'town',
+                       'phone_number',
+                       'mobile_phone_number',
+                   ]}),
+    )
 
 
 class PortalAdmin(admin.ModelAdmin):

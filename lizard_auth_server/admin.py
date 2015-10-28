@@ -61,8 +61,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     model = models.UserProfile
     list_display = ['username', 'full_name', 'email', 'created_at']
     search_fields = ['user__first_name', 'user__last_name', 'user__email']
-    list_filter = ['portals']
-    # An additional list_filter on organisations is simply too long.
+    list_filter = ['portals', 'organisations']
 
     filter_horizontal = ('portals', 'organisations')
     readonly_fields = [
@@ -113,9 +112,13 @@ class OrganisationAdmin(admin.ModelAdmin):
                                  roles_count=Count('roles', distinct=True))
 
     def num_user_profiles(self, obj):
-        return obj.user_profiles_count
+        count = obj.user_profiles_count
+        url = reverse('admin:lizard_auth_server_userprofile_changelist')
+        url += '?organisations__id__exact={}'.format(obj.id)
+        return '<a href="{}">&rarr; {}</a>'.format(url, count)
     num_user_profiles.short_description = ugettext_lazy('number of user profiles')
     num_user_profiles.admin_order_field = 'user_profiles_count'
+    num_user_profiles.allow_tags = True
 
     def num_roles(self, obj):
         return obj.roles_count

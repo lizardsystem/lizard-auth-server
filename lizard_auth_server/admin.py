@@ -185,10 +185,25 @@ class TokenAdmin(admin.ModelAdmin):
     list_display = ['created', 'portal', 'user']
 
 
+class RelevantOrganisationFilter(admin.SimpleListFilter):
+    title = _('organisation')
+    parameter_name = 'organisation'
+
+    def lookups(self, request, model_admin):
+        return models.Organisation.objects.filter(
+            organisation_roles__isnull=False).distinct().values_list(
+            'id', 'name')
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        return queryset.filter(organisation=self.value())
+
+
 class OrganisationRoleAdmin(admin.ModelAdmin):
     ordering = ('role__portal', 'organisation', 'role')
     list_display = ['__unicode__', 'role', 'organisation']
-    list_filter = ['role']
+    list_filter = ['role', RelevantOrganisationFilter]
     search_fields = ['organisation__name', 'role__name', 'role__portal__name']
 
 

@@ -596,9 +596,11 @@ class Organisation(models.Model):
 class OrganisationRole(models.Model):
     organisation = models.ForeignKey(
         Organisation,
+        related_name='organisation_roles',
         verbose_name=_('organisation'))
     role = models.ForeignKey(
         Role,
+        related_name='organisation_roles',
         verbose_name=_('role'))
     for_all_users = models.BooleanField(
         verbose_name=_('for all users'),

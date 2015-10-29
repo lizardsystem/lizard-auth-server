@@ -128,7 +128,7 @@ class PortalAdmin(admin.ModelAdmin):
 
 class RelevantPortalFilter(admin.SimpleListFilter):
     title = _('portal')
-    parameter_name = 'portal'
+    parameter_name = 'portal__id__exact'
 
     def lookups(self, request, model_admin):
         return models.Portal.objects.filter(
@@ -143,9 +143,27 @@ class RelevantPortalFilter(admin.SimpleListFilter):
 
 class RoleAdmin(admin.ModelAdmin):
     model = models.Role
-    search_fields = ['name', 'portal', 'external_description', 'internal_description']
-    list_display = ['portal', 'name', 'internal_description']
+    search_fields = ['code', 'name', 'portal',
+                     'external_description', 'internal_description']
+    list_display = ['code', 'portal', 'name', 'internal_description',
+                    'num_organisation_roles']
     list_filter = [RelevantPortalFilter]
+
+    def get_queryset(self, request):
+        queryset = super(RoleAdmin, self).get_queryset(request)
+        return queryset.annotate(
+            organisation_roles_count=Count('organisation_roles', distinct=True))
+
+    def num_organisation_roles(self, obj):
+        count = obj.organisation_roles_count
+        if not count:
+            return ''
+        url = reverse('admin:lizard_auth_server_organisationrole_changelist')
+        url += '?role__id__exact={}'.format(obj.id)
+        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+    num_organisation_roles.short_description = ugettext_lazy('number of organisation roles')
+    num_organisation_roles.admin_order_field = 'organisation_roles_count'
+    num_organisation_roles.allow_tags = True
 
 
 class OrganisationAdmin(admin.ModelAdmin):
@@ -170,7 +188,7 @@ class OrganisationAdmin(admin.ModelAdmin):
     def num_roles(self, obj):
         count = obj.roles_count
         if not count:
-            return count
+            return ''
         url = reverse('admin:lizard_auth_server_organisationrole_changelist')
         url += '?organisation__id__exact={}'.format(obj.id)
         return '<a href="{}">&rarr; {}</a>'.format(url, count)
@@ -187,7 +205,7 @@ class TokenAdmin(admin.ModelAdmin):
 
 class RelevantOrganisationFilter(admin.SimpleListFilter):
     title = _('organisation')
-    parameter_name = 'organisation'
+    parameter_name = 'organisation__id__exact'
 
     def lookups(self, request, model_admin):
         return models.Organisation.objects.filter(

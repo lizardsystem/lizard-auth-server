@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 17:21+0100\n"
-"PO-Revision-Date: 2015-10-28 16:22+0000\n"
+"POT-Creation-Date: 2015-10-29 10:12+0100\n"
+"PO-Revision-Date: 2015-10-29 09:13+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -42,17 +42,25 @@ msgstr "Datums"
 msgid "Personal data"
 msgstr "Persoonsgegevens"
 
-#: admin.py:115 admin.py:166
+#: admin.py:115 admin.py:184
 msgid "number of user profiles"
 msgstr "Aantal gebruikersprofielen"
 
-#: admin.py:124 admin.py:177
+#: admin.py:124 admin.py:195
 msgid "number of roles"
 msgstr "Aantal rollen"
 
 #: admin.py:130 models.py:94 models.py:125 models.py:542
 msgid "portal"
 msgstr "portaal"
+
+#: admin.py:164
+msgid "number of organisation roles"
+msgstr "Aantal organisatierollen"
+
+#: admin.py:207 models.py:352 models.py:583 models.py:600
+msgid "organisation"
+msgstr "organisatie"
 
 #: forms.py:46
 #, python-format
@@ -276,10 +284,6 @@ msgstr "gebruikersprofielen"
 msgid "e-mail"
 msgstr "e-mail"
 
-#: models.py:352 models.py:583 models.py:599
-msgid "organisation"
-msgstr "organisatie"
-
 #: models.py:357
 msgid "language"
 msgstr "taal"
@@ -326,23 +330,23 @@ msgstr "omschrijving voor externen"
 msgid "internal description"
 msgstr "interne omschrijving"
 
-#: models.py:547 models.py:602
+#: models.py:547 models.py:604
 msgid "role"
 msgstr "rol"
 
-#: models.py:604
+#: models.py:606
 msgid "for all users"
 msgstr "voor alle gebruikers"
 
-#: models.py:609
+#: models.py:611
 msgid "organisation role"
 msgstr "organisatierol"
 
-#: models.py:610
+#: models.py:612
 msgid "organisation roles"
 msgstr "organisatierollen"
 
-#: models.py:614
+#: models.py:616
 msgid "{role} for everybody in {org}"
 msgstr "{role} voor iedereen in {org}"
 

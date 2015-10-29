@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-28 17:21+0100\n"
+"POT-Creation-Date: 2015-10-29 10:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,16 +40,24 @@ msgstr ""
 msgid "Personal data"
 msgstr ""
 
-#: admin.py:115 admin.py:166
+#: admin.py:115 admin.py:184
 msgid "number of user profiles"
 msgstr ""
 
-#: admin.py:124 admin.py:177
+#: admin.py:124 admin.py:195
 msgid "number of roles"
 msgstr ""
 
 #: admin.py:130 models.py:94 models.py:125 models.py:542
 msgid "portal"
+msgstr ""
+
+#: admin.py:164
+msgid "number of organisation roles"
+msgstr ""
+
+#: admin.py:207 models.py:352 models.py:583 models.py:600
+msgid "organisation"
 msgstr ""
 
 #: forms.py:46
@@ -266,10 +274,6 @@ msgstr ""
 msgid "e-mail"
 msgstr ""
 
-#: models.py:352 models.py:583 models.py:599
-msgid "organisation"
-msgstr ""
-
 #: models.py:357
 msgid "language"
 msgstr ""
@@ -314,23 +318,23 @@ msgstr ""
 msgid "internal description"
 msgstr ""
 
-#: models.py:547 models.py:602
+#: models.py:547 models.py:604
 msgid "role"
 msgstr ""
 
-#: models.py:604
+#: models.py:606
 msgid "for all users"
 msgstr ""
 
-#: models.py:609
+#: models.py:611
 msgid "organisation role"
 msgstr ""
 
-#: models.py:610
+#: models.py:612
 msgid "organisation roles"
 msgstr ""
 
-#: models.py:614
+#: models.py:616
 msgid "{role} for everybody in {org}"
 msgstr ""
 

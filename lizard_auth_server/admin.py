@@ -143,7 +143,8 @@ class RelevantPortalFilter(admin.SimpleListFilter):
 
 class RoleAdmin(admin.ModelAdmin):
     model = models.Role
-    search_fields = ['code', 'name', 'portal',
+    search_fields = ['code', 'name', 'portal__name', 'portal__visit_url',
+                     'portal__allowed_domain',
                      'external_description', 'internal_description']
     list_display = ['code', 'portal', 'name', 'internal_description',
                     'num_organisation_roles']
@@ -219,6 +220,7 @@ class RelevantOrganisationFilter(admin.SimpleListFilter):
 
 
 class OrganisationRoleAdmin(admin.ModelAdmin):
+    model = models.OrganisationRole
     ordering = ('role__portal', 'organisation', 'role')
     list_display = ['__unicode__', 'role', 'organisation']
     list_filter = ['role', RelevantOrganisationFilter]

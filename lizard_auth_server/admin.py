@@ -104,19 +104,7 @@ class PortalAdmin(admin.ModelAdmin):
     search_fields = ['name', 'visit_url', 'allowed_domain']
     list_display = ['name', 'visit_url', 'allowed_domain',
                     'num_user_profiles', 'num_roles']
-    fieldsets = (
-        (None, {
-            'fields': ['name',
-                       'redirect_url',
-                       'visit_url',
-                       'allowed_domain',
-                       ]}),
-        (ugettext_lazy('Key and secret, not to be changed'), {
-            'classes': ['collapse'],
-            'fields': ['sso_secret',
-                       'sso_key',
-                       ]}),
-    )
+    readonly_fields = ['sso_secret', 'sso_key']
 
     def get_queryset(self, request):
         queryset = super(PortalAdmin, self).get_queryset(request)
@@ -166,6 +154,7 @@ class RoleAdmin(admin.ModelAdmin):
     list_display = ['code', 'portal', 'name', 'internal_description',
                     'num_organisation_roles']
     list_filter = [RelevantPortalFilter]
+    readonly_fields = ['unique_id']
 
     def get_queryset(self, request):
         queryset = super(RoleAdmin, self).get_queryset(request)
@@ -188,6 +177,7 @@ class OrganisationAdmin(admin.ModelAdmin):
     model = models.Organisation
     search_fields = ['name']
     list_display = ['name', 'num_user_profiles', 'num_roles']
+    readonly_fields = ['unique_id']
 
     def get_queryset(self, request):
         queryset = super(OrganisationAdmin, self).get_queryset(request)
@@ -219,7 +209,7 @@ class TokenAdmin(admin.ModelAdmin):
     model = models.Token
     search_fields = ['portal__name', 'portal__visit_url', 'portal__allowed_domain']
     list_display = ['created', 'portal', 'user']
-    readonly_fields = ['request_token', 'auth_token']
+    readonly_fields = ['created', 'request_token', 'auth_token']
 
 
 class RelevantOrganisationFilter(admin.SimpleListFilter):

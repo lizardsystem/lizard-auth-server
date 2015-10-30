@@ -537,9 +537,11 @@ class Role(models.Model):
         null=False,
         blank=False)
     external_description = models.TextField(
-        verbose_name=_('external description'))
+        verbose_name=_('external description'),
+        blank=True)
     internal_description = models.TextField(
-        verbose_name=_('internal description'))
+        verbose_name=_('internal description'),
+        blank=True)
 
     class Meta:
         ordering = ['portal', 'name']

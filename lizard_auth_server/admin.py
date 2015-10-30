@@ -114,6 +114,19 @@ class RelevantPortalFilter(admin.SimpleListFilter):
         return queryset.filter(portal=self.value())
 
 
+class RoleInline(admin.TabularInline):
+    model = models.Role
+    fields = ['code', 'name', 'internal_description', 'external_description']
+    readonly_fields = ['internal_description', 'external_description']
+    # TODO: add show_change_link when we move to django 1.8.
+    extra = 1
+
+
+class OrganisationRoleInline(admin.TabularInline):
+    model = models.OrganisationRole
+    extra = 1
+
+
 class RoleAdmin(admin.ModelAdmin):
     model = models.Role
     search_fields = ['code', 'name', 'portal__name', 'portal__visit_url',
@@ -123,6 +136,9 @@ class RoleAdmin(admin.ModelAdmin):
                     'num_organisation_roles']
     list_filter = [RelevantPortalFilter]
     readonly_fields = ['unique_id']
+    # inlines = [OrganisationRoleInline]
+    # ^^^ This is easy to enable, but I [reinout] found it unclear how to use
+    # it. Better to only have this inline on Organisation only.
 
     def get_queryset(self, request):
         queryset = super(RoleAdmin, self).get_queryset(request)
@@ -139,19 +155,6 @@ class RoleAdmin(admin.ModelAdmin):
     num_organisation_roles.short_description = ugettext_lazy('number of organisation roles')
     num_organisation_roles.admin_order_field = 'organisation_roles_count'
     num_organisation_roles.allow_tags = True
-
-
-class RoleInline(admin.TabularInline):
-    model = models.Role
-    fields = ['code', 'name', 'internal_description', 'external_description']
-    readonly_fields = ['internal_description', 'external_description']
-    # TODO: add show_change_link when we move to django 1.8.
-    extra = 1
-
-
-class OrganisationRoleInline(admin.TabularInline):
-    model = models.OrganisationRole
-    extra = 1
 
 
 class PortalAdmin(admin.ModelAdmin):

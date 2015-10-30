@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-30 12:23+0100\n"
-"PO-Revision-Date: 2015-10-30 11:26+0000\n"
+"POT-Creation-Date: 2015-10-30 14:26+0100\n"
+"PO-Revision-Date: 2015-10-30 13:27+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,52 +18,47 @@ msgstr ""
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: admin.py:33
+#: admin.py:36
 msgid "Resend the activation email, with a new key"
 msgstr "Stuur een nieuwe activatie e-mail, met een nieuwe sleutel"
 
-#: admin.py:44
+#: admin.py:47
 msgid "Activate manually"
 msgstr "Handmatig activeren"
 
-#: admin.py:46
+#: admin.py:49
 msgid "Shortcut URLs"
 msgstr "Snelkoppelingen"
 
-#: admin.py:57 models.py:242
+#: admin.py:60 models.py:238
 msgid "user profile"
 msgstr "gebruikersprofiel"
 
-#: admin.py:83
+#: admin.py:87
 msgid "Dates"
 msgstr "Datums"
 
-#: admin.py:87
+#: admin.py:91
 msgid "Personal data"
 msgstr "Persoonsgegevens"
 
-#: admin.py:110
-msgid "Key and secret, not to be changed"
-msgstr ""
-"Gedeelde identificator en geheime string; deze moeten niet gewijzigd worden"
-
-#: admin.py:128 admin.py:198
-msgid "number of user profiles"
-msgstr "Aantal gebruikersprofielen"
-
-#: admin.py:137 admin.py:209
-msgid "number of roles"
-msgstr "Aantal rollen"
-
-#: admin.py:143 models.py:94 models.py:125 models.py:525
+#: admin.py:103 models.py:94 models.py:125 models.py:520
 msgid "portal"
 msgstr "portaal"
 
-#: admin.py:178
+#: admin.py:139
 msgid "number of organisation roles"
 msgstr "Aantal organisatierollen"
 
-#: admin.py:221 models.py:354 models.py:589 models.py:606
+#: admin.py:169 admin.py:199
+msgid "number of user profiles"
+msgstr "Aantal gebruikersprofielen"
+
+#: admin.py:178 admin.py:210
+msgid "number of roles"
+msgstr "Aantal rollen"
+
+#: admin.py:223 models.py:350 models.py:585 models.py:602
 msgid "organisation"
 msgstr "organisatie"
 
@@ -160,7 +155,7 @@ msgstr "Telefoonnummer"
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
-#: models.py:50 models.py:345 models.py:539 models.py:570
+#: models.py:50 models.py:341 models.py:534 models.py:567
 msgid "name"
 msgstr "naam"
 
@@ -217,7 +212,7 @@ msgid "URL used in the UI to refer to this portal."
 msgstr ""
 "URL van het portal zelf waarnaar we kunnen linken vanuit overzichtspagina's."
 
-#: models.py:95 models.py:176 models.py:365
+#: models.py:95 models.py:174 models.py:361
 msgid "portals"
 msgstr "portalen"
 
@@ -225,142 +220,146 @@ msgstr "portalen"
 msgid "request token"
 msgstr "token van het request"
 
-#: models.py:132
+#: models.py:131
 msgid "auth token"
 msgstr "authenticatie token"
 
-#: models.py:138 models.py:171 models.py:394
+#: models.py:136 models.py:169 models.py:389
 msgid "user"
 msgstr "gebruiker"
 
-#: models.py:142 models.py:193 models.py:368
+#: models.py:140 models.py:191 models.py:364
 msgid "created on"
 msgstr "aangemaakt op"
 
-#: models.py:148
+#: models.py:146
 msgid "authentication token"
 msgstr "authenticatieteken"
 
-#: models.py:149
+#: models.py:147
 msgid "authentication tokens"
 msgstr "authenticatietekens"
 
-#: models.py:181 models.py:590
+#: models.py:179 models.py:586
 msgid "organisations"
 msgstr "organisaties"
 
-#: models.py:188 models.py:553 models.py:584
-msgid "roles"
-msgstr "rollen"
+#: models.py:186
+msgid "roles (via organisation)"
+msgstr "rollen (via organisatie)"
 
-#: models.py:198
+#: models.py:195
 msgid "updated on"
 msgstr "geüpdated op"
 
-#: models.py:203
+#: models.py:199
 msgid "title"
 msgstr "titel"
 
-#: models.py:209
+#: models.py:205
 msgid "street"
 msgstr "straat"
 
-#: models.py:215
+#: models.py:211
 msgid "postal code"
 msgstr "postcode"
 
-#: models.py:221
+#: models.py:217
 msgid "town"
 msgstr "plaats"
 
-#: models.py:227
+#: models.py:223
 msgid "phone number"
 msgstr "telefoonnummer"
 
-#: models.py:233
+#: models.py:229
 msgid "mobile phone number"
 msgstr "mobiele telefoonnummer"
 
-#: models.py:243
+#: models.py:239
 msgid "user profiles"
 msgstr "gebruikersprofielen"
 
-#: models.py:350
+#: models.py:346
 msgid "e-mail"
 msgstr "e-mail"
 
-#: models.py:359
+#: models.py:355
 msgid "language"
 msgstr "taal"
 
-#: models.py:372
+#: models.py:367
 msgid "activation key"
 msgstr "activatiecode"
 
-#: models.py:378
+#: models.py:373
 msgid "activation key date"
 msgstr "datum van de activatiecode"
 
-#: models.py:382
+#: models.py:377
 msgid "Date on which the activation key was generated. Used for expiration."
 msgstr ""
 "Datum waarop de activatiecode is gegenereerd. Wordt gebruikt om de code "
 "automatisch te laten verlopen."
 
-#: models.py:386
+#: models.py:381
 msgid "is activated"
 msgstr "is geactiveerd"
 
-#: models.py:389
+#: models.py:384
 msgid "activated on"
 msgstr "geactiveerd op"
 
-#: models.py:399 models.py:400
+#: models.py:394 models.py:395
 msgid "invitation"
 msgstr "uitnodiging"
 
-#: models.py:527 models.py:576
+#: models.py:522 models.py:573
 msgid "unique id"
 msgstr "uniek ID"
 
-#: models.py:533
+#: models.py:528
 msgid "code"
 msgstr "code"
 
-#: models.py:535
+#: models.py:530
 msgid "name used internally by the portal to identify the role"
 msgstr ""
 "naam die intern door het portaal gebruikt wordt om de rol te identificeren"
 
-#: models.py:540
+#: models.py:535
 msgid "human-readable name"
 msgstr "naam die aan de gebruiker getoond wordt"
 
-#: models.py:545
+#: models.py:540
 msgid "external description"
 msgstr "omschrijving voor eindgebruikers"
 
-#: models.py:547
+#: models.py:543
 msgid "internal description"
 msgstr "interne omschrijving"
 
-#: models.py:552 models.py:610
+#: models.py:549 models.py:606
 msgid "role"
 msgstr "rol"
 
-#: models.py:612
+#: models.py:550 models.py:580
+msgid "roles"
+msgstr "rollen"
+
+#: models.py:608
 msgid "for all users"
 msgstr "voor alle gebruikers"
 
-#: models.py:617
-msgid "organisation role"
-msgstr "organisatierol"
+#: models.py:613
+msgid "organisation-role mapping"
+msgstr "organisatie-rol koppeling"
+
+#: models.py:614
+msgid "organisation-role mappings"
+msgstr "organisatie-rol koppelingen"
 
 #: models.py:618
-msgid "organisation roles"
-msgstr "organisatierollen"
-
-#: models.py:622
 msgid "{role} for everybody in {org}"
 msgstr "{role} voor iedereen in {org}"
 

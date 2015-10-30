@@ -183,7 +183,7 @@ class UserProfile(models.Model):
     roles = models.ManyToManyField(
         "OrganisationRole",
         related_name='user_profiles',
-        verbose_name=_('roles'),
+        verbose_name=_('roles (via organisation)'),
         blank=True,
         null=True)
 
@@ -610,8 +610,8 @@ class OrganisationRole(models.Model):
 
     class Meta:
         unique_together = (('organisation', 'role'), )
-        verbose_name = _('organisation role')
-        verbose_name_plural = _('organisation roles')
+        verbose_name = _('organisation-role mapping')
+        verbose_name_plural = _('organisation-role mappings')
 
     def __unicode__(self):
         if self.for_all_users:

@@ -571,6 +571,7 @@ class Organisation(models.Model):
         verbose_name=_('unique id'),
         max_length=32,
         unique=True,
+        editable=False,
         default=create_new_uuid)
     roles = models.ManyToManyField(
         Role,

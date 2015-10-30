@@ -126,9 +126,11 @@ class Token(models.Model):
     request_token = models.CharField(
         verbose_name=_('request token'),
         max_length=64,
+        editable=False,
         unique=True)
     auth_token = models.CharField(
         verbose_name=_('auth token'),
+        editable=False,
         max_length=64,
         unique=True)
     user = models.ForeignKey(

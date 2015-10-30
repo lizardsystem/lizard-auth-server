@@ -145,6 +145,13 @@ class RoleInline(admin.TabularInline):
     model = models.Role
     fields = ['code', 'name', 'internal_description', 'external_description']
     readonly_fields = ['internal_description', 'external_description']
+    # TODO: add show_change_link when we move to django 1.8.
+    extra = 1
+
+
+class OrganisationRoleInline(admin.TabularInline):
+    model = models.OrganisationRole
+    extra = 1
 
 
 class PortalAdmin(admin.ModelAdmin):
@@ -185,6 +192,7 @@ class OrganisationAdmin(admin.ModelAdmin):
     search_fields = ['name']
     list_display = ['name', 'num_user_profiles', 'num_roles']
     readonly_fields = ['unique_id']
+    inlines = [OrganisationRoleInline]
 
     def get_queryset(self, request):
         queryset = super(OrganisationAdmin, self).get_queryset(request)

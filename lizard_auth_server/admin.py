@@ -16,7 +16,8 @@ class InvitationAdmin(admin.ModelAdmin):
     search_fields = ['name', 'email']
     list_filter = ['is_activated']
 
-    readonly_fields = ['created_at', 'shortcut_urls']
+    readonly_fields = ['created_at', 'shortcut_urls', 'activation_key',
+                       'activation_key_date', 'activated_on']
     actions = ['send_new_activation_email']
 
     def send_new_activation_email(self, request, queryset):

@@ -34,7 +34,7 @@ class InvitationAdmin(admin.ModelAdmin):
     )
 
     def shortcut_urls(self, obj):
-        if self.is_activated:
+        if obj.is_activated:
             return ''
         else:
             url = reverse(

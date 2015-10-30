@@ -2,8 +2,8 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-1.2 (unreleased)
-----------------
+1.1.1 (2015-10-30)
+------------------
 
 - Re-release of 1.1, I accidentally made it on the branch.
   [reinout]

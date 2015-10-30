@@ -522,6 +522,7 @@ class Role(models.Model):
     unique_id = models.CharField(
         verbose_name=_('unique id'),
         max_length=32,
+        editable=False,
         unique=True,
         default=create_new_uuid)
     code = models.CharField(

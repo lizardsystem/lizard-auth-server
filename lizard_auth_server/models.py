@@ -519,6 +519,10 @@ def create_new_uuid():
 
 
 class Role(models.Model):
+    portal = models.ForeignKey(
+        Portal,
+        related_name='roles',
+        verbose_name=_('portal'))
     unique_id = models.CharField(
         verbose_name=_('unique id'),
         max_length=32,
@@ -528,10 +532,12 @@ class Role(models.Model):
     code = models.CharField(
         verbose_name=_('code'),
         max_length=255,
+        help_text=_('name used internally by the portal to identify the role'),
         null=False,
         blank=False)
     name = models.CharField(
         verbose_name=_('name'),
+        help_text=_('human-readable name'),
         max_length=255,
         null=False,
         blank=False)
@@ -539,10 +545,6 @@ class Role(models.Model):
         verbose_name=_('external description'))
     internal_description = models.TextField(
         verbose_name=_('internal description'))
-    portal = models.ForeignKey(
-        Portal,
-        related_name='roles',
-        verbose_name=_('portal'))
 
     class Meta:
         ordering = ['portal', 'name']

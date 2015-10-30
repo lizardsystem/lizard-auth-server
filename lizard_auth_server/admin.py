@@ -16,8 +16,11 @@ class InvitationAdmin(admin.ModelAdmin):
     search_fields = ['name', 'email']
     list_filter = ['is_activated']
 
-    readonly_fields = ['created_at', 'shortcut_urls']
+    readonly_fields = ['created_at', 'activation_key',
+                       'activation_key_date', 'activated_on',
+                       'shortcut_urls']
     actions = ['send_new_activation_email']
+    filter_horizontal = ['portals']
 
     def send_new_activation_email(self, request, queryset):
         for profile in queryset:
@@ -34,7 +37,7 @@ class InvitationAdmin(admin.ModelAdmin):
     )
 
     def shortcut_urls(self, obj):
-        if self.is_activated:
+        if obj.is_activated:
             return ''
         else:
             url = reverse(
@@ -62,8 +65,9 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ['username', 'full_name', 'email', 'created_at']
     search_fields = ['user__first_name', 'user__last_name', 'user__email']
     list_filter = ['portals', 'organisations']
+    readonly_fields = ['updated_at', 'created_at']
 
-    filter_horizontal = ('portals', 'organisations')
+    filter_horizontal = ('portals', 'organisations', 'roles')
     readonly_fields = [
         'created_at',
         'updated_at',
@@ -71,6 +75,86 @@ class UserProfileAdmin(admin.ModelAdmin):
         'last_name',
         'email'
     ]
+    fieldsets = (
+        (None, {
+            'fields': ['user',
+                       'first_name',
+                       'last_name',
+                       'portals',
+                       'organisations',
+                       'roles',
+                   ]}),
+        (ugettext_lazy('Dates'), {
+            'fields': ['created_at',
+                       'updated_at',
+                   ]}),
+        (ugettext_lazy('Personal data'), {
+            'fields': ['title',
+                       'street',
+                       'postal_code',
+                       'town',
+                       'phone_number',
+                       'mobile_phone_number',
+                   ]}),
+    )
+
+
+class RelevantPortalFilter(admin.SimpleListFilter):
+    title = _('portal')
+    parameter_name = 'portal__id__exact'
+
+    def lookups(self, request, model_admin):
+        return models.Portal.objects.filter(
+            roles__isnull=False).distinct().values_list(
+            'id', 'name')
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        return queryset.filter(portal=self.value())
+
+
+class RoleInline(admin.TabularInline):
+    model = models.Role
+    fields = ['code', 'name', 'internal_description', 'external_description']
+    readonly_fields = ['internal_description', 'external_description']
+    # TODO: add show_change_link when we move to django 1.8.
+    extra = 1
+
+
+class OrganisationRoleInline(admin.TabularInline):
+    model = models.OrganisationRole
+    extra = 1
+
+
+class RoleAdmin(admin.ModelAdmin):
+    model = models.Role
+    search_fields = ['code', 'name', 'portal__name', 'portal__visit_url',
+                     'portal__allowed_domain',
+                     'external_description', 'internal_description']
+    list_display = ['code', 'portal', 'name', 'internal_description',
+                    'num_organisation_roles']
+    list_filter = [RelevantPortalFilter]
+    readonly_fields = ['unique_id']
+    # inlines = [OrganisationRoleInline]
+    # ^^^ This is easy to enable, but I [reinout] found it unclear how to use
+    # it. Better to only have this inline on Organisation only.
+
+    def get_queryset(self, request):
+        queryset = super(RoleAdmin, self).get_queryset(request)
+        return queryset.annotate(
+            organisation_roles_count=Count('organisation_roles', distinct=True))
+
+    def num_organisation_roles(self, obj):
+        count = obj.organisation_roles_count
+        if not count:
+            return ''
+        url = reverse('admin:lizard_auth_server_organisationrole_changelist')
+        url += '?role__id__exact={}'.format(obj.id)
+        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+    num_organisation_roles.short_description = ugettext_lazy('number of organisation roles')
+    num_organisation_roles.admin_order_field = 'organisation_roles_count'
+    num_organisation_roles.allow_tags = True
 
 
 class PortalAdmin(admin.ModelAdmin):
@@ -78,6 +162,8 @@ class PortalAdmin(admin.ModelAdmin):
     search_fields = ['name', 'visit_url', 'allowed_domain']
     list_display = ['name', 'visit_url', 'allowed_domain',
                     'num_user_profiles', 'num_roles']
+    readonly_fields = ['sso_secret', 'sso_key']
+    inlines = [RoleInline]
 
     def get_queryset(self, request):
         queryset = super(PortalAdmin, self).get_queryset(request)
@@ -104,32 +190,12 @@ class PortalAdmin(admin.ModelAdmin):
     num_roles.allow_tags = True
 
 
-class RelevantPortalFilter(admin.SimpleListFilter):
-    title = _('portal')
-    parameter_name = 'portal'
-
-    def lookups(self, request, model_admin):
-        return models.Portal.objects.filter(
-            roles__isnull=False).distinct().values_list(
-            'id', 'name')
-
-    def queryset(self, request, queryset):
-        if not self.value():
-            return queryset
-        return queryset.filter(portal=self.value())
-
-
-class RoleAdmin(admin.ModelAdmin):
-    model = models.Role
-    search_fields = ['name', 'portal', 'external_description', 'internal_description']
-    list_display = ['portal', 'name', 'internal_description']
-    list_filter = [RelevantPortalFilter]
-
-
 class OrganisationAdmin(admin.ModelAdmin):
     model = models.Organisation
     search_fields = ['name']
     list_display = ['name', 'num_user_profiles', 'num_roles']
+    readonly_fields = ['unique_id']
+    inlines = [OrganisationRoleInline]
 
     def get_queryset(self, request):
         queryset = super(OrganisationAdmin, self).get_queryset(request)
@@ -148,7 +214,7 @@ class OrganisationAdmin(admin.ModelAdmin):
     def num_roles(self, obj):
         count = obj.roles_count
         if not count:
-            return count
+            return ''
         url = reverse('admin:lizard_auth_server_organisationrole_changelist')
         url += '?organisation__id__exact={}'.format(obj.id)
         return '<a href="{}">&rarr; {}</a>'.format(url, count)
@@ -161,11 +227,30 @@ class TokenAdmin(admin.ModelAdmin):
     model = models.Token
     search_fields = ['portal__name', 'portal__visit_url', 'portal__allowed_domain']
     list_display = ['created', 'portal', 'user']
+    readonly_fields = ['created', 'request_token', 'auth_token']
+
+
+class RelevantOrganisationFilter(admin.SimpleListFilter):
+    title = _('organisation')
+    parameter_name = 'organisation__id__exact'
+
+    def lookups(self, request, model_admin):
+        return models.Organisation.objects.filter(
+            organisation_roles__isnull=False).distinct().values_list(
+            'id', 'name')
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        return queryset.filter(organisation=self.value())
 
 
 class OrganisationRoleAdmin(admin.ModelAdmin):
+    model = models.OrganisationRole
     ordering = ('role__portal', 'organisation', 'role')
     list_display = ['__unicode__', 'role', 'organisation']
+    list_filter = ['role', RelevantOrganisationFilter]
+    search_fields = ['organisation__name', 'role__name', 'role__portal__name']
 
 
 admin.site.register(models.Portal, PortalAdmin)

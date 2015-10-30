@@ -2,7 +2,13 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-1.1 (unreleased)
+1.2 (unreleased)
+----------------
+
+- Nothing changed yet.
+
+
+1.1 (2015-10-30)
 ----------------
 
 - Internal change: sorting the imports with ``bin/isort
@@ -19,6 +25,13 @@ Changelog of lizard-auth-server
 
 - Huge admin update for the changelist pages. Better sorting, more columns,
   more search, more filtering, more links to related objects.
+  [reinout]
+
+- Huge update for the object edit pages. Better order, better fields, editable
+  yes/no, etcetera. **Most important change**: horizontal filtering for
+  portals instead of a long ctrl-click-to-select-multiple list. Also added
+  inlines for easy editing roles on portals and editing organisation roles on
+  organisations.
   [reinout]
 
 

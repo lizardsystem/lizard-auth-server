@@ -134,8 +134,8 @@ class Token(models.Model):
     user = models.ForeignKey(
         User,
         verbose_name=_('user'),
+        blank=True,
         null=True)
-    # ^^^ TODO: user seems to be complete unused [comment by Reinout 2015-10-28]
     created = models.DateTimeField(
         verbose_name=_('created on'),
         default=lambda: datetime.datetime.now(tz=pytz.UTC))
@@ -168,26 +168,33 @@ class UserProfile(models.Model):
         User,
         verbose_name=_('user'),
         related_name='user_profile')
+
     portals = models.ManyToManyField(
         Portal,
         verbose_name=_('portals'),
         related_name='user_profiles',
         blank=True)
-    created_at = models.DateTimeField(
-        verbose_name=_('created on'),
-        # Grrrrrr. "it has been created AT the factory ON 1 october"
-        auto_now_add=True,
-        editable=False)
-    updated_at = models.DateTimeField(
-        verbose_name=_('updated on'),
-        auto_now=True,
-        editable=False)
     organisations = models.ManyToManyField(
         "Organisation",
         verbose_name=_('organisations'),
         related_name='user_profiles',
         blank=True,
         null=True)
+    roles = models.ManyToManyField(
+        "OrganisationRole",
+        related_name='user_profiles',
+        verbose_name=_('roles (via organisation)'),
+        blank=True,
+        null=True)
+
+    created_at = models.DateTimeField(
+        verbose_name=_('created on'),
+        # Grrrrrr. "it has been created AT the factory ON 1 october"
+        auto_now_add=True)
+    updated_at = models.DateTimeField(
+        verbose_name=_('updated on'),
+        auto_now=True)
+
     title = models.CharField(
         verbose_name=_('title'),
         max_length=255,
@@ -224,12 +231,6 @@ class UserProfile(models.Model):
         null=True,
         blank=True,
         default='')
-    roles = models.ManyToManyField(
-        "OrganisationRole",
-        related_name='user_profiles',
-        verbose_name=_('roles'),
-        blank=True,
-        null=True)
 
     objects = UserProfileManager()
 
@@ -361,8 +362,7 @@ class Invitation(models.Model):
         blank=True)
     created_at = models.DateTimeField(
         verbose_name=_('created on'),
-        auto_now_add=True,
-        editable=False)
+        auto_now_add=True)
     activation_key = models.CharField(
         verbose_name=_('activation key'),
         max_length=64,
@@ -514,29 +514,34 @@ def create_new_uuid():
 
 
 class Role(models.Model):
+    portal = models.ForeignKey(
+        Portal,
+        related_name='roles',
+        verbose_name=_('portal'))
     unique_id = models.CharField(
         verbose_name=_('unique id'),
         max_length=32,
+       editable=False,
         unique=True,
         default=create_new_uuid)
     code = models.CharField(
         verbose_name=_('code'),
         max_length=255,
+        help_text=_('name used internally by the portal to identify the role'),
         null=False,
         blank=False)
     name = models.CharField(
         verbose_name=_('name'),
+        help_text=_('human-readable name'),
         max_length=255,
         null=False,
         blank=False)
     external_description = models.TextField(
-        verbose_name=_('external description'))
+        verbose_name=_('external description'),
+        blank=True)
     internal_description = models.TextField(
-        verbose_name=_('internal description'))
-    portal = models.ForeignKey(
-        Portal,
-        related_name='roles',
-        verbose_name=_('portal'))
+        verbose_name=_('internal description'),
+        blank=True)
 
     class Meta:
         ordering = ['portal', 'name']
@@ -593,9 +598,11 @@ class Organisation(models.Model):
 class OrganisationRole(models.Model):
     organisation = models.ForeignKey(
         Organisation,
+        related_name='organisation_roles',
         verbose_name=_('organisation'))
     role = models.ForeignKey(
         Role,
+        related_name='organisation_roles',
         verbose_name=_('role'))
     for_all_users = models.BooleanField(
         verbose_name=_('for all users'),
@@ -603,8 +610,8 @@ class OrganisationRole(models.Model):
 
     class Meta:
         unique_together = (('organisation', 'role'), )
-        verbose_name = _('organisation role')
-        verbose_name_plural = _('organisation roles')
+        verbose_name = _('organisation-role-mapping')
+        verbose_name_plural = _('organisation-role-mappings')
 
     def __unicode__(self):
         if self.for_all_users:

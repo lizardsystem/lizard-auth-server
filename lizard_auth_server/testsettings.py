@@ -40,7 +40,17 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True
         },
+        'django.request': {
+            'handlers': ['console', 'logfile'],
+            'propagate': False,
+            'level': 'WARN',  # WARN also shows 404 errors
+        },
         'django.db.backends': {
+            'handlers': ['null'],
+            'level': 'WARN',
+            'propagate': False
+        },
+        'factory': {
             'handlers': ['null'],
             'level': 'DEBUG',
             'propagate': False

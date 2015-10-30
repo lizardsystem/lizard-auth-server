@@ -99,38 +99,6 @@ class UserProfileAdmin(admin.ModelAdmin):
     )
 
 
-class PortalAdmin(admin.ModelAdmin):
-    model = models.Portal
-    search_fields = ['name', 'visit_url', 'allowed_domain']
-    list_display = ['name', 'visit_url', 'allowed_domain',
-                    'num_user_profiles', 'num_roles']
-    readonly_fields = ['sso_secret', 'sso_key']
-
-    def get_queryset(self, request):
-        queryset = super(PortalAdmin, self).get_queryset(request)
-        return queryset.annotate(
-            user_profiles_count=Count('user_profiles', distinct=True),
-            roles_count=Count('roles', distinct=True))
-
-    def num_user_profiles(self, obj):
-        count = obj.user_profiles_count
-        url = reverse('admin:lizard_auth_server_userprofile_changelist')
-        url += '?portals__id__exact={}'.format(obj.id)
-        return '<a href="{}">&rarr; {}</a>'.format(url, count)
-    num_user_profiles.short_description = ugettext_lazy('number of user profiles')
-    num_user_profiles.admin_order_field = 'user_profiles_count'
-    num_user_profiles.allow_tags = True
-
-    def num_roles(self, obj):
-        count = obj.roles_count
-        url = reverse('admin:lizard_auth_server_role_changelist')
-        url += '?portal__id__exact={}'.format(obj.id)
-        return '<a href="{}">&rarr; {}</a>'.format(url, count)
-    num_roles.short_description = ugettext_lazy('number of roles')
-    num_roles.admin_order_field = 'roles_count'
-    num_roles.allow_tags = True
-
-
 class RelevantPortalFilter(admin.SimpleListFilter):
     title = _('portal')
     parameter_name = 'portal__id__exact'
@@ -171,6 +139,45 @@ class RoleAdmin(admin.ModelAdmin):
     num_organisation_roles.short_description = ugettext_lazy('number of organisation roles')
     num_organisation_roles.admin_order_field = 'organisation_roles_count'
     num_organisation_roles.allow_tags = True
+
+
+class RoleInline(admin.TabularInline):
+    model = models.Role
+    fields = ['code', 'name', 'internal_description', 'external_description']
+    readonly_fields = ['internal_description', 'external_description']
+
+
+class PortalAdmin(admin.ModelAdmin):
+    model = models.Portal
+    search_fields = ['name', 'visit_url', 'allowed_domain']
+    list_display = ['name', 'visit_url', 'allowed_domain',
+                    'num_user_profiles', 'num_roles']
+    readonly_fields = ['sso_secret', 'sso_key']
+    inlines = [RoleInline]
+
+    def get_queryset(self, request):
+        queryset = super(PortalAdmin, self).get_queryset(request)
+        return queryset.annotate(
+            user_profiles_count=Count('user_profiles', distinct=True),
+            roles_count=Count('roles', distinct=True))
+
+    def num_user_profiles(self, obj):
+        count = obj.user_profiles_count
+        url = reverse('admin:lizard_auth_server_userprofile_changelist')
+        url += '?portals__id__exact={}'.format(obj.id)
+        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+    num_user_profiles.short_description = ugettext_lazy('number of user profiles')
+    num_user_profiles.admin_order_field = 'user_profiles_count'
+    num_user_profiles.allow_tags = True
+
+    def num_roles(self, obj):
+        count = obj.roles_count
+        url = reverse('admin:lizard_auth_server_role_changelist')
+        url += '?portal__id__exact={}'.format(obj.id)
+        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+    num_roles.short_description = ugettext_lazy('number of roles')
+    num_roles.admin_order_field = 'roles_count'
+    num_roles.allow_tags = True
 
 
 class OrganisationAdmin(admin.ModelAdmin):

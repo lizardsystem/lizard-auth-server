@@ -126,11 +126,9 @@ class Token(models.Model):
     request_token = models.CharField(
         verbose_name=_('request token'),
         max_length=64,
-        editable=False,
         unique=True)
     auth_token = models.CharField(
         verbose_name=_('auth token'),
-        editable=False,
         max_length=64,
         unique=True)
     user = models.ForeignKey(
@@ -192,12 +190,10 @@ class UserProfile(models.Model):
     created_at = models.DateTimeField(
         verbose_name=_('created on'),
         # Grrrrrr. "it has been created AT the factory ON 1 october"
-        auto_now_add=True,
-        editable=False)
+        auto_now_add=True)
     updated_at = models.DateTimeField(
         verbose_name=_('updated on'),
-        auto_now=True,
-        editable=False)
+        auto_now=True)
 
     title = models.CharField(
         verbose_name=_('title'),
@@ -366,8 +362,7 @@ class Invitation(models.Model):
         blank=True)
     created_at = models.DateTimeField(
         verbose_name=_('created on'),
-        auto_now_add=True,
-        editable=False)
+        auto_now_add=True)
     activation_key = models.CharField(
         verbose_name=_('activation key'),
         max_length=64,
@@ -526,7 +521,7 @@ class Role(models.Model):
     unique_id = models.CharField(
         verbose_name=_('unique id'),
         max_length=32,
-        editable=False,
+       editable=False,
         unique=True,
         default=create_new_uuid)
     code = models.CharField(

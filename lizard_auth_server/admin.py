@@ -63,6 +63,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ['username', 'full_name', 'email', 'created_at']
     search_fields = ['user__first_name', 'user__last_name', 'user__email']
     list_filter = ['portals', 'organisations']
+    readonly_fields = ['updated_at', 'created_at']
 
     filter_horizontal = ('portals', 'organisations', 'roles')
     readonly_fields = [
@@ -216,6 +217,7 @@ class TokenAdmin(admin.ModelAdmin):
     model = models.Token
     search_fields = ['portal__name', 'portal__visit_url', 'portal__allowed_domain']
     list_display = ['created', 'portal', 'user']
+    readonly_fields = ['request_token', 'auth_token']
 
 
 class RelevantOrganisationFilter(admin.SimpleListFilter):

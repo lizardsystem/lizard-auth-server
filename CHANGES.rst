@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-1.1 (unreleased)
+1.1 (2015-10-30)
 ----------------
 
 - Internal change: sorting the imports with ``bin/isort

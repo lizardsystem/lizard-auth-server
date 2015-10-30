@@ -21,6 +21,13 @@ Changelog of lizard-auth-server
   more search, more filtering, more links to related objects.
   [reinout]
 
+- Huge update for the object edit pages. Better order, better fields, editable
+  yes/no, etcetera. **Most important change**: horizontal filtering for
+  portals instead of a long ctrl-click-to-select-multiple list. Also added
+  inlines for easy editing roles on portals and editing organisation roles on
+  organisations.
+  [reinout]
+
 
 1.0 (2015-09-24)
 ----------------

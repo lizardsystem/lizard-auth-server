@@ -610,8 +610,8 @@ class OrganisationRole(models.Model):
 
     class Meta:
         unique_together = (('organisation', 'role'), )
-        verbose_name = _('organisation-role mapping')
-        verbose_name_plural = _('organisation-role mappings')
+        verbose_name = _('organisation-role-mapping')
+        verbose_name_plural = _('organisation-role-mappings')
 
     def __unicode__(self):
         if self.for_all_users:

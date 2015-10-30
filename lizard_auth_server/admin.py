@@ -100,6 +100,19 @@ class PortalAdmin(admin.ModelAdmin):
     search_fields = ['name', 'visit_url', 'allowed_domain']
     list_display = ['name', 'visit_url', 'allowed_domain',
                     'num_user_profiles', 'num_roles']
+    fieldsets = (
+        (None, {
+            'fields': ['name',
+                       'redirect_url',
+                       'visit_url',
+                       'allowed_domain',
+                       ]}),
+        (ugettext_lazy('Key and secret, not to be changed'), {
+            'classes': ['collapse'],
+            'fields': ['sso_secret',
+                       'sso_key',
+                       ]}),
+    )
 
     def get_queryset(self, request):
         queryset = super(PortalAdmin, self).get_queryset(request)

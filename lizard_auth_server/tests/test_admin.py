@@ -1,9 +1,12 @@
+from django.contrib.admin.sites import AdminSite
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.test import Client
 from django.test import TestCase
 from django.test.client import RequestFactory
 from lizard_auth_server import admin
 from lizard_auth_server import models
 from lizard_auth_server.tests import factories
-from django.contrib.admin.sites import AdminSite
 
 import mock
 
@@ -59,3 +62,61 @@ class TestInvitationAdmin(TestCase):
         queryset = models.Invitation.objects.filter(id=self.invitation.id)
         self.admin_instance.send_new_activation_email(self.some_request, queryset)
         self.assertTrue(patched_method.called)
+
+    def test_shortcut_urls1(self):
+        # By default, show a shortcut url for manual activation.
+        self.assertTrue('href' in self.admin_instance.shortcut_urls(self.invitation))
+
+    def test_shortcut_urls2(self):
+        # If activated, no shortcut url for manual activation.
+        self.invitation.is_activated = True
+        self.assertEquals(self.admin_instance.shortcut_urls(self.invitation), '')
+
+    def test_user_profile_link1(self):
+        # No user profle? No handy link.
+        self.assertEquals(self.admin_instance.user_profile_link(self.invitation),
+                          None)
+
+    def test_user_profile_link2(self):
+        user_profile = factories.UserProfileF()
+        self.invitation.user = user_profile.user
+        # User profle? Link to the user profile.
+        self.assertTrue(
+            'href' in self.admin_instance.user_profile_link(self.invitation))
+
+
+class TestSmokeAdminPages(TestCase):
+
+    def setUp(self):
+        User.objects.create_superuser('admin', 'a@a.nl', 'admin')
+        self.client = Client()
+        self.client.login(username='admin', password='admin')
+        # Create a bunch of objects.
+        factories.UserProfileF()
+        factories.PortalF()
+        factories.RoleF()
+        factories.TokenF()
+        factories.OrganisationF()
+        factories.InvitationF()
+
+    def check_changelist_page_200(self, model_name):
+        url = reverse('admin:lizard_auth_server_%s_changelist' % model_name)
+        self.assertEquals(self.client.get(url).status_code, 200)
+
+    def test_userprofile_list(self):
+        self.check_changelist_page_200('userprofile')
+
+    def test_portal_list(self):
+        self.check_changelist_page_200('portal')
+
+    def test_role_list(self):
+        self.check_changelist_page_200('role')
+
+    def test_token_list(self):
+        self.check_changelist_page_200('token')
+
+    def test_organisation_list(self):
+        self.check_changelist_page_200('organisation')
+
+    def test_invitation_list(self):
+        self.check_changelist_page_200('invitation')

@@ -23,15 +23,15 @@ class InvitationAdmin(admin.ModelAdmin):
     filter_horizontal = ['portals']
 
     def send_new_activation_email(self, request, queryset):
-        for profile in queryset:
-            if profile.is_activated:
+        for invitation in queryset:
+            if invitation.is_activated:
                 messages.error(
                     request,
-                    'Invitation {} is already activated!'.format(profile),
+                    'Invitation {} is already activated!'.format(invitation),
                     fail_silently=False
                 )
             else:
-                profile.send_new_activation_email()
+                invitation.send_new_activation_email()
     send_new_activation_email.short_description = ugettext_lazy(
         'Resend the activation email, with a new key'
     )

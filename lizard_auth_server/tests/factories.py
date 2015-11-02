@@ -48,6 +48,7 @@ class OrganisationF(factory.DjangoModelFactory):
     class Meta:
         model = models.Organisation
 
+    name = factory.Sequence(lambda n: 'organisation %s' % n)
     unique_id = factory.LazyAttribute(lambda org: models.create_new_uuid())
 
 

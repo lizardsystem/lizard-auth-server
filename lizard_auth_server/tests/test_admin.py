@@ -1,6 +1,8 @@
 from django.test import TestCase
 from lizard_auth_server import admin
 
+import mock
+
 
 class TestSearchFields(TestCase):
 
@@ -27,3 +29,7 @@ class TestSearchFields(TestCase):
                 self.assertEquals(
                     model_class.objects.filter(**kwargs).count(),
                     0)
+
+
+class TestInvitationAdmin(TestCase):
+    pass

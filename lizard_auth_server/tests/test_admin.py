@@ -1,5 +1,9 @@
 from django.test import TestCase
+from django.test.client import RequestFactory
 from lizard_auth_server import admin
+from lizard_auth_server import models
+from lizard_auth_server.tests import factories
+from django.contrib.admin.sites import AdminSite
 
 import mock
 
@@ -32,4 +36,26 @@ class TestSearchFields(TestCase):
 
 
 class TestInvitationAdmin(TestCase):
-    pass
+
+    def setUp(self):
+        self.invitation = factories.InvitationF()
+        self.request_factory = RequestFactory()
+        self.some_request = self.request_factory.get('/admin/')
+        site = AdminSite()
+        self.admin_instance = admin.InvitationAdmin(models.Invitation, site)
+
+    @mock.patch.object(models.Invitation, 'send_new_activation_email')
+    def test_send_new_activation_email1(self, patched_method):
+        # Patch method actually sends the activation email.
+        queryset = models.Invitation.objects.filter(id=self.invitation.id)
+        self.admin_instance.send_new_activation_email(self.some_request, queryset)
+        self.assertTrue(patched_method.called)
+
+    @mock.patch('django.contrib.messages.error')
+    def test_send_new_activation_email2(self, patched_method):
+        # Patched method is the error message printing "We are already activated".
+        self.invitation.is_activated = True
+        self.invitation.save()
+        queryset = models.Invitation.objects.filter(id=self.invitation.id)
+        self.admin_instance.send_new_activation_email(self.some_request, queryset)
+        self.assertTrue(patched_method.called)

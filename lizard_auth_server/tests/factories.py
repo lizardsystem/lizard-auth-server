@@ -58,3 +58,13 @@ class UserProfileF(factory.DjangoModelFactory):
 
     user = factory.SubFactory(UserF)
     organisation = factory.SubFactory(OrganisationF)
+
+
+class InvitationF(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Invitation
+
+    name = 'Reinout'
+    email = 'reinout@example.org'
+    organisation = 'Some organisation'
+    language = 'nl'

@@ -1,8 +1,7 @@
 from django.test import TestCase
 from lizard_auth_server import models
 from lizard_auth_server import views_api
-
-from . import test_models
+from lizard_auth_server.tests import factories
 
 
 class TestGetOrganisationsView(TestCase):
@@ -16,9 +15,9 @@ class TestGetOrganisationsView(TestCase):
             {'organisations': []})
 
     def test_with_role(self):
-        portal = test_models.PortalF.create()
-        role = test_models.RoleF.create(portal=portal)
-        organisation = test_models.OrganisationF.create()
+        portal = factories.PortalF.create()
+        role = factories.RoleF.create(portal=portal)
+        organisation = factories.OrganisationF.create()
         models.OrganisationRole.objects.create(
             organisation=organisation, role=role)
 

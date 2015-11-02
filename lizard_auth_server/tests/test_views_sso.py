@@ -5,8 +5,7 @@ from django.test import TestCase
 from itsdangerous import URLSafeTimedSerializer
 from lizard_auth_server import models
 from lizard_auth_server import views_sso
-
-from . import test_models
+from lizard_auth_server.tests import factories
 
 
 class TestConstructOrganisationRoleDict(TestCase):
@@ -19,9 +18,9 @@ class TestConstructOrganisationRoleDict(TestCase):
         u_org = uuid.uuid4().hex
         u_role = uuid.uuid4().hex
 
-        org = test_models.OrganisationF.build(
+        org = factories.OrganisationF.build(
             name='testorg', unique_id=u_org)
-        role = test_models.RoleF.build(
+        role = factories.RoleF.build(
             unique_id=u_role,
             code='testrole',
             name='Testrole',
@@ -59,17 +58,17 @@ class TestLoginRedirect(TestCase):
 
         self.client = Client()
 
-        self.portal = test_models.PortalF.create(
+        self.portal = factories.PortalF.create(
             sso_key=self.key,
             redirect_url=redirect,
             allowed_domain=allowed_domain
         )
-        user = test_models.UserF.create(username=self.username)
+        user = factories.UserF.create(username=self.username)
         user.set_password(self.password)
         user.save()
 
-        org = test_models.OrganisationF.create(name='Some org')
-        role = test_models.RoleF.create(portal=self.portal)
+        org = factories.OrganisationF.create(name='Some org')
+        role = factories.RoleF.create(portal=self.portal)
 
         models.OrganisationRole.objects.create(
             organisation=org, role=role, for_all_users=True)
@@ -82,7 +81,7 @@ class TestLoginRedirect(TestCase):
         request_token = 'request_token'
         auth_token = 'auth_token'
 
-        token = test_models.TokenF.create(request_token=request_token,
+        token = factories.TokenF.create(request_token=request_token,
                                           auth_token=auth_token,
                                           portal=self.portal)
 

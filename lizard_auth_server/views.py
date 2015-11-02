@@ -26,6 +26,10 @@ class ViewContextMixin(object):
 
     Ensure this is first in the inheritance list!
     """
+
+    # TODO: zap this after some tests have been added. Django 1.4 or so
+    # already includes this!
+
     def get_context_data(self, **kwargs):
         return {
             'params': kwargs,
@@ -79,6 +83,7 @@ class ProfileView(ViewContextMixin, TemplateView):
 
     @property
     def profile(self):
+        # TODO cached_property
         if not self._profile:
             self._profile = self.request.user.get_profile()
         return self._profile

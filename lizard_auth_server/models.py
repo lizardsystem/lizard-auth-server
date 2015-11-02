@@ -241,7 +241,7 @@ class UserProfile(models.Model):
 
     def __unicode__(self):
         if self.user:
-            return self.user
+            return '{}'.format(self.user)
         else:
             return 'UserProfile {}'.format(self.pk)
 

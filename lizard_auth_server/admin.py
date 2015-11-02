@@ -49,10 +49,8 @@ class InvitationAdmin(admin.ModelAdmin):
     shortcut_urls.short_description = ugettext_lazy('Shortcut URLs')
 
     def user_profile_link(self, obj):
-        if not obj.user:
+        if not obj.user or not obj.user.user_profile:
             return
-        if not obj.user.user_profile:
-            return obj.user
         url = reverse('admin:lizard_auth_server_userprofile_change',
                       args=[obj.user.user_profile.id])
         return '<a href="{}">&rarr; {}</a>'.format(url, obj.user)

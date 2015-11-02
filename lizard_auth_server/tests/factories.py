@@ -1,6 +1,8 @@
-import factory
+from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from lizard_auth_server import models
+
+import factory
 
 
 class UserF(factory.DjangoModelFactory):

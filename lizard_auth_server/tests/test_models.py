@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.test import TestCase
 from lizard_auth_server import models
 from lizard_auth_server.tests import factories
@@ -97,3 +98,26 @@ class TestUserProfile(TestCase):
             len(list(profile.all_organisation_roles(portal2))), 2)
         self.assertEquals(
             len(list(profile.all_organisation_roles(portal3))), 0)
+
+
+class UnicodeMethodTestCase(TestCase):
+
+    def test_unicode_portal(self):
+        portal = factories.PortalF()
+        self.assertEquals(type(portal.__unicode__()), unicode)
+
+    def test_unicode_role(self):
+        role = factories.RoleF()
+        self.assertEquals(type(role.__unicode__()), unicode)
+
+    def test_unicode_organisation(self):
+        organisation = factories.OrganisationF()
+        self.assertEquals(type(organisation.__unicode__()), unicode)
+
+    def test_unicode_user_profile(self):
+        user_profile = factories.UserProfileF()
+        self.assertEquals(type(user_profile.__unicode__()), unicode)
+
+    def test_unicode_invitation(self):
+        invitation = factories.InvitationF()
+        self.assertEquals(type(invitation.__unicode__()), unicode)

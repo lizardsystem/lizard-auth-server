@@ -8,6 +8,9 @@ Changelog of lizard-auth-server
 - Increased the test coverage.
   [reinout]
 
+- Fixed bug with ``__unicode__`` method on ``UserProfile``.
+  [reinout]
+
 
 1.1.1 (2015-10-30)
 ------------------

@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-1.2 (unreleased)
+1.2 (2015-11-02)
 ----------------
 
 - Increased the test coverage.

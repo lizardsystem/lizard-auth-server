@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 1.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Increased the test coverage.
+  [reinout]
 
 
 1.1.1 (2015-10-30)

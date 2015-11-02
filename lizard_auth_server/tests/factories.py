@@ -8,6 +8,8 @@ class UserF(factory.DjangoModelFactory):
         model = User
 
     username = factory.Sequence(lambda n: 'testuser{0}'.format(n))
+    # Note: normally you'd call
+    # User.objects.create_user('someone', 'a@a.nl', 'pass')
 
 
 class PortalF(factory.DjangoModelFactory):

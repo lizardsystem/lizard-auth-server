@@ -50,6 +50,11 @@ LOGGING = {
             'level': 'WARN',
             'propagate': False
         },
+        'south': {
+            'handlers': ['null'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
         'factory': {
             'handlers': ['null'],
             'level': 'DEBUG',

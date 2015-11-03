@@ -316,16 +316,30 @@ class UserProfile(models.Model):
     def all_organisation_roles(self, portal):
         """Return a queryset of OrganisationRoles that apply to this profile.
 
-        There are two ways for a UserProfile to have a role in an
-        organisation: either be a member of the organisation and role
-        that everyone in the organisation has, or it must be
-        explicitly in this user's roles."""
+        There are three ways for a UserProfile to have a role in an
+        organisation for this portal:
 
-        # TODO: understand/improve this query - why is distinct() needed?
-        return OrganisationRole.objects.filter(
+        1. The userprofile is link to a OrganisationProfile using its 'roles'
+           ManyToManyField.
+
+        2. It is a member of an organisation that has "for_all_users=True" for
+           this OrganisationRole.
+
+        3. It has another role (possibly on another portal) and a role
+           on this portal is a DependentRole of that one.
+        """
+
+        organisation_roles_on_all_portals = OrganisationRole.objects.filter(
             models.Q(organisation__user_profiles=self, for_all_users=True) |
-            models.Q(user_profiles=self)).filter(
-            role__portal=portal).distinct()
+            models.Q(user_profiles=self)
+        ).select_related('role__portal').distinct()
+
+        all_organisation_roles = DependentRoles.with_supporting_roles(
+            organisation_roles_on_all_portals)
+
+        return (organisation_role
+                for organisation_role in all_organisation_roles
+                if organisation_role.role.portal == portal)
 
 
 # have the creation of a User trigger the creation of a Profile
@@ -521,7 +535,7 @@ class Role(models.Model):
     unique_id = models.CharField(
         verbose_name=_('unique id'),
         max_length=32,
-       editable=False,
+        editable=False,
         unique=True,
         default=create_new_uuid)
     code = models.CharField(
@@ -626,3 +640,48 @@ class OrganisationRole(models.Model):
             "organisation": self.organisation.as_dict(),
             "role": self.role.as_dict()
         }
+
+
+class DependentRoles(models.Model):
+    """A way to define that, if a user has role A on portal B (the leading
+    role), he should also have role X on portal Y for the same
+    organisation (the supporting role).
+
+    """
+    leading_role = models.ForeignKey(Role, related_name='dependents')
+    supporting_role = models.ForeignKey(Role, related_name='depends_on')
+
+    @classmethod
+    def with_supporting_roles(cls, leading_roles):
+        """From an iterator of OrganisationRoles that the user has been
+        configured to have, generate all OrganisationRoles that he has
+        (including both the ones passed to use, and any that he has
+        through DependentRoles).
+
+        """
+        all_dependent_roles = list(cls.objects.all().select_related())
+
+        # Keep a set of yielded roles so we don't yield doubles
+        yielded_roles = set()
+
+        for organisation_role in leading_roles:
+            yielded_roles.add(organisation_role.pk)
+            yield organisation_role
+
+            for dependent_role in all_dependent_roles:
+                if dependent_role.leading_role == organisation_role.role:
+                    # See if this organisation is allowed to have the
+                    # supporting role
+                    try:
+                        supporting_organisation_role = (
+                            OrganisationRole.objects.get(
+                                organisation=organisation_role.organisation,
+                                role=dependent_role.supporting_role))
+                    except OrganisationRole.DoesNotExist:
+                        # No. This is probably a configuration mistake, but we
+                        # can't solve it here.
+                        continue
+
+                    if supporting_organisation_role.pk not in yielded_roles:
+                        yielded_roles.add(supporting_organisation_role.pk)
+                        yield supporting_organisation_role

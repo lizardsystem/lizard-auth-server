@@ -99,6 +99,42 @@ class TestUserProfile(TestCase):
         self.assertEquals(
             len(list(profile.all_organisation_roles(portal3))), 0)
 
+    def test_dependent_roles(self):
+        # User has role1 on portal1. He also has role2 on portal2 for
+        # the same organisation because of a DependentRole.
+
+        portal1 = factories.PortalF.create(name='portal1')
+        portal2 = factories.PortalF.create(name='portal2')
+
+        role1 = factories.RoleF.create(name='role1', portal=portal1)
+        role2 = factories.RoleF.create(name='role2', portal=portal2)
+
+        user = factories.UserF.create(username='newuser')
+        org = factories.OrganisationF.create()
+
+        profile = models.UserProfile.objects.fetch_for_user(user)
+        profile.organisations.add(org)
+
+        # User has this role because of for_all_users=True
+        models.OrganisationRole.objects.create(
+            organisation=org, role=role1, for_all_users=True)
+        # But User wouldn't normally have this role
+        org_role_2 = models.OrganisationRole.objects.create(
+            organisation=org, role=role2, for_all_users=False)
+
+        # See, he doesn't have any roles on portal2:
+        self.assertEquals(
+            len(list(profile.all_organisation_roles(portal2))), 0)
+
+        # However, when the second role depends on the first
+        models.DependentRoles.objects.create(
+            leading_role=role1, supporting_role=role2)
+
+        # Then he does:
+        self.assertEquals(
+            list(profile.all_organisation_roles(portal2))[0],
+            org_role_2)
+
 
 class UnicodeMethodTestCase(TestCase):
 

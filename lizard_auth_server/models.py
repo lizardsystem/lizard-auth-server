@@ -321,11 +321,18 @@ class UserProfile(models.Model):
         that everyone in the organisation has, or it must be
         explicitly in this user's roles."""
 
-        # TODO: understand/improve this query - why is distinct() needed?
+        tied_to_my_organisation_for_all_users = models.Q(
+            organisation__user_profiles=self, for_all_users=True)
+        tied_to_my_user_profile = models.Q(user_profiles=self)
+
+        tied_to_the_portal = models.Q(role__portal=portal)
+        tied_to_the_portal_via_parent_role = models.Q(
+            role__parent_roles__portal=portal)
+
         return OrganisationRole.objects.filter(
-            models.Q(organisation__user_profiles=self, for_all_users=True) |
-            models.Q(user_profiles=self)).filter(
-            role__portal=portal).distinct()
+            tied_to_my_organisation_for_all_users | tied_to_my_user_profile).filter(
+                tied_to_the_portal | tied_to_the_portal_via_parent_role
+            ).distinct()
 
 
 # have the creation of a User trigger the creation of a Profile
@@ -536,6 +543,14 @@ class Role(models.Model):
         max_length=255,
         null=False,
         blank=False)
+    child_roles = models.ManyToManyField(
+        "self",
+        verbose_name=_('child roles'),
+        symmetrical=False,
+        related_name='parent_roles',
+        help_text=_('roles that are automatically inherited from us'),
+        blank=True)
+
     external_description = models.TextField(
         verbose_name=_('external description'),
         blank=True)

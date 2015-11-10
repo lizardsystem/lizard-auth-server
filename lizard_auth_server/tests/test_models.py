@@ -99,7 +99,7 @@ class TestUserProfile(TestCase):
         self.assertEquals(
             len(list(profile.all_organisation_roles(portal3))), 0)
 
-    def test_dependent_roles(self):
+    def test_role_inheritance(self):
         # User has role1 on portal1. He also has role2 on portal2 for
         # the same organisation because of a DependentRole.
 
@@ -126,10 +126,11 @@ class TestUserProfile(TestCase):
         self.assertEquals(
             len(list(profile.all_organisation_roles(portal2))), 0)
 
-        # However, when the second role depends on the first
-        models.DependentRoles.objects.create(
-            leading_role=role1, supporting_role=role2)
+        # However, when the second role is attached to the first:
+        role1.child_roles.add(role2)
+        role1.save()
 
+        profile = models.UserProfile.objects.fetch_for_user(user)
         # Then he does:
         self.assertEquals(
             list(profile.all_organisation_roles(portal2))[0],

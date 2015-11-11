@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db import models
 from django.db import transaction
+from django.db.models import F
 from django.db.models.loading import get_model
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
@@ -315,24 +316,44 @@ class UserProfile(models.Model):
 
     def all_organisation_roles(self, portal):
         """Return a queryset of OrganisationRoles that apply to this profile.
+        """
 
-        There are two ways for a UserProfile to have a role in an
-        organisation: either be a member of the organisation and role
-        that everyone in the organisation has, or it must be
-        explicitly in this user's roles."""
+        # First grab all applicable roles.
+        relevant_roles_tied_to_the_portal = Role.objects.filter(portal=portal)
 
+        # Two Q objects for filtering organisation roles I have access
+        # to. Either directly via my profile or via for_all_users.
         tied_to_my_organisation_for_all_users = models.Q(
-            organisation__user_profiles=self, for_all_users=True)
+            for_all_users=True,
+            organisation__user_profiles=self)
         tied_to_my_user_profile = models.Q(user_profiles=self)
+        # All organisation roles I have access to. This does not yet take into
+        # account the organisation roles I get via the role inheritance
+        organisation_roles_i_can_access = OrganisationRole.objects.filter(
+            tied_to_my_organisation_for_all_users | tied_to_my_user_profile)
 
-        tied_to_the_portal = models.Q(role__portal=portal)
-        tied_to_the_portal_via_parent_role = models.Q(
-            role__parent_roles__portal=portal)
+        # Two criteria for filtering organisation roles.
+
+        # The simple case is that an organisation role is both in our access
+        # list AND it points at a relevant role. Bingo.
+        relevant_role_and_direct_access = models.Q(
+            id__in=organisation_roles_i_can_access,
+            role__in=relevant_roles_tied_to_the_portal)
+
+        # The elaborate case is that a role must of course be a relevant
+        # role. Then that same role must have a parent with an organisation
+        # role that I can access. That same organisation role must also have
+        # the same organisation as the organisation role I'm looking
+        # from. Django ensures those "the same" items are really the
+        # same. This needs more tests, though.
+        relevant_role_and_indirect_access_with_matching_org = models.Q(
+            role__in=relevant_roles_tied_to_the_portal,
+            role__parent_roles__organisation_roles__in=organisation_roles_i_can_access,
+            role__parent_roles__organisation_roles__organisation=F('organisation'))
 
         return OrganisationRole.objects.filter(
-            tied_to_my_organisation_for_all_users | tied_to_my_user_profile).filter(
-                tied_to_the_portal | tied_to_the_portal_via_parent_role
-            ).distinct()
+            relevant_role_and_direct_access |
+            relevant_role_and_indirect_access_with_matching_org).distinct()
 
 
 # have the creation of a User trigger the creation of a Profile

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-30 14:29+0100\n"
+"POT-Creation-Date: 2015-11-12 11:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,35 +28,43 @@ msgstr ""
 msgid "Shortcut URLs"
 msgstr ""
 
-#: admin.py:60 models.py:238
+#: admin.py:58 models.py:239
 msgid "user profile"
 msgstr ""
 
-#: admin.py:87
+#: admin.py:85
 msgid "Dates"
 msgstr ""
 
-#: admin.py:91
+#: admin.py:89
 msgid "Personal data"
 msgstr ""
 
-#: admin.py:103 models.py:94 models.py:125 models.py:520
+#: admin.py:101 models.py:95 models.py:126 models.py:548
 msgid "portal"
 msgstr ""
 
-#: admin.py:139
+#: admin.py:129
+msgid "parent role"
+msgstr ""
+
+#: admin.py:172
 msgid "number of organisation roles"
 msgstr ""
 
-#: admin.py:169 admin.py:199
+#: admin.py:183
+msgid "number of child roles"
+msgstr ""
+
+#: admin.py:207 admin.py:238
 msgid "number of user profiles"
 msgstr ""
 
-#: admin.py:178 admin.py:210
+#: admin.py:216 admin.py:249
 msgid "number of roles"
 msgstr ""
 
-#: admin.py:223 models.py:350 models.py:585 models.py:602
+#: admin.py:262 models.py:378 models.py:623 models.py:640
 msgid "organisation"
 msgstr ""
 
@@ -151,210 +159,220 @@ msgstr ""
 msgid "Mobile phone number"
 msgstr ""
 
-#: models.py:50 models.py:341 models.py:534 models.py:567
+#: models.py:51 models.py:369 models.py:562 models.py:605
 msgid "name"
 msgstr ""
 
-#: models.py:54
+#: models.py:55
 msgid "Name used to refer to this portal."
 msgstr ""
 
-#: models.py:56
+#: models.py:57
 msgid "shared secret"
 msgstr ""
 
-#: models.py:60
+#: models.py:61
 msgid ""
 "Secret shared between SSO client and server to sign/encrypt communication."
 msgstr ""
 
-#: models.py:63
+#: models.py:64
 msgid "identifying key"
 msgstr ""
 
-#: models.py:67
+#: models.py:68
 msgid "String used to identify the SSO client."
 msgstr ""
 
-#: models.py:69
+#: models.py:70
 msgid "allowed domain(s)"
 msgstr ""
 
-#: models.py:73
+#: models.py:74
 msgid ""
 "Allowed domain suffix for redirects using the next parameter. Multiple, "
 "whitespace-separated suffixes may be specified."
 msgstr ""
 
-#: models.py:76
+#: models.py:77
 msgid "redirect url"
 msgstr ""
 
-#: models.py:78
+#: models.py:79
 msgid "URL used in the SSO redirection."
 msgstr ""
 
-#: models.py:80
+#: models.py:81
 msgid "visit url"
 msgstr ""
 
-#: models.py:82
+#: models.py:83
 msgid "URL used in the UI to refer to this portal."
 msgstr ""
 
-#: models.py:95 models.py:174 models.py:361
+#: models.py:96 models.py:175 models.py:389
 msgid "portals"
 msgstr ""
 
-#: models.py:127
+#: models.py:128
 msgid "request token"
 msgstr ""
 
-#: models.py:131
+#: models.py:132
 msgid "auth token"
 msgstr ""
 
-#: models.py:136 models.py:169 models.py:389
+#: models.py:137 models.py:170 models.py:417
 msgid "user"
 msgstr ""
 
-#: models.py:140 models.py:191 models.py:364
+#: models.py:141 models.py:192 models.py:392
 msgid "created on"
 msgstr ""
 
-#: models.py:146
+#: models.py:147
 msgid "authentication token"
 msgstr ""
 
-#: models.py:147
+#: models.py:148
 msgid "authentication tokens"
 msgstr ""
 
-#: models.py:179 models.py:586
+#: models.py:180 models.py:624
 msgid "organisations"
 msgstr ""
 
-#: models.py:186
+#: models.py:187
 msgid "roles (via organisation)"
 msgstr ""
 
-#: models.py:195
+#: models.py:196
 msgid "updated on"
 msgstr ""
 
-#: models.py:199
+#: models.py:200
 msgid "title"
 msgstr ""
 
-#: models.py:205
+#: models.py:206
 msgid "street"
 msgstr ""
 
-#: models.py:211
+#: models.py:212
 msgid "postal code"
 msgstr ""
 
-#: models.py:217
+#: models.py:218
 msgid "town"
 msgstr ""
 
-#: models.py:223
+#: models.py:224
 msgid "phone number"
 msgstr ""
 
-#: models.py:229
+#: models.py:230
 msgid "mobile phone number"
 msgstr ""
 
-#: models.py:239
+#: models.py:240
 msgid "user profiles"
 msgstr ""
 
-#: models.py:346
+#: models.py:374
 msgid "e-mail"
 msgstr ""
 
-#: models.py:355
+#: models.py:383
 msgid "language"
 msgstr ""
 
-#: models.py:367
+#: models.py:395
 msgid "activation key"
 msgstr ""
 
-#: models.py:373
+#: models.py:401
 msgid "activation key date"
 msgstr ""
 
-#: models.py:377
+#: models.py:405
 msgid "Date on which the activation key was generated. Used for expiration."
 msgstr ""
 
-#: models.py:381
+#: models.py:409
 msgid "is activated"
 msgstr ""
 
-#: models.py:384
+#: models.py:412
 msgid "activated on"
 msgstr ""
 
-#: models.py:394 models.py:395
+#: models.py:422 models.py:423
 msgid "invitation"
 msgstr ""
 
-#: models.py:522 models.py:573
+#: models.py:550 models.py:611
 msgid "unique id"
 msgstr ""
 
-#: models.py:528
+#: models.py:556
 msgid "code"
 msgstr ""
 
-#: models.py:530
+#: models.py:558
 msgid "name used internally by the portal to identify the role"
 msgstr ""
 
-#: models.py:535
+#: models.py:563
 msgid "human-readable name"
 msgstr ""
 
-#: models.py:540
+#: models.py:569
+msgid "child roles"
+msgstr ""
+
+#: models.py:572
+msgid ""
+"roles that are automatically inherited from us for organisations that have "
+"organisation roles pointing at both parent and child role."
+msgstr ""
+
+#: models.py:578
 msgid "external description"
 msgstr ""
 
-#: models.py:543
+#: models.py:581
 msgid "internal description"
 msgstr ""
 
-#: models.py:549 models.py:606
+#: models.py:587 models.py:644
 msgid "role"
 msgstr ""
 
-#: models.py:550 models.py:580
+#: models.py:588 models.py:618
 msgid "roles"
 msgstr ""
 
-#: models.py:608
+#: models.py:646
 msgid "for all users"
 msgstr ""
 
-#: models.py:613
+#: models.py:651
 msgid "organisation-role-mapping"
 msgstr ""
 
-#: models.py:614
+#: models.py:652
 msgid "organisation-role-mappings"
 msgstr ""
 
-#: models.py:618
+#: models.py:656
 msgid "{role} for everybody in {org}"
 msgstr ""
 
-#: views.py:54
+#: views.py:58
 msgid "An unknown error occurred."
 msgstr ""
 
-#: views.py:208
+#: views.py:213
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 

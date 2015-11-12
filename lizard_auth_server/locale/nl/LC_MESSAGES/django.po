@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-30 14:29+0100\n"
-"PO-Revision-Date: 2015-10-30 13:29+0000\n"
+"POT-Creation-Date: 2015-11-12 11:25+0100\n"
+"PO-Revision-Date: 2015-11-12 11:00+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -30,35 +30,43 @@ msgstr "Handmatig activeren"
 msgid "Shortcut URLs"
 msgstr "Snelkoppelingen"
 
-#: admin.py:60 models.py:238
+#: admin.py:58 models.py:239
 msgid "user profile"
 msgstr "gebruikersprofiel"
 
-#: admin.py:87
+#: admin.py:85
 msgid "Dates"
 msgstr "Datums"
 
-#: admin.py:91
+#: admin.py:89
 msgid "Personal data"
 msgstr "Persoonsgegevens"
 
-#: admin.py:103 models.py:94 models.py:125 models.py:520
+#: admin.py:101 models.py:95 models.py:126 models.py:548
 msgid "portal"
 msgstr "portaal"
 
-#: admin.py:139
+#: admin.py:129
+msgid "parent role"
+msgstr "hoofd-rol"
+
+#: admin.py:172
 msgid "number of organisation roles"
 msgstr "Aantal organisatierollen"
 
-#: admin.py:169 admin.py:199
+#: admin.py:183
+msgid "number of child roles"
+msgstr "aantal overervende rollen"
+
+#: admin.py:207 admin.py:238
 msgid "number of user profiles"
 msgstr "Aantal gebruikersprofielen"
 
-#: admin.py:178 admin.py:210
+#: admin.py:216 admin.py:249
 msgid "number of roles"
 msgstr "Aantal rollen"
 
-#: admin.py:223 models.py:350 models.py:585 models.py:602
+#: admin.py:262 models.py:378 models.py:623 models.py:640
 msgid "organisation"
 msgstr "organisatie"
 
@@ -155,38 +163,38 @@ msgstr "Telefoonnummer"
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
-#: models.py:50 models.py:341 models.py:534 models.py:567
+#: models.py:51 models.py:369 models.py:562 models.py:605
 msgid "name"
 msgstr "naam"
 
-#: models.py:54
+#: models.py:55
 msgid "Name used to refer to this portal."
 msgstr "Naam waaronder dit portaal bekend staat."
 
-#: models.py:56
+#: models.py:57
 msgid "shared secret"
 msgstr "gedeelde geheime string"
 
-#: models.py:60
+#: models.py:61
 msgid ""
 "Secret shared between SSO client and server to sign/encrypt communication."
 msgstr ""
 "De geheime code die tussen de SSO client en SSO server gedeeld wordt om de "
 "communicatie te ondertekenen en te versleutelen."
 
-#: models.py:63
+#: models.py:64
 msgid "identifying key"
 msgstr "identificatie-string"
 
-#: models.py:67
+#: models.py:68
 msgid "String used to identify the SSO client."
 msgstr "Code die gebruikt wordt om de SSO client te identificeren."
 
-#: models.py:69
+#: models.py:70
 msgid "allowed domain(s)"
 msgstr "toegestaan domein(en)"
 
-#: models.py:73
+#: models.py:74
 msgid ""
 "Allowed domain suffix for redirects using the next parameter. Multiple, "
 "whitespace-separated suffixes may be specified."
@@ -195,179 +203,191 @@ msgstr ""
 "moet eindigen met wat hier is ingevuld. Meerdere domeinnamen kan je invoeren "
 "door ze met spaties te scheiden."
 
-#: models.py:76
+#: models.py:77
 msgid "redirect url"
 msgstr "redirect-url"
 
-#: models.py:78
+#: models.py:79
 msgid "URL used in the SSO redirection."
 msgstr "URL die standaard voor het redirecten gebruikt wordt."
 
-#: models.py:80
+#: models.py:81
 msgid "visit url"
 msgstr "bezoek-url"
 
-#: models.py:82
+#: models.py:83
 msgid "URL used in the UI to refer to this portal."
 msgstr ""
 "URL van het portal zelf waarnaar we kunnen linken vanuit overzichtspagina's."
 
-#: models.py:95 models.py:174 models.py:361
+#: models.py:96 models.py:175 models.py:389
 msgid "portals"
 msgstr "portalen"
 
-#: models.py:127
+#: models.py:128
 msgid "request token"
 msgstr "token van het request"
 
-#: models.py:131
+#: models.py:132
 msgid "auth token"
 msgstr "authenticatie token"
 
-#: models.py:136 models.py:169 models.py:389
+#: models.py:137 models.py:170 models.py:417
 msgid "user"
 msgstr "gebruiker"
 
-#: models.py:140 models.py:191 models.py:364
+#: models.py:141 models.py:192 models.py:392
 msgid "created on"
 msgstr "aangemaakt op"
 
-#: models.py:146
+#: models.py:147
 msgid "authentication token"
 msgstr "authenticatieteken"
 
-#: models.py:147
+#: models.py:148
 msgid "authentication tokens"
 msgstr "authenticatietekens"
 
-#: models.py:179 models.py:586
+#: models.py:180 models.py:624
 msgid "organisations"
 msgstr "organisaties"
 
-#: models.py:186
+#: models.py:187
 msgid "roles (via organisation)"
 msgstr "rollen (via organisatie)"
 
-#: models.py:195
+#: models.py:196
 msgid "updated on"
 msgstr "geüpdated op"
 
-#: models.py:199
+#: models.py:200
 msgid "title"
 msgstr "titel"
 
-#: models.py:205
+#: models.py:206
 msgid "street"
 msgstr "straat"
 
-#: models.py:211
+#: models.py:212
 msgid "postal code"
 msgstr "postcode"
 
-#: models.py:217
+#: models.py:218
 msgid "town"
 msgstr "plaats"
 
-#: models.py:223
+#: models.py:224
 msgid "phone number"
 msgstr "telefoonnummer"
 
-#: models.py:229
+#: models.py:230
 msgid "mobile phone number"
 msgstr "mobiele telefoonnummer"
 
-#: models.py:239
+#: models.py:240
 msgid "user profiles"
 msgstr "gebruikersprofielen"
 
-#: models.py:346
+#: models.py:374
 msgid "e-mail"
 msgstr "e-mail"
 
-#: models.py:355
+#: models.py:383
 msgid "language"
 msgstr "taal"
 
-#: models.py:367
+#: models.py:395
 msgid "activation key"
 msgstr "activatiecode"
 
-#: models.py:373
+#: models.py:401
 msgid "activation key date"
 msgstr "datum van de activatiecode"
 
-#: models.py:377
+#: models.py:405
 msgid "Date on which the activation key was generated. Used for expiration."
 msgstr ""
 "Datum waarop de activatiecode is gegenereerd. Wordt gebruikt om de code "
 "automatisch te laten verlopen."
 
-#: models.py:381
+#: models.py:409
 msgid "is activated"
 msgstr "is geactiveerd"
 
-#: models.py:384
+#: models.py:412
 msgid "activated on"
 msgstr "geactiveerd op"
 
-#: models.py:394 models.py:395
+#: models.py:422 models.py:423
 msgid "invitation"
 msgstr "uitnodiging"
 
-#: models.py:522 models.py:573
+#: models.py:550 models.py:611
 msgid "unique id"
 msgstr "uniek ID"
 
-#: models.py:528
+#: models.py:556
 msgid "code"
 msgstr "code"
 
-#: models.py:530
+#: models.py:558
 msgid "name used internally by the portal to identify the role"
 msgstr ""
 "naam die intern door het portaal gebruikt wordt om de rol te identificeren"
 
-#: models.py:535
+#: models.py:563
 msgid "human-readable name"
 msgstr "naam die aan de gebruiker getoond wordt"
 
-#: models.py:540
+#: models.py:569
+msgid "child roles"
+msgstr "overervende rollen"
+
+#: models.py:572
+msgid ""
+"roles that are automatically inherited from us for organisations that have "
+"organisation roles pointing at both parent and child role."
+msgstr ""
+"rollen die je automatisch meekrijgt voor organisaties die organisatie-rol-"
+"koppelingen hebben naar zowel de hoofd-rol als de overervende rollen."
+
+#: models.py:578
 msgid "external description"
 msgstr "omschrijving voor eindgebruikers"
 
-#: models.py:543
+#: models.py:581
 msgid "internal description"
 msgstr "interne omschrijving"
 
-#: models.py:549 models.py:606
+#: models.py:587 models.py:644
 msgid "role"
 msgstr "rol"
 
-#: models.py:550 models.py:580
+#: models.py:588 models.py:618
 msgid "roles"
 msgstr "rollen"
 
-#: models.py:608
+#: models.py:646
 msgid "for all users"
 msgstr "voor alle gebruikers"
 
-#: models.py:613
+#: models.py:651
 msgid "organisation-role-mapping"
 msgstr "organisatie-rol-koppeling"
 
-#: models.py:614
+#: models.py:652
 msgid "organisation-role-mappings"
 msgstr "organisatie-rol-koppelingen"
 
-#: models.py:618
+#: models.py:656
 msgid "{role} for everybody in {org}"
 msgstr "{role} voor iedereen in {org}"
 
-#: views.py:54
+#: views.py:58
 msgid "An unknown error occurred."
 msgstr "Onbekende fout."
 
-#: views.py:208
+#: views.py:213
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 "Ongeldige activatiesleutel. Dit betekent waarschijnlijk dat het account al "

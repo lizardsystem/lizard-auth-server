@@ -38,7 +38,7 @@ Then update the NL translation on
 https://translations.lizard.net/projects/p/lizardsystem/resource/lizard-auth-server/
 and afterwards fetch the latest translations::
 
-    $ bin/translations fetch
+    $ bin/transifex fetch
 
 Note: this also fetches af/vi/zh, but we don't translate into those languages
 currently. They're ignored in the ``.gitignore`` file.

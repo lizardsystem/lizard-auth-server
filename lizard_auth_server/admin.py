@@ -114,10 +114,30 @@ class RelevantPortalFilter(admin.SimpleListFilter):
 
 class RoleInline(admin.TabularInline):
     model = models.Role
-    fields = ['code', 'name', 'internal_description', 'external_description']
-    readonly_fields = ['internal_description', 'external_description']
+    fields = ['code', 'name', 'internal_description', 'external_description',
+              'num_inheriting_roles']
+    readonly_fields = ['internal_description', 'external_description',
+                       'num_inheriting_roles']
     # TODO: add show_change_link when we move to django 1.8.
     extra = 1
+
+    def get_queryset(self, request):
+        # Direct copy/paste from RoleAdmin (apart from the different 'super').
+        queryset = super(RoleInline, self).get_queryset(request)
+        return queryset.annotate(
+            inheriting_roles_count=Count('inheriting_roles', distinct=True))
+
+    def num_inheriting_roles(self, obj):
+        # Direct copy/paste from RoleAdmin
+        count = obj.inheriting_roles_count
+        if not count:
+            return ''
+        url = reverse('admin:lizard_auth_server_role_changelist')
+        url += '?base_role={}'.format(obj.id)
+        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+    num_inheriting_roles.short_description = ugettext_lazy('number of inheriting roles')
+    num_inheriting_roles.admin_order_field = 'inheriting_roles_count'
+    num_inheriting_roles.allow_tags = True
 
 
 class OrganisationRoleInline(admin.TabularInline):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-12 11:25+0100\n"
+"POT-Creation-Date: 2015-11-12 12:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,26 +45,26 @@ msgid "portal"
 msgstr ""
 
 #: admin.py:129
-msgid "parent role"
+msgid "base role"
 msgstr ""
 
-#: admin.py:172
+#: admin.py:171
 msgid "number of organisation roles"
 msgstr ""
 
-#: admin.py:183
-msgid "number of child roles"
+#: admin.py:182
+msgid "number of inheriting roles"
 msgstr ""
 
-#: admin.py:207 admin.py:238
+#: admin.py:206 admin.py:237
 msgid "number of user profiles"
 msgstr ""
 
-#: admin.py:216 admin.py:249
+#: admin.py:215 admin.py:248
 msgid "number of roles"
 msgstr ""
 
-#: admin.py:262 models.py:378 models.py:623 models.py:640
+#: admin.py:261 models.py:378 models.py:623 models.py:640
 msgid "organisation"
 msgstr ""
 
@@ -327,13 +327,13 @@ msgid "human-readable name"
 msgstr ""
 
 #: models.py:569
-msgid "child roles"
+msgid "inheriting roles"
 msgstr ""
 
 #: models.py:572
 msgid ""
 "roles that are automatically inherited from us for organisations that have "
-"organisation roles pointing at both parent and child role."
+"organisation roles pointing at both base and inheriting role."
 msgstr ""
 
 #: models.py:578

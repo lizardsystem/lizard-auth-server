@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-12 11:25+0100\n"
-"PO-Revision-Date: 2015-11-12 11:00+0000\n"
+"POT-Creation-Date: 2015-11-12 12:17+0100\n"
+"PO-Revision-Date: 2015-11-12 11:20+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -47,26 +47,26 @@ msgid "portal"
 msgstr "portaal"
 
 #: admin.py:129
-msgid "parent role"
-msgstr "hoofd-rol"
+msgid "base role"
+msgstr "basisrol"
 
-#: admin.py:172
+#: admin.py:171
 msgid "number of organisation roles"
 msgstr "Aantal organisatierollen"
 
-#: admin.py:183
-msgid "number of child roles"
+#: admin.py:182
+msgid "number of inheriting roles"
 msgstr "aantal overervende rollen"
 
-#: admin.py:207 admin.py:238
+#: admin.py:206 admin.py:237
 msgid "number of user profiles"
 msgstr "Aantal gebruikersprofielen"
 
-#: admin.py:216 admin.py:249
+#: admin.py:215 admin.py:248
 msgid "number of roles"
 msgstr "Aantal rollen"
 
-#: admin.py:262 models.py:378 models.py:623 models.py:640
+#: admin.py:261 models.py:378 models.py:623 models.py:640
 msgid "organisation"
 msgstr "organisatie"
 
@@ -340,16 +340,16 @@ msgid "human-readable name"
 msgstr "naam die aan de gebruiker getoond wordt"
 
 #: models.py:569
-msgid "child roles"
+msgid "inheriting roles"
 msgstr "overervende rollen"
 
 #: models.py:572
 msgid ""
 "roles that are automatically inherited from us for organisations that have "
-"organisation roles pointing at both parent and child role."
+"organisation roles pointing at both base and inheriting role."
 msgstr ""
 "rollen die je automatisch meekrijgt voor organisaties die organisatie-rol-"
-"koppelingen hebben naar zowel de hoofd-rol als de overervende rollen."
+"koppelingen hebben naar zowel de basisrol als naar de overervende rol."
 
 #: models.py:578
 msgid "external description"

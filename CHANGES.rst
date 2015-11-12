@@ -15,6 +15,19 @@ Changelog of lizard-auth-server
   organisation roles).
   [reinout]
 
+- Beautified the main SSO page ("my profile") and made it more usable. Nicer
+  list of organisations; "definition list" instead of "table" for the user
+  profile data; all actions in one spot.
+  [reinout]
+
+- Added separate page for viewing your permissions (which means
+  "organisation-role-mappings") per portal, linked from the main portal page.
+
+  As staff member, you can see detailed debug information to troubleshoot
+  permissions. You can also view other users' permission information,
+  essential for getting permissions right.
+  [reinout]
+
 
 1.2 (2015-11-02)
 ----------------

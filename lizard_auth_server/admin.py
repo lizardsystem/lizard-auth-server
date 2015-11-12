@@ -125,19 +125,19 @@ class OrganisationRoleInline(admin.TabularInline):
     extra = 1
 
 
-class RelevantParentFilter(admin.SimpleListFilter):
-    title = _('parent role')
-    parameter_name = 'parent'
+class RelevantBaseRoleFilter(admin.SimpleListFilter):
+    title = _('base role')
+    parameter_name = 'base_role'
 
     def lookups(self, request, model_admin):
         return models.Role.objects.exclude(
-            child_roles__isnull=True).values_list(
+            inheriting_roles__isnull=True).values_list(
             'id', 'name')
 
     def queryset(self, request, queryset):
         if not self.value():
             return queryset
-        return queryset.filter(parent_roles=self.value())
+        return queryset.filter(base_roles=self.value())
 
 
 class RoleAdmin(admin.ModelAdmin):
@@ -146,12 +146,11 @@ class RoleAdmin(admin.ModelAdmin):
                      'portal__allowed_domain',
                      'external_description', 'internal_description']
     list_display = ['code', 'portal', 'name', 'internal_description',
-                    'num_organisation_roles', 'num_child_roles']
-    list_filter = [RelevantPortalFilter, RelevantParentFilter]
+                    'num_organisation_roles', 'num_inheriting_roles']
+    list_filter = [RelevantPortalFilter, RelevantBaseRoleFilter]
     readonly_fields = ['unique_id']
-    filter_horizontal = ['child_roles']
+    filter_horizontal = ['inheriting_roles']
 
-    #xxxx
     # inlines = [OrganisationRoleInline]
     # ^^^ This is easy to enable, but I [reinout] found it unclear how to use
     # it. Better to only have this inline on Organisation only.
@@ -160,7 +159,7 @@ class RoleAdmin(admin.ModelAdmin):
         queryset = super(RoleAdmin, self).get_queryset(request)
         return queryset.annotate(
             organisation_roles_count=Count('organisation_roles', distinct=True),
-            child_roles_count=Count('child_roles', distinct=True))
+            inheriting_roles_count=Count('inheriting_roles', distinct=True))
 
     def num_organisation_roles(self, obj):
         count = obj.organisation_roles_count
@@ -173,16 +172,16 @@ class RoleAdmin(admin.ModelAdmin):
     num_organisation_roles.admin_order_field = 'organisation_roles_count'
     num_organisation_roles.allow_tags = True
 
-    def num_child_roles(self, obj):
-        count = obj.child_roles_count
+    def num_inheriting_roles(self, obj):
+        count = obj.inheriting_roles_count
         if not count:
             return ''
         url = reverse('admin:lizard_auth_server_role_changelist')
-        url += '?parent={}'.format(obj.id)
+        url += '?base_role={}'.format(obj.id)
         return '<a href="{}">&rarr; {}</a>'.format(url, count)
-    num_child_roles.short_description = ugettext_lazy('number of child roles')
-    num_child_roles.admin_order_field = 'child_roles_count'
-    num_child_roles.allow_tags = True
+    num_inheriting_roles.short_description = ugettext_lazy('number of inheriting roles')
+    num_inheriting_roles.admin_order_field = 'inheriting_roles_count'
+    num_inheriting_roles.allow_tags = True
 
 
 class PortalAdmin(admin.ModelAdmin):

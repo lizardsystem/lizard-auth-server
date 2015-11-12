@@ -124,8 +124,9 @@ class TestUserProfile(TestCase):
         self.assertEquals(
             len(list(profile.all_organisation_roles(portal2))), 0)
 
-        # However, when the second role a child role of the first:
-        role1.child_roles.add(role2)
+        # However, when the second role an inheriting role of the first (which
+        # then becomes the second role's base role):
+        role1.inheriting_roles.add(role2)
 
         profile = models.UserProfile.objects.fetch_for_user(user)
         # Then he does:
@@ -157,9 +158,9 @@ class TestUserProfile(TestCase):
         self.assertEquals(
             len(list(profile.all_organisation_roles(portal2))), 0)
 
-        # Even when the second role is a child role of the first we don't get
-        # it as the organisations don't match.
-        role1.child_roles.add(role2)
+        # Even when the second role is an inheriting role of the first we
+        # don't get it as the organisations don't match.
+        role1.inheriting_roles.add(role2)
         profile = models.UserProfile.objects.fetch_for_user(user)
         self.assertEquals(
             len(profile.all_organisation_roles(portal2)), 0)

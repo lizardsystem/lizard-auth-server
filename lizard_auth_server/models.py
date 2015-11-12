@@ -341,15 +341,15 @@ class UserProfile(models.Model):
             role__in=relevant_roles_tied_to_the_portal)
 
         # The elaborate case is that a role must of course be a relevant
-        # role. Then that same role must have a parent with an organisation
+        # role. Then that same role must have a base role with an organisation
         # role that I can access. That same organisation role must also have
         # the same organisation as the organisation role I'm looking
         # from. Django ensures those "the same" items are really the
         # same. This needs more tests, though.
         relevant_role_and_indirect_access_with_matching_org = models.Q(
             role__in=relevant_roles_tied_to_the_portal,
-            role__parent_roles__organisation_roles__in=organisation_roles_i_can_access,
-            role__parent_roles__organisation_roles__organisation=F('organisation'))
+            role__base_roles__organisation_roles__in=organisation_roles_i_can_access,
+            role__base_roles__organisation_roles__organisation=F('organisation'))
 
         return OrganisationRole.objects.filter(
             relevant_role_and_direct_access |
@@ -564,14 +564,14 @@ class Role(models.Model):
         max_length=255,
         null=False,
         blank=False)
-    child_roles = models.ManyToManyField(
+    inheriting_roles = models.ManyToManyField(
         "self",
-        verbose_name=_('child roles'),
+        verbose_name=_('inheriting roles'),
         symmetrical=False,
-        related_name='parent_roles',
+        related_name='base_roles',
         help_text=_('roles that are automatically inherited from us for '
                     'organisations that have organisation roles pointing at '
-                    'both parent and child role.'),
+                    'both base and inheriting role.'),
         blank=True)
 
     external_description = models.TextField(

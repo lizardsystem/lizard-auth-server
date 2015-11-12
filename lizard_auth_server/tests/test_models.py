@@ -128,7 +128,6 @@ class TestUserProfile(TestCase):
 
         # However, when the second role is attached to the first:
         role1.child_roles.add(role2)
-        role1.save()
 
         profile = models.UserProfile.objects.fetch_for_user(user)
         # Then he does:

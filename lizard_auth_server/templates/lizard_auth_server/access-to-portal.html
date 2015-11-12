@@ -6,6 +6,77 @@
 {% block container %}
   <div class="content">
     <h1>{{ view.title }}</h1>
-    Tadaaah
+
+    {% if view.my_organisation_roles_for_this_portal %}
+
+      <p>
+        {% trans "Apart from logging in, you have the following extra permissions:" %}
+      </p>
+      <ul>
+        {% for orgrole in view.my_organisation_roles_for_this_portal %}
+          <li>{{ orgrole }}</li>
+        {% endfor %}
+      </ul>
+
+    {% else %}
+
+      <p>
+        {% trans "Apart from logging in, you don't have any special permissions." %}
+      </p>
+
+    {% endif %}
+
+    {% if user.is_staff %}
+      <div class="alert alert-block alert-info">
+        <h4>Debug info</h4>
+        Note: you're allowed to access the /admin, so we show you extra debug information.
+        Regular users only see the final list of results shown above.
+      </div>
+
+      <h2>Basic information: portal roles and organisation-role-mappings</h2>
+      <h4>First we grab the relevant roles tied to the portal ({{ view.portal }}):</h4>
+      {% for role in view.organisation_roles_explanation.relevant_roles_tied_to_the_portal %}
+        {{ role }}<br>
+      {% empty %}
+        Nothing
+      {% endfor %}
+
+      <h4>Then, unfiltered, <i>all</i> the organisation-role-mappings {{ view.profile }} can access...</h4>
+      <h5>...directly tied to {{ view.profile }}:</h5>
+      {% for orgrole in view.organisation_roles_explanation.organisation_roles_directly %}
+        {{ orgrole }}<br>
+      {% empty %}
+        Nothing
+      {% endfor %}
+      <h5>...via organisation membership:</h5>
+      {% for orgrole in view.organisation_roles_explanation.organisation_roles_via_organisation %}
+        {{ orgrole }}<br>
+      {% empty %}
+        Nothing
+      {% endfor %}
+
+      <h2>Filtered: the applicable organisation-role-mappings I can access for this portal</h2>
+      <h3>...direct access to roles</h3>
+      {% for orgrole in view.organisation_roles_explanation.direct_results %}
+        {{ orgrole }}<br>
+      {% empty %}
+        Nothing
+      {% endfor %}
+      <h3>...indirect access via role inheritance</h3>
+      {% for orgrole in view.organisation_roles_explanation.indirect_results %}
+        {{ orgrole }}<br>
+      {% empty %}
+        Nothing
+      {% endfor %}
+
+      <h2>As a final check, the total applicable organisation role mappings I can access for this portal</h2>
+      {% for orgrole in view.organisation_roles_explanation.results %}
+        {{ orgrole }}<br>
+      {% empty %}
+        Nothing
+      {% endfor %}
+
+    {% endif %}
+
   </div>
 {% endblock %}

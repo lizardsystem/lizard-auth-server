@@ -86,8 +86,11 @@ class ProfileView(ViewContextMixin, TemplateView):
         return self.request.user.get_profile()
 
     @property
-    def all_portals(self):
-        return Portal.objects.all()
+    def portals(self):
+        if self.request.user.is_staff:
+            return Portal.objects.all()
+        else:
+            return self.view.profile.portals.all()
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -97,6 +100,10 @@ class ProfileView(ViewContextMixin, TemplateView):
 class AccessToPortalView(ViewContextMixin, TemplateView):
     template_name = 'lizard_auth_server/access-to-portal.html'
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AccessToPortalView, self).dispatch(request, *args, **kwargs)
+
     @cached_property
     def portal(self):
         portal_pk = self.kwargs['portal_pk']
@@ -104,16 +111,22 @@ class AccessToPortalView(ViewContextMixin, TemplateView):
 
     @cached_property
     def title(self):
-        return _('Access to portal {}').format(self.portal.name)
-    #xxxx
+        return _('Access to portal {} for {}').format(self.portal.name,
+                                                      self.profile)
 
     @cached_property
     def profile(self):
         return self.request.user.get_profile()
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super(AccessToPortalView, self).dispatch(request, *args, **kwargs)
+    @cached_property
+    def organisation_roles_explanation(self):
+        return self.profile.all_organisation_roles(
+            self.portal,
+            return_explanation=True)
+
+    @cached_property
+    def my_organisation_roles_for_this_portal(self):
+        return self.profile.all_organisation_roles(self.portal)
 
 
 class EditProfileView(FormView):

@@ -314,10 +314,12 @@ class UserProfile(models.Model):
             return True
         return self.portals.filter(pk=portal.pk).exists()
 
-    def all_organisation_roles(self, portal):
+    def all_organisation_roles(self, portal, return_explanation=False):
         """Return a queryset of OrganisationRoles that apply to this profile.
-        """
 
+        If ``return_explanation`` is True, return a dict with explanatory
+        results, instead.
+        """
         # First grab all applicable roles.
         relevant_roles_tied_to_the_portal = Role.objects.filter(portal=portal)
 
@@ -351,11 +353,23 @@ class UserProfile(models.Model):
             role__base_roles__organisation_roles__in=organisation_roles_i_can_access,
             role__base_roles__organisation_roles__organisation=F('organisation'))
 
-        result = OrganisationRole.objects.filter(
+        results = OrganisationRole.objects.filter(
             relevant_role_and_direct_access |
             relevant_role_and_indirect_access_with_matching_org).distinct()
 
-        return result
+        if return_explanation:
+            organisation_roles_directly = OrganisationRole.objects.filter(
+                tied_to_my_user_profile)
+            organisation_roles_via_organisation = OrganisationRole.objects.filter(
+                tied_to_my_organisation_for_all_users).distinct()
+            direct_results = OrganisationRole.objects.filter(
+                relevant_role_and_direct_access).distinct()
+            indirect_results = OrganisationRole.objects.filter(
+                relevant_role_and_indirect_access_with_matching_org).distinct()
+
+            return locals()
+
+        return results
 
 
 # have the creation of a User trigger the creation of a Profile

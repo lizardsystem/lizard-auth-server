@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -79,14 +80,10 @@ class ProfileView(ViewContextMixin, TemplateView):
     Straightforward view which displays a user's profile.
     """
     template_name = 'lizard_auth_server/profile.html'
-    _profile = None
 
-    @property
+    @cached_property
     def profile(self):
-        # TODO cached_property
-        if not self._profile:
-            self._profile = self.request.user.get_profile()
-        return self._profile
+        return self.request.user.get_profile()
 
     @property
     def all_portals(self):

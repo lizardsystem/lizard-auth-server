@@ -5,6 +5,7 @@ from lizard_auth_server.tests import factories
 
 
 class TestUserProfile(TestCase):
+
     def test_organisation_can_return_none(self):
         user = factories.UserF.create()
         profile = models.UserProfile.objects.fetch_for_user(user)
@@ -100,22 +101,19 @@ class TestUserProfile(TestCase):
             len(list(profile.all_organisation_roles(portal3))), 0)
 
     def test_role_inheritance(self):
-        # User has role1 on portal1. He also has role2 on portal2 for
-        # the same organisation because of a DependentRole.
+        # User has role1 on portal1. He also has role2 on portal2 for the same
+        # organisation because of role inheritance.
 
         portal1 = factories.PortalF.create(name='portal1')
         portal2 = factories.PortalF.create(name='portal2')
-
         role1 = factories.RoleF.create(name='role1', portal=portal1)
         role2 = factories.RoleF.create(name='role2', portal=portal2)
-
-        user = factories.UserF.create(username='newuser')
         org = factories.OrganisationF.create()
-
+        user = factories.UserF.create(username='newuser')
         profile = models.UserProfile.objects.fetch_for_user(user)
         profile.organisations.add(org)
 
-        # User has this role because of for_all_users=True
+        # User has role1 because of for_all_users=True
         models.OrganisationRole.objects.create(
             organisation=org, role=role1, for_all_users=True)
         # But User wouldn't normally have this role
@@ -126,13 +124,13 @@ class TestUserProfile(TestCase):
         self.assertEquals(
             len(list(profile.all_organisation_roles(portal2))), 0)
 
-        # However, when the second role is attached to the first:
+        # However, when the second role a child role of the first:
         role1.child_roles.add(role2)
 
         profile = models.UserProfile.objects.fetch_for_user(user)
         # Then he does:
         self.assertEquals(
-            list(profile.all_organisation_roles(portal2))[0],
+            profile.all_organisation_roles(portal2)[0],
             org_role_2)
 
 

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
@@ -116,13 +117,26 @@ class AccessToPortalView(ViewContextMixin, TemplateView):
 
     @cached_property
     def profile(self):
+        if self.request.user.is_staff:
+            user_id = self.kwargs.get('user_pk')
+            if user_id:
+                user = User.objects.get(id=user_id)
+                return user.get_profile()
         return self.request.user.get_profile()
 
     @cached_property
     def organisation_roles_explanation(self):
+        if not self.request.user.is_staff:
+            return
         return self.profile.all_organisation_roles(
             self.portal,
             return_explanation=True)
+
+    @cached_property
+    def user_profiles_for_portal(self):
+        if not self.request.user.is_staff:
+            return
+        return self.portal.user_profiles.select_related('user')
 
     @cached_property
     def my_organisation_roles_for_this_portal(self):

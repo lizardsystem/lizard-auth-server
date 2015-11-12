@@ -56,13 +56,13 @@
       {% endfor %}
 
       <h2>Filtered: the applicable organisation-role-mappings I can access for this portal</h2>
-      <h3>...direct access to roles</h3>
+      <h4>...direct access to roles</h4>
       {% for orgrole in view.organisation_roles_explanation.direct_results %}
         {{ orgrole }}<br>
       {% empty %}
         Nothing
       {% endfor %}
-      <h3>...indirect access via role inheritance</h3>
+      <h4>...indirect access via role inheritance</h4>
       {% for orgrole in view.organisation_roles_explanation.indirect_results %}
         {{ orgrole }}<br>
       {% empty %}
@@ -75,6 +75,18 @@
       {% empty %}
         Nothing
       {% endfor %}
+
+      <h2>Users that can log into this portal</h2>
+      <p>The link goes to this same page <b>for that user</b>. Handy for debugging access issues.</p>
+      <ul>
+        {% for user_profile in view.user_profiles_for_portal %}
+          <li>
+            <a href="{% url 'lizard_auth_server.access_to_portal' portal_pk=view.portal.id user_pk=user_profile.user.id %}">
+              {{ user_profile.user.username }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
 
     {% endif %}
 

@@ -204,6 +204,11 @@ urlpatterns = patterns(
         views.AccessToPortalView.as_view(),
         name='lizard_auth_server.access_to_portal'
     ),
+    url(
+        r'^access-to-portal/(?P<portal_pk>\d+)/(?P<user_pk>\d+)/$',
+        views.AccessToPortalView.as_view(),
+        name='lizard_auth_server.access_to_portal'
+    ),
 
 )
 

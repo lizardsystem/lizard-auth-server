@@ -5,40 +5,69 @@
 
 {% block container %}
   <div class="content">
-    <h2>
-      {{ view.profile.first_name }} {{ view.profile.last_name }}
-      <small>
-        {% trans 'Your profile' %}
-      </small>
-    </h2>
-
-    <div>
-      <a class="pull-right btn"
-         href="{% url 'lizard_auth_server.edit_profile' %}">
-        {% trans "Edit my profile" %}
-      </a>
-    </div>
-    <dl>
-      <dt>{% trans 'Email' %}</dt>
-      <dd>{{ view.profile.email }}</dd>
-      <dt>{% trans 'Title' %}</dt>
-      <dd>{{ view.profile.title }}</dd>
-      <dt>{% trans 'Street' %}</dt>
-      <dd>{{ view.profile.street }}</dd>
-      <dt>{% trans 'Postal code' %}</dt>
-      <dd>{{ view.profile.postal_code }}</dd>
-      <dt>{% trans 'Town' %}</dt>
-      <dd>{{ view.profile.town }}</dd>
-      <dt>{% trans 'Phone number' %}</dt>
-      <dd>{{ view.profile.phone_number }}</dd>
-      <dt>{% trans 'Mobile phone number' %}</dt>
-      <dd>{{ view.profile.mobile_phone_number }}</dd>
-      <dt>{% trans 'Created on' %}</dt>
-      <dd>{{ view.profile.created_at }}</dd>
-    </dl>
+    <h2>{% trans 'Your profile' %}</h2>
 
     <div class="row">
-      <div class="span6">
+      <div class="span8">
+
+        <h3>{% trans 'Your data' %}</h3>
+        <dl>
+          <dt>{% trans 'Name' %}</dt>
+          <dd>{{ view.profile.first_name }} {{ view.profile.last_name }}</dd>
+          <dt>{% trans 'Email' %}</dt>
+          <dd>{{ view.profile.email }}</dd>
+          <dt>{% trans 'Title' %}</dt>
+          <dd>{{ view.profile.title }}</dd>
+          <dt>{% trans 'Street' %}</dt>
+          <dd>{{ view.profile.street }}</dd>
+          <dt>{% trans 'Postal code' %}</dt>
+          <dd>{{ view.profile.postal_code }}</dd>
+          <dt>{% trans 'Town' %}</dt>
+          <dd>{{ view.profile.town }}</dd>
+          <dt>{% trans 'Phone number' %}</dt>
+          <dd>{{ view.profile.phone_number }}</dd>
+          <dt>{% trans 'Mobile phone number' %}</dt>
+          <dd>{{ view.profile.mobile_phone_number }}</dd>
+          <dt>{% trans 'Created on' %}</dt>
+          <dd>{{ view.profile.created_at }}</dd>
+        </dl>
+
+      </div>
+      <div class="span4">
+
+        <h3>{% trans 'Actions' %}</h3>
+        <ul>
+          <li>
+            <a href="{% url 'lizard_auth_server.edit_profile' %}">
+              {% trans "Edit my profile" %}
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'django.contrib.auth.views.password_change' %}">
+              {% trans "Change password" %}
+            </a>
+          </li>
+          {% if user.is_staff %}
+            <li>
+              <a href="{% url 'lizard_auth_server.invite_user' %}">
+                {% trans 'Register a new user' %}
+              </a>
+            </li>
+          {% endif %}
+          {% if user.is_superuser %}
+            <li>
+              <a href="{% url 'admin:lizard_auth_server_portal_changelist' %}">
+                {% trans 'Manage SSO portals' %}
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="span8">
 
         <h3>{% trans 'Available portals' %}</h3>
         <p>{% trans 'You have access to the following portals:' %}</p>
@@ -62,7 +91,7 @@
         {% endif %}
 
       </div>
-      <div class="span6">
+      <div class="span4">
 
         <h3>{% trans 'Organisations' %}</h3>
         <p>{% trans 'You are a member of the following organisations:' %}</p>
@@ -75,15 +104,4 @@
       </div>
     </div>
 
-    <h3>{% trans 'Actions' %}</h3>
-    <ul>
-      <li><a href="{% url "django.contrib.auth.views.password_change" %}">{% trans "Change password" %}</a></li>
-      {% if user.is_staff %}
-      <li><a href="{% url "lizard_auth_server.invite_user" %}">{% trans 'Register a new user' %}</a></li>
-      {% endif %}
-      {% if user.is_superuser %}
-      <li><a href="{% url "admin:lizard_auth_server_portal_changelist" %}">{% trans 'Manage SSO portals' %}</a></li>
-      {% endif %}
-    </ul>
-  </div>
 {% endblock %}

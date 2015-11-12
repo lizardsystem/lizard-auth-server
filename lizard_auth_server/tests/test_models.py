@@ -100,7 +100,7 @@ class TestUserProfile(TestCase):
         self.assertEquals(
             len(list(profile.all_organisation_roles(portal3))), 0)
 
-    def test_role_inheritance(self):
+    def test_role_inheritance1(self):
         # User has role1 on portal1. He also has role2 on portal2 for the same
         # organisation because of role inheritance.
 
@@ -132,6 +132,37 @@ class TestUserProfile(TestCase):
         self.assertEquals(
             profile.all_organisation_roles(portal2)[0],
             org_role_2)
+
+    def test_role_inheritance2(self):
+        # Same test as test_role_inheritance2, only "org_role_2" is attached
+        # to a different organisation, so we don't get that role.
+
+        portal1 = factories.PortalF.create(name='portal1')
+        portal2 = factories.PortalF.create(name='portal2')
+        role1 = factories.RoleF.create(name='role1', portal=portal1)
+        role2 = factories.RoleF.create(name='role2', portal=portal2)
+        org = factories.OrganisationF.create()
+        second_org = factories.OrganisationF.create()
+        user = factories.UserF.create(username='newuser')
+        profile = models.UserProfile.objects.fetch_for_user(user)
+        profile.organisations.add(org)
+
+        # User has role1 because of for_all_users=True
+        models.OrganisationRole.objects.create(
+            organisation=org, role=role1, for_all_users=True)
+        # But User wouldn't normally have this role
+        org_role_2 = models.OrganisationRole.objects.create(
+            organisation=second_org, role=role2, for_all_users=False)
+        # See, he doesn't have any roles on portal2:
+        self.assertEquals(
+            len(list(profile.all_organisation_roles(portal2))), 0)
+
+        # Even when the second role is a child role of the first we don't get
+        # it as the organisations don't match.
+        role1.child_roles.add(role2)
+        profile = models.UserProfile.objects.fetch_for_user(user)
+        self.assertEquals(
+            len(profile.all_organisation_roles(portal2)), 0)
 
 
 class UnicodeMethodTestCase(TestCase):

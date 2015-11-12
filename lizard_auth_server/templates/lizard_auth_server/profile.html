@@ -81,7 +81,10 @@
                 <a href="{{ portal.visit_url }}">
                   {{ portal.name }}
                 </a><br>
-                <small class="muted">{{ portal.visit_url }}</small>
+                <small class="muted">{{ portal.visit_url }}</small><br>
+                <a href="{% url 'lizard_auth_server.access_to_portal' portal_pk=portal.id %}">
+                  <small>Look up extra permissions for this portal</small>
+                </a>
               </li>
             {% empty %}
               <li>{% trans 'No portals found.' %}</li>

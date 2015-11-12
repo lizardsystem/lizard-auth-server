@@ -351,9 +351,11 @@ class UserProfile(models.Model):
             role__base_roles__organisation_roles__in=organisation_roles_i_can_access,
             role__base_roles__organisation_roles__organisation=F('organisation'))
 
-        return OrganisationRole.objects.filter(
+        result = OrganisationRole.objects.filter(
             relevant_role_and_direct_access |
             relevant_role_and_indirect_access_with_matching_org).distinct()
+
+        return result
 
 
 # have the creation of a User trigger the creation of a Profile

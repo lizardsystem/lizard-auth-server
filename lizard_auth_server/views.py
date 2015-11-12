@@ -94,6 +94,28 @@ class ProfileView(ViewContextMixin, TemplateView):
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
 
 
+class AccessToPortalView(ViewContextMixin, TemplateView):
+    template_name = 'lizard_auth_server/access-to-portal.html'
+
+    @cached_property
+    def portal(self):
+        portal_pk = self.kwargs['portal_pk']
+        return Portal.objects.get(id=portal_pk)
+
+    @cached_property
+    def title(self):
+        return _('Access to portal {}').format(self.portal.name)
+    #xxxx
+
+    @cached_property
+    def profile(self):
+        return self.request.user.get_profile()
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AccessToPortalView, self).dispatch(request, *args, **kwargs)
+
+
 class EditProfileView(FormView):
     """
     Straightforward view which displays a form to have a user

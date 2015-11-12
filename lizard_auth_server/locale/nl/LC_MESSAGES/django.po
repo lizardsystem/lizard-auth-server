@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-12 12:17+0100\n"
-"PO-Revision-Date: 2015-11-12 11:20+0000\n"
+"POT-Creation-Date: 2015-11-12 16:33+0100\n"
+"PO-Revision-Date: 2015-11-12 15:37+0000\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -46,27 +46,27 @@ msgstr "Persoonsgegevens"
 msgid "portal"
 msgstr "portaal"
 
-#: admin.py:129
-msgid "base role"
-msgstr "basisrol"
-
-#: admin.py:171
-msgid "number of organisation roles"
-msgstr "Aantal organisatierollen"
-
-#: admin.py:182
+#: admin.py:138 admin.py:202
 msgid "number of inheriting roles"
 msgstr "aantal overervende rollen"
 
-#: admin.py:206 admin.py:237
+#: admin.py:149
+msgid "base role"
+msgstr "basisrol"
+
+#: admin.py:191
+msgid "number of organisation roles"
+msgstr "Aantal organisatierollen"
+
+#: admin.py:226 admin.py:257
 msgid "number of user profiles"
 msgstr "Aantal gebruikersprofielen"
 
-#: admin.py:215 admin.py:248
+#: admin.py:235 admin.py:268
 msgid "number of roles"
 msgstr "Aantal rollen"
 
-#: admin.py:261 models.py:378 models.py:623 models.py:640
+#: admin.py:281 models.py:378 models.py:623 models.py:640
 msgid "organisation"
 msgstr "organisatie"
 
@@ -83,7 +83,7 @@ msgstr ""
 "Het nieuwe wachtwoord moet minstens twee cijfers, een hoofdletter en een "
 "kleine letter bevatten."
 
-#: forms.py:108 templates/lizard_auth_server/profile.html:12
+#: forms.py:108 templates/lizard_auth_server/profile.html:15
 msgid "Name"
 msgstr "Naam"
 
@@ -91,7 +91,7 @@ msgstr "Naam"
 msgid "For the purpose of an invitation email (not the username)"
 msgstr "T.b.v. de aanhef in een e-mail (niet de gebruikersnaam)"
 
-#: forms.py:114 forms.py:196 templates/lizard_auth_server/profile.html:16
+#: forms.py:114 forms.py:196 templates/lizard_auth_server/profile.html:17
 msgid "Email"
 msgstr "E-mail"
 
@@ -139,27 +139,27 @@ msgstr "Voornaam"
 msgid "Last name"
 msgstr "Achternaam"
 
-#: forms.py:207 templates/lizard_auth_server/profile.html:20
+#: forms.py:207 templates/lizard_auth_server/profile.html:19
 msgid "Title"
 msgstr "Titel"
 
-#: forms.py:208 templates/lizard_auth_server/profile.html:28
+#: forms.py:208 templates/lizard_auth_server/profile.html:21
 msgid "Street"
 msgstr "Straat"
 
-#: forms.py:211 templates/lizard_auth_server/profile.html:32
+#: forms.py:211 templates/lizard_auth_server/profile.html:23
 msgid "Postal code"
 msgstr "Postcode"
 
-#: forms.py:214 templates/lizard_auth_server/profile.html:36
+#: forms.py:214 templates/lizard_auth_server/profile.html:25
 msgid "Town"
 msgstr "Plaats"
 
-#: forms.py:217 templates/lizard_auth_server/profile.html:40
+#: forms.py:217 templates/lizard_auth_server/profile.html:27
 msgid "Phone number"
 msgstr "Telefoonnummer"
 
-#: forms.py:222 templates/lizard_auth_server/profile.html:44
+#: forms.py:222 templates/lizard_auth_server/profile.html:29
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
@@ -506,7 +506,7 @@ msgid "Log out"
 msgstr "Afmelden"
 
 #: templates/lizard_auth_server/base.html:75
-#: templates/lizard_auth_server/profile.html:79
+#: templates/lizard_auth_server/profile.html:47
 msgid "Change password"
 msgstr "Verander het wachtwoord"
 
@@ -561,8 +561,8 @@ msgid "With this account, you can access the following sites:"
 msgstr "Met dit account kunt u de volgende portalen benaderen:"
 
 #: templates/lizard_auth_server/invitation_email.html:14
-#: templates/lizard_auth_server/profile.html:65
-#: templates/lizard_auth_server/profile.html:73
+#: templates/lizard_auth_server/profile.html:80
+#: templates/lizard_auth_server/profile.html:88
 msgid "No portals found."
 msgstr "Geen portalen gevonden."
 
@@ -611,7 +611,7 @@ msgid "No portals selected."
 msgstr "Geen portalen geselecteerd"
 
 #: templates/lizard_auth_server/invite_user_complete.html:22
-#: templates/lizard_auth_server/profile.html:77
+#: templates/lizard_auth_server/profile.html:38
 msgid "Actions"
 msgstr "Acties"
 
@@ -757,34 +757,42 @@ msgstr "Wachtwoord-reset voor %(site_name)s"
 msgid "Your profile"
 msgstr "Uw profiel"
 
-#: templates/lizard_auth_server/profile.html:24
-msgid "Organisations"
-msgstr "Organisaties"
+#: templates/lizard_auth_server/profile.html:13
+msgid "Your data"
+msgstr "Uw gegevens"
 
-#: templates/lizard_auth_server/profile.html:48
+#: templates/lizard_auth_server/profile.html:31
 msgid "Created on"
 msgstr "Aangemaakt op"
 
-#: templates/lizard_auth_server/profile.html:55
+#: templates/lizard_auth_server/profile.html:42
 msgid "Edit my profile"
 msgstr "Bewerk mijn profiel"
 
-#: templates/lizard_auth_server/profile.html:57
-msgid "Available portals"
-msgstr "Beschikbare portalen"
-
-#: templates/lizard_auth_server/profile.html:58
-msgid "You have access to the following portals:"
-msgstr "Dit zijn de portalen waar u toegang tot heeft:"
-
-#: templates/lizard_auth_server/profile.html:60
-msgid "All portals (staff member)."
-msgstr "Alle portalen (beheerder)."
-
-#: templates/lizard_auth_server/profile.html:81
+#: templates/lizard_auth_server/profile.html:53
 msgid "Register a new user"
 msgstr "Registreer een nieuwe gebruiker"
 
-#: templates/lizard_auth_server/profile.html:84
+#: templates/lizard_auth_server/profile.html:60
 msgid "Manage SSO portals"
 msgstr "Beheer SSO portalen"
+
+#: templates/lizard_auth_server/profile.html:72
+msgid "Available portals"
+msgstr "Beschikbare portalen"
+
+#: templates/lizard_auth_server/profile.html:73
+msgid "You have access to the following portals:"
+msgstr "Dit zijn de portalen waar u toegang tot heeft:"
+
+#: templates/lizard_auth_server/profile.html:75
+msgid "All portals (staff member)."
+msgstr "Alle portalen (beheerder)."
+
+#: templates/lizard_auth_server/profile.html:96
+msgid "Organisations"
+msgstr "Organisaties"
+
+#: templates/lizard_auth_server/profile.html:97
+msgid "You are a member of the following organisations:"
+msgstr "U behoort tot de volgende organisaties:"

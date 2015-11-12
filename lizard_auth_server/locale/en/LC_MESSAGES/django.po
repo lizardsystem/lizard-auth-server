@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-12 12:17+0100\n"
+"POT-Creation-Date: 2015-11-12 16:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,27 +44,27 @@ msgstr ""
 msgid "portal"
 msgstr ""
 
-#: admin.py:129
-msgid "base role"
-msgstr ""
-
-#: admin.py:171
-msgid "number of organisation roles"
-msgstr ""
-
-#: admin.py:182
+#: admin.py:138 admin.py:202
 msgid "number of inheriting roles"
 msgstr ""
 
-#: admin.py:206 admin.py:237
+#: admin.py:149
+msgid "base role"
+msgstr ""
+
+#: admin.py:191
+msgid "number of organisation roles"
+msgstr ""
+
+#: admin.py:226 admin.py:257
 msgid "number of user profiles"
 msgstr ""
 
-#: admin.py:215 admin.py:248
+#: admin.py:235 admin.py:268
 msgid "number of roles"
 msgstr ""
 
-#: admin.py:261 models.py:378 models.py:623 models.py:640
+#: admin.py:281 models.py:378 models.py:623 models.py:640
 msgid "organisation"
 msgstr ""
 
@@ -79,7 +79,7 @@ msgid ""
 "one lowercase character."
 msgstr ""
 
-#: forms.py:108 templates/lizard_auth_server/profile.html:12
+#: forms.py:108 templates/lizard_auth_server/profile.html:15
 msgid "Name"
 msgstr ""
 
@@ -87,7 +87,7 @@ msgstr ""
 msgid "For the purpose of an invitation email (not the username)"
 msgstr ""
 
-#: forms.py:114 forms.py:196 templates/lizard_auth_server/profile.html:16
+#: forms.py:114 forms.py:196 templates/lizard_auth_server/profile.html:17
 msgid "Email"
 msgstr ""
 
@@ -135,27 +135,27 @@ msgstr ""
 msgid "Last name"
 msgstr ""
 
-#: forms.py:207 templates/lizard_auth_server/profile.html:20
+#: forms.py:207 templates/lizard_auth_server/profile.html:19
 msgid "Title"
 msgstr ""
 
-#: forms.py:208 templates/lizard_auth_server/profile.html:28
+#: forms.py:208 templates/lizard_auth_server/profile.html:21
 msgid "Street"
 msgstr ""
 
-#: forms.py:211 templates/lizard_auth_server/profile.html:32
+#: forms.py:211 templates/lizard_auth_server/profile.html:23
 msgid "Postal code"
 msgstr ""
 
-#: forms.py:214 templates/lizard_auth_server/profile.html:36
+#: forms.py:214 templates/lizard_auth_server/profile.html:25
 msgid "Town"
 msgstr ""
 
-#: forms.py:217 templates/lizard_auth_server/profile.html:40
+#: forms.py:217 templates/lizard_auth_server/profile.html:27
 msgid "Phone number"
 msgstr ""
 
-#: forms.py:222 templates/lizard_auth_server/profile.html:44
+#: forms.py:222 templates/lizard_auth_server/profile.html:29
 msgid "Mobile phone number"
 msgstr ""
 
@@ -485,7 +485,7 @@ msgid "Log out"
 msgstr ""
 
 #: templates/lizard_auth_server/base.html:75
-#: templates/lizard_auth_server/profile.html:79
+#: templates/lizard_auth_server/profile.html:47
 msgid "Change password"
 msgstr ""
 
@@ -538,8 +538,8 @@ msgid "With this account, you can access the following sites:"
 msgstr ""
 
 #: templates/lizard_auth_server/invitation_email.html:14
-#: templates/lizard_auth_server/profile.html:65
-#: templates/lizard_auth_server/profile.html:73
+#: templates/lizard_auth_server/profile.html:80
+#: templates/lizard_auth_server/profile.html:88
 msgid "No portals found."
 msgstr ""
 
@@ -586,7 +586,7 @@ msgid "No portals selected."
 msgstr ""
 
 #: templates/lizard_auth_server/invite_user_complete.html:22
-#: templates/lizard_auth_server/profile.html:77
+#: templates/lizard_auth_server/profile.html:38
 msgid "Actions"
 msgstr ""
 
@@ -718,34 +718,42 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:24
-msgid "Organisations"
+#: templates/lizard_auth_server/profile.html:13
+msgid "Your data"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:48
+#: templates/lizard_auth_server/profile.html:31
 msgid "Created on"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:55
+#: templates/lizard_auth_server/profile.html:42
 msgid "Edit my profile"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:57
-msgid "Available portals"
-msgstr ""
-
-#: templates/lizard_auth_server/profile.html:58
-msgid "You have access to the following portals:"
-msgstr ""
-
-#: templates/lizard_auth_server/profile.html:60
-msgid "All portals (staff member)."
-msgstr ""
-
-#: templates/lizard_auth_server/profile.html:81
+#: templates/lizard_auth_server/profile.html:53
 msgid "Register a new user"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:84
+#: templates/lizard_auth_server/profile.html:60
 msgid "Manage SSO portals"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:72
+msgid "Available portals"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:73
+msgid "You have access to the following portals:"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:75
+msgid "All portals (staff member)."
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:96
+msgid "Organisations"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:97
+msgid "You are a member of the following organisations:"
 msgstr ""

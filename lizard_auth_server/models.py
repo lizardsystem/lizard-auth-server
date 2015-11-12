@@ -569,10 +569,9 @@ class Role(models.Model):
         verbose_name=_('child roles'),
         symmetrical=False,
         related_name='parent_roles',
-        help_text=_('roles that are automatically inherited from us if the '
-                    'user belongs to organisation role mappings pointing at '
-                    'both parent and child role, provided the organisation '
-                    'is the same'),
+        help_text=_('roles that are automatically inherited from us for '
+                    'organisations that have organisation roles pointing at '
+                    'both parent and child role.'),
         blank=True)
 
     external_description = models.TextField(

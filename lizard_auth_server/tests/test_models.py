@@ -128,7 +128,6 @@ class TestUserProfile(TestCase):
         # then becomes the second role's base role):
         role1.inheriting_roles.add(role2)
 
-        profile = models.UserProfile.objects.fetch_for_user(user)
         # Then he does:
         self.assertEquals(
             profile.all_organisation_roles(portal2)[0],
@@ -161,7 +160,7 @@ class TestUserProfile(TestCase):
         # Even when the second role is an inheriting role of the first we
         # don't get it as the organisations don't match.
         role1.inheriting_roles.add(role2)
-        profile = models.UserProfile.objects.fetch_for_user(user)
+
         self.assertEquals(
             len(profile.all_organisation_roles(portal2)), 0)
 

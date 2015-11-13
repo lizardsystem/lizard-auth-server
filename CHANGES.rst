@@ -28,6 +28,12 @@ Changelog of lizard-auth-server
   essential for getting permissions right.
   [reinout]
 
+- OrganisationRole has a manager now that automatically sets
+  ``select_related()`` to select roles, portals and organisations. Otherwise
+  to have to add select_related in way too many places. (Uncovered by testing
+  with the django debug toolbar).
+  [reinout]
+
 
 1.2 (2015-11-02)
 ----------------

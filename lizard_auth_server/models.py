@@ -656,6 +656,15 @@ class Organisation(models.Model):
             'unique_id': self.unique_id
             }
 
+class OrganisationRoleManager(models.Manager):
+
+    def get_queryset(self):
+        # Always use select_related on role and organisation, otherwise we
+        # have to specify it in a *lot* of places.
+        return super(OrganisationRoleManager, self).get_queryset(
+        ).select_related(
+            'role', 'organisation', 'role__portal')
+
 
 class OrganisationRole(models.Model):
     organisation = models.ForeignKey(
@@ -669,6 +678,8 @@ class OrganisationRole(models.Model):
     for_all_users = models.BooleanField(
         verbose_name=_('for all users'),
         default=False)
+
+    objects = OrganisationRoleManager()
 
     class Meta:
         unique_together = (('organisation', 'role'), )

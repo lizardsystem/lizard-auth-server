@@ -367,7 +367,15 @@ class UserProfile(models.Model):
             indirect_results = OrganisationRole.objects.filter(
                 relevant_role_and_indirect_access_with_matching_org).distinct()
 
-            return locals()
+            return {
+                'relevant_roles_tied_to_the_portal':
+                relevant_roles_tied_to_the_portal,
+                'organisation_roles_directly': organisation_roles_directly,
+                'organisation_roles_via_organisation':
+                organisation_roles_via_organisation,
+                'direct_results': direct_results,
+                'indirect_results': indirect_results,
+                'results': results}
 
         return results
 

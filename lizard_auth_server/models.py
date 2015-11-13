@@ -347,7 +347,7 @@ class UserProfile(models.Model):
         # role that I can access. That same organisation role must also have
         # the same organisation as the organisation role I'm looking
         # from. Django ensures those "the same" items are really the
-        # same. This needs more tests, though.
+        # same.
         relevant_role_and_indirect_access_with_matching_org = models.Q(
             role__in=relevant_roles_tied_to_the_portal,
             role__base_roles__organisation_roles__in=organisation_roles_i_can_access,

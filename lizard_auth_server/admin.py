@@ -15,6 +15,7 @@ class InvitationAdmin(admin.ModelAdmin):
                     'created_at', 'activated_on']
     search_fields = ['name', 'email']
     list_filter = ['is_activated']
+    list_select_related = ['user', 'user__user_profile']
 
     readonly_fields = ['created_at', 'activation_key',
                        'activation_key_date', 'activated_on',

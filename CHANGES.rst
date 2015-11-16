@@ -5,9 +5,9 @@ Changelog of lizard-auth-server
 1.3 (unreleased)
 ----------------
 
-- Added role inheritance. One portal's role can point at other portals' roles
-  as "inheriting roles". The other way around, the original role then becomes
-  those other roles' "base role".
+- Added role inheritance, mainly based on an idea by Remco. One portal's role
+  can point at other portals' roles as "inheriting roles". The other way
+  around, the original role then becomes those other roles' "base role".
 
   If an organisation has an organisation role pointing at the base role *and*
   an organisation role pointing at the inheriting role, that inheriting role
@@ -31,7 +31,11 @@ Changelog of lizard-auth-server
 - OrganisationRole has a manager now that automatically sets
   ``select_related()`` to select roles, portals and organisations. Otherwise
   to have to add select_related in way too many places. (Uncovered by testing
-  with the django debug toolbar).
+  with the django debug toolbar). Same for Role.
+  [reinout]
+
+- Added ``select_related`` in several places to lower the amount of queries,
+  especially in the admin.
   [reinout]
 
 

@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db import models
 from django.db import transaction
+from django.db.models import F
 from django.db.models.loading import get_model
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
@@ -313,19 +314,70 @@ class UserProfile(models.Model):
             return True
         return self.portals.filter(pk=portal.pk).exists()
 
-    def all_organisation_roles(self, portal):
+    def all_organisation_roles(self, portal, return_explanation=False):
         """Return a queryset of OrganisationRoles that apply to this profile.
 
-        There are two ways for a UserProfile to have a role in an
-        organisation: either be a member of the organisation and role
-        that everyone in the organisation has, or it must be
-        explicitly in this user's roles."""
+        If ``return_explanation`` is True, return a dict with explanatory
+        results, instead.
+        """
+        # First grab all applicable roles.
+        relevant_roles_tied_to_the_portal = Role.objects.filter(portal=portal)
 
-        # TODO: understand/improve this query - why is distinct() needed?
-        return OrganisationRole.objects.filter(
-            models.Q(organisation__user_profiles=self, for_all_users=True) |
-            models.Q(user_profiles=self)).filter(
-            role__portal=portal).distinct()
+        # Two Q objects for filtering organisation roles I have access
+        # to. Either directly via my profile or via for_all_users.
+        tied_to_my_organisation_for_all_users = models.Q(
+            for_all_users=True,
+            organisation__user_profiles=self)
+        tied_to_my_user_profile = models.Q(user_profiles=self)
+        # All organisation roles I have access to. This does not yet take into
+        # account the organisation roles I get via the role inheritance
+        organisation_roles_i_can_access = OrganisationRole.objects.filter(
+            tied_to_my_organisation_for_all_users | tied_to_my_user_profile)
+
+        # Two criteria for filtering organisation roles.
+
+        # The simple case is that an organisation role is both in our access
+        # list AND it points at a relevant role. Bingo.
+        relevant_role_and_direct_access = models.Q(
+            id__in=organisation_roles_i_can_access,
+            role__in=relevant_roles_tied_to_the_portal)
+
+        # The elaborate case is that a role must of course be a relevant
+        # role. Then that same role must have a base role with an organisation
+        # role that I can access. That same organisation role must also have
+        # the same organisation as the organisation role I'm looking
+        # from. Django ensures those "the same" items are really the
+        # same.
+        relevant_role_and_indirect_access_with_matching_org = models.Q(
+            role__in=relevant_roles_tied_to_the_portal,
+            role__base_roles__organisation_roles__in=organisation_roles_i_can_access,
+            role__base_roles__organisation_roles__organisation=F('organisation'))
+
+        results = OrganisationRole.objects.filter(
+            relevant_role_and_direct_access |
+            relevant_role_and_indirect_access_with_matching_org).distinct()
+
+        if return_explanation:
+            organisation_roles_directly = OrganisationRole.objects.filter(
+                tied_to_my_user_profile)
+            organisation_roles_via_organisation = OrganisationRole.objects.filter(
+                tied_to_my_organisation_for_all_users).distinct()
+            direct_results = OrganisationRole.objects.filter(
+                relevant_role_and_direct_access).distinct()
+            indirect_results = OrganisationRole.objects.filter(
+                relevant_role_and_indirect_access_with_matching_org).distinct()
+
+            return {
+                'relevant_roles_tied_to_the_portal':
+                relevant_roles_tied_to_the_portal,
+                'organisation_roles_directly': organisation_roles_directly,
+                'organisation_roles_via_organisation':
+                organisation_roles_via_organisation,
+                'direct_results': direct_results,
+                'indirect_results': indirect_results,
+                'results': results}
+
+        return results
 
 
 # have the creation of a User trigger the creation of a Profile
@@ -513,6 +565,12 @@ def create_new_uuid():
     return uuid.uuid4().hex
 
 
+class RoleManager(models.Manager):
+
+    def get_queryset(self):
+        return super(RoleManager, self).get_queryset().select_related('portal')
+
+
 class Role(models.Model):
     portal = models.ForeignKey(
         Portal,
@@ -536,12 +594,24 @@ class Role(models.Model):
         max_length=255,
         null=False,
         blank=False)
+    inheriting_roles = models.ManyToManyField(
+        "self",
+        verbose_name=_('inheriting roles'),
+        symmetrical=False,
+        related_name='base_roles',
+        help_text=_('roles that are automatically inherited from us for '
+                    'organisations that have organisation roles pointing at '
+                    'both base and inheriting role.'),
+        blank=True)
+
     external_description = models.TextField(
         verbose_name=_('external description'),
         blank=True)
     internal_description = models.TextField(
         verbose_name=_('internal description'),
         blank=True)
+
+    objects = RoleManager()
 
     class Meta:
         ordering = ['portal', 'name']
@@ -550,7 +620,8 @@ class Role(models.Model):
         verbose_name_plural = _('roles')
 
     def __unicode__(self):
-        return '{name} on {portal}'.format(name=self.name, portal=self.portal)
+        return _('{name} on {portal}').format(name=self.name,
+                                              portal=self.portal.name)
 
     def as_dict(self):
         return {
@@ -594,6 +665,15 @@ class Organisation(models.Model):
             'unique_id': self.unique_id
             }
 
+class OrganisationRoleManager(models.Manager):
+
+    def get_queryset(self):
+        # Always use select_related on role and organisation, otherwise we
+        # have to specify it in a *lot* of places.
+        return super(OrganisationRoleManager, self).get_queryset(
+        ).select_related(
+            'role', 'organisation', 'role__portal')
+
 
 class OrganisationRole(models.Model):
     organisation = models.ForeignKey(
@@ -607,6 +687,8 @@ class OrganisationRole(models.Model):
     for_all_users = models.BooleanField(
         verbose_name=_('for all users'),
         default=False)
+
+    objects = OrganisationRoleManager()
 
     class Meta:
         unique_together = (('organisation', 'role'), )

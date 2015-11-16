@@ -2,11 +2,13 @@
 from __future__ import unicode_literals
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -79,22 +81,66 @@ class ProfileView(ViewContextMixin, TemplateView):
     Straightforward view which displays a user's profile.
     """
     template_name = 'lizard_auth_server/profile.html'
-    _profile = None
 
-    @property
+    @cached_property
     def profile(self):
-        # TODO cached_property
-        if not self._profile:
-            self._profile = self.request.user.get_profile()
-        return self._profile
+        return self.request.user.get_profile()
 
     @property
-    def all_portals(self):
-        return Portal.objects.all()
+    def portals(self):
+        if self.request.user.is_staff:
+            return Portal.objects.all()
+        else:
+            return self.view.profile.portals.all()
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
+
+
+class AccessToPortalView(ViewContextMixin, TemplateView):
+    template_name = 'lizard_auth_server/access-to-portal.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AccessToPortalView, self).dispatch(request, *args, **kwargs)
+
+    @cached_property
+    def portal(self):
+        portal_pk = self.kwargs['portal_pk']
+        return Portal.objects.get(id=portal_pk)
+
+    @cached_property
+    def title(self):
+        return _('Access to portal {} for {}').format(self.portal.name,
+                                                      self.profile)
+
+    @cached_property
+    def profile(self):
+        if self.request.user.is_staff:
+            user_id = self.kwargs.get('user_pk')
+            if user_id:
+                user = User.objects.get(id=user_id)
+                return user.get_profile()
+        return self.request.user.get_profile()
+
+    @cached_property
+    def organisation_roles_explanation(self):
+        if not self.request.user.is_staff:
+            return
+        return self.profile.all_organisation_roles(
+            self.portal,
+            return_explanation=True)
+
+    @cached_property
+    def user_profiles_for_portal(self):
+        if not self.request.user.is_staff:
+            return
+        return self.portal.user_profiles.select_related('user')
+
+    @cached_property
+    def my_organisation_roles_for_this_portal(self):
+        return self.profile.all_organisation_roles(self.portal)
 
 
 class EditProfileView(FormView):

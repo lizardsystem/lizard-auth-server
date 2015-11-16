@@ -5,7 +5,38 @@ Changelog of lizard-auth-server
 1.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Added role inheritance, mainly based on an idea by Remco. One portal's role
+  can point at other portals' roles as "inheriting roles". The other way
+  around, the original role then becomes those other roles' "base role".
+
+  If an organisation has an organisation role pointing at the base role *and*
+  an organisation role pointing at the inheriting role, that inheriting role
+  is available to the user (provided he has access to one of those two
+  organisation roles).
+  [reinout]
+
+- Beautified the main SSO page ("my profile") and made it more usable. Nicer
+  list of organisations; "definition list" instead of "table" for the user
+  profile data; all actions in one spot.
+  [reinout]
+
+- Added separate page for viewing your permissions (which means
+  "organisation-role-mappings") per portal, linked from the main portal page.
+
+  As staff member, you can see detailed debug information to troubleshoot
+  permissions. You can also view other users' permission information,
+  essential for getting permissions right.
+  [reinout]
+
+- OrganisationRole has a manager now that automatically sets
+  ``select_related()`` to select roles, portals and organisations. Otherwise
+  to have to add select_related in way too many places. (Uncovered by testing
+  with the django debug toolbar). Same for Role.
+  [reinout]
+
+- Added ``select_related`` in several places to lower the amount of queries,
+  especially in the admin.
+  [reinout]
 
 
 1.2 (2015-11-02)

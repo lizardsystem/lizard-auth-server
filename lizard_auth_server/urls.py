@@ -197,6 +197,19 @@ urlpatterns = patterns(
         views.EditProfileView.as_view(),
         name='lizard_auth_server.edit_profile'
     ),
+
+    # URLs for debugging portal access.
+    url(
+        r'^access-to-portal/(?P<portal_pk>\d+)/$',
+        views.AccessToPortalView.as_view(),
+        name='lizard_auth_server.access_to_portal'
+    ),
+    url(
+        r'^access-to-portal/(?P<portal_pk>\d+)/(?P<user_pk>\d+)/$',
+        views.AccessToPortalView.as_view(),
+        name='lizard_auth_server.access_to_portal'
+    ),
+
 )
 
 if settings.DEBUG:

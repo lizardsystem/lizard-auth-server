@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-30 14:29+0100\n"
+"POT-Creation-Date: 2015-11-16 14:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,35 +28,43 @@ msgstr ""
 msgid "Shortcut URLs"
 msgstr ""
 
-#: admin.py:60 models.py:238
+#: admin.py:58 models.py:239
 msgid "user profile"
 msgstr ""
 
-#: admin.py:87
+#: admin.py:86
 msgid "Dates"
 msgstr ""
 
-#: admin.py:91
+#: admin.py:90
 msgid "Personal data"
 msgstr ""
 
-#: admin.py:103 models.py:94 models.py:125 models.py:520
+#: admin.py:102 models.py:95 models.py:126 models.py:578
 msgid "portal"
 msgstr ""
 
-#: admin.py:139
+#: admin.py:139 admin.py:203
+msgid "number of inheriting roles"
+msgstr ""
+
+#: admin.py:150
+msgid "base role"
+msgstr ""
+
+#: admin.py:192
 msgid "number of organisation roles"
 msgstr ""
 
-#: admin.py:169 admin.py:199
+#: admin.py:227 admin.py:258
 msgid "number of user profiles"
 msgstr ""
 
-#: admin.py:178 admin.py:210
+#: admin.py:236 admin.py:269
 msgid "number of roles"
 msgstr ""
 
-#: admin.py:223 models.py:350 models.py:585 models.py:602
+#: admin.py:282 models.py:402 models.py:656 models.py:682
 msgid "organisation"
 msgstr ""
 
@@ -71,7 +79,7 @@ msgid ""
 "one lowercase character."
 msgstr ""
 
-#: forms.py:108 templates/lizard_auth_server/profile.html:12
+#: forms.py:108 templates/lizard_auth_server/profile.html:15
 msgid "Name"
 msgstr ""
 
@@ -79,7 +87,7 @@ msgstr ""
 msgid "For the purpose of an invitation email (not the username)"
 msgstr ""
 
-#: forms.py:114 forms.py:196 templates/lizard_auth_server/profile.html:16
+#: forms.py:114 forms.py:196 templates/lizard_auth_server/profile.html:19
 msgid "Email"
 msgstr ""
 
@@ -99,7 +107,7 @@ msgstr ""
 msgid "{} is already taken."
 msgstr ""
 
-#: forms.py:153
+#: forms.py:153 templates/lizard_auth_server/profile.html:17
 msgid "Username"
 msgstr ""
 
@@ -127,234 +135,252 @@ msgstr ""
 msgid "Last name"
 msgstr ""
 
-#: forms.py:207 templates/lizard_auth_server/profile.html:20
+#: forms.py:207 templates/lizard_auth_server/profile.html:21
 msgid "Title"
 msgstr ""
 
-#: forms.py:208 templates/lizard_auth_server/profile.html:28
+#: forms.py:208 templates/lizard_auth_server/profile.html:23
 msgid "Street"
 msgstr ""
 
-#: forms.py:211 templates/lizard_auth_server/profile.html:32
+#: forms.py:211 templates/lizard_auth_server/profile.html:25
 msgid "Postal code"
 msgstr ""
 
-#: forms.py:214 templates/lizard_auth_server/profile.html:36
+#: forms.py:214 templates/lizard_auth_server/profile.html:27
 msgid "Town"
 msgstr ""
 
-#: forms.py:217 templates/lizard_auth_server/profile.html:40
+#: forms.py:217 templates/lizard_auth_server/profile.html:29
 msgid "Phone number"
 msgstr ""
 
-#: forms.py:222 templates/lizard_auth_server/profile.html:44
+#: forms.py:222 templates/lizard_auth_server/profile.html:31
 msgid "Mobile phone number"
 msgstr ""
 
-#: models.py:50 models.py:341 models.py:534 models.py:567
+#: models.py:51 models.py:393 models.py:592 models.py:638
 msgid "name"
 msgstr ""
 
-#: models.py:54
+#: models.py:55
 msgid "Name used to refer to this portal."
 msgstr ""
 
-#: models.py:56
+#: models.py:57
 msgid "shared secret"
 msgstr ""
 
-#: models.py:60
+#: models.py:61
 msgid ""
 "Secret shared between SSO client and server to sign/encrypt communication."
 msgstr ""
 
-#: models.py:63
+#: models.py:64
 msgid "identifying key"
 msgstr ""
 
-#: models.py:67
+#: models.py:68
 msgid "String used to identify the SSO client."
 msgstr ""
 
-#: models.py:69
+#: models.py:70
 msgid "allowed domain(s)"
 msgstr ""
 
-#: models.py:73
+#: models.py:74
 msgid ""
 "Allowed domain suffix for redirects using the next parameter. Multiple, "
 "whitespace-separated suffixes may be specified."
 msgstr ""
 
-#: models.py:76
+#: models.py:77
 msgid "redirect url"
 msgstr ""
 
-#: models.py:78
+#: models.py:79
 msgid "URL used in the SSO redirection."
 msgstr ""
 
-#: models.py:80
+#: models.py:81
 msgid "visit url"
 msgstr ""
 
-#: models.py:82
+#: models.py:83
 msgid "URL used in the UI to refer to this portal."
 msgstr ""
 
-#: models.py:95 models.py:174 models.py:361
+#: models.py:96 models.py:175 models.py:413
 msgid "portals"
 msgstr ""
 
-#: models.py:127
+#: models.py:128
 msgid "request token"
 msgstr ""
 
-#: models.py:131
+#: models.py:132
 msgid "auth token"
 msgstr ""
 
-#: models.py:136 models.py:169 models.py:389
+#: models.py:137 models.py:170 models.py:441
 msgid "user"
 msgstr ""
 
-#: models.py:140 models.py:191 models.py:364
+#: models.py:141 models.py:192 models.py:416
 msgid "created on"
 msgstr ""
 
-#: models.py:146
+#: models.py:147
 msgid "authentication token"
 msgstr ""
 
-#: models.py:147
+#: models.py:148
 msgid "authentication tokens"
 msgstr ""
 
-#: models.py:179 models.py:586
+#: models.py:180 models.py:657
 msgid "organisations"
 msgstr ""
 
-#: models.py:186
+#: models.py:187
 msgid "roles (via organisation)"
 msgstr ""
 
-#: models.py:195
+#: models.py:196
 msgid "updated on"
 msgstr ""
 
-#: models.py:199
+#: models.py:200
 msgid "title"
 msgstr ""
 
-#: models.py:205
+#: models.py:206
 msgid "street"
 msgstr ""
 
-#: models.py:211
+#: models.py:212
 msgid "postal code"
 msgstr ""
 
-#: models.py:217
+#: models.py:218
 msgid "town"
 msgstr ""
 
-#: models.py:223
+#: models.py:224
 msgid "phone number"
 msgstr ""
 
-#: models.py:229
+#: models.py:230
 msgid "mobile phone number"
 msgstr ""
 
-#: models.py:239
+#: models.py:240
 msgid "user profiles"
 msgstr ""
 
-#: models.py:346
+#: models.py:398
 msgid "e-mail"
 msgstr ""
 
-#: models.py:355
+#: models.py:407
 msgid "language"
 msgstr ""
 
-#: models.py:367
+#: models.py:419
 msgid "activation key"
 msgstr ""
 
-#: models.py:373
+#: models.py:425
 msgid "activation key date"
 msgstr ""
 
-#: models.py:377
+#: models.py:429
 msgid "Date on which the activation key was generated. Used for expiration."
 msgstr ""
 
-#: models.py:381
+#: models.py:433
 msgid "is activated"
 msgstr ""
 
-#: models.py:384
+#: models.py:436
 msgid "activated on"
 msgstr ""
 
-#: models.py:394 models.py:395
+#: models.py:446 models.py:447
 msgid "invitation"
 msgstr ""
 
-#: models.py:522 models.py:573
+#: models.py:580 models.py:644
 msgid "unique id"
 msgstr ""
 
-#: models.py:528
+#: models.py:586
 msgid "code"
 msgstr ""
 
-#: models.py:530
+#: models.py:588
 msgid "name used internally by the portal to identify the role"
 msgstr ""
 
-#: models.py:535
+#: models.py:593
 msgid "human-readable name"
 msgstr ""
 
-#: models.py:540
-msgid "external description"
+#: models.py:599
+msgid "inheriting roles"
 msgstr ""
 
-#: models.py:543
-msgid "internal description"
-msgstr ""
-
-#: models.py:549 models.py:606
-msgid "role"
-msgstr ""
-
-#: models.py:550 models.py:580
-msgid "roles"
+#: models.py:602
+msgid ""
+"roles that are automatically inherited from us for organisations that have "
+"organisation roles pointing at both base and inheriting role."
 msgstr ""
 
 #: models.py:608
+msgid "external description"
+msgstr ""
+
+#: models.py:611
+msgid "internal description"
+msgstr ""
+
+#: models.py:619 models.py:686
+msgid "role"
+msgstr ""
+
+#: models.py:620 models.py:651
+msgid "roles"
+msgstr ""
+
+#: models.py:623
+msgid "{name} on {portal}"
+msgstr ""
+
+#: models.py:688
 msgid "for all users"
 msgstr ""
 
-#: models.py:613
+#: models.py:695
 msgid "organisation-role-mapping"
 msgstr ""
 
-#: models.py:614
+#: models.py:696
 msgid "organisation-role-mappings"
 msgstr ""
 
-#: models.py:618
+#: models.py:700
 msgid "{role} for everybody in {org}"
 msgstr ""
 
-#: views.py:54
+#: views.py:60
 msgid "An unknown error occurred."
 msgstr ""
 
-#: views.py:208
+#: views.py:115
+msgid "Access to portal {} for {}"
+msgstr ""
+
+#: views.py:259
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 
@@ -372,6 +398,14 @@ msgstr ""
 
 #: templates/admin/base_site.html:10 templates/lizard_auth_server/base.html:57
 msgid "Django administration"
+msgstr ""
+
+#: templates/lizard_auth_server/access-to-portal.html:13
+msgid "Apart from logging in, you have the following extra permissions:"
+msgstr ""
+
+#: templates/lizard_auth_server/access-to-portal.html:24
+msgid "Apart from logging in, you don't have any special permissions."
 msgstr ""
 
 #: templates/lizard_auth_server/access_denied.html:4
@@ -467,7 +501,7 @@ msgid "Log out"
 msgstr ""
 
 #: templates/lizard_auth_server/base.html:75
-#: templates/lizard_auth_server/profile.html:79
+#: templates/lizard_auth_server/profile.html:49
 msgid "Change password"
 msgstr ""
 
@@ -520,8 +554,7 @@ msgid "With this account, you can access the following sites:"
 msgstr ""
 
 #: templates/lizard_auth_server/invitation_email.html:14
-#: templates/lizard_auth_server/profile.html:65
-#: templates/lizard_auth_server/profile.html:73
+#: templates/lizard_auth_server/profile.html:95
 msgid "No portals found."
 msgstr ""
 
@@ -568,7 +601,7 @@ msgid "No portals selected."
 msgstr ""
 
 #: templates/lizard_auth_server/invite_user_complete.html:22
-#: templates/lizard_auth_server/profile.html:77
+#: templates/lizard_auth_server/profile.html:40
 msgid "Actions"
 msgstr ""
 
@@ -700,34 +733,46 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:24
-msgid "Organisations"
+#: templates/lizard_auth_server/profile.html:13
+msgid "Your data"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:48
+#: templates/lizard_auth_server/profile.html:33
 msgid "Created on"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:55
+#: templates/lizard_auth_server/profile.html:44
 msgid "Edit my profile"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:57
-msgid "Available portals"
-msgstr ""
-
-#: templates/lizard_auth_server/profile.html:58
-msgid "You have access to the following portals:"
-msgstr ""
-
-#: templates/lizard_auth_server/profile.html:60
-msgid "All portals (staff member)."
-msgstr ""
-
-#: templates/lizard_auth_server/profile.html:81
+#: templates/lizard_auth_server/profile.html:55
 msgid "Register a new user"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:84
+#: templates/lizard_auth_server/profile.html:62
 msgid "Manage SSO portals"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:74
+msgid "Available portals"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:76
+msgid "All portals (staff member):"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:78
+msgid "You have access to the following portals:"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:90
+msgid "permissions"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:102
+msgid "Organisations"
+msgstr ""
+
+#: templates/lizard_auth_server/profile.html:103
+msgid "You are a member of the following organisations:"
 msgstr ""

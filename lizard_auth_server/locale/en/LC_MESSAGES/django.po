@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-12 21:44+0100\n"
+"POT-Creation-Date: 2015-11-16 14:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,39 +32,39 @@ msgstr ""
 msgid "user profile"
 msgstr ""
 
-#: admin.py:85
+#: admin.py:86
 msgid "Dates"
 msgstr ""
 
-#: admin.py:89
+#: admin.py:90
 msgid "Personal data"
 msgstr ""
 
-#: admin.py:101 models.py:95 models.py:126 models.py:564
+#: admin.py:102 models.py:95 models.py:126 models.py:578
 msgid "portal"
 msgstr ""
 
-#: admin.py:138 admin.py:202
+#: admin.py:139 admin.py:203
 msgid "number of inheriting roles"
 msgstr ""
 
-#: admin.py:149
+#: admin.py:150
 msgid "base role"
 msgstr ""
 
-#: admin.py:191
+#: admin.py:192
 msgid "number of organisation roles"
 msgstr ""
 
-#: admin.py:226 admin.py:257
+#: admin.py:227 admin.py:258
 msgid "number of user profiles"
 msgstr ""
 
-#: admin.py:235 admin.py:268
+#: admin.py:236 admin.py:269
 msgid "number of roles"
 msgstr ""
 
-#: admin.py:281 models.py:394 models.py:639 models.py:656
+#: admin.py:282 models.py:402 models.py:656 models.py:682
 msgid "organisation"
 msgstr ""
 
@@ -159,7 +159,7 @@ msgstr ""
 msgid "Mobile phone number"
 msgstr ""
 
-#: models.py:51 models.py:385 models.py:578 models.py:621
+#: models.py:51 models.py:393 models.py:592 models.py:638
 msgid "name"
 msgstr ""
 
@@ -210,7 +210,7 @@ msgstr ""
 msgid "URL used in the UI to refer to this portal."
 msgstr ""
 
-#: models.py:96 models.py:175 models.py:405
+#: models.py:96 models.py:175 models.py:413
 msgid "portals"
 msgstr ""
 
@@ -222,11 +222,11 @@ msgstr ""
 msgid "auth token"
 msgstr ""
 
-#: models.py:137 models.py:170 models.py:433
+#: models.py:137 models.py:170 models.py:441
 msgid "user"
 msgstr ""
 
-#: models.py:141 models.py:192 models.py:408
+#: models.py:141 models.py:192 models.py:416
 msgid "created on"
 msgstr ""
 
@@ -238,7 +238,7 @@ msgstr ""
 msgid "authentication tokens"
 msgstr ""
 
-#: models.py:180 models.py:640
+#: models.py:180 models.py:657
 msgid "organisations"
 msgstr ""
 
@@ -278,93 +278,97 @@ msgstr ""
 msgid "user profiles"
 msgstr ""
 
-#: models.py:390
+#: models.py:398
 msgid "e-mail"
 msgstr ""
 
-#: models.py:399
+#: models.py:407
 msgid "language"
 msgstr ""
 
-#: models.py:411
+#: models.py:419
 msgid "activation key"
 msgstr ""
 
-#: models.py:417
+#: models.py:425
 msgid "activation key date"
 msgstr ""
 
-#: models.py:421
+#: models.py:429
 msgid "Date on which the activation key was generated. Used for expiration."
 msgstr ""
 
-#: models.py:425
+#: models.py:433
 msgid "is activated"
 msgstr ""
 
-#: models.py:428
+#: models.py:436
 msgid "activated on"
 msgstr ""
 
-#: models.py:438 models.py:439
+#: models.py:446 models.py:447
 msgid "invitation"
 msgstr ""
 
-#: models.py:566 models.py:627
+#: models.py:580 models.py:644
 msgid "unique id"
 msgstr ""
 
-#: models.py:572
+#: models.py:586
 msgid "code"
 msgstr ""
 
-#: models.py:574
+#: models.py:588
 msgid "name used internally by the portal to identify the role"
 msgstr ""
 
-#: models.py:579
+#: models.py:593
 msgid "human-readable name"
 msgstr ""
 
-#: models.py:585
+#: models.py:599
 msgid "inheriting roles"
 msgstr ""
 
-#: models.py:588
+#: models.py:602
 msgid ""
 "roles that are automatically inherited from us for organisations that have "
 "organisation roles pointing at both base and inheriting role."
 msgstr ""
 
-#: models.py:594
+#: models.py:608
 msgid "external description"
 msgstr ""
 
-#: models.py:597
+#: models.py:611
 msgid "internal description"
 msgstr ""
 
-#: models.py:603 models.py:660
+#: models.py:619 models.py:686
 msgid "role"
 msgstr ""
 
-#: models.py:604 models.py:634
+#: models.py:620 models.py:651
 msgid "roles"
 msgstr ""
 
-#: models.py:662
+#: models.py:623
+msgid "{name} on {portal}"
+msgstr ""
+
+#: models.py:688
 msgid "for all users"
 msgstr ""
 
-#: models.py:667
+#: models.py:695
 msgid "organisation-role-mapping"
 msgstr ""
 
-#: models.py:668
+#: models.py:696
 msgid "organisation-role-mappings"
 msgstr ""
 
-#: models.py:672
+#: models.py:700
 msgid "{role} for everybody in {org}"
 msgstr ""
 

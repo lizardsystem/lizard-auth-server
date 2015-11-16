@@ -565,6 +565,12 @@ def create_new_uuid():
     return uuid.uuid4().hex
 
 
+class RoleManager(models.Manager):
+
+    def get_queryset(self):
+        return super(RoleManager, self).get_queryset().select_related('portal')
+
+
 class Role(models.Model):
     portal = models.ForeignKey(
         Portal,
@@ -605,6 +611,8 @@ class Role(models.Model):
         verbose_name=_('internal description'),
         blank=True)
 
+    objects = RoleManager()
+
     class Meta:
         ordering = ['portal', 'name']
         unique_together = (('name', 'portal'), )
@@ -612,7 +620,8 @@ class Role(models.Model):
         verbose_name_plural = _('roles')
 
     def __unicode__(self):
-        return '{name} on {portal}'.format(name=self.name, portal=self.portal)
+        return _('{name} on {portal}').format(name=self.name,
+                                              portal=self.portal.name)
 
     def as_dict(self):
         return {

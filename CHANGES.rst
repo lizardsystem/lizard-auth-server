@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-1.3 (unreleased)
+1.3 (2015-11-16)
 ----------------
 
 - Added role inheritance, mainly based on an idea by Remco. One portal's role

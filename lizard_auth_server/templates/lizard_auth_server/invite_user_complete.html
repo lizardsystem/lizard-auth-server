@@ -7,16 +7,17 @@
   <div class="content">
     <h3>{% trans "Registration complete" %}</h3>
     <p>
-      {% trans "The account has been registered, and an activation email has been sent to" %} <a href="mailto:{{ view.invitiation.email }}">{{ view.invitiation.email }}</a>.
+      {% trans "The account has been registered, and an activation email has been sent to" %}
+      <a href="mailto:{{ view.invitiation.email }}">{{ view.invitiation.email }}</a>.
     </p>
     <p>
       {% trans "Visit the specific portals to grant this account additional permissions:" %}
     </p>
     <ul>
       {% for portal in view.invitiation.portals.all %}
-      <li><a href="{{ portal.visit_url }}">{{ portal.name }} ({{ portal.visit_url }})</a></li>
+        <li><a href="{{ portal.visit_url }}">{{ portal.name }} ({{ portal.visit_url }})</a></li>
       {% empty %}
-      <li>{% trans "No portals selected." %}</li>
+        <li>{% trans "No portals selected." %}</li>
       {% endfor %}
     </ul>
     <p>{% trans 'Actions' %}</p>

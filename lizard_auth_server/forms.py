@@ -8,6 +8,7 @@ from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from itsdangerous import BadSignature
 from itsdangerous import URLSafeTimedSerializer
+from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 
 
@@ -112,10 +113,11 @@ class InviteUserForm(forms.Form):
         ),
     )
     email = forms.EmailField(max_length=255, label=_('Email'), required=True)
-    organisation = forms.CharField(
-        max_length=255,
+    organisation = forms.ChoiceField(
         label=_('Organisation'),
-        required=False,
+        required=True,
+        choices=[(organisation.name, organisation.name) for organisation
+                 in Organisation.objects.all()]
     )
     language = forms.ChoiceField(
         label=_('Language'),

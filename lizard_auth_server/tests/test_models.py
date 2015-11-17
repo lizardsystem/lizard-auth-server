@@ -151,7 +151,7 @@ class TestUserProfile(TestCase):
         models.OrganisationRole.objects.create(
             organisation=org, role=role1, for_all_users=True)
         # But User wouldn't normally have this role
-        org_role_2 = models.OrganisationRole.objects.create(
+        models.OrganisationRole.objects.create(
             organisation=second_org, role=role2, for_all_users=False)
         # See, he doesn't have any roles on portal2:
         self.assertEquals(

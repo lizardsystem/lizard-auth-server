@@ -4,28 +4,28 @@
 {% block subtitle %}{% trans 'Registration complete' %}{% endblock %}
 
 {% block container %}
-    <div class="content">
-        <h3>{% trans "Registration complete" %}</h3>
-        <p>
-            {% trans "The account has been registered, and an activation email has been sent to" %} <a href="mailto:{{ view.invitiation.email }}">{{ view.invitiation.email }}</a>.
-        </p>
-        <p>
-            {% trans "Visit the specific portals to grant this account additional permissions:" %}
-        </p>
-        <ul>
-            {% for portal in view.invitiation.portals.all %}
-            <li><a href="{{ portal.visit_url }}">{{ portal.name }} ({{ portal.visit_url }})</a></li>
-            {% empty %}
-            <li>{% trans "No portals selected." %}</li>
-            {% endfor %}
-        </ul>
-        <p>{% trans 'Actions' %}</p>
-        <ul>
-            <li><a href="{% url 'lizard_auth_server.activate' activation_key=view.invitiation.activation_key %}">
-                {% trans 'Immediately activate this account' %}
-            </a></li>
-            <li><a href="{% url "lizard_auth_server.invite_user" %}">{% trans 'Register another user' %}</a></li>
-            <li><a href="{% url "profile" %}">{% trans 'Go back to my profile' %}</a></li>
-        </ul>
-    </div>
+  <div class="content">
+    <h3>{% trans "Registration complete" %}</h3>
+    <p>
+      {% trans "The account has been registered, and an activation email has been sent to" %} <a href="mailto:{{ view.invitiation.email }}">{{ view.invitiation.email }}</a>.
+    </p>
+    <p>
+      {% trans "Visit the specific portals to grant this account additional permissions:" %}
+    </p>
+    <ul>
+      {% for portal in view.invitiation.portals.all %}
+      <li><a href="{{ portal.visit_url }}">{{ portal.name }} ({{ portal.visit_url }})</a></li>
+      {% empty %}
+      <li>{% trans "No portals selected." %}</li>
+      {% endfor %}
+    </ul>
+    <p>{% trans 'Actions' %}</p>
+    <ul>
+      <li><a href="{% url 'lizard_auth_server.activate' activation_key=view.invitiation.activation_key %}">
+        {% trans 'Immediately activate this account' %}
+      </a></li>
+      <li><a href="{% url "lizard_auth_server.invite_user" %}">{% trans 'Register another user' %}</a></li>
+      <li><a href="{% url "profile" %}">{% trans 'Go back to my profile' %}</a></li>
+    </ul>
+  </div>
 {% endblock %}

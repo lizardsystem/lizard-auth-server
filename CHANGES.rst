@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 1.4 (unreleased)
 ----------------
 
-- One and only one 3di billing role is needed for users with access to the 3di
+- One and only one 3di billing role is allowed for users with access to the 3di
   portal.
   [reinout]
 

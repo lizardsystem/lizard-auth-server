@@ -20,6 +20,9 @@ import logging
 import pytz
 import uuid
 
+BILLING_ROLE = 'billing'
+THREEDI_PORTAL = '3Di'
+
 
 logger = logging.getLogger(__name__)
 
@@ -702,6 +705,18 @@ class OrganisationRole(models.Model):
         else:
             return "{role} in {org}".format(
                 role=self.role, org=self.organisation)
+
+    def clean(self):
+        if self.role.name != BILLING_ROLE:
+            return
+        if self.role.portal.name != THREEDI_PORTAL:
+            return
+        # Hardcoded: we point at the 3di 'billing' role.
+        if self.for_all_users:
+            raise ValidationError(
+                {'for_all_users':
+                 _('The special 3di billing role is not allowed '
+                   '"for all users"')})
 
     def as_dict(self):
         return {

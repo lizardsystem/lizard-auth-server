@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from lizard_auth_server import models
 from lizard_auth_server.tests import factories
@@ -163,6 +164,18 @@ class TestUserProfile(TestCase):
 
         self.assertEquals(
             len(profile.all_organisation_roles(portal2)), 0)
+
+    def test_3di_billing_not_allowed_for_all(self):
+        threedi_portal = factories.PortalF.create(name='3Di')
+        # user = factories.UserF.create(username='newuser2')
+        org = factories.OrganisationF.create()
+        billing_role = factories.RoleF.create(portal=threedi_portal, name='billing')
+
+        orgrole = models.OrganisationRole.objects.create(
+            organisation=org, role=billing_role, for_all_users=True)
+
+        self.assertRaises(ValidationError,
+                          orgrole.clean)
 
 
 class UnicodeMethodTestCase(TestCase):

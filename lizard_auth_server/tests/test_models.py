@@ -167,19 +167,6 @@ class TestUserProfile(TestCase):
 
     def test_3di_billing_not_allowed_for_all(self):
         threedi_portal = factories.PortalF.create(name='3Di')
-        # user = factories.UserF.create(username='newuser2')
-        org = factories.OrganisationF.create()
-        billing_role = factories.RoleF.create(portal=threedi_portal, name='billing')
-
-        orgrole = models.OrganisationRole.objects.create(
-            organisation=org, role=billing_role, for_all_users=True)
-
-        self.assertRaises(ValidationError,
-                          orgrole.clean)
-
-    def test_3di_billing_not_allowed_for_all(self):
-        threedi_portal = factories.PortalF.create(name='3Di')
-        # user = factories.UserF.create(username='newuser2')
         org = factories.OrganisationF.create()
         billing_role = factories.RoleF.create(portal=threedi_portal, code='billing')
 
@@ -188,6 +175,48 @@ class TestUserProfile(TestCase):
 
         self.assertRaises(ValidationError,
                           orgrole.clean)
+
+    def test_3di_billing_not_allowed_multiple_times(self):
+        threedi_portal = factories.PortalF.create(name='3Di')
+        user = factories.UserF.create(username='newuser2')
+        profile = models.UserProfile.objects.fetch_for_user(user)
+        org1 = factories.OrganisationF.create()
+        org2 = factories.OrganisationF.create()
+        billing_role = factories.RoleF.create(portal=threedi_portal, code='billing')
+        profile.portals.add(threedi_portal)
+
+        orgrole1 = models.OrganisationRole.objects.create(
+            organisation=org1, role=billing_role, for_all_users=True)
+        orgrole2 = models.OrganisationRole.objects.create(
+            organisation=org2, role=billing_role, for_all_users=True)
+        profile.roles = [orgrole1, orgrole2]
+        self.assertRaises(ValidationError,
+                          profile.clean)
+
+    def test_3di_billing_required(self):
+        threedi_portal = factories.PortalF.create(name='3Di')
+        user = factories.UserF.create(username='newuser2')
+        profile = models.UserProfile.objects.fetch_for_user(user)
+        profile.portals.add(threedi_portal)
+        # No billing org role set!
+        self.assertRaises(ValidationError,
+                          profile.clean)
+
+    def test_3di_billing_only_applies_to_users_with_access(self):
+        threedi_portal = factories.PortalF.create(name='3Di')
+        user = factories.UserF.create(username='newuser2')
+        profile = models.UserProfile.objects.fetch_for_user(user)
+        org1 = factories.OrganisationF.create()
+        org2 = factories.OrganisationF.create()
+        billing_role = factories.RoleF.create(portal=threedi_portal, code='billing')
+        # Explicitly missing: adding threedi_portal to profile.portals!
+
+        orgrole1 = models.OrganisationRole.objects.create(
+            organisation=org1, role=billing_role, for_all_users=True)
+        orgrole2 = models.OrganisationRole.objects.create(
+            organisation=org2, role=billing_role, for_all_users=True)
+        profile.roles = [orgrole1, orgrole2]
+        self.assertEquals(profile.clean(), None)
 
 
 class UnicodeMethodTestCase(TestCase):

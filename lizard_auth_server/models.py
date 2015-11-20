@@ -707,16 +707,18 @@ class OrganisationRole(models.Model):
                 role=self.role, org=self.organisation)
 
     def clean(self):
-        if self.role.name != BILLING_ROLE:
+        if self.role.code != BILLING_ROLE:
+            print(self.role.code)
             return
         if self.role.portal.name != THREEDI_PORTAL:
+            print(self.role.portal.name)
             return
         # Hardcoded: we point at the 3di 'billing' role.
         if self.for_all_users:
             raise ValidationError(
-                {'for_all_users':
-                 _('The special 3di billing role is not allowed '
-                   '"for all users"')})
+                {'for_all_users': [
+                    _('The special 3di billing role is not allowed '
+                      '"for all users"')]})
 
     def as_dict(self):
         return {

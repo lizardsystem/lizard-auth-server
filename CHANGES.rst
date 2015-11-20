@@ -5,7 +5,18 @@ Changelog of lizard-auth-server
 1.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- One and only one 3di billing role is needed for users with access to the 3di
+  portal.
+  [reinout]
+
+- Added check that 3di billing isn't enabled 'for all users' of an
+  organisation.
+  [reinout]
+
+- Added link to edit a user's profile at the end of the registration
+  steps. This assumes the lizard6-style manual enabling of users. The previous
+  link was in an unusable place.
+  [reinout]
 
 
 1.3 (2015-11-16)

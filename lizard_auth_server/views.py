@@ -91,7 +91,7 @@ class ProfileView(ViewContextMixin, TemplateView):
         if self.request.user.is_staff:
             return Portal.objects.all()
         else:
-            return self.view.profile.portals.all()
+            return self.profile.portals.all()
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

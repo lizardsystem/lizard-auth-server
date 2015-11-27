@@ -724,10 +724,8 @@ class OrganisationRole(models.Model):
 
     def clean(self):
         if self.role.code != BILLING_ROLE:
-            print(self.role.code)
             return
         if self.role.portal.name != THREEDI_PORTAL:
-            print(self.role.portal.name)
             return
         # Hardcoded: we point at the 3di 'billing' role.
         if self.for_all_users:

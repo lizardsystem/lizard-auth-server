@@ -8,8 +8,11 @@ from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from itsdangerous import BadSignature
 from itsdangerous import URLSafeTimedSerializer
+from lizard_auth_server.models import BILLING_ROLE
 from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
+from lizard_auth_server.models import THREEDI_PORTAL
+from lizard_auth_server.models import UserProfile
 
 
 MIN_LENGTH = 8
@@ -259,3 +262,31 @@ class EditProfileForm(forms.Form):
         if users.exists():
             raise ValidationError(_('{} is already taken.').format(email))
         return email
+
+
+class UserProfileForm(forms.ModelForm):
+
+    class Meta:
+        model = UserProfile
+
+    def clean(self):
+        """Check 3Di-specific requirements"""
+        cleaned_data = super(UserProfileForm, self).clean()
+        portals = cleaned_data.get('portals')
+        if not [portal for portal in portals if portal.name == THREEDI_PORTAL]:
+            # We don't need to check
+            return cleaned_data
+        # Note: roles below is really organisation_roles...
+        organisation_roles = self.cleaned_data.get('roles')
+        num_threedi_billing_roles = len([
+            organisation_role for organisation_role in organisation_roles
+            if organisation_role.role.code == BILLING_ROLE and
+            organisation_role.role.portal.name == THREEDI_PORTAL])
+        if num_threedi_billing_roles == 0:
+            self._errors['roles'] = self.error_class([_('required 3Di billing role is missing')])
+        if num_threedi_billing_roles >= 2:
+            self._errors['roles'] = self.error_class([
+                _('Only one 3Di billing role is allowed ({} found)').format(
+                    num_threedi_billing_roles)])
+        print(self._errors)
+        return cleaned_data

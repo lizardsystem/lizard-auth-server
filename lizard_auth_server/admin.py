@@ -7,6 +7,7 @@ from django.db.models import Count
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from lizard_auth_server import models
+from lizard_auth_server import forms
 
 
 class InvitationAdmin(admin.ModelAdmin):
@@ -61,6 +62,7 @@ class InvitationAdmin(admin.ModelAdmin):
 
 class UserProfileAdmin(admin.ModelAdmin):
     model = models.UserProfile
+    form = forms.UserProfileForm
     list_display = ['username', 'full_name', 'email', 'created_at']
     search_fields = ['user__first_name', 'user__last_name', 'user__email']
     list_filter = ['portals', 'organisations']

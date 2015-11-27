@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-1.4 (unreleased)
+1.4 (2015-11-27)
 ----------------
 
 - One and only one 3di billing role is allowed for users with access to the 3di

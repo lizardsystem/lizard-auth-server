@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-1.5 (unreleased)
+1.5 (2015-11-27)
 ----------------
 
 - Moved ``.clean()`` method from the UserProfile model to a form. M2M fields

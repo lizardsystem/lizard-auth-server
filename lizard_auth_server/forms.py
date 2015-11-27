@@ -8,6 +8,7 @@ from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from itsdangerous import BadSignature
 from itsdangerous import URLSafeTimedSerializer
+from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 
 
@@ -98,10 +99,22 @@ class SetPasswordForm(auth.forms.SetPasswordForm):
         return password1
 
 
+def organisation_choices():
+    return [(organisation.name, organisation.name)
+            for organisation in Organisation.objects.all()]
+
+
 class InviteUserForm(forms.Form):
     """
     Form used by an administrator to invite a user.
     """
+
+    def __init__(self, *args, **kwargs):
+        super(InviteUserForm, self).__init__(*args, **kwargs)
+        self.fields['organisation'].choices = organisation_choices()
+        # TODO: in django 1.8 you can just set "choices =
+        # organisation_choices" on the field.
+
     # Whitespace is allowed in `name` (it's only used in the invitation email).
     name = forms.CharField(
         max_length=64,
@@ -112,10 +125,10 @@ class InviteUserForm(forms.Form):
         ),
     )
     email = forms.EmailField(max_length=255, label=_('Email'), required=True)
-    organisation = forms.CharField(
-        max_length=255,
+    organisation = forms.ChoiceField(
         label=_('Organisation'),
-        required=False,
+        required=True,
+        choices=[]
     )
     language = forms.ChoiceField(
         label=_('Language'),

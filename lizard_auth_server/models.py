@@ -20,6 +20,9 @@ import logging
 import pytz
 import uuid
 
+BILLING_ROLE = 'billing'
+THREEDI_PORTAL = '3Di'
+
 
 logger = logging.getLogger(__name__)
 
@@ -239,6 +242,22 @@ class UserProfile(models.Model):
         verbose_name = _('user profile')
         verbose_name_plural = _('user profiles')
         ordering = ['user__username']
+
+    def clean(self):
+        if not self.portals.filter(name=THREEDI_PORTAL).exists():
+            return
+        # Note: self.roles below is really organisation_roles...
+        num_threedi_billing_roles = self.roles.filter(
+            role__code=BILLING_ROLE,
+            role__portal__name=THREEDI_PORTAL).count()
+        if num_threedi_billing_roles == 0:
+            raise ValidationError(
+                {'roles': [_('required 3Di billing role is missing')]})
+        if num_threedi_billing_roles >= 2:
+            raise ValidationError(
+                {'roles': [
+                    _('Only one 3Di billing role is allowed ({} found)').format(
+                        num_threedi_billing_roles)]})
 
     def __unicode__(self):
         if self.user:
@@ -702,6 +721,18 @@ class OrganisationRole(models.Model):
         else:
             return "{role} in {org}".format(
                 role=self.role, org=self.organisation)
+
+    def clean(self):
+        if self.role.code != BILLING_ROLE:
+            return
+        if self.role.portal.name != THREEDI_PORTAL:
+            return
+        # Hardcoded: we point at the 3di 'billing' role.
+        if self.for_all_users:
+            raise ValidationError(
+                {'for_all_users': [
+                    _('The special 3di billing role is not allowed '
+                      '"for all users"')]})
 
     def as_dict(self):
         return {

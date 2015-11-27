@@ -91,7 +91,7 @@ class ProfileView(ViewContextMixin, TemplateView):
         if self.request.user.is_staff:
             return Portal.objects.all()
         else:
-            return self.view.profile.portals.all()
+            return self.profile.portals.all()
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -217,18 +217,15 @@ class InviteUserView(StaffOnlyMixin, FormView):
 
 class InviteUserCompleteView(StaffOnlyMixin, ViewContextMixin, TemplateView):
     template_name = 'lizard_auth_server/invite_user_complete.html'
-    _invitiation = None
 
     def get(self, request, invitation_pk, *args, **kwargs):
         self.invitation_pk = int(invitation_pk)
         return super(
             InviteUserCompleteView, self).get(request, *args, **kwargs)
 
-    @property
+    @cached_property
     def invitiation(self):
-        if not self._invitiation:
-            self._invitiation = Invitation.objects.get(pk=self.invitation_pk)
-        return self._invitiation
+        return Invitation.objects.get(pk=self.invitation_pk)
 
 
 class InvitationMixin(object):

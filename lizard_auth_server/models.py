@@ -243,22 +243,6 @@ class UserProfile(models.Model):
         verbose_name_plural = _('user profiles')
         ordering = ['user__username']
 
-    def clean(self):
-        if not self.portals.filter(name=THREEDI_PORTAL).exists():
-            return
-        # Note: self.roles below is really organisation_roles...
-        num_threedi_billing_roles = self.roles.filter(
-            role__code=BILLING_ROLE,
-            role__portal__name=THREEDI_PORTAL).count()
-        if num_threedi_billing_roles == 0:
-            raise ValidationError(
-                {'roles': [_('required 3Di billing role is missing')]})
-        if num_threedi_billing_roles >= 2:
-            raise ValidationError(
-                {'roles': [
-                    _('Only one 3Di billing role is allowed ({} found)').format(
-                        num_threedi_billing_roles)]})
-
     def __unicode__(self):
         if self.user:
             return '{}'.format(self.user)

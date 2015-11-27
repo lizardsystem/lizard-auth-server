@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
+from django.forms.models import model_to_dict
 from django.test import TestCase
+from lizard_auth_server import forms
 from lizard_auth_server import models
 from lizard_auth_server.tests import factories
 
@@ -190,8 +192,9 @@ class TestUserProfile(TestCase):
         orgrole2 = models.OrganisationRole.objects.create(
             organisation=org2, role=billing_role, for_all_users=True)
         profile.roles = [orgrole1, orgrole2]
-        self.assertRaises(ValidationError,
-                          profile.clean)
+        profile_form = forms.UserProfileForm(model_to_dict(profile),
+                                             instance=profile)
+        self.assertFalse(profile_form.is_valid())
 
     def test_3di_billing_required(self):
         threedi_portal = factories.PortalF.create(name='3Di')
@@ -199,8 +202,9 @@ class TestUserProfile(TestCase):
         profile = models.UserProfile.objects.fetch_for_user(user)
         profile.portals.add(threedi_portal)
         # No billing org role set!
-        self.assertRaises(ValidationError,
-                          profile.clean)
+        profile_form = forms.UserProfileForm(model_to_dict(profile),
+                                             instance=profile)
+        self.assertFalse(profile_form.is_valid())
 
     def test_3di_billing_only_applies_to_users_with_access(self):
         threedi_portal = factories.PortalF.create(name='3Di')
@@ -216,7 +220,9 @@ class TestUserProfile(TestCase):
         orgrole2 = models.OrganisationRole.objects.create(
             organisation=org2, role=billing_role, for_all_users=True)
         profile.roles = [orgrole1, orgrole2]
-        self.assertEquals(profile.clean(), None)
+        profile_form = forms.UserProfileForm(model_to_dict(profile),
+                                             instance=profile)
+        self.assertTrue(profile_form.is_valid())
 
 
 class UnicodeMethodTestCase(TestCase):

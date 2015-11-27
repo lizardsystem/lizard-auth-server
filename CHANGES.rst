@@ -5,7 +5,10 @@ Changelog of lizard-auth-server
 1.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Moved ``.clean()`` method from the UserProfile model to a form. M2M fields
+  cannot be checked by a model's ``.clean()`` as it always looks at the
+  existing, old, data.
+  [reinout]
 
 
 1.4 (2015-11-27)

@@ -157,7 +157,8 @@ class AuthorizeView(ProcessGetFormView):
             if self.request.user.is_authenticated():
                 self.domain = get_domain(form)
                 return self.form_valid_authenticated()
-            return self.form_valid_unauthenticated()
+            return self.form_valid_unauthenticated(
+                form.cleaned_data.get('force_login', True))
         return self.token_timeout()
 
     def form_invalid(self, form):
@@ -249,11 +250,19 @@ class AuthorizeView(ProcessGetFormView):
         )])
         return '%s?%s' % (reverse('django.contrib.auth.views.login'), params)
 
-    def form_valid_unauthenticated(self):
+    def build_back_to_portal_url(self):
+        """Redirect user back to the portal, without logging him in."""
+        return urljoin(self.domain, 'sso/local_not_logged_in') + '/'
+
+    def form_valid_unauthenticated(self, force_login):
         """
-        Redirect to login page when user isn't logged in yet.
+        Redirect user, to login page if force_login == True.
         """
-        return HttpResponseRedirect(self.build_login_url())
+        if force_login:
+            return HttpResponseRedirect(self.build_login_url())
+        else:
+            # Return the unauthenticated user back to the portal.
+            return HttpResponseRedirect(self.build_back_to_portal_url())
 
 
 def construct_user_data(user=None, profile=None):

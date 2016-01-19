@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 1.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fixed wrong variable in log message.
+  [reinout]
 
 
 1.5 (2015-11-27)

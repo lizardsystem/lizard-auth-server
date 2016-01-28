@@ -5,17 +5,17 @@ Changelog of lizard-auth-server
 1.8 (unreleased)
 ----------------
 
-- A user arriving at the SSO server after being redirected there can now
-  use a "force_login" URL attribute. If the user is already logged in on
-  the SSO server, redirects are set up so that he will be logged in on
-  the site he was redirected from.
+- A user arriving at the SSO server after being redirected there can
+  now use a "return_unauthenticated" URL attribute. If the user is
+  already logged in on the SSO server, redirects are set up so that he
+  will be logged in on the site he was redirected from.
 
-  If he is not, then if force_login is True (the default, and the
-  old behaviour), then he will be forced to log in before being redirected
-  back.
+  If he is not, then if return_unauthenticated is False (the default,
+  and the old behaviour), then he will be forced to log in before
+  being redirected back.
 
-  If force_login is False, redirect the user back without logging in (to
-  lizard-auth-client's /sso/local_not_logged_in/ URL).
+  If return_unauthenticated, redirect the user back without logging in
+  (to lizard-auth-client's /sso/local_not_logged_in/ URL).
 
   This enables a "attempt to auto-login if possible, but don't require it"
   workflow that is sometimes helpful.

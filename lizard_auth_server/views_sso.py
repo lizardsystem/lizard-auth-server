@@ -158,7 +158,7 @@ class AuthorizeView(ProcessGetFormView):
                 self.domain = get_domain(form)
                 return self.form_valid_authenticated()
             return self.form_valid_unauthenticated(
-                form.cleaned_data.get('force_login', True))
+                form.cleaned_data.get('return_unauthenticated', False))
         return self.token_timeout()
 
     def form_invalid(self, form):
@@ -254,15 +254,16 @@ class AuthorizeView(ProcessGetFormView):
         """Redirect user back to the portal, without logging him in."""
         return urljoin(self.domain, 'sso/local_not_logged_in') + '/'
 
-    def form_valid_unauthenticated(self, force_login):
+    def form_valid_unauthenticated(self, return_unauthenticated):
         """
-        Redirect user, to login page if force_login == True.
+        Redirect user, to login page if return_unauthenticated == False.
         """
-        if force_login:
-            return HttpResponseRedirect(self.build_login_url())
-        else:
+        if return_unauthenticated:
             # Return the unauthenticated user back to the portal.
             return HttpResponseRedirect(self.build_back_to_portal_url())
+        else:
+            # Typical situation -- force the user to login.
+            return HttpResponseRedirect(self.build_login_url())
 
 
 def construct_user_data(user=None, profile=None):

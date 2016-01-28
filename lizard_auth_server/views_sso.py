@@ -216,7 +216,7 @@ class AuthorizeView(ProcessGetFormView):
         self.token.user = self.request.user
         self.token.save()
         # redirect user back to the portal
-        url = urljoin(self.domain, 'sso/local_login') + '/'
+        url = urljoin(self.domain, 'sso/local_login/')
         url = '%s?%s' % (url, urlencode({'message': message}))
         return HttpResponseRedirect(url)
 

@@ -252,7 +252,7 @@ class AuthorizeView(ProcessGetFormView):
 
     def build_back_to_portal_url(self):
         """Redirect user back to the portal, without logging him in."""
-        return urljoin(self.domain, 'sso/local_not_logged_in') + '/'
+        return urljoin(self.domain, 'sso/local_not_logged_in/')
 
     def form_valid_unauthenticated(self, return_unauthenticated):
         """

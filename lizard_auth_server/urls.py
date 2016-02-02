@@ -197,6 +197,12 @@ urlpatterns = patterns(
         views.EditProfileView.as_view(),
         name='lizard_auth_server.edit_profile'
     ),
+    # URLs for third-party apps.
+    url(
+        r'^jwt/$',
+        views.JWTView.as_view(),
+        name='lizard_auth_server.jwt'
+    ),
 
     # URLs for debugging portal access.
     url(

@@ -4,25 +4,27 @@
 {% block subtitle %}{% trans 'Log in' %}{% endblock %}
 
 {% block container %}
-    <div class="content">
-        {% if form.errors %}
+<div class="content">
+    {% if form.errors %}
+        {% for error in form.non_field_errors %}
             <div class="alert alert-block fade in">
                 <button class="close" data-dismiss="alert" href="#">×</button>
-                <p>{% trans "Please enter a correct username and password. Note that both fields are case-sensitive." %}</p>
+                <p>{{ error|escape }}</p>
             </div>
-        {% endif %}
-        <form action="{{ request.get_full_path }}" method="post" id="login-form">{% csrf_token %}
-            <input type="hidden" name="next" value="{{ next }}">
-            <fieldset>
-                <legend>{% trans 'Log in' %}</legend>
-                {% for field in form %}
-                    {% include 'lizard_auth_server/form_field.html' %}
-                {% endfor %}
-                <div class="actions">
-                    <input type="submit" class="btn btn-primary" value="{% trans 'Log in' %}">&nbsp;<button type="reset" class="btn">{% trans 'Reset values' %}</button>
-                </div>
-            </fieldset>
-        </form>
-        <p><a href="{% url "django.contrib.auth.views.password_reset" %}">{% trans "Reset my password" %}</a></p>
-    </div>
+        {% endfor %}
+    {% endif %}
+    <form action="{{ request.get_full_path }}" method="post" id="login-form">{% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <fieldset>
+            <legend>{% trans 'Log in' %}</legend>
+            {% for field in form %}
+                {% include 'lizard_auth_server/form_field.html' %}
+            {% endfor %}
+            <div class="actions">
+                <input type="submit" class="btn btn-primary" value="{% trans 'Log in' %}">&nbsp;<button type="reset" class="btn">{% trans 'Reset values' %}</button>
+            </div>
+        </fieldset>
+    </form>
+    <p><a href="{% url "django.contrib.auth.views.password_reset" %}">{% trans "Reset my password" %}</a></p>
+</div>
 {% endblock %}

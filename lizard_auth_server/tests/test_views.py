@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-import json
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
@@ -176,7 +175,7 @@ class JWTViewTestCase(TestCase):
         expected_url = reverse('django.contrib.auth.views.login')
         self.assertTrue(response.url.startswith(expected_url))
 
-    def test_get_request_with_json_response(self):
+    def test_get_request_with_text_response(self):
         request = self.factory.get(
             reverse('lizard_auth_server.jwt'), {
                 'portal': self.portal.sso_key,
@@ -188,10 +187,10 @@ class JWTViewTestCase(TestCase):
         expected_status_code = 200
         actual_status_code = response.status_code
         self.assertEqual(expected_status_code, actual_status_code)
-        expected_content_type = 'application/json'
+        expected_content_type = 'text/plain'
         actual_content_type = response.get('Content-Type')
         self.assertEqual(expected_content_type, actual_content_type)
-        token = json.loads(response.content)['access_token']
+        token = response.content
         payload = jwt.decode(token, self.portal.sso_secret, JWT_ALGORITHM)
         self.assertTrue(payload['username'] == self.user.username)
         self.assertTrue('exp' in payload)

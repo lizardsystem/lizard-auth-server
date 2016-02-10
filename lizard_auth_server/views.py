@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 from datetime import datetime
-import json
 import jwt
 import logging
 
@@ -441,7 +440,7 @@ class JWTView(View):
         if self.redirect_to:
             return redirect(self.success_url)
         else:
-            return self.as_json()
+            return HttpResponse(self.token, content_type='text/plain')
 
     @property
     def success_url(self):
@@ -457,10 +456,3 @@ class JWTView(View):
         url = parse.urlunparse((
             scheme, netloc, path, params, query, fragment))
         return str(url)
-
-    def as_json(self):
-        """Return a JSON response including a token."""
-        return HttpResponse(
-            json.dumps({'access_token': self.token}),
-            content_type='application/json'
-        )

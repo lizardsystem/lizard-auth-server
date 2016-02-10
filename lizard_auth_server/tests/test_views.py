@@ -53,8 +53,8 @@ class JWTViewTestCase(TestCase):
         self.assertTrue(JWTView.is_url(fake.url()))
 
     def test_invalid_portal(self):
-        sso_key = gen_key('Portal', 'sso_key')
-        self.assertFalse(JWTView.is_portal(sso_key=sso_key))
+        random_sso_key = gen_key('Portal', 'sso_key')
+        self.assertFalse(JWTView.is_portal(sso_key=random_sso_key))
 
     def test_valid_portal(self):
         self.assertTrue(JWTView.is_portal(self.portal.sso_key))
@@ -137,10 +137,10 @@ class JWTViewTestCase(TestCase):
         self.assertEqual(expected_status_code, actual_status_code)
 
     def test_get_request_with_invalid_portal_parameter(self):
-        sso_key = gen_key('Portal', 'sso_key')
+        random_sso_key = gen_key('Portal', 'sso_key')
         request = self.factory.get(
             reverse('lizard_auth_server.jwt'), {
-                'portal': sso_key,
+                'portal': random_sso_key,
             },
         )
         self.user.user_profile.portals.add(self.portal)

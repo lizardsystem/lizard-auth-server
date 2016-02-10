@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 1.6 (unreleased)
 ----------------
 
-- Add support for JSON Web Tokens.
+- Added support for JSON Web Tokens.
   [byrman]
 
 - Fixed wrong variable in log message.

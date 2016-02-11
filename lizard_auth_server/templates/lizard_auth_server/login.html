@@ -6,10 +6,12 @@
 {% block container %}
     <div class="content">
         {% if form.errors %}
-            <div class="alert alert-block fade in">
-                <button class="close" data-dismiss="alert" href="#">×</button>
-                <p>{% trans "Please enter a correct username and password. Note that both fields are case-sensitive." %}</p>
-            </div>
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-block fade in">
+                    <button class="close" data-dismiss="alert" href="#">×</button>
+                    <p>{{ error|escape }}</p>
+                </div>
+            {% endfor %}
         {% endif %}
         <form action="{{ request.get_full_path }}" method="post" id="login-form">{% csrf_token %}
             <input type="hidden" name="next" value="{{ next }}">
@@ -19,7 +21,10 @@
                     {% include 'lizard_auth_server/form_field.html' %}
                 {% endfor %}
                 <div class="actions">
-                    <input type="submit" class="btn btn-primary" value="{% trans 'Log in' %}">&nbsp;<button type="reset" class="btn">{% trans 'Reset values' %}</button>
+                    <input type="submit"
+                           class="btn btn-primary"
+                           value="{% trans 'Log in' %}">&nbsp;
+                        <button type="reset" class="btn">{% trans 'Reset values' %}</button>
                 </div>
             </fieldset>
         </form>

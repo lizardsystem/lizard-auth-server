@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
+
 from django import forms
 from django.conf import settings
 from django.contrib import auth
@@ -8,12 +10,12 @@ from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from itsdangerous import BadSignature
 from itsdangerous import URLSafeTimedSerializer
+
 from lizard_auth_server.models import BILLING_ROLE
 from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 from lizard_auth_server.models import THREEDI_PORTAL
 from lizard_auth_server.models import UserProfile
-
 
 MIN_LENGTH = 8
 
@@ -283,7 +285,8 @@ class UserProfileForm(forms.ModelForm):
             if organisation_role.role.code == BILLING_ROLE and
             organisation_role.role.portal.name == THREEDI_PORTAL])
         if num_threedi_billing_roles == 0:
-            self._errors['roles'] = self.error_class([_('required 3Di billing role is missing')])
+            self._errors['roles'] = self.error_class([
+                _('required 3Di billing role is missing')])
         if num_threedi_billing_roles >= 2:
             self._errors['roles'] = self.error_class([
                 _('Only one 3Di billing role is allowed ({} found)').format(

@@ -10,20 +10,24 @@ long_description = '\n\n'.join([
 
 install_requires = [
     'Django >= 1.6, < 1.7',
+    'django-appconf',
     'django-extensions',
     'django-nose',
-    'factory_boy >= 2.4.0',
     'itsdangerous',
+    'pyjwt',
     'pytz',
     'requests',
+    'six',
     'south',
     'translations',
     ],
 
 tests_require = [
-    'nose',
-    'mock',
     'coverage',
+    'factory_boy >= 2.4.0',
+    'fake-factory',
+    'mock',
+    'nose',
     ]
 
 setup(name='lizard-auth-server',

@@ -1,27 +1,42 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
+
 from django.contrib.auth.models import User
+from faker import Factory as FakerFactory
+import factory
+
 from lizard_auth_server import models
 
-import factory
+
+faker = FakerFactory.create()
 
 
 class UserF(factory.DjangoModelFactory):
     class Meta:
         model = User
 
-    username = factory.Sequence(lambda n: 'testuser{0}'.format(n))
+    username = factory.LazyAttribute(lambda x: faker.user_name())
+    password = factory.LazyAttribute(lambda x: faker.password())
     # Note: normally you'd call
     # User.objects.create_user('someone', 'a@a.nl', 'pass')
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        user = model_class(*args, **kwargs)
+        user.raw_password = user.password
+        user.set_password(user.password)
+        user.save()
+        return user
 
 
 class PortalF(factory.DjangoModelFactory):
     class Meta:
         model = models.Portal
 
-    name = 'Some portal'
-    redirect_url = 'http://default.portal.net/'
-    visit_url = 'http://www.portal.net/'
-    allowed_domain = ''
+    name = factory.LazyAttribute(lambda x: faker.company())
+    redirect_url = factory.LazyAttribute(lambda x: faker.url())
+    visit_url = factory.LazyAttribute(lambda x: faker.url())
 
 
 class RoleF(factory.DjangoModelFactory):

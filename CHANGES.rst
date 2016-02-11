@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-1.6 (unreleased)
+1.6 (2016-02-11)
 ----------------
 
 - Added support for JSON Web Tokens.

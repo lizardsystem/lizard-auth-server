@@ -13,17 +13,6 @@ Lizard auth server is build upon django-simple-sso_.
 It is installed as https://sso.lizard.net, see https://github.com/nens/sso/
 
 
-Setup
------
-
-If you get a `Site matching query does not exist` error when you access the
-site you need to do something like this::
-
-    $ bin/django shell
-    >>> from django.contrib.sites.models import Site
-    >>> new_site = Site.objects.create(domain='foo.com', name='foo.com')
-
-
 Workflow
 ---------
 

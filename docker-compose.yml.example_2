@@ -3,7 +3,7 @@ services:
   server:
     build: .
     ports:
-     - "5000:5000"
+      - "5000:5000"
     volumes:
         # The following hack is courtesy to: http://jdlm.info/articles/2016/03/06/lessons-building-node-app-docker.html
         # and specifically, this answer: http://stackoverflow.com/a/32785014.

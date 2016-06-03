@@ -17,6 +17,7 @@ services:
         - /code/eggs
         - /code/develop-eggs
         - /code/parts
+        - /code/var  # for test.db
         # This might be needed if you have check-outs:
         # - /code/src
 

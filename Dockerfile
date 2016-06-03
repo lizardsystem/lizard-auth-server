@@ -61,7 +61,7 @@ WORKDIR /code
 
 RUN python bootstrap.py \
 && bin/buildout \
-&& yes no | bin/django syncdb \
+&& bin/django syncdb --noinput \
 && bin/django migrate
 
 CMD bin/django runserver 0.0.0.0:5000

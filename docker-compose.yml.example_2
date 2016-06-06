@@ -1,6 +1,6 @@
 version: '2'
 services:
-  server:
+  web:
     build: .
     ports:
       - "5000:5000"

@@ -3,7 +3,7 @@
 # First install your vendors:
 #   $ docker-compose run --rm vendors
 # Then run your app:
-#   $ docker-compose up (-d) server
+#   $ docker-compose up (-d) web
 
 version: '2'
 services:

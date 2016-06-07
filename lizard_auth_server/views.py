@@ -102,7 +102,10 @@ class ProfileView(ViewContextMixin, TemplateView):
 
     @cached_property
     def profile(self):
-        return self.request.user.get_profile()
+        # TODO: clean this up, tests, etc.
+        # User.get_profile is deprecated since Django 1.7
+        # return self.request.user.get_profile()
+        return self.request.user.user_profile
 
     @property
     def portals(self):
@@ -140,8 +143,12 @@ class AccessToPortalView(ViewContextMixin, TemplateView):
             user_id = self.kwargs.get('user_pk')
             if user_id:
                 user = User.objects.get(id=user_id)
-                return user.get_profile()
-        return self.request.user.get_profile()
+                # User.get_profile is deprecated since Django 1.7
+                # return user.get_profile()
+                return user.user_profile
+        # User.get_profile is deprecated since Django 1.7
+        # return self.request.user.get_profile()
+        return self.request.user.user_profile
 
     @cached_property
     def organisation_roles_explanation(self):
@@ -178,7 +185,9 @@ class EditProfileView(FormView):
     @property
     def profile(self):
         if not self._profile:
-            self._profile = self.request.user.get_profile()
+            # User.get_profile is deprecated since Django 1.7
+            # self._profile = self.request.user.get_profile()
+            self._profile = self.request.user.user_profile
         return self._profile
 
     def get_initial(self):
@@ -321,7 +330,9 @@ class ActivationCompleteView(InvitationMixin, TemplateView):
     @property
     def profile(self):
         if not self._profile:
-            self._profile = self.invitation.user.get_profile()
+            # User.get_profile is deprecated since Django 1.7
+            # self._profile = self.invitation.user.get_profile()
+            self._profile = self.invitation.user.user_profile
         return self._profile
 
 

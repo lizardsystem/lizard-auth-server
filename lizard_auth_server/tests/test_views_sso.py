@@ -18,9 +18,12 @@ class TestConstructOrganisationRoleDict(TestCase):
         u_org = uuid.uuid4().hex
         u_role = uuid.uuid4().hex
 
-        org = factories.OrganisationF.build(
+        # TODO: used create instead of build because we need the orgrole
+        # to be saveable. Better solution: make an orgrole factory which
+        # has a primary key or something?
+        org = factories.OrganisationF.create(
             name='testorg', unique_id=u_org)
-        role = factories.RoleF.build(
+        role = factories.RoleF.create(
             unique_id=u_role,
             code='testrole',
             name='Testrole',
@@ -29,9 +32,14 @@ class TestConstructOrganisationRoleDict(TestCase):
 
         orgrole = models.OrganisationRole(
             organisation=org, role=role)
+        # TODO: the reason for this save is because orgroles need a primary
+        # key to be hashable in Django >=1.7, and apparently it didn't need
+        # one before.
+        orgrole.save()
 
-        self.assertEquals(
-            views_sso.construct_organisation_role_dict([orgrole]), {
+        org_role_dicts = views_sso.construct_organisation_role_dict([orgrole])
+
+        self.assertEquals(org_role_dicts, {
                 'organisations': [{
                     'name': 'testorg',
                     'unique_id': u_org

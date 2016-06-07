@@ -81,7 +81,7 @@ class AuthenticateUnsignedView(FormView):
                 return JsonError('User account is disabled')
             else:
                 try:
-                    profile = user.get_profile()
+                    profile = user.user_profile
                 except models.UserProfile.DoesNotExist:
                     return JsonError('No access to this portal')
                 if profile.has_access(portal):
@@ -151,7 +151,8 @@ class AuthenticateView(FormView):
                 return JsonError('User account is disabled')
             else:
                 try:
-                    profile = user.get_profile()
+                    # Get profile deprecated in Django >= 1.7
+                    profile = user.user_profile
                 except models.UserProfile.DoesNotExist:
                     return JsonError('No access to this portal')
                 if profile.has_access(portal):
@@ -214,7 +215,7 @@ class GetUserView(FormView):
                 return JsonError('User account is disabled')
             else:
                 try:
-                    profile = user.get_profile()
+                    profile = user.user_profile
                 except models.UserProfile.DoesNotExist:
                     return JsonError('No access to this portal')
                 if profile.has_access(portal):
@@ -255,7 +256,7 @@ class GetUsersView(FormView):
         user_data = []
         for user in User.objects.select_related('user_profile'):
             try:
-                profile = user.get_profile()
+                profile = user.user_profile
             except models.UserProfile.DoesNotExist:
                 continue
             if profile.has_access(portal):

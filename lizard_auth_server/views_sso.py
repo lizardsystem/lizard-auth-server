@@ -195,7 +195,9 @@ class AuthorizeView(ProcessGetFormView):
             return False
         # check whether the UserProfile object is related to this Portal
         try:
-            profile = self.request.user.get_profile()
+            # get_profile is deprecated in Django >= 1.7
+            # profile = self.request.user.get_profile()
+            profile = self.request.user.user_profile
         except UserProfile.DoesNotExist:
             return False
         return profile.has_access(self.token.portal)
@@ -266,7 +268,9 @@ def construct_user_data(user=None, profile=None):
     if user is None:
         user = profile.user
     if profile is None:
-        profile = user.get_profile()
+        # get_profile is deprecated in Django >= 1.7
+        # profile = user.get_profile()
+        profile = user.user_profile
     data = {}
     for key in ['pk', 'username', 'first_name', 'last_name',
                 'email', 'is_active', 'is_staff', 'is_superuser']:
@@ -374,12 +378,12 @@ class VerifyView(ProcessGetFormView):
         """
         Returns the JSON string representation of the user object for a portal.
         """
-        profile = self.token.user.get_profile()
+        profile = self.token.user.user_profile
         data = construct_user_data(profile=profile)
         return json.dumps(data)
 
     def get_organisation_roles_json(self, portal):
-        profile = self.token.user.get_profile()
+        profile = self.token.user.user_profile
         data = construct_organisation_role_dict(
             profile.all_organisation_roles(portal))
         return json.dumps(data)

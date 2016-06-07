@@ -7,7 +7,14 @@ from django.core.mail import send_mail
 from django.db import models
 from django.db import transaction
 from django.db.models import F
-from django.db.models.loading import get_model
+
+try:
+    # Django >=1.9
+    from django.apps import apps
+    get_model = apps.get_model
+except ImportError:
+    from django.db.models.loading import get_model
+
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from django.template.loader import render_to_string
@@ -27,8 +34,41 @@ THREEDI_PORTAL = '3Di'
 logger = logging.getLogger(__name__)
 
 
+from django.utils.deconstruct import deconstructible
+
+
+@deconstructible
+class GenKey(object):
+    # Field.default needs to be serializable (a change since Django 1.7). Here
+    # we use the deconstruct method described in:
+    # https://code.djangoproject.com/ticket/22999
+    # https://docs.djangoproject.com/en/1.9/topics/migrations/#adding-a-deconstruct-method
+
+    def __init__(self, model, field):
+        self.model = model
+        self.field = field
+
+    def __call__(self):
+        if isinstance(self.model, basestring):
+            ModelClass = get_model('lizard_auth_server', self.model)
+            if not ModelClass:
+                raise Exception('Unknown model {}'.format(self.model))
+        else:
+            ModelClass = self.model
+        key = gen_secret_key(64)
+        while ModelClass.objects.filter(**{self.field: key}).exists():
+            key = gen_secret_key(64)
+        return key
+
+    def __eq__(self, other):
+        return all([self.model == other.model,
+                    self.field == other.field])
+
+
 def gen_key(model, field):
     """
+    DEPRECATED, reimplemented in GenKey which is serialiazable.
+
     Helper function to give a unique default value to the selected
     field in a model.
     """
@@ -60,14 +100,14 @@ class Portal(models.Model):
         verbose_name=_('shared secret'),
         max_length=64,
         unique=True,
-        default=gen_key('Portal', 'sso_secret'),
+        default=GenKey('Portal', 'sso_secret'),
         help_text=_('Secret shared between SSO client and '
                     'server to sign/encrypt communication.'))
     sso_key = models.CharField(
         verbose_name=_('identifying key'),
         max_length=64,
         unique=True,
-        default=gen_key('Portal', 'sso_key'),
+        default=GenKey('Portal', 'sso_key'),
         help_text=_('String used to identify the SSO client.'))
     allowed_domain = models.CharField(
         verbose_name=_('allowed domain(s)'),
@@ -89,8 +129,8 @@ class Portal(models.Model):
         return self.name
 
     def rotate_keys(self):
-        self.sso_secret = gen_key(Portal, 'sso_secret')()
-        self.sso_key = gen_key(Portal, 'sso_key')()
+        self.sso_secret = GenKey(Portal, 'sso_secret')()
+        self.sso_key = GenKey(Portal, 'sso_key')()
         self.save()
 
     class Meta:
@@ -120,6 +160,10 @@ class TokenManager(models.Manager):
         )
 
 
+def token_creation_date():
+    return datetime.datetime.now(tz=pytz.UTC)
+
+
 class Token(models.Model):
     """
     An auth token used to authenticate a user.
@@ -142,7 +186,8 @@ class Token(models.Model):
         null=True)
     created = models.DateTimeField(
         verbose_name=_('created on'),
-        default=lambda: datetime.datetime.now(tz=pytz.UTC))
+        default=token_creation_date
+        )
 
     objects = TokenManager()
 
@@ -469,7 +514,7 @@ class Invitation(models.Model):
             raise Exception('user is already activated')
 
         # generate a new activation key
-        self.activation_key = gen_key(Invitation, 'activation_key')()
+        self.activation_key = GenKey(Invitation, 'activation_key')()
 
         # update key date so we can check for expiration
         self.activation_key_date = datetime.datetime.now(tz=pytz.UTC)
@@ -543,7 +588,9 @@ class Invitation(models.Model):
 
             # create and fill the profile
             # this sets the additional attributes on the User model as well
-            profile = user.get_profile()
+            # get_profile deprecated in Django >= 1.7
+            # profile = user.get_profile()
+            profile = user.user_profile
             profile.update_all(data)
 
             # many-to-many, so save these after profile has been assigned an ID

@@ -13,9 +13,11 @@ services:
     volumes:
       - .:/code
     command: bash -c "python bootstrap.py && bin/buildout && bin/django syncdb --noinput && bin/django migrate"
+    user: buildout
   web:
     build: .
     ports:
       - "5000:5000"
     volumes:
       - .:/code
+    user: buildout

@@ -14,7 +14,7 @@ from nose.tools import raises
 import jwt
 
 from lizard_auth_server.conf import settings
-from lizard_auth_server.models import gen_key
+from lizard_auth_server.models import GenKey
 from lizard_auth_server.tests import factories
 from lizard_auth_server.views import JWTView
 
@@ -52,7 +52,7 @@ class JWTViewTestCase(TestCase):
         self.assertTrue(JWTView.is_url(fake.url()))
 
     def test_invalid_portal(self):
-        random_sso_key = gen_key('Portal', 'sso_key')
+        random_sso_key = GenKey('Portal', 'sso_key')
         self.assertFalse(JWTView.is_portal(sso_key=random_sso_key))
 
     def test_valid_portal(self):
@@ -136,7 +136,7 @@ class JWTViewTestCase(TestCase):
         self.assertEqual(expected_status_code, actual_status_code)
 
     def test_get_request_with_invalid_portal_parameter(self):
-        random_sso_key = gen_key('Portal', 'sso_key')
+        random_sso_key = GenKey('Portal', 'sso_key')
         request = self.factory.get(
             reverse('lizard_auth_server.jwt'), {
                 'portal': random_sso_key,

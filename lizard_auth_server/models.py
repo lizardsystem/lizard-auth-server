@@ -39,10 +39,15 @@ from django.utils.deconstruct import deconstructible
 
 @deconstructible
 class GenKey(object):
-    # Field.default needs to be serializable (a change since Django 1.7). Here
-    # we use the deconstruct method described in:
-    # https://code.djangoproject.com/ticket/22999
-    # https://docs.djangoproject.com/en/1.9/topics/migrations/#adding-a-deconstruct-method
+    """
+    Helper function to give a unique default value to the selected
+    field in a model.
+
+    Note: Field.default needs to be serializable (a change since Django 1.7).
+    Here we use the deconstruct method described in:
+    https://code.djangoproject.com/ticket/22999
+    https://docs.djangoproject.com/en/1.9/topics/migrations/#adding-a-deconstruct-method
+    """
 
     def __init__(self, model, field):
         self.model = model
@@ -63,27 +68,6 @@ class GenKey(object):
     def __eq__(self, other):
         return all([self.model == other.model,
                     self.field == other.field])
-
-
-def gen_key(model, field):
-    """
-    DEPRECATED, reimplemented in GenKey which is serialiazable.
-
-    Helper function to give a unique default value to the selected
-    field in a model.
-    """
-    def _genkey():
-        if isinstance(model, basestring):
-            ModelClass = get_model('lizard_auth_server', model)
-            if not ModelClass:
-                raise Exception('Unknown model {}'.format(model))
-        else:
-            ModelClass = model
-        key = gen_secret_key(64)
-        while ModelClass.objects.filter(**{field: key}).exists():
-            key = gen_secret_key(64)
-        return key
-    return _genkey
 
 
 class Portal(models.Model):

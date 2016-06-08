@@ -50,11 +50,6 @@ LOGGING = {
             'level': 'WARN',
             'propagate': False
         },
-        'south': {
-            'handlers': ['null'],
-            'level': 'DEBUG',
-            'propagate': False
-        },
         'factory': {
             'handlers': ['null'],
             'level': 'DEBUG',
@@ -171,7 +166,6 @@ MIDDLEWARE_CLASSES = (
 
 INSTALLED_APPS = (
     'lizard_auth_server',
-    # 'south',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

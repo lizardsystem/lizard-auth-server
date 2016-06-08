@@ -119,7 +119,11 @@ class TestLoginRedirect(TestCase):
         response = self.client.post('/accounts/login/', params)
 
         self.assertEquals(response.status_code, 302)
-        self.assertEquals(response.url, 'http://testserver/sso/authorize')
+
+        # Before upgrading from Django 1.6 -> 1.9 this used to be this (but now
+        # doesn't work):
+        # self.assertEquals(response.url, 'http://testserver/sso/authorize')
+        self.assertEquals(response.url, '/sso/authorize')
 
         self.authorize_and_check_redirect(None, self.portal.redirect_url)
         self.authorize_and_check_redirect('/', self.portal.redirect_url)

@@ -1,19 +1,13 @@
-# Inspired by: https://www.theodo.fr/blog/2015/04/docker-and-virtualenv-a-clean-way-to-locally-install-python-dependencies-with-pip-in-docker/
+# Follows this structure (loosely): https://docs.docker.com/compose/django/
 #
-# First install your vendors:
-#   $ docker-compose run --rm vendors
-# Then run your app:
-#   $ docker-compose up (-d) web
+# Start your services:
+#   $ docker-compose up (-d)
+#
+# Setup databases, and run buildout once again:
+#   $ docker-compose run web ./docker-bootstrap.sh
 
 version: '2'
 services:
-  vendors:
-    build: .
-    working_dir: /code
-    volumes:
-      - .:/code
-    command: bash -c "python bootstrap.py && bin/buildout && bin/django syncdb --noinput && bin/django migrate"
-    user: buildout
   web:
     build: .
     ports:

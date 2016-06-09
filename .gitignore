@@ -57,7 +57,3 @@ lizard_auth_server/local*.py
 lizard_auth_server/locale/af/
 lizard_auth_server/locale/vi/
 lizard_auth_server/locale/zh/
-
-# Docker
-Dockerfile
-docker-compose.yml

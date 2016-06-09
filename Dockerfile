@@ -18,8 +18,6 @@ MAINTAINER 3Di <3Di@nelen-schuurmans.nl>
 ENV REFRESHED_AT 20160531
 
 # system dependencies
-# Sympy installs a lot of fonts, latex stuff, etc., which we don't want, so
-# that is run with the --no-install-recommends option.
 RUN apt-get update && apt-get install -y \
     python-software-properties \
     wget \
@@ -36,14 +34,9 @@ RUN apt-get update && apt-get install -y \
 && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # pip packages
-RUN pip install \
-    matplotlib \
-    six
+RUN pip install zc.buildout
 
 ADD . /code
 WORKDIR /code
 
-RUN python bootstrap.py \
-&& bin/buildout \
-
-# CMD ["bin/django", "runserver", "0.0.0.0:5000"]
+RUN buildout

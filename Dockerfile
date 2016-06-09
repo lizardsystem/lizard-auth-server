@@ -28,27 +28,11 @@ RUN apt-get update && apt-get install -y \
     libevent-dev \
     libfreetype6-dev \
     libgeos-dev \
-    libhdf5-serial-dev \
     libpng12-dev \
-    mercurial \
     python-dev \
-    python-lxml \
-    python-mapnik \
-    python-numpy \
     python-pip \
-    python-pyproj \
-    python-pysqlite2 \
     python-psycopg2 \
-    python-scipy \
-    spatialite-bin \
-    gdal-bin \
-    libgdal1i \
-    libnetcdf-dev \
-    netcdf-bin \
     python-gdal \
-    vim \
-&& apt-get install -y --no-install-recommends \
-    python-sympy \
 && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # pip packages

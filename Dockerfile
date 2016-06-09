@@ -40,11 +40,6 @@ RUN pip install \
     matplotlib \
     six
 
-# Add 'buildout' group and user with the same gid and uid as the host user.
-# TODO: for now gid:uid is hardcoded to 1000:1000, change this if it isn't correct for you.
-RUN groupadd --gid 1000 buildout && \
-    useradd buildout --gid 1000 --uid 1000 -m -s /bin/bash
-
 ADD . /code
 WORKDIR /code
 

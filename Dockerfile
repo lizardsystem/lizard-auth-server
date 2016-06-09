@@ -33,6 +33,9 @@ RUN apt-get update && apt-get install -y \
     python-gdal \
 && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /root/.buildout/eggs && \
+    echo '[buildout]\neggs-directory = /root/.buildout/eggs' > /root/.buildout/default.cfg
+
 # pip packages
 RUN pip install zc.buildout
 

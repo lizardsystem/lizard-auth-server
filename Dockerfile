@@ -1,15 +1,3 @@
-# ubuntu trusty base image for building other images within N & S
-#
-# build
-# $ docker build -f Dockerfile.ubuntu-trusty-base -t nens/ubuntu-trusty-base:latest .
-#
-# release
-# $ docker tag <image_id> dockrepo.lizard.net/nens/ubuntu-trusty-base:latest
-#
-# push it to the registry
-# $ docker push dockrepo.lizard.net/nens/ubuntu-trusty-base:latest
-#
-
 FROM ubuntu:xenial
 
 MAINTAINER 3Di <3Di@nelen-schuurmans.nl>

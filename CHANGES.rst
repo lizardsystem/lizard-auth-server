@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 1.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Upgraded to Django 1.9.7.
 
 
 1.6 (2016-02-11)

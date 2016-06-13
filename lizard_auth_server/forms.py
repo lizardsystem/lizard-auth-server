@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django import forms
 from django.conf import settings
-from django.contrib import auth
+from django.contrib.auth import forms as authforms
 from django.contrib.auth.models import User
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -86,7 +86,7 @@ class AuthenticateUnsignedForm(forms.Form):
         return data
 
 
-class PasswordChangeForm(auth.forms.PasswordChangeForm):
+class PasswordChangeForm(authforms.PasswordChangeForm):
     """Used to verify whether the new password is secure."""
 
     def clean_new_password1(self):
@@ -95,7 +95,7 @@ class PasswordChangeForm(auth.forms.PasswordChangeForm):
         return password1
 
 
-class SetPasswordForm(auth.forms.SetPasswordForm):
+class SetPasswordForm(authforms.SetPasswordForm):
     """Used to verify whether the new password is secure."""
 
     def clean_new_password1(self):
@@ -270,6 +270,8 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
+        # TODO: 1.8 change
+        fields = '__all__'  # Or a list of the fields that you want to include in your form
 
     def clean(self):
         """Check 3Di-specific requirements"""

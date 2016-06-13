@@ -9,7 +9,7 @@ long_description = '\n\n'.join([
     ])
 
 install_requires = [
-    'Django >= 1.6, < 1.7',
+    'Django >= 1.9',
     'django-appconf',
     'django-extensions',
     'django-nose',
@@ -18,7 +18,6 @@ install_requires = [
     'pytz',
     'requests',
     'six',
-    'south',
     'translations',
     ],
 

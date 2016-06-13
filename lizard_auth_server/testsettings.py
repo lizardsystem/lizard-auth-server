@@ -30,7 +30,7 @@ LOGGING = {
             'level': 'WARN'
         },
         'null': {
-            'class': 'django.utils.log.NullHandler',
+            'class': 'logging.NullHandler',
             'level': 'DEBUG'
         }
     },
@@ -48,11 +48,6 @@ LOGGING = {
         'django.db.backends': {
             'handlers': ['null'],
             'level': 'WARN',
-            'propagate': False
-        },
-        'south': {
-            'handlers': ['null'],
-            'level': 'DEBUG',
             'propagate': False
         },
         'factory': {
@@ -171,7 +166,6 @@ MIDDLEWARE_CLASSES = (
 
 INSTALLED_APPS = (
     'lizard_auth_server',
-    'south',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -188,7 +182,8 @@ UI_GAUGES_SITE_ID = ''  # Staging has a separate one.
 DEFAULT_FROM_EMAIL = 'noreply@nelen-schuurmans.nl'
 EMAIL_HOST = '100-mail-d03.external-nens.local'
 
-AUTH_PROFILE_MODULE = 'lizard_auth_server.UserProfile'
+# TODO: this deprecated, should be removed?
+# AUTH_PROFILE_MODULE = 'lizard_auth_server.UserProfile'
 
 try:
     # Import local settings that aren't stored in svn/git.

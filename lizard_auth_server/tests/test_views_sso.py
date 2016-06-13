@@ -18,9 +18,12 @@ class TestConstructOrganisationRoleDict(TestCase):
         u_org = uuid.uuid4().hex
         u_role = uuid.uuid4().hex
 
-        org = factories.OrganisationF.build(
+        # TODO: used create instead of build because we need the orgrole
+        # to be saveable. Better solution: make an orgrole factory which
+        # has a primary key or something?
+        org = factories.OrganisationF.create(
             name='testorg', unique_id=u_org)
-        role = factories.RoleF.build(
+        role = factories.RoleF.create(
             unique_id=u_role,
             code='testrole',
             name='Testrole',
@@ -29,9 +32,14 @@ class TestConstructOrganisationRoleDict(TestCase):
 
         orgrole = models.OrganisationRole(
             organisation=org, role=role)
+        # TODO: the reason for this save is because orgroles need a primary
+        # key to be hashable in Django >=1.7, and apparently it didn't need
+        # one before.
+        orgrole.save()
 
-        self.assertEquals(
-            views_sso.construct_organisation_role_dict([orgrole]), {
+        org_role_dicts = views_sso.construct_organisation_role_dict([orgrole])
+
+        self.assertEquals(org_role_dicts, {
                 'organisations': [{
                     'name': 'testorg',
                     'unique_id': u_org
@@ -111,7 +119,11 @@ class TestLoginRedirect(TestCase):
         response = self.client.post('/accounts/login/', params)
 
         self.assertEquals(response.status_code, 302)
-        self.assertEquals(response.url, 'http://testserver/sso/authorize')
+
+        # Before upgrading from Django 1.6 -> 1.9 this used to be this (but now
+        # doesn't work):
+        # self.assertEquals(response.url, 'http://testserver/sso/authorize')
+        self.assertEquals(response.url, '/sso/authorize')
 
         self.authorize_and_check_redirect(None, self.portal.redirect_url)
         self.authorize_and_check_redirect('/', self.portal.redirect_url)

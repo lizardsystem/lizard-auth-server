@@ -24,11 +24,12 @@ def check_settings():
     if not getattr(settings, 'USE_TZ', False):
         raise ImproperlyConfigured(
             'Setting USE_TZ = True in your settings is also a good idea.')
-    if (getattr(settings, 'AUTH_PROFILE_MODULE') !=
-            'lizard_auth_server.UserProfile'):
-        raise ImproperlyConfigured(
-            'Ensure AUTH_PROFILE_MODULE is set to our custom '
-            'UserProfile model.')
+    # TODO: This settings is removed since Django 1.7, but this needs testing!
+    # if (getattr(settings, 'AUTH_PROFILE_MODULE') !=
+    #         'lizard_auth_server.UserProfile'):
+    #     raise ImproperlyConfigured(
+    #         'Ensure AUTH_PROFILE_MODULE is set to our custom '
+    #        'UserProfile model.')
 
 
 check_settings()

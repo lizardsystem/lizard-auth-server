@@ -7,7 +7,7 @@ import string
 
 
 random = SystemRandom()
-KEY_CHARACTERS = string.letters + string.digits
+KEY_CHARACTERS = string.ascii_letters + string.digits
 
 
 def default_gen_secret_key(length=40):

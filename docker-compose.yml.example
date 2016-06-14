@@ -1,7 +1,10 @@
 # Follows this structure (loosely): https://docs.docker.com/compose/django/
 #
-# Setup databases, and run buildout once again:
-#   $ docker-compose run web ./docker-bootstrap.sh
+# Build image:
+#   $ docker-compose build
+#
+# Migrations (no need to specify a container because db is outside of the container):
+#   $ docker-compose run web bin/django migrate --fake-initial
 #
 # Start your services:
 #   $ docker-compose up (-d)
@@ -14,5 +17,20 @@ services:
     ports:
       - "5000:5000"
     volumes:
+      # The following hack is courtesy to: http://jdlm.info/articles/2016/03/06/lessons-building-node-app-docker.html
+      # and specifically, this answer: http://stackoverflow.com/a/32785014.
+      # The first mount will mount your host project directory in /code,
+      # which will mask/overlay the contents that were originally in your
+      # Docker container's image. This is a problem because all our Buildout
+      # files, eggs, etc. will be masked. However, you can expose the masked
+      # files by adding them as extra mounts:
       - .:/code
+      - /code/bin
+      - /code/eggs
+      - /code/develop-eggs
+      - /code/parts
+        #- /code/var  # for test.db
+      # Data that is kept out of the container:
+      - ./var:/code/var
+      #- ./src:/code/src  # enable this if you have checkouts
     user: buildout

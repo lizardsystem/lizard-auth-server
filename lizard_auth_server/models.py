@@ -54,7 +54,7 @@ class GenKey(object):
         self.field = field
 
     def __call__(self):
-        if isinstance(self.model, basestring):
+        if isinstance(self.model, str):
             ModelClass = get_model('lizard_auth_server', self.model)
             if not ModelClass:
                 raise Exception('Unknown model {}'.format(self.model))

@@ -6,6 +6,7 @@ node {
    sh "docker-compose -f docker-compose.yml build"
    sh "docker-compose -f docker-compose.yml run web buildout"
 
+
    stage "Test"
    sh "docker-compose -f docker-compose.yml run web bin/test"
    step $class: 'JUnitResultArchiver', testResults: 'nosetests.xml'

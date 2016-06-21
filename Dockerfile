@@ -21,5 +21,5 @@ RUN apt-get update && apt-get install -y \
     python-gdal \
 && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-VOLUME /buildout
-WORKDIR /buildout
+VOLUME /code
+WORKDIR /code

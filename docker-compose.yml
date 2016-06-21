@@ -15,9 +15,3 @@ services:
       - "5000:5000"
     volumes:
       - .:/buildout
-
-# Note: command is the default when you run "up".  We don't want it in the
-# dockerfile as you'd have to do the full setup there, otherwise.
-
-
-# $ docker-compose run web buildout

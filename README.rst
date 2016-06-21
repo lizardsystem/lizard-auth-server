@@ -42,3 +42,21 @@ and afterwards fetch the latest translations::
 
 Note: this also fetches af/vi/zh, but we don't translate into those languages
 currently. They're ignored in the ``.gitignore`` file.
+
+
+Development with docker
+-----------------------
+
+The short version::
+
+    $ docker-compose build
+    $ docker-compose run web python bootstrap.py
+    $ docker-compose run web bin/buildout
+    $ docker-compose run web bin/django migrate
+    $ docker-compose up
+
+The site will now run on http://localhost:5000
+
+Running the tests::
+
+    $ docker-compose run web bin/test

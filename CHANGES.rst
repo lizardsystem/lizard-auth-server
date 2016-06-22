@@ -5,6 +5,8 @@ Changelog of lizard-auth-server
 1.8 (unreleased)
 ----------------
 
+- Some py3 changes.
+
 - Renamed 'return_unauthenticated'.
 
 - A user arriving at the SSO server after being redirected there can
@@ -23,7 +25,6 @@ Changelog of lizard-auth-server
   workflow that is sometimes helpful.
 
 - Python 3 setup and test fixes.
-
 
 1.7 (2016-06-14)
 ----------------

@@ -229,20 +229,20 @@ class StrMethodTestCase(TestCase):
 
     def test_str_portal(self):
         portal = factories.PortalF()
-        self.assertEquals(type(portal.__str__()), str)
+        self.assertEquals(type(str(portal)), str)
 
     def test_str_role(self):
         role = factories.RoleF()
-        self.assertEquals(type(role.__str__()), str)
+        self.assertEquals(type(str(role)), str)
 
     def test_str_organisation(self):
         organisation = factories.OrganisationF()
-        self.assertEquals(type(organisation.__str__()), str)
+        self.assertEquals(type(str(organisation)), str)
 
     def test_str_user_profile(self):
         user_profile = factories.UserProfileF()
-        self.assertEquals(type(user_profile.__str__()), str)
+        self.assertEquals(type(str(user_profile)), str)
 
     def test_str_invitation(self):
         invitation = factories.InvitationF()
-        self.assertEquals(type(invitation.__str__()), str)
+        self.assertEquals(type(str(invitation)), str)

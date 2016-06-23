@@ -748,18 +748,12 @@ class OrganisationRole(models.Model):
 class Profile(models.Model):
     """Replacement for UserProfile."""
     user = models.OneToOneField(
-        User,
+        'User',
         verbose_name=_('user'),
         related_name='profile')
-    organisations = models.ManyToManyField(
-        "Customer",
-        verbose_name=_('customers'),
-        related_name='profiles',
-        blank=True,
-        null=True)
 
 
-class Customer(models.Model):
+class Company(models.Model):
     """Replacement for Organisation."""
     name = models.CharField(
         verbose_name=_('name'),
@@ -774,6 +768,31 @@ class Customer(models.Model):
         default=create_new_uuid)
 
 
+class CompanyRole(models.Model):
+    GUEST = 0
+    EMPLOYEE = 1
+    ADMINISTRATOR = 2
+
+    COMPANY_ROLE_TYPES = (
+        (GUEST, 'Guest/external user'),
+        (EMPLOYEE, 'Employee'),
+        (ADMINISTRATOR, 'Administrator'),
+        )
+    company = models.ForeignKey(
+        'Company',
+        related_name='company_roles',
+        verbose_name=_('company'),
+        blank=True)
+    profile = models.ManyToManyField(
+        'Profile',
+        related_name='company_roles',
+        verbose_name=_('profiles'),
+        blank=True)
+    type = models.IntegerField(
+        choices=COMPANY_ROLE_TYPES,
+        default=GUEST)
+
+
 class Site(models.Model):
     """Replacement for Portal."""
     name = models.CharField(
@@ -781,4 +800,4 @@ class Site(models.Model):
         max_length=255,
         null=False,
         blank=False,
-        help_text=_('Name used to refer to this portal.'))
+        help_text=_('Name used to refer to this site.'))

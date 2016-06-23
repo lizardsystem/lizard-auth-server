@@ -9,7 +9,6 @@ from django.db import models
 from django.db import transaction
 from django.db.models import F
 from django.db.models.query_utils import Q
-from django.db.models.signals import post_save
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.deconstruct import deconstructible
@@ -188,6 +187,8 @@ class UserProfile(models.Model):
 
     Note: this is linked via Django's user profile support. This means
     all fields must be OPTIONAL.
+
+    Note 2: This doesn't work with getprofile() anymore
     """
     user = models.OneToOneField(
         User,
@@ -402,14 +403,6 @@ class UserProfile(models.Model):
                 'results': results}
 
         return results
-
-
-# have the creation of a User trigger the creation of a Profile
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-
-post_save.connect(create_user_profile, sender=User)
 
 
 class Invitation(models.Model):
@@ -691,6 +684,7 @@ class Organisation(models.Model):
             'unique_id': self.unique_id
             }
 
+
 class OrganisationRoleManager(models.Manager):
 
     def get_queryset(self):
@@ -746,3 +740,45 @@ class OrganisationRole(models.Model):
             "organisation": self.organisation.as_dict(),
             "role": self.role.as_dict()
         }
+
+
+# New models
+# ##########
+
+class Profile(models.Model):
+    """Replacement for UserProfile."""
+    user = models.OneToOneField(
+        User,
+        verbose_name=_('user'),
+        related_name='profile')
+    organisations = models.ManyToManyField(
+        "Customer",
+        verbose_name=_('customers'),
+        related_name='profiles',
+        blank=True,
+        null=True)
+
+
+class Customer(models.Model):
+    """Replacement for Organisation."""
+    name = models.CharField(
+        verbose_name=_('name'),
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=True)
+    unique_id = models.CharField(
+        verbose_name=_('unique id'),
+        max_length=32,
+        unique=True,
+        default=create_new_uuid)
+
+
+class Site(models.Model):
+    """Replacement for Portal."""
+    name = models.CharField(
+        verbose_name=_('name'),
+        max_length=255,
+        null=False,
+        blank=False,
+        help_text=_('Name used to refer to this portal.'))

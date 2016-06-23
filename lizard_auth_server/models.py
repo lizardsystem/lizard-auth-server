@@ -767,10 +767,18 @@ class Company(models.Model):
         unique=True,
         default=create_new_uuid)
 
+    class Meta:
+        verbose_name = _('company'),
+        verbose_name_plural = _('companies')
+
 
 class CompanyRole(models.Model):
+    """The role a user has in the company."""
+    # External or guest user that wants access to site
     GUEST = 0
+    # Works there, has access to all company sites
     EMPLOYEE = 1
+    # Can add/remove users for the company
     ADMINISTRATOR = 2
 
     COMPANY_ROLE_TYPES = (
@@ -783,14 +791,14 @@ class CompanyRole(models.Model):
         related_name='company_roles',
         verbose_name=_('company'),
         blank=True)
-    profile = models.ManyToManyField(
+    profiles = models.ManyToManyField(
         'Profile',
         related_name='company_roles',
         verbose_name=_('profiles'),
         blank=True)
     type = models.IntegerField(
         choices=COMPANY_ROLE_TYPES,
-        default=GUEST)
+        default=EMPLOYEE)
 
 
 class Site(models.Model):

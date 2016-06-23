@@ -748,7 +748,7 @@ class OrganisationRole(models.Model):
 class Profile(models.Model):
     """Replacement for UserProfile."""
     user = models.OneToOneField(
-        'User',
+        User,
         verbose_name=_('user'),
         related_name='profile')
 

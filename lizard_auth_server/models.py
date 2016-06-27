@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.db import transaction
 from django.db.models import F
-from django.apps import AppConfig
+from django.apps import apps
 
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
@@ -49,7 +49,8 @@ class GenKey(object):
 
     def __call__(self):
         if isinstance(self.model, str):
-            ModelClass = AppConfig.get_model(self.model)
+            ModelClass = apps.get_app_config('lizard_auth_server').get_model(
+                self.model)
             if not ModelClass:
                 raise Exception('Unknown model {}'.format(self.model))
         else:

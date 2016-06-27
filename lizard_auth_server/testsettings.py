@@ -70,7 +70,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'NAME': os.path.join(BUILDOUT_DIR, 'var', 'sqlite', 'test.db'),
-        'ENGINE': b'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3',
         'USER': 'buildout',
         'PASSWORD': 'buildout',
         'HOST': '',

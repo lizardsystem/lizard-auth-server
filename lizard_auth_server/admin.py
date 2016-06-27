@@ -299,7 +299,7 @@ class RelevantOrganisationFilter(admin.SimpleListFilter):
 class OrganisationRoleAdmin(admin.ModelAdmin):
     model = models.OrganisationRole
     ordering = ('role__portal', 'organisation', 'role')
-    list_display = ['__unicode__', 'role', 'organisation']
+    list_display = ['__str__', 'role', 'organisation']
     list_filter = ['role', RelevantOrganisationFilter]
     search_fields = ['organisation__name', 'role__name', 'role__portal__name']
 

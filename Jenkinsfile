@@ -4,6 +4,7 @@ node {
 
    stage "Build"
    sh "docker-compose build"
+   sh "rm .installed.cfg"
    sh "docker-compose run web python3 bootstrap.py"
    sh "docker-compose run web bin/buildout"
 

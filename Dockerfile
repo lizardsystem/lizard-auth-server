@@ -13,12 +13,10 @@ RUN apt-get update && apt-get install -y \
     git \
     libevent-dev \
     libfreetype6-dev \
-    libgeos-dev \
     libpng12-dev \
     python-dev \
     python-pip \
-    python-psycopg2 \
-    python-gdal \
+    python3-psycopg2 \
 && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 VOLUME /code

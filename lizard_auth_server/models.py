@@ -767,8 +767,8 @@ class Profile(models.Model):
         return self.user.username
 
     class Meta:
-        verbose_name = _("profile")
-        verbose_name_plural = _("profiles")
+        verbose_name = _("user profile")
+        verbose_name_plural = _("user profiles")
 
     @property
     def username(self):

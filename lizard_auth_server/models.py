@@ -261,8 +261,8 @@ class UserProfile(models.Model):
     objects = UserProfileManager()
 
     class Meta:
-        verbose_name = _('user profile')
-        verbose_name_plural = _('user profiles')
+        verbose_name = _('user profile (old style)')
+        verbose_name_plural = _('user profiles (old style)')
         ordering = ['user__username']
 
     def __str__(self):
@@ -756,9 +756,39 @@ class Profile(models.Model):
         verbose_name=_('company'),
         blank=True,
         null=True)
+    created_at = models.DateTimeField(
+        verbose_name=_('created on'),
+        auto_now_add=True)
+    updated_at = models.DateTimeField(
+        verbose_name=_('updated on'),
+        auto_now=True)
 
     def __str__(self):
-        return "%s's profile" % self.user.username
+        return self.user.username
+
+    class Meta:
+        verbose_name = _("profile")
+        verbose_name_plural = _("profiles")
+
+    @property
+    def username(self):
+        return self.user.username
+
+    @property
+    def full_name(self):
+        return self.user.get_full_name()
+
+    @property
+    def first_name(self):
+        return self.user.first_name
+
+    @property
+    def last_name(self):
+        return self.user.last_name
+
+    @property
+    def email(self):
+        return self.user.email
 
 
 class Company(models.Model):
@@ -778,12 +808,14 @@ class Company(models.Model):
         'Profile',
         related_name='guest_companies',
         verbose_name=_('guests'),
-        blank=True)
+        blank=True,
+        help_text=_("Guests or external users."))
     administrators = models.ManyToManyField(
         'Profile',
         related_name='admin_companies',
         verbose_name=_('administrators'),
-        blank=True)
+        blank=True,
+        help_text=_("Can manage other user profiles."))
 
     def __str__(self):
         return self.name
@@ -809,3 +841,7 @@ class Site(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = _("site")
+        verbose_name_plural = _("sites")

@@ -306,6 +306,23 @@ class OrganisationRoleAdmin(admin.ModelAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
     model = models.Profile
+    list_display = ['username', 'full_name', 'email', 'created_at']
+    search_fields = ['user__first_name', 'user__last_name', 'user__email']
+    list_filter = ['company']
+    readonly_fields = ['updated_at', 'created_at']
+    list_select_related = ['user']
+
+
+class CompanyAdmin(admin.ModelAdmin):
+    model = models.Company
+    filter_horizontal = ['guests', 'administrators']
+    search_fields = ['name']
+
+
+class SiteAdmin(admin.ModelAdmin):
+    model = models.Site
+    filter_horizontal = ['available_to']
+    search_fields = ['name']
 
 
 admin.site.register(models.Portal, PortalAdmin)
@@ -317,5 +334,5 @@ admin.site.register(models.Organisation, OrganisationAdmin)
 admin.site.register(models.OrganisationRole, OrganisationRoleAdmin)
 
 admin.site.register(models.Profile, ProfileAdmin)
-admin.site.register(models.Company)
-admin.site.register(models.Site)
+admin.site.register(models.Company, CompanyAdmin)
+admin.site.register(models.Site, SiteAdmin)

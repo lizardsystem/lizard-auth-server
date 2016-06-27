@@ -752,6 +752,9 @@ class Profile(models.Model):
         verbose_name=_('user'),
         related_name='profile')
 
+    def __str__(self):
+        return "%s's profile" % self.user.username
+
 
 class Company(models.Model):
     """Replacement for Organisation."""
@@ -809,3 +812,8 @@ class Site(models.Model):
         null=False,
         blank=False,
         help_text=_('Name used to refer to this site.'))
+    administrators = models.ManyToManyField(
+        'Profile',
+        related_name='sites',
+        verbose_name=_('administrators'),
+        blank=True)

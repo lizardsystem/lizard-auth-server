@@ -12,7 +12,7 @@ cache:
    - $HOME/.local
 install:
   - deactivate
-  - /usr/bin/python3 bootstrap.py
+  - python bootstrap.py
   - bin/buildout -v
 script:
   - bin/test

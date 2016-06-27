@@ -12,6 +12,7 @@ from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from django.template.loader import render_to_string
 from django.utils import translation
+from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _
 from lizard_auth_server.utils import gen_secret_key
 
@@ -25,9 +26,6 @@ THREEDI_PORTAL = '3Di'
 
 
 logger = logging.getLogger(__name__)
-
-
-from django.utils.deconstruct import deconstructible
 
 
 @deconstructible

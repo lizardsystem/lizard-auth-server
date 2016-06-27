@@ -101,7 +101,7 @@ class Portal(models.Model):
         max_length=255,
         help_text=_('URL used in the UI to refer to this portal.'))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def rotate_keys(self):
@@ -264,7 +264,7 @@ class UserProfile(models.Model):
         verbose_name_plural = _('user profiles')
         ordering = ['user__username']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.user:
             return '{}'.format(self.user)
         else:
@@ -471,7 +471,7 @@ class Invitation(models.Model):
         verbose_name_plural = _('invitation')
         ordering = ['is_activated', '-created_at', 'email']
 
-    def __unicode__(self):
+    def __str__(self):
         return "invitation for %s" % self.email
 
     def clean(self):
@@ -645,7 +645,7 @@ class Role(models.Model):
         verbose_name = _('role')
         verbose_name_plural = _('roles')
 
-    def __unicode__(self):
+    def __str__(self):
         return _('{name} on {portal}').format(name=self.name,
                                               portal=self.portal.name)
 
@@ -682,7 +682,7 @@ class Organisation(models.Model):
         verbose_name = _('organisation')
         verbose_name_plural = _('organisations')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def as_dict(self):
@@ -721,7 +721,7 @@ class OrganisationRole(models.Model):
         verbose_name = _('organisation-role-mapping')
         verbose_name_plural = _('organisation-role-mappings')
 
-    def __unicode__(self):
+    def __str__(self):
         if self.for_all_users:
             return _("{role} for everybody in {org}").format(
                 role=self.role, org=self.organisation)

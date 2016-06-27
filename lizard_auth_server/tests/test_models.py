@@ -225,24 +225,24 @@ class TestUserProfile(TestCase):
         self.assertTrue(profile_form.is_valid())
 
 
-class UnicodeMethodTestCase(TestCase):
+class StrMethodTestCase(TestCase):
 
-    def test_unicode_portal(self):
+    def test_str_portal(self):
         portal = factories.PortalF()
-        self.assertEquals(type(portal.__unicode__()), unicode)
+        self.assertEquals(type(portal.__str__()), str)
 
-    def test_unicode_role(self):
+    def test_str_role(self):
         role = factories.RoleF()
-        self.assertEquals(type(role.__unicode__()), unicode)
+        self.assertEquals(type(role.__str__()), str)
 
-    def test_unicode_organisation(self):
+    def test_str_organisation(self):
         organisation = factories.OrganisationF()
-        self.assertEquals(type(organisation.__unicode__()), unicode)
+        self.assertEquals(type(organisation.__str__()), str)
 
-    def test_unicode_user_profile(self):
+    def test_str_user_profile(self):
         user_profile = factories.UserProfileF()
-        self.assertEquals(type(user_profile.__unicode__()), unicode)
+        self.assertEquals(type(user_profile.__str__()), str)
 
-    def test_unicode_invitation(self):
+    def test_str_invitation(self):
         invitation = factories.InvitationF()
-        self.assertEquals(type(invitation.__unicode__()), unicode)
+        self.assertEquals(type(invitation.__str__()), str)

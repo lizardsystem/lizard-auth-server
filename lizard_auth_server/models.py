@@ -806,3 +806,6 @@ class Site(models.Model):
         related_name='sites',
         verbose_name=_('available to'),
         blank=True)
+
+    def __str__(self):
+        return self.name

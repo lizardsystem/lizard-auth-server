@@ -134,7 +134,7 @@ SITE_NAME = 'sso.lizard.net'
 
 ROOT_URLCONF = 'lizard_auth_server.urls'
 
-TEST_RUNNER = b'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 CACHES = {
     'default': {

@@ -2,16 +2,11 @@ language: python
 sudo: false
 python:
   - 3.5
-addons:
-  apt:
-    packages:
-     - python3-psycopg2
 cache:
   directories:
    - eggs
    - $HOME/.local
 install:
-  - deactivate
   - python bootstrap.py
   - bin/buildout -v
 script:

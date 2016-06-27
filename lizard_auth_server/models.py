@@ -751,6 +751,11 @@ class Profile(models.Model):
         User,
         verbose_name=_('user'),
         related_name='profile')
+    company = models.ForeignKey(
+        'Company',
+        verbose_name=_('company'),
+        blank=True,
+        null=True)
 
     def __str__(self):
         return "%s's profile" % self.user.username
@@ -769,39 +774,23 @@ class Company(models.Model):
         max_length=32,
         unique=True,
         default=create_new_uuid)
+    guests = models.ManyToManyField(
+        'Profile',
+        related_name='guest_companies',
+        verbose_name=_('guests'),
+        blank=True)
+    administrators = models.ManyToManyField(
+        'Profile',
+        related_name='admin_companies',
+        verbose_name=_('administrators'),
+        blank=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
-        verbose_name = _('company'),
+        verbose_name = _('company')
         verbose_name_plural = _('companies')
-
-
-class CompanyRole(models.Model):
-    """The role a user has in the company."""
-    # External or guest user that wants access to site
-    GUEST = 0
-    # Works there, has access to all company sites
-    EMPLOYEE = 1
-    # Can add/remove users for the company
-    ADMINISTRATOR = 2
-
-    COMPANY_ROLE_TYPES = (
-        (GUEST, 'Guest/external user'),
-        (EMPLOYEE, 'Employee'),
-        (ADMINISTRATOR, 'Administrator'),
-        )
-    company = models.ForeignKey(
-        'Company',
-        related_name='company_roles',
-        verbose_name=_('company'),
-        blank=True)
-    profiles = models.ManyToManyField(
-        'Profile',
-        related_name='company_roles',
-        verbose_name=_('profiles'),
-        blank=True)
-    type = models.IntegerField(
-        choices=COMPANY_ROLE_TYPES,
-        default=EMPLOYEE)
 
 
 class Site(models.Model):
@@ -812,8 +801,8 @@ class Site(models.Model):
         null=False,
         blank=False,
         help_text=_('Name used to refer to this site.'))
-    administrators = models.ManyToManyField(
-        'Profile',
+    available_to = models.ManyToManyField(
+        'Company',
         related_name='sites',
-        verbose_name=_('administrators'),
+        verbose_name=_('available to'),
         blank=True)

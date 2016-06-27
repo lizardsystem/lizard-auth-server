@@ -304,13 +304,8 @@ class OrganisationRoleAdmin(admin.ModelAdmin):
     search_fields = ['organisation__name', 'role__name', 'role__portal__name']
 
 
-class CompanyRoleInline(admin.TabularInline):
-    model = models.CompanyRole.profiles.through
-
-
 class ProfileAdmin(admin.ModelAdmin):
     model = models.Profile
-    inlines = (CompanyRoleInline,)
 
 
 admin.site.register(models.Portal, PortalAdmin)
@@ -323,5 +318,4 @@ admin.site.register(models.OrganisationRole, OrganisationRoleAdmin)
 
 admin.site.register(models.Profile, ProfileAdmin)
 admin.site.register(models.Company)
-admin.site.register(models.CompanyRole)
 admin.site.register(models.Site)

@@ -838,6 +838,34 @@ class Site(models.Model):
         related_name='sites',
         verbose_name=_('available to'),
         blank=True)
+    sso_secret = models.CharField(
+        verbose_name=_('shared secret'),
+        max_length=64,
+        unique=True,
+        default=GenKey('Portal', 'sso_secret'),
+        help_text=_('Secret shared between SSO client and '
+                    'server to sign/encrypt communication.'))
+    sso_key = models.CharField(
+        verbose_name=_('identifying key'),
+        max_length=64,
+        unique=True,
+        default=GenKey('Portal', 'sso_key'),
+        help_text=_('String used to identify the SSO client.'))
+    allowed_domain = models.CharField(
+        verbose_name=_('allowed domain(s)'),
+        max_length=255,
+        default='',
+        help_text=_(
+            'Allowed domain suffix for redirects using the next parameter. '
+            'Multiple, whitespace-separated suffixes may be specified.'))
+    redirect_url = models.CharField(
+        verbose_name=_('redirect url'),
+        max_length=255,
+        help_text=_('URL used in the SSO redirection.'))
+    visit_url = models.CharField(
+        verbose_name=_('visit url'),
+        max_length=255,
+        help_text=_('URL used in the UI to refer to this portal.'))
 
     def __str__(self):
         return self.name

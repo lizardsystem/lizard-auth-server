@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -7,18 +8,11 @@ from django.core.mail import send_mail
 from django.db import models
 from django.db import transaction
 from django.db.models import F
-
-try:
-    # Django >=1.9
-    from django.apps import apps
-    get_model = apps.get_model
-except ImportError:
-    from django.db.models.loading import get_model
-
 from django.db.models.query_utils import Q
 from django.db.models.signals import post_save
 from django.template.loader import render_to_string
 from django.utils import translation
+from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _
 from lizard_auth_server.utils import gen_secret_key
 
@@ -32,9 +26,6 @@ THREEDI_PORTAL = '3Di'
 
 
 logger = logging.getLogger(__name__)
-
-
-from django.utils.deconstruct import deconstructible
 
 
 @deconstructible
@@ -55,7 +46,8 @@ class GenKey(object):
 
     def __call__(self):
         if isinstance(self.model, str):
-            ModelClass = get_model('lizard_auth_server', self.model)
+            ModelClass = apps.get_app_config('lizard_auth_server').get_model(
+                self.model)
             if not ModelClass:
                 raise Exception('Unknown model {}'.format(self.model))
         else:
@@ -109,7 +101,7 @@ class Portal(models.Model):
         max_length=255,
         help_text=_('URL used in the UI to refer to this portal.'))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def rotate_keys(self):
@@ -272,7 +264,7 @@ class UserProfile(models.Model):
         verbose_name_plural = _('user profiles')
         ordering = ['user__username']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.user:
             return '{}'.format(self.user)
         else:
@@ -479,7 +471,7 @@ class Invitation(models.Model):
         verbose_name_plural = _('invitation')
         ordering = ['is_activated', '-created_at', 'email']
 
-    def __unicode__(self):
+    def __str__(self):
         return "invitation for %s" % self.email
 
     def clean(self):
@@ -653,7 +645,7 @@ class Role(models.Model):
         verbose_name = _('role')
         verbose_name_plural = _('roles')
 
-    def __unicode__(self):
+    def __str__(self):
         return _('{name} on {portal}').format(name=self.name,
                                               portal=self.portal.name)
 
@@ -690,7 +682,7 @@ class Organisation(models.Model):
         verbose_name = _('organisation')
         verbose_name_plural = _('organisations')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def as_dict(self):
@@ -729,7 +721,7 @@ class OrganisationRole(models.Model):
         verbose_name = _('organisation-role-mapping')
         verbose_name_plural = _('organisation-role-mappings')
 
-    def __unicode__(self):
+    def __str__(self):
         if self.for_all_users:
             return _("{role} for everybody in {org}").format(
                 role=self.role, org=self.organisation)

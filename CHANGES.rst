@@ -20,6 +20,7 @@ Changelog of lizard-auth-server
   This enables a "attempt to auto-login if possible, but don't require it"
   workflow that is sometimes helpful.
 
+- Python 3 setup and test fixes.
 
 
 1.7 (2016-06-14)

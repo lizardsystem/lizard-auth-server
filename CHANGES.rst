@@ -5,6 +5,10 @@ Changelog of lizard-auth-server
 1.8 (unreleased)
 ----------------
 
+- Added new models for SSO refactoring.
+
+- Put user creation signals handlers into seperate module.
+
 - Some py3 changes.
 
 - Renamed 'return_unauthenticated'.

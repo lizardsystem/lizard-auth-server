@@ -154,10 +154,11 @@ class AuthorizeView(ProcessGetFormView):
         except Token.DoesNotExist:
             return HttpResponseForbidden('Invalid request token')
         if self.check_token_timeout():
+            self.domain = get_domain(form)
             if self.request.user.is_authenticated():
-                self.domain = get_domain(form)
                 return self.form_valid_authenticated()
-            return self.form_valid_unauthenticated()
+            return self.form_valid_unauthenticated(
+                form.cleaned_data.get('return_unauthenticated', False))
         return self.token_timeout()
 
     def form_invalid(self, form):
@@ -215,7 +216,7 @@ class AuthorizeView(ProcessGetFormView):
         self.token.user = self.request.user
         self.token.save()
         # redirect user back to the portal
-        url = urljoin(self.domain, 'sso/local_login') + '/'
+        url = urljoin(self.domain, 'sso/local_login/')
         url = '%s?%s' % (url, urlencode({'message': message}))
         return HttpResponseRedirect(url)
 
@@ -249,11 +250,20 @@ class AuthorizeView(ProcessGetFormView):
         )])
         return '%s?%s' % (reverse('django.contrib.auth.views.login'), params)
 
-    def form_valid_unauthenticated(self):
+    def build_back_to_portal_url(self):
+        """Redirect user back to the portal, without logging him in."""
+        return urljoin(self.domain, 'sso/local_not_logged_in/')
+
+    def form_valid_unauthenticated(self, return_unauthenticated):
         """
-        Redirect to login page when user isn't logged in yet.
+        Redirect user, to login page if return_unauthenticated == False.
         """
-        return HttpResponseRedirect(self.build_login_url())
+        if return_unauthenticated:
+            # Return the unauthenticated user back to the portal.
+            return HttpResponseRedirect(self.build_back_to_portal_url())
+        else:
+            # Typical situation -- force the user to login.
+            return HttpResponseRedirect(self.build_login_url())
 
 
 def construct_user_data(user=None, profile=None):

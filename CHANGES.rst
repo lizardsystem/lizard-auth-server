@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 1.8 (unreleased)
 ----------------
 
-- Renamed 'return_unauthenticated' to 'attempt_login_if_authenticated'.
+- Renamed 'return_unauthenticated'.
 
 - A user arriving at the SSO server after being redirected there can
   now use a "return_unauthenticated" URL attribute. If the user is

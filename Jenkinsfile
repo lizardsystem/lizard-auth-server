@@ -8,7 +8,9 @@ node {
    sh "docker-compose run web bin/buildout"
 
    stage "Test"
-   sh "docker-compose run web bin/test"
+   sh "docker-compose run web bin/coverage run bin/test"
+   sh "docker-compose run web bin/coverage report"
+   sh "docker-compose run web bin/test html"
    step $class: 'JUnitResultArchiver', testResults: 'nosetests.xml'
    publishHTML target: [reportDir: 'htmlcov', reportFiles: 'index.html', reportName: 'Coverage report']
 }

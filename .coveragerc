@@ -2,3 +2,13 @@
 omit =
     */migrations/*
     *settings.py
+source = lizard_auth_server
+
+[report]
+show_missing = true
+
+[html]
+directory = htmlcov
+
+[xml]
+output = coverage.xml

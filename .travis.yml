@@ -10,8 +10,6 @@ install:
   - python bootstrap.py
   - bin/buildout -v
 script:
-  - bin/coverage run bin/test
-  - bin/coverage report
-  - bin/coverage xml
+  - bin/test
 after_success:
   - bin/coveralls

@@ -88,3 +88,29 @@ class InvitationF(factory.DjangoModelFactory):
     email = 'reinout@example.org'
     organisation = 'Some organisation'
     language = 'nl'
+
+
+class CompanyF(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Company
+
+    name = factory.Sequence(lambda n: 'company %s' % n)
+    unique_id = factory.LazyAttribute(lambda org: models.create_new_uuid())
+
+
+class ProfileF(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Profile
+        django_get_or_create = ('user',)
+
+    user = factory.SubFactory(UserF)
+    company = factory.SubFactory(CompanyF)
+
+
+class SiteF(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Site
+
+    name = factory.LazyAttribute(lambda x: faker.company())
+    redirect_url = factory.LazyAttribute(lambda x: faker.url())
+    visit_url = factory.LazyAttribute(lambda x: faker.url())

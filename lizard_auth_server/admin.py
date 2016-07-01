@@ -299,9 +299,30 @@ class RelevantOrganisationFilter(admin.SimpleListFilter):
 class OrganisationRoleAdmin(admin.ModelAdmin):
     model = models.OrganisationRole
     ordering = ('role__portal', 'organisation', 'role')
-    list_display = ['__unicode__', 'role', 'organisation']
+    list_display = ['__str__', 'role', 'organisation']
     list_filter = ['role', RelevantOrganisationFilter]
     search_fields = ['organisation__name', 'role__name', 'role__portal__name']
+
+
+class ProfileAdmin(admin.ModelAdmin):
+    model = models.Profile
+    list_display = ['username', 'full_name', 'email', 'created_at']
+    search_fields = ['user__first_name', 'user__last_name', 'user__email']
+    list_filter = ['company']
+    readonly_fields = ['updated_at', 'created_at']
+    list_select_related = ['user']
+
+
+class CompanyAdmin(admin.ModelAdmin):
+    model = models.Company
+    filter_horizontal = ['guests', 'administrators']
+    search_fields = ['name']
+
+
+class SiteAdmin(admin.ModelAdmin):
+    model = models.Site
+    filter_horizontal = ['available_to']
+    search_fields = ['name', 'visit_url']
 
 
 admin.site.register(models.Portal, PortalAdmin)
@@ -311,3 +332,6 @@ admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Role, RoleAdmin)
 admin.site.register(models.Organisation, OrganisationAdmin)
 admin.site.register(models.OrganisationRole, OrganisationRoleAdmin)
+admin.site.register(models.Profile, ProfileAdmin)
+admin.site.register(models.Company, CompanyAdmin)
+admin.site.register(models.Site, SiteAdmin)

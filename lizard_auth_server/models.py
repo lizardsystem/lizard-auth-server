@@ -9,7 +9,6 @@ from django.db import models
 from django.db import transaction
 from django.db.models import F
 from django.db.models.query_utils import Q
-from django.db.models.signals import post_save
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.deconstruct import deconstructible
@@ -188,6 +187,8 @@ class UserProfile(models.Model):
 
     Note: this is linked via Django's user profile support. This means
     all fields must be OPTIONAL.
+
+    Note 2: This doesn't work with getprofile() anymore
     """
     user = models.OneToOneField(
         User,
@@ -260,8 +261,8 @@ class UserProfile(models.Model):
     objects = UserProfileManager()
 
     class Meta:
-        verbose_name = _('user profile')
-        verbose_name_plural = _('user profiles')
+        verbose_name = _('user profile (old style)')
+        verbose_name_plural = _('user profiles (old style)')
         ordering = ['user__username']
 
     def __str__(self):
@@ -402,14 +403,6 @@ class UserProfile(models.Model):
                 'results': results}
 
         return results
-
-
-# have the creation of a User trigger the creation of a Profile
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-
-post_save.connect(create_user_profile, sender=User)
 
 
 class Invitation(models.Model):
@@ -691,6 +684,7 @@ class Organisation(models.Model):
             'unique_id': self.unique_id
             }
 
+
 class OrganisationRoleManager(models.Manager):
 
     def get_queryset(self):
@@ -746,3 +740,139 @@ class OrganisationRole(models.Model):
             "organisation": self.organisation.as_dict(),
             "role": self.role.as_dict()
         }
+
+
+# New models
+# ##########
+
+class Profile(models.Model):
+    """Replacement for UserProfile."""
+    user = models.OneToOneField(
+        User,
+        verbose_name=_('user'),
+        related_name='profile')
+    company = models.ForeignKey(
+        'Company',
+        verbose_name=_('company'),
+        blank=True,
+        null=True)
+    created_at = models.DateTimeField(
+        verbose_name=_('created at'),
+        auto_now_add=True)
+    updated_at = models.DateTimeField(
+        verbose_name=_('updated at'),
+        auto_now=True)
+
+    def __str__(self):
+        return self.user.username
+
+    class Meta:
+        verbose_name = _("user profile")
+        verbose_name_plural = _("user profiles")
+
+    @property
+    def username(self):
+        return self.user.username
+
+    @property
+    def full_name(self):
+        return self.user.get_full_name()
+
+    @property
+    def first_name(self):
+        return self.user.first_name
+
+    @property
+    def last_name(self):
+        return self.user.last_name
+
+    @property
+    def email(self):
+        return self.user.email
+
+
+class Company(models.Model):
+    """Replacement for Organisation."""
+    name = models.CharField(
+        verbose_name=_('name'),
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=True)
+    unique_id = models.CharField(
+        verbose_name=_('unique id'),
+        max_length=32,
+        unique=True,
+        default=create_new_uuid)
+    guests = models.ManyToManyField(
+        'Profile',
+        related_name='companies_as_guest',
+        verbose_name=_('guests'),
+        blank=True,
+        help_text=_("Guests or external users."))
+    administrators = models.ManyToManyField(
+        'Profile',
+        related_name='companies_as_admin',
+        verbose_name=_('administrators'),
+        blank=True,
+        help_text=_(
+            "Admins can add/edit users belonging to the company and can add/"
+            "remove guests and manage site access")
+        )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('company')
+        verbose_name_plural = _('companies')
+
+
+class Site(models.Model):
+    """Replacement for Portal."""
+    name = models.CharField(
+        verbose_name=_('name'),
+        max_length=255,
+        null=False,
+        blank=False,
+        help_text=_('Name used to refer to this site.'))
+    available_to = models.ManyToManyField(
+        'Company',
+        related_name='sites',
+        verbose_name=_('available to'),
+        blank=True)
+    sso_secret = models.CharField(
+        verbose_name=_('shared secret'),
+        max_length=64,
+        unique=True,
+        default=GenKey('Site', 'sso_secret'),
+        help_text=_('Secret shared between SSO client and '
+                    'server to sign/encrypt communication.'))
+    sso_key = models.CharField(
+        verbose_name=_('identifying key'),
+        max_length=64,
+        unique=True,
+        default=GenKey('Site', 'sso_key'),
+        help_text=_('String used to identify the SSO client.'))
+    allowed_domain = models.CharField(
+        verbose_name=_('allowed domain(s)'),
+        max_length=1000,
+        default='',
+        help_text=_(
+            'Allowed domain suffix for redirects using the next parameter. '
+            'Multiple, whitespace-separated suffixes may be specified.'))
+    redirect_url = models.CharField(
+        verbose_name=_('redirect url'),
+        max_length=255,
+        help_text=_('URL used in the SSO redirection.'))
+    visit_url = models.CharField(
+        verbose_name=_('visit url'),
+        max_length=255,
+        help_text=_('URL used in the UI to refer to this portal.'))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("site")
+        verbose_name_plural = _("sites")

@@ -227,22 +227,30 @@ class TestUserProfile(TestCase):
 
 class StrMethodTestCase(TestCase):
 
+    def call_str(self, obj):
+        self.assertEquals(type(obj.__str__()), str)
+
     def test_str_portal(self):
-        portal = factories.PortalF()
-        self.assertEquals(type(portal.__str__()), str)
+        """Smoke tests."""
+        objs = [
+            factories.PortalF(),
+            factories.RoleF(),
+            factories.OrganisationF(),
+            factories.UserProfileF(),
+            factories.InvitationF(),
+            factories.SiteF(),
+            factories.CompanyF(),
+            factories.ProfileF(),
+        ]
 
-    def test_str_role(self):
-        role = factories.RoleF()
-        self.assertEquals(type(role.__str__()), str)
+        for o in objs:
+            self.call_str(o)
 
-    def test_str_organisation(self):
-        organisation = factories.OrganisationF()
-        self.assertEquals(type(organisation.__str__()), str)
-
-    def test_str_user_profile(self):
-        user_profile = factories.UserProfileF()
-        self.assertEquals(type(user_profile.__str__()), str)
-
-    def test_str_invitation(self):
-        invitation = factories.InvitationF()
-        self.assertEquals(type(invitation.__str__()), str)
+    def test_profile_properties(self):
+        """Simple property checks."""
+        p = factories.ProfileF()
+        p.username
+        p.full_name
+        p.first_name
+        p.last_name
+        p.email

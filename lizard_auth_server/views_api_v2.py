@@ -78,7 +78,7 @@ class AuthorizeView(ProcessGetFormView):
 
     def form_valid_authenticated(self):
         """
-        Called then login succeeded.
+        Called when login succeeded.
         """
         if self.has_access():
             return self.success()

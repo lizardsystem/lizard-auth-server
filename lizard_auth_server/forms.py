@@ -71,9 +71,8 @@ class JWTDecryptForm(forms.Form):
         try:
             new_data = jwt.decode(data['message'], self.site.sso_secret,
                                   algorithms=['HS256'])
-        except:
-            # TODO: catch custom exceptions
-            raise Exception("Key verification failed")
+        except jwt.exception.DecodeError:
+            raise ValidationError("Failed to decode JWT.")
 
         # TODO: Is this needed? Seems superfluous
         if data['key'] != new_data['key']:

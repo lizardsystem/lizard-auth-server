@@ -126,13 +126,11 @@ class AuthorizeView(ProcessGetFormView):
             # login anyway
             return False
         try:
-            # get_profile is deprecated in Django >= 1.7
-            # profile = self.request.user.get_profile()
-            profile = self.request.user.user_profile
+            profile = self.request.user.profile
         except UserProfile.DoesNotExist:
             return False
         # TODO: check whether the UserProfile object is related to this Site
-        return True
+        return profile.has_access(self.site)
 
     def success(self):
         payload = {

@@ -184,8 +184,7 @@ class AuthorizeView(ProcessGetFormView):
 
 class LogoutView(ProcessGetFormView):
     """
-    View that allows portals to do some miscellaneous actions,
-    like logging out.
+    View for logging out.
     """
     form_class = forms.JWTDecryptForm
 

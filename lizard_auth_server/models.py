@@ -806,13 +806,13 @@ class Company(models.Model):
         default=create_new_uuid)
     guests = models.ManyToManyField(
         'Profile',
-        related_name='companies_from_guest',
+        related_name='companies_as_guest',
         verbose_name=_('guests'),
         blank=True,
         help_text=_("Guests or external users."))
     administrators = models.ManyToManyField(
         'Profile',
-        related_name='companies_from_admin',
+        related_name='companies_as_admin',
         verbose_name=_('administrators'),
         blank=True,
         help_text=_(

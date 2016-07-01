@@ -10,12 +10,16 @@ from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from itsdangerous import BadSignature
 from itsdangerous import URLSafeTimedSerializer
+import jwt
 
-from lizard_auth_server.models import BILLING_ROLE
-from lizard_auth_server.models import Organisation
-from lizard_auth_server.models import Portal
-from lizard_auth_server.models import THREEDI_PORTAL
-from lizard_auth_server.models import UserProfile
+from lizard_auth_server.models import (
+    BILLING_ROLE,
+    Organisation,
+    Portal,
+    THREEDI_PORTAL,
+    UserProfile,
+    Site,
+    )
 
 MIN_LENGTH = 8
 
@@ -39,6 +43,41 @@ class DecryptForm(forms.Form):
             raise ValidationError('Bad signature')
         if data['key'] != new_data['key']:
             raise ValidationError('Public key does not match signed key')
+        return new_data
+
+
+class JWTDecryptForm(forms.Form):
+    key = forms.CharField(max_length=1024)
+    message = forms.CharField(max_length=8192)
+
+    def clean(self):
+        """Verifies the JWT from the site and cleans form data.
+
+        Note: replaces the original form data with JWT payload, which should
+        contain a dictionary with the following keys:
+
+        ['key',
+         'domain',
+         'force_sso_login',
+         ]
+        """
+        data = super(JWTDecryptForm, self).clean()
+        if 'key' not in data:
+            raise ValidationError('No SSO key')
+        try:
+            self.site = Site.objects.get(sso_key=data['key'])
+        except Site.DoesNotExist:
+            raise ValidationError('Invalid SSO key')
+        try:
+            new_data = jwt.decode(data['message'], self.site.sso_secret,
+                                  algorithms=['HS256'])
+        except:
+            # TODO: catch custom exceptions
+            raise Exception("Key verification failed")
+
+        # TODO: Is this needed? Seems superfluous
+        if data['key'] != new_data['key']:
+            raise ValidationError('Public SSO key does not match signed key')
         return new_data
 
 

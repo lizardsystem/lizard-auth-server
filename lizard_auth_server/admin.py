@@ -322,7 +322,7 @@ class CompanyAdmin(admin.ModelAdmin):
 class SiteAdmin(admin.ModelAdmin):
     model = models.Site
     filter_horizontal = ['available_to']
-    search_fields = ['name', 'visit_url']
+    list_display = ['name', 'visit_url', 'allowed_domain']
 
 
 admin.site.register(models.Portal, PortalAdmin)

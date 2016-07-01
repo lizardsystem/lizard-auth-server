@@ -757,10 +757,10 @@ class Profile(models.Model):
         blank=True,
         null=True)
     created_at = models.DateTimeField(
-        verbose_name=_('created on'),
+        verbose_name=_('created at'),
         auto_now_add=True)
     updated_at = models.DateTimeField(
-        verbose_name=_('updated on'),
+        verbose_name=_('updated at'),
         auto_now=True)
 
     def __str__(self):

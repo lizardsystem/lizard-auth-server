@@ -18,9 +18,7 @@ import jwt
 from lizard_auth_server import forms
 from lizard_auth_server.views_sso import (
     ProcessGetFormView,
-    # get_domain,
     domain_match,
-    construct_user_data,
 )
 from lizard_auth_server.views import ErrorMessageResponse
 from lizard_auth_server.models import UserProfile
@@ -60,6 +58,41 @@ def get_domain(form):
             and domain_match(netloc, form.site.allowed_domain):
         return domain
     return portal_redirect
+
+
+# Copied from views_sso.py
+def construct_user_data(user=None, profile=None):
+    """
+    Construct a dict of information about a user object,
+    like first_name, and permissions.
+
+    Older versions of this server did not send information about
+    roles, and only a single organisation name. Older clients still
+    expect that, so we need to stay backward compatible.
+    """
+    if user is None:
+        user = profile.user
+    if profile is None:
+        profile = user.profile
+    data = {}
+    for key in ['pk', 'username', 'first_name', 'last_name',
+                'email', 'is_active', 'is_staff', 'is_superuser']:
+        data[key] = getattr(user, key)
+    data['permissions'] = []
+    for perm in user.user_permissions.select_related('content_type').all():
+        data['permissions'].append({
+            'content_type': perm.content_type.natural_key(),
+            'codename': perm.codename,
+        })
+
+    # For backward compatibility, if the user has at least one
+    # organisation, send then name of one of them.
+    data['company'] = profile.company
+
+    # datetimes should be serialized to an iso8601 string
+    data['created_at'] = profile.created_at.isoformat()
+
+    return data
 
 
 class AuthorizeView(ProcessGetFormView):
@@ -136,12 +169,8 @@ class AuthorizeView(ProcessGetFormView):
         payload = {
             'key': self.site.sso_key,
             # Dump all relevant data:
-            # TODO: this contains user fullname, is that sensitive info?
-            # TODO: construct_user_data still uses user.user_profile, need
-            # to update that to the new api.
             'user': json.dumps(construct_user_data(self.request.user)),
             }
-
         signed_message = jwt.encode(payload, self.site.sso_secret,
                                     algorithm='HS256')
         params = {

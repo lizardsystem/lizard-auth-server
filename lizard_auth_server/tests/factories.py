@@ -97,6 +97,7 @@ class CompanyF(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: 'company %s' % n)
     unique_id = factory.LazyAttribute(lambda org: models.create_new_uuid())
 
+    # This makes a many-to-many relation in factory-boy
     @factory.post_generation
     def guests(self, create, extracted, **kwargs):
         if not create:

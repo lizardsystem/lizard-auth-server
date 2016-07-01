@@ -322,7 +322,7 @@ class CompanyAdmin(admin.ModelAdmin):
 class SiteAdmin(admin.ModelAdmin):
     model = models.Site
     filter_horizontal = ['available_to']
-    search_fields = ['name']
+    search_fields = ['name', 'visit_url']
 
 
 admin.site.register(models.Portal, PortalAdmin)
@@ -332,7 +332,6 @@ admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Role, RoleAdmin)
 admin.site.register(models.Organisation, OrganisationAdmin)
 admin.site.register(models.OrganisationRole, OrganisationRoleAdmin)
-
 admin.site.register(models.Profile, ProfileAdmin)
 admin.site.register(models.Company, CompanyAdmin)
 admin.site.register(models.Site, SiteAdmin)

@@ -806,16 +806,19 @@ class Company(models.Model):
         default=create_new_uuid)
     guests = models.ManyToManyField(
         'Profile',
-        related_name='guest_companies',
+        related_name='companies_from_guest',
         verbose_name=_('guests'),
         blank=True,
         help_text=_("Guests or external users."))
     administrators = models.ManyToManyField(
         'Profile',
-        related_name='admin_companies',
+        related_name='companies_from_admin',
         verbose_name=_('administrators'),
         blank=True,
-        help_text=_("Can manage other user profiles."))
+        help_text=_(
+            "Admins can add/edit users belonging to the company and can add/"
+            "remove guests and manage site access")
+        )
 
     def __str__(self):
         return self.name
@@ -842,18 +845,18 @@ class Site(models.Model):
         verbose_name=_('shared secret'),
         max_length=64,
         unique=True,
-        default=GenKey('Portal', 'sso_secret'),
+        default=GenKey('Site', 'sso_secret'),
         help_text=_('Secret shared between SSO client and '
                     'server to sign/encrypt communication.'))
     sso_key = models.CharField(
         verbose_name=_('identifying key'),
         max_length=64,
         unique=True,
-        default=GenKey('Portal', 'sso_key'),
+        default=GenKey('Site', 'sso_key'),
         help_text=_('String used to identify the SSO client.'))
     allowed_domain = models.CharField(
         verbose_name=_('allowed domain(s)'),
-        max_length=255,
+        max_length=1000,
         default='',
         help_text=_(
             'Allowed domain suffix for redirects using the next parameter. '

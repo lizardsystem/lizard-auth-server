@@ -799,9 +799,8 @@ class Profile(models.Model):
         if self.user.is_staff:
             # staff can access any site
             return True
-        # TODO: test this query
-        # This query evaluates to True if:
-        # 1. The user's company is in site.available_to, or:
+        # This query evaluates to True if one of these is true:
+        # 1. The user's company is in site.available_to
         # 2. The companies where the user is a guest of is in the site's
         #    avaiable_to list
         company_pk = self.company.pk if self.company else None

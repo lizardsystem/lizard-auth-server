@@ -12,6 +12,8 @@ except ImportError:
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.template.context import RequestContext
+from django.template.response import TemplateResponse
 from django.utils.translation import ugettext as _
 import jwt
 
@@ -22,6 +24,7 @@ from lizard_auth_server.views_sso import (
 )
 from lizard_auth_server.views import ErrorMessageResponse
 from lizard_auth_server.models import UserProfile
+from lizard_auth_server.models import Profile
 
 
 logger = logging.getLogger(__name__)
@@ -152,7 +155,7 @@ class AuthorizeView(ProcessGetFormView):
 
     def has_access(self):
         """
-        Check whether the user has access to the portal.
+        Check whether the user has access to the site.
         """
         if not self.request.user.is_active:
             # extra check: should not be necessary as inactive users can't
@@ -160,9 +163,8 @@ class AuthorizeView(ProcessGetFormView):
             return False
         try:
             profile = self.request.user.profile
-        except UserProfile.DoesNotExist:
+        except Profile.DoesNotExist:
             return False
-        # TODO: check whether the UserProfile object is related to this Site
         return profile.has_access(self.site)
 
     def success(self):
@@ -180,6 +182,19 @@ class AuthorizeView(ProcessGetFormView):
         url = urljoin(self.domain, 'sso/local_login/')
         url_with_params = '%s?%s' % (url, urlencode(params))
         return HttpResponseRedirect(url_with_params)
+
+    def access_denied(self):
+        """
+        Show a user-friendly access denied page.
+        """
+        context = RequestContext(self.request,
+                                 {'login_url': self.build_login_url()})
+        return TemplateResponse(
+            self.request,
+            'lizard_auth_server/access_denied.html',
+            context,
+            status=403
+        )
 
 
 class LogoutView(ProcessGetFormView):

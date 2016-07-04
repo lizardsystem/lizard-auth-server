@@ -5,6 +5,8 @@ Changelog of lizard-auth-server
 1.8 (unreleased)
 ----------------
 
+- Added new V2 API in separate endpoints which uses JWT.
+
 - Added new models for SSO refactoring.
 
 - Put user creation signals handlers into seperate module.

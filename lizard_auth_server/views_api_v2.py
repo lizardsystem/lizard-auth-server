@@ -88,9 +88,8 @@ def construct_user_data(user=None, profile=None):
             'codename': perm.codename,
         })
 
-    # For backward compatibility, if the user has at least one
-    # organisation, send then name of one of them.
-    data['company'] = profile.company
+    # TODO: not sure if needed, but why not..
+    data['company'] = str(profile.company)
 
     # datetimes should be serialized to an iso8601 string
     data['created_at'] = profile.created_at.isoformat()

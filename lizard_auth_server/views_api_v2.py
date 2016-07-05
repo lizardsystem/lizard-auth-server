@@ -23,7 +23,6 @@ from lizard_auth_server.views_sso import (
     domain_match,
 )
 from lizard_auth_server.views import ErrorMessageResponse
-from lizard_auth_server.models import UserProfile
 from lizard_auth_server.models import Profile
 
 
@@ -42,12 +41,12 @@ def get_domain(form):
 
     """
     portal_redirect = form.site.redirect_url
-    domain = form.cleaned_data.get('domain', None)
+    domain = form.cleaned_data.get('message', {}).get('domain', None)
 
     # BBB, previously the "next" parameter was used, but django itself also
     # uses it, leading to conflicts. IF "next" starts with "http", we use it
     # and otherwise we omit it.
-    next = form.cleaned_data.get('next', None)
+    next = form.cleaned_data.get('message', {}).get('next', None)
     if next:
         if next.startswith('http'):  # Includes https :-)
             domain = next
@@ -93,8 +92,15 @@ def construct_user_data(user=None, profile=None):
 
     # datetimes should be serialized to an iso8601 string
     data['created_at'] = profile.created_at.isoformat()
-
     return data
+
+
+def form_invalid(request, form):
+    logger.error('Error while decrypting form: %s',
+                 form.errors.as_text())
+    return ErrorMessageResponse(request,
+                                _('Communication error.'),
+                                400)
 
 
 class AuthorizeView(ProcessGetFormView):
@@ -106,10 +112,12 @@ class AuthorizeView(ProcessGetFormView):
         if self.request.user.is_authenticated():
             return self.form_valid_authenticated()
         return self.form_valid_unauthenticated(
-            form.cleaned_data.get('force_sso_login', True))
+            form.cleaned_data.get('message', {}).get('force_sso_login', True))
 
     def form_invalid(self, form):
-        return HttpResponse("invalid %s" % json.dumps(form.cleaned_data))
+        # return HttpResponse("invalid %s, errors %s" % (json.dumps(
+        #                     form.cleaned_data), json.dumps(form.errors)))
+        return form_invalid(self.request, form)
 
     def form_valid_authenticated(self):
         """
@@ -200,7 +208,7 @@ class LogoutView(ProcessGetFormView):
     """
     View for logging out.
     """
-    form_class = forms.JWTDecryptForm
+    form_class = forms.JWTLogoutDecryptForm
 
     def form_valid(self, form):
         next_url = reverse('lizard_auth_server.api_v2.logout_redirect')
@@ -222,26 +230,18 @@ class LogoutView(ProcessGetFormView):
         return HttpResponseRedirect(url)
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: %s',
-                     form.errors.as_text())
-        return ErrorMessageResponse(self.request,
-                                    _('Communication error.'),
-                                    400)
+        return form_invalid(self.request, form)
 
 
 class LogoutRedirectView(ProcessGetFormView):
     """
     View that redirects the user to the logout page of the portal.
     """
-    form_class = forms.JWTDecryptForm
+    form_class = forms.JWTLogoutDecryptForm
 
     def form_valid(self, form):
         url = urljoin(get_domain(form), 'sso/local_logout/')
         return HttpResponseRedirect(url)
 
     def form_invalid(self, form):
-        logger.error('Error while decrypting form: %s',
-                     form.errors.as_text())
-        return ErrorMessageResponse(self.request,
-                                    _('Communication error.'),
-                                    400)
+        return form_invalid(self.request, form)

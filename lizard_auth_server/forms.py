@@ -31,6 +31,14 @@ class JWTField(forms.CharField):
     you can do this in the __init__ method of your Form.
     """
     def __init__(self, allowed_keys=(), secret_key='', *args, **kwargs):
+        """Constructor
+
+        Args:
+            allowed_keys: (iterable) set of expected keys
+            secret_key: the secret for decoding the JWT, generally set not
+                via this argument but manually when used in conjunction with
+                forms
+        """
         super(JWTField, self).__init__(*args, **kwargs)
         self.allowed_keys = allowed_keys
         self.secret_key = secret_key

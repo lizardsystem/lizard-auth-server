@@ -47,7 +47,7 @@ class JWTField(forms.CharField):
             raise ValidationError("Failed to decode JWT.")
         except Exception as e:
             raise ValidationError(
-                "Uncaught exception while decoding JWT: %s" % e)
+                "Unknown exception while decoding JWT: %s" % e)
 
         for key in self.allowed_keys:
             if key not in self.custom_cleaned:

@@ -40,9 +40,9 @@ class JWTField(forms.CharField):
         super(JWTField, self).clean(value)
         # Do our own cleaning
         try:
-            self.custom_cleaned = jwt.decode(value, self.secret_key,
-                                             algorithms=['HS256'])
-            # self.custom_cleaned = jwt.decode(value, verify=False)
+            custom_cleaned = jwt.decode(value, self.secret_key,
+                                        algorithms=['HS256'])
+            # custom_cleaned = jwt.decode(value, verify=False)
         except jwt.exceptions.DecodeError:
             raise ValidationError("Failed to decode JWT.")
         except Exception as e:
@@ -50,9 +50,9 @@ class JWTField(forms.CharField):
                 "Unknown exception while decoding JWT: %s" % e)
 
         for key in self.allowed_keys:
-            if key not in self.custom_cleaned:
+            if key not in custom_cleaned:
                 raise ValidationError("Missing key in JWT.")
-        return self.custom_cleaned
+        return custom_cleaned
 
 
 class DecryptForm(forms.Form):

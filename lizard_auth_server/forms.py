@@ -30,7 +30,7 @@ class JWTField(forms.CharField):
     the JWT. Therefore the 'secret_key' field must be set manually. Typically
     you can do this in the __init__ method of your Form.
     """
-    def __init__(self, allowed_keys=None, secret_key=None, *args, **kwargs):
+    def __init__(self, allowed_keys=(), secret_key='', *args, **kwargs):
         super(JWTField, self).__init__(*args, **kwargs)
         self.allowed_keys = allowed_keys
         self.secret_key = secret_key

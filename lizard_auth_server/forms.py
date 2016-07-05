@@ -110,7 +110,7 @@ class JWTDecryptForm(forms.Form):
             self.site = Site.objects.get(sso_key=self.data['key'])
         except Site.DoesNotExist:
             self.init_errors += 1
-            self.init_error_msg.append('Invalid SSO key.')
+            self.init_error_msgs.append('Invalid SSO key.')
             return
         # The key for decoding the JWTField must be set via this way
         self.fields['message'].secret_key = self.site.sso_secret

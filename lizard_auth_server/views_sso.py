@@ -57,7 +57,17 @@ class ProcessGetFormView(FormMixin, View):
             return self.form_invalid(form)
 
 
-class PortalActionView(ProcessGetFormView):
+class FormInvalidMixin(object):
+    """Provides a default error message for form_invalid"""
+    def form_invalid(self, form):
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
+        return ErrorMessageResponse(self.request,
+                                    _('Communication error.'),
+                                    400)
+
+
+class PortalActionView(FormInvalidMixin, ProcessGetFormView):
     """
     View that allows portals to do some miscellaneous actions,
     like logging out.
@@ -82,15 +92,8 @@ class PortalActionView(ProcessGetFormView):
             return HttpResponseRedirect(url)
         return HttpResponseBadRequest('Unknown action')
 
-    def form_invalid(self, form):
-        logger.error('Error while decrypting form: %s',
-                     form.errors.as_text())
-        return ErrorMessageResponse(self.request,
-                                    _('Communication error.'),
-                                    400)
 
-
-class LogoutRedirectView(ProcessGetFormView):
+class LogoutRedirectView(FormInvalidMixin, ProcessGetFormView):
     """
     View that redirects the user to the logout page of the portal.
     """
@@ -102,13 +105,6 @@ class LogoutRedirectView(ProcessGetFormView):
             return HttpResponseRedirect(url)
         else:
             return HttpResponseBadRequest('Unknown action')
-
-    def form_invalid(self, form):
-        logger.error('Error while decrypting form: %s',
-                     form.errors.as_text())
-        return ErrorMessageResponse(self.request,
-                                    _('Communication error.'),
-                                    400)
 
 
 class RequestTokenView(ProcessGetFormView):
@@ -133,7 +129,7 @@ class RequestTokenView(ProcessGetFormView):
         return HttpResponseBadRequest('Bad signature')
 
 
-class AuthorizeView(ProcessGetFormView):
+class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
     """
     The portal get's redirected to this view with the `request_token` obtained
     by the Request Token Request by the portal application beforehand.
@@ -160,13 +156,6 @@ class AuthorizeView(ProcessGetFormView):
             return self.form_valid_unauthenticated(
                 form.cleaned_data.get('force_sso_login', True))
         return self.token_timeout()
-
-    def form_invalid(self, form):
-        logger.error('Error while decrypting form: %s',
-                     form.errors.as_text())
-        return ErrorMessageResponse(self.request,
-                                    _('Communication error.'),
-                                    400)
 
     def check_token_timeout(self):
         delta = datetime.datetime.now(tz=pytz.UTC) - self.token.created

@@ -21,6 +21,7 @@ from lizard_auth_server import forms
 from lizard_auth_server.views_sso import (
     ProcessGetFormView,
     domain_match,
+    FormInvalidMixin,
 )
 from lizard_auth_server.views import ErrorMessageResponse
 from lizard_auth_server.models import Profile
@@ -95,15 +96,7 @@ def construct_user_data(user=None, profile=None):
     return data
 
 
-def form_invalid(request, form):
-    logger.error('Error while decrypting form: %s',
-                 form.errors.as_text())
-    return ErrorMessageResponse(request,
-                                _('Communication error.'),
-                                400)
-
-
-class AuthorizeView(ProcessGetFormView):
+class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
     form_class = forms.JWTDecryptForm
 
     def form_valid(self, form):
@@ -113,11 +106,6 @@ class AuthorizeView(ProcessGetFormView):
             return self.form_valid_authenticated()
         return self.form_valid_unauthenticated(
             form.cleaned_data.get('message', {}).get('force_sso_login', True))
-
-    def form_invalid(self, form):
-        # return HttpResponse("invalid %s, errors %s" % (json.dumps(
-        #                     form.cleaned_data), json.dumps(form.errors)))
-        return form_invalid(self.request, form)
 
     def form_valid_authenticated(self):
         """
@@ -204,7 +192,7 @@ class AuthorizeView(ProcessGetFormView):
         )
 
 
-class LogoutView(ProcessGetFormView):
+class LogoutView(FormInvalidMixin, ProcessGetFormView):
     """
     View for logging out.
     """
@@ -227,11 +215,8 @@ class LogoutView(ProcessGetFormView):
         # the next parameter?
         return HttpResponseRedirect(url)
 
-    def form_invalid(self, form):
-        return form_invalid(self.request, form)
 
-
-class LogoutRedirectView(ProcessGetFormView):
+class LogoutRedirectView(FormInvalidMixin, ProcessGetFormView):
     """
     View that redirects the user to the logout page of the portal.
     """
@@ -240,6 +225,3 @@ class LogoutRedirectView(ProcessGetFormView):
     def form_valid(self, form):
         url = urljoin(get_domain(form), 'sso/local_logout/')
         return HttpResponseRedirect(url)
-
-    def form_invalid(self, form):
-        return form_invalid(self.request, form)

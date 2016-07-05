@@ -93,7 +93,7 @@ urlpatterns = patterns(
         views_sso.VerifyView.as_view(),
         name='lizard_auth_server.sso.api.verify'),
 
-    # The (newer) V2 API
+    # V2 API
     url(r'^api/v2/authorize/$',
         views_api_v2.AuthorizeView.as_view(),
         name='lizard_auth_server.api_v2.authorize'),

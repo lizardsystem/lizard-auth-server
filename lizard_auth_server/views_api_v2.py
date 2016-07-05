@@ -215,8 +215,6 @@ class LogoutView(ProcessGetFormView):
         next_params = {
             'message': self.request.GET['message'],
             'key': self.request.GET['key'],
-            # TODO: include user?
-            # 'user': self.request.user.username,
         }
 
         # after logout redirect user to the site

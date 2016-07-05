@@ -78,6 +78,7 @@ class DecryptForm(forms.Form):
 
 
 class JWTDecryptForm(forms.Form):
+    """Form to decrypt and verify JWT requests."""
     key = forms.CharField(max_length=1024)
     message = JWTField(max_length=8192,
                        allowed_keys=('key', 'domain', 'force_sso_login'))

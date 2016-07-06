@@ -3,11 +3,8 @@ V2 API
 """
 import logging
 import json
-try:
-    from urlparse import urljoin, urlparse
-    from urllib import urlencode
-except ImportError:
-    from urllib.parse import urljoin, urlparse, urlencode
+# py3 only:
+from urllib.parse import urljoin, urlparse, urlencode
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect

@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import datetime
+import json
+import logging
+import pytz
+# py3 only:
+from urllib.parse import urljoin, urlparse, urlencode
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
@@ -14,22 +22,11 @@ from django.views.decorators.cache import never_cache
 from django.views.generic.base import View
 from django.views.generic.edit import FormMixin
 from itsdangerous import URLSafeTimedSerializer
+
 from lizard_auth_server import forms
 from lizard_auth_server.models import Token
 from lizard_auth_server.models import UserProfile
 from lizard_auth_server.views import ErrorMessageResponse
-
-import datetime
-import json
-import logging
-import pytz
-
-
-try:
-    from urlparse import urljoin, urlparse
-    from urllib import urlencode
-except ImportError:
-    from urllib.parse import urljoin, urlparse, urlencode
 
 
 logger = logging.getLogger(__name__)

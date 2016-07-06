@@ -796,9 +796,6 @@ class Profile(models.Model):
         """
         if not site:
             raise AttributeError('Need a valid Site instance')
-        if self.user.is_staff:
-            # staff can access any site
-            return True
         # This query evaluates to True if one of these is true:
         # 1. The user's company is in site.available_to
         # 2. The companies where the user is a guest of is in the site's

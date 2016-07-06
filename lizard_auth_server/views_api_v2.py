@@ -76,7 +76,7 @@ def construct_user_data(user=None, profile=None):
         profile = user.profile
     data = {}
     for key in ['pk', 'username', 'first_name', 'last_name',
-                'email', 'is_active', 'is_staff', 'is_superuser']:
+                'email', 'is_active']:
         data[key] = getattr(user, key)
     data['permissions'] = []
     for perm in user.user_permissions.select_related('content_type').all():

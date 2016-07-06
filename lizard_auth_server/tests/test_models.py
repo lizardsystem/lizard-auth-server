@@ -265,7 +265,7 @@ class TestProfile(TestCase):
         company = factories.CompanyF()
         profile = factories.ProfileF()
         site = factories.SiteF.create(available_to=[company])
-        self.assertEqual(profile.has_access(site), False)
+        self.assertFalse(profile.has_access(site))
 
     def test_site_access_as_employee(self):
         """Test that user has access when its company is in the available_to
@@ -275,11 +275,11 @@ class TestProfile(TestCase):
         profile = factories.ProfileF()
         profile.company = company
         site = factories.SiteF.create(available_to=[company])
-        self.assertEqual(profile.has_access(site), True)
+        self.assertTrue(profile.has_access(site))
 
     def test_site_access_as_guest(self):
         """Test that a guest at a company can access their sites."""
         profile = factories.ProfileF()
         company = factories.CompanyF.create(guests=[profile])
         site = factories.SiteF.create(available_to=[company])
-        self.assertEqual(profile.has_access(site), True)
+        self.assertTrue(profile.has_access(site))

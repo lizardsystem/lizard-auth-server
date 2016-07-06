@@ -45,6 +45,7 @@ class DecryptForm(forms.Form):
 
 
 class JWTDecryptForm(forms.Form):
+    """Form for decrypting JWTs"""
     key = forms.CharField(max_length=1024)
     message = forms.CharField(max_length=8192)
 

@@ -73,6 +73,8 @@ class JWTDecryptForm(forms.Form):
                                   algorithms=['HS256'])
         except jwt.exceptions.DecodeError:
             raise ValidationError("Failed to decode JWT.")
+        except jwt.exceptions.ExpiredSignatureError:
+            raise ValidationError("JWT has expired.")
 
         # This is useful for verifying if the key of the GET parameter (which
         # could be tampered with) is same as the key in the payload.

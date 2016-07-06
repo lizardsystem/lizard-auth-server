@@ -122,6 +122,7 @@ SECRET_KEY = 'This is not secret but that is ok.'
 
 # SSO
 SSO_TOKEN_TIMEOUT_MINUTES = 30
+JWT_EXPIRATION_MINUTES = 15
 
 # Invitation / activation
 # Activation keys expire after this timedelta

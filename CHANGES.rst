@@ -5,6 +5,8 @@ Changelog of lizard-auth-server
 1.8 (unreleased)
 ----------------
 
+- Added JWT expiration time of 15 minutes.
+
 - Added new V2 API in separate endpoints which uses JWT.
 
 - Added new models for SSO refactoring.

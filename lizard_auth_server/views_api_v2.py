@@ -1,11 +1,13 @@
 """
 V2 API
 """
+import datetime
 import logging
 import json
 # py3 only:
 from urllib.parse import urljoin, urlparse, urlencode
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
@@ -22,6 +24,7 @@ from lizard_auth_server.models import Profile
 
 
 logger = logging.getLogger(__name__)
+JWT_EXPIRATION = datetime.timedelta(minutes=settings.JWT_EXPIRATION_MINUTES)
 
 
 # Copied from views_sso.py
@@ -157,6 +160,8 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
             'key': self.site.sso_key,
             # Dump all relevant data:
             'user': json.dumps(construct_user_data(self.request.user)),
+            # Set timeout
+            'exp': datetime.datetime.utcnow() + JWT_EXPIRATION,
             }
         signed_message = jwt.encode(payload, self.site.sso_secret,
                                     algorithm='HS256')

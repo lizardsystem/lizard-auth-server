@@ -166,9 +166,13 @@ class TestLoginRedirectV2(TestCase):
             allowed_domain=allowed_domain,
             available_to=[company],
         )
+        self.site.save()
 
         import jwt
-        self.payload = {'key': self.sso_key}
+        self.payload = {
+            'key': self.sso_key,
+            'domain': 'http://very.custom.net',
+            }
         self.message = jwt.encode(self.payload, self.secret_key,
                                   algorithm='HS256')
 
@@ -184,11 +188,10 @@ class TestLoginRedirectV2(TestCase):
         jwt_params = {
             'key': self.sso_key,
             'message': self.message,
-            'domain': 'http://very.custom.net'
             }
         self.assertEqual(resp1.url, '/api/v2/authorize')
 
         resp2 = self.client.get('/api/v2/authorize/', jwt_params)
         self.assertEqual(resp2.status_code, 302)
         self.assertTrue(
-            'http://default.site.net/sso/local_login/' in resp2.url)
+            'http://very.custom.net/sso/local_login/' in resp2.url)

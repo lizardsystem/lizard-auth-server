@@ -137,3 +137,76 @@ class TestLoginRedirect(TestCase):
         self.portal.save()
         self.authorize_and_check_redirect('http://very.custom.net/nok',
                                           self.portal.redirect_url)
+
+
+class TestLoginRedirectV2(TestCase):
+    """Test the V2 API redirects"""
+    def setUp(self):
+        self.username = 'me'
+        self.password = 'bla'
+        self.sso_key = 'ssokey'
+        self.secret_key = 'a secret'
+        redirect = 'http://default.site.net'
+        allowed_domain = 'custom.net'
+
+        self.client = Client()
+
+        user = factories.UserF.create(username=self.username)
+        user.set_password(self.password)
+        user.save()
+        company = factories.CompanyF.create(name='Some org')
+        self.profile = factories.ProfileF(user=user)
+        self.profile.company = company
+        self.profile.save()
+
+        self.site = factories.SiteF.create(
+            sso_key=self.sso_key,
+            sso_secret=self.secret_key,
+            redirect_url=redirect,
+            allowed_domain=allowed_domain,
+            available_to=[company],
+        )
+        self.site.save()
+
+        import jwt
+        self.payload = {
+            'key': self.sso_key,
+            'domain': 'http://very.custom.net',
+            }
+        self.message = jwt.encode(self.payload, self.secret_key,
+                                  algorithm='HS256')
+
+    def test_login_redirect(self):
+        params = {
+            'username': self.username,
+            'password': self.password,
+            'next': '/api/v2/authorize'
+        }
+        resp1 = self.client.post('/accounts/login/', params)
+        self.assertEquals(resp1.status_code, 302)
+
+        jwt_params = {
+            'key': self.sso_key,
+            'message': self.message,
+            }
+        self.assertEqual(resp1.url, '/api/v2/authorize')
+
+        resp2 = self.client.get('/api/v2/authorize/', jwt_params)
+        self.assertEqual(resp2.status_code, 302)
+        self.assertTrue(
+            'http://very.custom.net/sso/local_login/' in resp2.url)
+
+    def test_inactive_user_cant_login(self):
+        self.profile.user.is_active = False
+        self.profile.user.save()
+
+        params = {
+            'username': self.username,
+            'password': self.password,
+            'next': '/api/v2/authorize'
+        }
+        resp1 = self.client.post('/accounts/login/', params)
+        # Basically this means that the redirect failed and the user couldn't
+        # log in, which is in line with what we expect with an inactive user.
+        self.assertTrue(resp1.status_code != 302)
+        self.assertEqual(resp1.status_code, 200)

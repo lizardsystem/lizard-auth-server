@@ -10,6 +10,7 @@ from django.core.exceptions import ImproperlyConfigured
 from lizard_auth_server import forms
 from lizard_auth_server import views
 from lizard_auth_server import views_api
+from lizard_auth_server import views_api_v2
 from lizard_auth_server import views_sso
 
 
@@ -91,6 +92,17 @@ urlpatterns = patterns(
     url(r'^sso/api/verify/$',
         views_sso.VerifyView.as_view(),
         name='lizard_auth_server.sso.api.verify'),
+
+    # V2 API
+    url(r'^api/v2/authorize/$',
+        views_api_v2.AuthorizeView.as_view(),
+        name='lizard_auth_server.api_v2.authorize'),
+    url(r'^api/v2/logout/$',
+        views_api_v2.LogoutView.as_view(),
+        name='lizard_auth_server.api_v2.logout'),
+    url(r'^api/v2/logout_redirect/$',
+        views_api_v2.LogoutRedirectView.as_view(),
+        name='lizard_auth_server.api_v2.logout_redirect'),
 
     # Override django-auth's default login/logout URLs
     # Note: ensure LOGIN_URL isn't defined in the settings

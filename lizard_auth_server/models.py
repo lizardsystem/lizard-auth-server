@@ -790,6 +790,21 @@ class Profile(models.Model):
     def email(self):
         return self.user.email
 
+    def has_access(self, site):
+        """
+        Returns True when this user has access to this site.
+        """
+        if not site:
+            raise AttributeError('Need a valid Site instance')
+        # This query evaluates to True if one of these is true:
+        # 1. The user's company is in site.available_to
+        # 2. The companies where the user is a guest of is in the site's
+        #    avaiable_to list
+        company_pk = self.company.pk if self.company else None
+        return site.available_to.filter(
+            Q(pk=company_pk) |
+            Q(pk__in=self.companies_as_guest.all())).exists()
+
 
 class Company(models.Model):
     """Replacement for Organisation."""

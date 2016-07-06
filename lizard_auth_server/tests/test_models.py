@@ -254,3 +254,32 @@ class StrMethodTestCase(TestCase):
         p.first_name
         p.last_name
         p.email
+
+
+class TestProfile(TestCase):
+
+    def test_no_site_access(self):
+        """Test that in the current (base) factory configuration the user
+        profile has no access to the site.
+        """
+        company = factories.CompanyF()
+        profile = factories.ProfileF()
+        site = factories.SiteF.create(available_to=[company])
+        self.assertFalse(profile.has_access(site))
+
+    def test_site_access_as_employee(self):
+        """Test that user has access when its company is in the available_to
+        list of the site, i.e., employees have access to their company's sites.
+        """
+        company = factories.CompanyF()
+        profile = factories.ProfileF()
+        profile.company = company
+        site = factories.SiteF.create(available_to=[company])
+        self.assertTrue(profile.has_access(site))
+
+    def test_site_access_as_guest(self):
+        """Test that a guest at a company can access their sites."""
+        profile = factories.ProfileF()
+        company = factories.CompanyF.create(guests=[profile])
+        site = factories.SiteF.create(available_to=[company])
+        self.assertTrue(profile.has_access(site))

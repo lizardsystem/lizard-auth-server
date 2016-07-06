@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import datetime
+import json
+import logging
+import pytz
+# py3 only:
+from urllib.parse import urljoin, urlparse, urlencode
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
@@ -14,22 +22,11 @@ from django.views.decorators.cache import never_cache
 from django.views.generic.base import View
 from django.views.generic.edit import FormMixin
 from itsdangerous import URLSafeTimedSerializer
+
 from lizard_auth_server import forms
 from lizard_auth_server.models import Token
 from lizard_auth_server.models import UserProfile
 from lizard_auth_server.views import ErrorMessageResponse
-
-import datetime
-import json
-import logging
-import pytz
-
-
-try:
-    from urlparse import urljoin, urlparse
-    from urllib import urlencode
-except ImportError:
-    from urllib.parse import urljoin, urlparse, urlencode
 
 
 logger = logging.getLogger(__name__)
@@ -57,7 +54,17 @@ class ProcessGetFormView(FormMixin, View):
             return self.form_invalid(form)
 
 
-class PortalActionView(ProcessGetFormView):
+class FormInvalidMixin(object):
+    """Provides a default error message for form_invalid"""
+    def form_invalid(self, form):
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
+        return ErrorMessageResponse(self.request,
+                                    _('Communication error.'),
+                                    400)
+
+
+class PortalActionView(FormInvalidMixin, ProcessGetFormView):
     """
     View that allows portals to do some miscellaneous actions,
     like logging out.
@@ -82,15 +89,8 @@ class PortalActionView(ProcessGetFormView):
             return HttpResponseRedirect(url)
         return HttpResponseBadRequest('Unknown action')
 
-    def form_invalid(self, form):
-        logger.error('Error while decrypting form: %s',
-                     form.errors.as_text())
-        return ErrorMessageResponse(self.request,
-                                    _('Communication error.'),
-                                    400)
 
-
-class LogoutRedirectView(ProcessGetFormView):
+class LogoutRedirectView(FormInvalidMixin, ProcessGetFormView):
     """
     View that redirects the user to the logout page of the portal.
     """
@@ -102,13 +102,6 @@ class LogoutRedirectView(ProcessGetFormView):
             return HttpResponseRedirect(url)
         else:
             return HttpResponseBadRequest('Unknown action')
-
-    def form_invalid(self, form):
-        logger.error('Error while decrypting form: %s',
-                     form.errors.as_text())
-        return ErrorMessageResponse(self.request,
-                                    _('Communication error.'),
-                                    400)
 
 
 class RequestTokenView(ProcessGetFormView):
@@ -133,7 +126,7 @@ class RequestTokenView(ProcessGetFormView):
         return HttpResponseBadRequest('Bad signature')
 
 
-class AuthorizeView(ProcessGetFormView):
+class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
     """
     The portal get's redirected to this view with the `request_token` obtained
     by the Request Token Request by the portal application beforehand.
@@ -161,13 +154,6 @@ class AuthorizeView(ProcessGetFormView):
                 form.cleaned_data.get('force_sso_login', True))
         return self.token_timeout()
 
-    def form_invalid(self, form):
-        logger.error('Error while decrypting form: %s',
-                     form.errors.as_text())
-        return ErrorMessageResponse(self.request,
-                                    _('Communication error.'),
-                                    400)
-
     def check_token_timeout(self):
         delta = datetime.datetime.now(tz=pytz.UTC) - self.token.created
         return delta <= TOKEN_TIMEOUT
@@ -190,10 +176,6 @@ class AuthorizeView(ProcessGetFormView):
         """
         Check whether the user has access to the portal.
         """
-        if not self.request.user.is_active:
-            # extra check: should not be necessary as inactive users can't
-            # login anyway
-            return False
         # check whether the UserProfile object is related to this Portal
         try:
             # get_profile is deprecated in Django >= 1.7

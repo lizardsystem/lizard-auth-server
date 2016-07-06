@@ -97,6 +97,16 @@ class CompanyF(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: 'company %s' % n)
     unique_id = factory.LazyAttribute(lambda org: models.create_new_uuid())
 
+    # This makes a many-to-many relation in factory-boy
+    @factory.post_generation
+    def guests(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            # A list of companies were passed in, use them
+            for guest in extracted:
+                self.guests.add(guest)
+
 
 class ProfileF(factory.DjangoModelFactory):
     class Meta:
@@ -114,3 +124,12 @@ class SiteF(factory.DjangoModelFactory):
     name = factory.LazyAttribute(lambda x: faker.company())
     redirect_url = factory.LazyAttribute(lambda x: faker.url())
     visit_url = factory.LazyAttribute(lambda x: faker.url())
+
+    @factory.post_generation
+    def available_to(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            # A list of companies were passed in, use them
+            for company in extracted:
+                self.available_to.add(company)

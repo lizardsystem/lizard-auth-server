@@ -162,7 +162,6 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
                                     algorithm='HS256')
         params = {
             'message': signed_message,
-            'api_version': 'v2',
             }
         url = urljoin(self.domain, 'sso/local_login/')
         url_with_params = '%s?%s' % (url, urlencode(params))

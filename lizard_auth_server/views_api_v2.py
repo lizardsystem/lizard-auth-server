@@ -149,10 +149,6 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
         """
         Check whether the user has access to the site.
         """
-        if not self.request.user.is_active:
-            # extra check: should not be necessary as inactive users can't
-            # login anyway
-            return False
         try:
             profile = self.request.user.profile
         except Profile.DoesNotExist:

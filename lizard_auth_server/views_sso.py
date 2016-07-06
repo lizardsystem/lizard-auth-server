@@ -179,10 +179,6 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
         """
         Check whether the user has access to the portal.
         """
-        if not self.request.user.is_active:
-            # extra check: should not be necessary as inactive users can't
-            # login anyway
-            return False
         # check whether the UserProfile object is related to this Portal
         try:
             # get_profile is deprecated in Django >= 1.7

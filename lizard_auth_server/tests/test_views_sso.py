@@ -192,4 +192,3 @@ class TestLoginRedirectV2(TestCase):
         self.assertEqual(resp2.status_code, 302)
         self.assertTrue(
             'http://default.site.net/sso/local_login/' in resp2.url)
-        from nose.tools import set_trace; set_trace()

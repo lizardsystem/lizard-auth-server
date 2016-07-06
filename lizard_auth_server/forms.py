@@ -22,47 +22,6 @@ from lizard_auth_server.models import Site
 MIN_LENGTH = 8
 
 
-class JWTField(forms.CharField):
-    """This Field verifies the JWT signature and also verifies if the contents
-    of the JWT payload contains what we expect.
-
-    Note: the JWTField needs the secret key of the JWT to be able to decode
-    the JWT. Therefore the 'secret_key' field must be set manually. Typically
-    you can do this in the __init__ method of your Form.
-    """
-    def __init__(self, allowed_keys=(), secret_key='', *args, **kwargs):
-        """Constructor
-
-        Args:
-            allowed_keys: (iterable) set of expected keys
-            secret_key: the secret for decoding the JWT, generally set not
-                via this argument but manually when used in conjunction with
-                forms
-        """
-        super(JWTField, self).__init__(*args, **kwargs)
-        self.allowed_keys = allowed_keys
-        self.secret_key = secret_key
-
-    def clean(self, value):
-        # Call the CharField cleaning method with its validators
-        super(JWTField, self).clean(value)
-        # Do our own cleaning
-        try:
-            custom_cleaned = jwt.decode(value, self.secret_key,
-                                        algorithms=['HS256'])
-            # custom_cleaned = jwt.decode(value, verify=False)
-        except jwt.exceptions.DecodeError:
-            raise ValidationError("Failed to decode JWT.")
-        except Exception as e:
-            raise ValidationError(
-                "Unknown exception while decoding JWT: %s" % e)
-
-        for key in self.allowed_keys:
-            if key not in custom_cleaned:
-                raise ValidationError("Missing key in JWT.")
-        return custom_cleaned
-
-
 class DecryptForm(forms.Form):
     key = forms.CharField(max_length=1024)
     message = forms.CharField(max_length=8192)
@@ -86,54 +45,39 @@ class DecryptForm(forms.Form):
 
 
 class JWTDecryptForm(forms.Form):
-    """Form to decrypt and verify JWT requests."""
     key = forms.CharField(max_length=1024)
-    message = JWTField(max_length=8192,
-                       allowed_keys=('key', 'domain', 'force_sso_login'))
-
-    def __init__(self, *args, **kwargs):
-        """This init override is necessary for setting the secret key of
-        the JWTField."""
-        super(JWTDecryptForm, self).__init__(*args, **kwargs)
-        self.init_errors = 0
-        self.init_error_msgs = []
-        # We'll try to get the SSO key. If this somehow fails, we can just
-        # return and we'll let the validation fail in the clean method
-        # due to insufficient data. Plus, for extra safety, the failed
-        # exception msg is saved and 're-raised' in an ad-hoc manner in the
-        # clean method so that it can be found in Form.errors.
-        if 'key' not in self.data:
-            self.init_errors += 1
-            self.init_error_msgs.append('No SSO key.')
-            return
-        try:
-            self.site = Site.objects.get(sso_key=self.data['key'])
-        except Site.DoesNotExist:
-            self.init_errors += 1
-            self.init_error_msgs.append('Invalid SSO key.')
-            return
-        # The key for decoding the JWTField must be set via this way
-        self.fields['message'].secret_key = self.site.sso_secret
+    message = forms.CharField(max_length=8192)
 
     def clean(self):
-        """Verifies additional stuff and cleans form data.  """
-        super(JWTDecryptForm, self).clean()
-        if self.init_errors > 0:
-            raise ValidationError(
-                "There were errors in the __init__ method of the form: %s" %
-                ' '.join(self.init_error_msgs))
-        if 'key' not in self.cleaned_data:
+        """Verifies the JWT from the site and returns the JWT payload.
+
+        Note: replaces the original form data with JWT payload, which should
+        contain a dictionary with the following keys:
+
+        ['key',
+         'domain',
+         'force_sso_login', (this is optional)
+         ]
+        """
+        cleaned_data = super(JWTDecryptForm, self).clean()
+        if 'key' not in cleaned_data:
             raise ValidationError('No SSO key')
-        # This check is useful because we can check if the key from the GET
-        # parameter has not been tampered with.
-        if self.cleaned_data['key'] != self.cleaned_data.get(
-                'message', {}).get('key'):
+        try:
+            self.site = Site.objects.get(sso_key=cleaned_data['key'])
+        except Site.DoesNotExist:
+            raise ValidationError('Invalid SSO key')
+        try:
+            new_data = jwt.decode(cleaned_data['message'],
+                                  self.site.sso_secret,
+                                  algorithms=['HS256'])
+        except jwt.exceptions.DecodeError:
+            raise ValidationError("Failed to decode JWT.")
+
+        # This is useful for verifying if the key of the GET parameter (which
+        # could be tampered with) is same as the key in the payload.
+        if cleaned_data['key'] != new_data['key']:
             raise ValidationError('Public SSO key does not match signed key')
-
-
-class JWTLogoutDecryptForm(JWTDecryptForm):
-    key = forms.CharField(max_length=1024)
-    message = JWTField(max_length=8192, allowed_keys=('key', 'domain'))
+        return new_data
 
 
 def validate_password(cleaned_password):

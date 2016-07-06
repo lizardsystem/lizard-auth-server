@@ -10,11 +10,9 @@ except ImportError:
     from urllib.parse import urljoin, urlparse, urlencode
 
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.template.response import TemplateResponse
-from django.utils.translation import ugettext as _
 import jwt
 
 from lizard_auth_server import forms
@@ -23,7 +21,6 @@ from lizard_auth_server.views_sso import (
     domain_match,
     FormInvalidMixin,
 )
-from lizard_auth_server.views import ErrorMessageResponse
 from lizard_auth_server.models import Profile
 
 
@@ -42,12 +39,12 @@ def get_domain(form):
 
     """
     portal_redirect = form.site.redirect_url
-    domain = form.cleaned_data.get('message', {}).get('domain', None)
+    domain = form.cleaned_data.get('domain', None)
 
     # BBB, previously the "next" parameter was used, but django itself also
     # uses it, leading to conflicts. IF "next" starts with "http", we use it
     # and otherwise we omit it.
-    next = form.cleaned_data.get('message', {}).get('next', None)
+    next = form.cleaned_data.get('next', None)
     if next:
         if next.startswith('http'):  # Includes https :-)
             domain = next
@@ -105,7 +102,7 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
         if self.request.user.is_authenticated():
             return self.form_valid_authenticated()
         return self.form_valid_unauthenticated(
-            form.cleaned_data.get('message', {}).get('force_sso_login', True))
+            form.cleaned_data.get('force_sso_login', True))
 
     def form_valid_authenticated(self):
         """
@@ -196,7 +193,7 @@ class LogoutView(FormInvalidMixin, ProcessGetFormView):
     """
     View for logging out.
     """
-    form_class = forms.JWTLogoutDecryptForm
+    form_class = forms.JWTDecryptForm
 
     def form_valid(self, form):
         next_url = reverse('lizard_auth_server.api_v2.logout_redirect')
@@ -220,7 +217,7 @@ class LogoutRedirectView(FormInvalidMixin, ProcessGetFormView):
     """
     View that redirects the user to the logout page of the portal.
     """
-    form_class = forms.JWTLogoutDecryptForm
+    form_class = forms.JWTDecryptForm
 
     def form_valid(self, form):
         url = urljoin(get_domain(form), 'sso/local_logout/')

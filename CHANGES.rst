@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-1.8 (unreleased)
+2.0 (2016-07-07)
 ----------------
 
 - Added JWT expiration time of 15 minutes.

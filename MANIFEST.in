@@ -2,6 +2,9 @@ recursive-include lizard_auth_server *
 recursive-include doc *
 include *.rst
 exclude .*
+exclude *.yml
+exclude Dockerfile
+exclude Jenkinsfile
 exclude bootstrap.py
 exclude coverage.xml
 exclude Makefile

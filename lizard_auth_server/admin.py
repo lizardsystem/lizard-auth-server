@@ -305,15 +305,29 @@ class OrganisationRoleAdmin(admin.ModelAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        """Only return employees from your own company."""
+        qs = super(ProfileAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(company=request.user.profile.company)
+
     model = models.Profile
     list_display = ['username', 'full_name', 'email', 'created_at']
     search_fields = ['user__first_name', 'user__last_name', 'user__email']
     list_filter = ['company']
-    readonly_fields = ['updated_at', 'created_at']
+    readonly_fields = ['full_name', 'email', 'updated_at', 'created_at']
     list_select_related = ['user']
 
 
 class CompanyAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        """Only return the employee's company."""
+        qs = super(CompanyAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(pk=request.user.profile.company.pk)
+
     model = models.Company
     filter_horizontal = ['guests', 'administrators']
     search_fields = ['name']

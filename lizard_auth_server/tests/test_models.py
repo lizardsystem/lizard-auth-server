@@ -363,6 +363,19 @@ class TestPermissions(TestCase):
         self.assertTrue(company2 in models.Company.objects.all())
 
     @patch('lizard_auth_server.models.request')
+    def test_get_companies_guest(self, mock_class):
+        """Guest can get companies where they are guest."""
+        profile = factories.ProfileF(company=None)
+        company = factories.CompanyF()
+        profile.company = company
+        profile.save()  # necessary evil for this to work
+        mock_class.user = profile.user
+        company2 = factories.CompanyF()
+        company2.guests.add(profile)
+        self.assertEqual(models.Company.objects.all().count(), 2)
+        self.assertTrue(company2 in models.Company.objects.all())
+
+    @patch('lizard_auth_server.models.request')
     def test_get_companies_superuser(self, mock_class):
         """Superuser can get all."""
         profile = factories.ProfileF(company=None)

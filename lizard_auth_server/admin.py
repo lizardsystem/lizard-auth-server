@@ -318,12 +318,6 @@ class CompanyAdmin(admin.ModelAdmin):
     filter_horizontal = ['guests', 'administrators']
     search_fields = ['name']
 
-    def get_queryset(self, request):
-        qs = super(CompanyAdmin, self).get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs
-
     def get_form(self, request, obj=None, **kwargs):
         form = super(CompanyAdmin, self).get_form(request, obj, **kwargs)
         # we want every Profile to be selectable in our guests form

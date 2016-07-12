@@ -759,11 +759,13 @@ class ProfileManager(models.Manager):
         if user.is_superuser:
             return qs
         # If the user is admin of one or more companies return all the users
-        # belonging to those companies. NOTE: this means an admin is able to
-        # edit users that belong to a company other than his or her own!
-        if user.profile.companies_as_admin.count() > 0:
-            return qs.filter(company__in=user.profile.companies_as_admin.all())
-        return qs.none()
+        # belonging to those companies.
+        # NOTE 1: this means an admin is able to edit users that belong to a
+        # company other than his or her own!
+        # NOTE 2: to be able to manage your own company's users you have to
+        # be explicitly admin of your company (which is in line with the
+        # implementation).
+        return qs.filter(company__in=user.profile.companies_as_admin.all())
 
 
 class CompanyManager(models.Manager):

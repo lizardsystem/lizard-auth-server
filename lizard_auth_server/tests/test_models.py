@@ -1,7 +1,11 @@
 from __future__ import unicode_literals
+
+from unittest.mock import patch
+
 from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
 from django.test import TestCase
+
 from lizard_auth_server import forms
 from lizard_auth_server import models
 from lizard_auth_server.tests import factories
@@ -283,3 +287,53 @@ class TestProfile(TestCase):
         company = factories.CompanyF.create(guests=[profile])
         site = factories.SiteF.create(available_to=[company])
         self.assertTrue(profile.has_access(site))
+
+
+class TestPermissions(TestCase):
+    @patch('lizard_auth_server.models.request')
+    def test_user_cant_access_users(self, mock_class):
+        """Normal users can't retrieve users."""
+        profile = factories.ProfileF()
+        mock_class.user = profile.user
+        self.assertTrue(models.Profile.objects.all().count() == 0)
+
+    @patch('lizard_auth_server.models.request')
+    def test_superuser_can_get_users(self, mock_class):
+        """Superusers can retrieve users."""
+        profile = factories.ProfileF()
+        mock_class.user = profile.user
+        mock_class.user.is_superuser = True
+        self.assertTrue(models.Profile.objects.all().count() > 0)
+
+    @patch('lizard_auth_server.models.request')
+    def test_admins_can_get_users(self, mock_class):
+        """Admins can retrieve users from companies they manage."""
+        profile = factories.ProfileF()
+        mock_class.user = profile.user
+        company = factories.CompanyF()
+        profile.company = company
+        profile.save()  # somehow this save is needed
+        company.administrators.add(profile)
+        self.assertTrue(models.Profile.objects.all().count() > 0)
+
+    @patch('lizard_auth_server.models.request')
+    def test_admins_cant_get_unmanaged(self, mock_class):
+        """Admins can't retrieve users from companies they don't manage."""
+        profile = factories.ProfileF()
+        profile2 = factories.ProfileF()
+        mock_class.user = profile.user
+        company = factories.CompanyF()
+        company2 = factories.CompanyF()
+        profile.company = company
+        profile.save()
+        profile2.company = company2
+        profile2.save()
+        company.administrators.add(profile)
+        # When only managing 1 company it can only get that company's users
+        self.assertTrue(models.Profile.objects.all().count() == 1)
+        self.assertTrue(profile in models.Profile.objects.all())
+
+        # Now also manages company2, thus gets also those users
+        company2.administrators.add(profile)
+        self.assertTrue(models.Profile.objects.all().count() == 2)
+        self.assertTrue(profile2 in models.Profile.objects.all())

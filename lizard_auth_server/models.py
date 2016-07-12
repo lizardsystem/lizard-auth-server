@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import datetime
+import logging
+import pytz
+import uuid
+
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,12 +19,10 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _
+from tls import request
+
 from lizard_auth_server.utils import gen_secret_key
 
-import datetime
-import logging
-import pytz
-import uuid
 
 BILLING_ROLE = 'billing'
 THREEDI_PORTAL = '3Di'
@@ -745,6 +749,45 @@ class OrganisationRole(models.Model):
 # New models
 # ##########
 
+class ProfileManager(models.Manager):
+    def get_queryset(self):
+        qs = super(ProfileManager, self).get_queryset()
+        try:
+            user = request.user
+        except RuntimeError:
+            return qs
+        if user.is_superuser:
+            return qs
+        # If the user is admin of one or more companies return all the users
+        # belonging to those companies. NOTE: this means an admin is able to
+        # edit users that belong to a company other than his or her own!
+        if user.profile.companies_as_admin.count() > 0:
+            # return qs.filter(company=user.profile.company)
+            return qs.filter(company__in=user.profile.companies_as_admin.all())
+        return qs.none()
+
+
+class CompanyManager(models.Manager):
+    def get_queryset(self):
+        qs = super(CompanyManager, self).get_queryset()
+        try:
+            user = request.user
+        except RuntimeError:
+            return qs
+        if user.is_superuser:
+            return qs
+        # If you're admin of a company, return those companies.
+        companies_as_admin = qs.filter(
+            administrators__pk__contains=user.profile.pk)
+        return companies_as_admin
+        # Return only your own company.
+        # try:
+        #     company = user.profile.company
+        # except AttributeError:
+        #     company = None
+        # return qs.filter(pk=company.pk)
+
+
 class Profile(models.Model):
     """Replacement for UserProfile."""
     user = models.OneToOneField(
@@ -762,6 +805,9 @@ class Profile(models.Model):
     updated_at = models.DateTimeField(
         verbose_name=_('updated at'),
         auto_now=True)
+
+    objects = ProfileManager()
+    all_objects = models.Manager()
 
     def __str__(self):
         return self.user.username
@@ -834,6 +880,8 @@ class Company(models.Model):
             "Admins can add/edit users belonging to the company and can add/"
             "remove guests and manage site access")
         )
+
+    objects = CompanyManager()
 
     def __str__(self):
         return self.name

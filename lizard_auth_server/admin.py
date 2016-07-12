@@ -305,13 +305,6 @@ class OrganisationRoleAdmin(admin.ModelAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    def get_queryset(self, request):
-        """Only return employees from your own company."""
-        qs = super(ProfileAdmin, self).get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(company=request.user.profile.company)
-
     model = models.Profile
     list_display = ['username', 'full_name', 'email', 'created_at']
     search_fields = ['user__first_name', 'user__last_name', 'user__email']
@@ -321,16 +314,21 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 class CompanyAdmin(admin.ModelAdmin):
-    def get_queryset(self, request):
-        """Only return the employee's company."""
-        qs = super(CompanyAdmin, self).get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(pk=request.user.profile.company.pk)
-
     model = models.Company
     filter_horizontal = ['guests', 'administrators']
     search_fields = ['name']
+
+    def get_queryset(self, request):
+        qs = super(CompanyAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(CompanyAdmin, self).get_form(request, obj, **kwargs)
+        # we want every Profile to be selectable in our guests form
+        form.base_fields['guests'].queryset = models.Profile.all_objects.all()
+        return form
 
 
 class SiteAdmin(admin.ModelAdmin):

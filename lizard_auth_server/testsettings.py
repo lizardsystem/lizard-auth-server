@@ -163,6 +163,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'tls.TLSRequestMiddleware',
 )
 
 INSTALLED_APPS = (
@@ -188,6 +189,6 @@ EMAIL_HOST = '100-mail-d03.external-nens.local'
 
 try:
     # Import local settings that aren't stored in svn/git.
-    from lizard_auth_server.local_testsettings import *
+    from lizard_auth_server.local_testsettings import *  # noqa
 except ImportError:
     pass

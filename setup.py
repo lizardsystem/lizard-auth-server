@@ -13,6 +13,7 @@ install_requires = [
     'django-appconf',
     'django-extensions',
     'django-nose',
+    'django-tls',
     'itsdangerous',
     'pyjwt',
     'pytz',

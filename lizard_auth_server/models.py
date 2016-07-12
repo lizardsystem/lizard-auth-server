@@ -777,9 +777,12 @@ class CompanyManager(models.Manager):
             return qs
         if user.is_superuser:
             return qs
-        # If you're admin of a company, return those companies.
+        # Return your own company; if you're admin of a company, return those
+        # companies as well.
+        company_pk = user.profile.company.pk if user.profile.company else None
         companies_as_admin = qs.filter(
-            administrators__pk__contains=user.profile.pk)
+            Q(administrators__pk__contains=user.profile.pk) |
+            Q(pk=company_pk))
         return companies_as_admin
 
 

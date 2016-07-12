@@ -782,7 +782,6 @@ class CompanyManager(models.Manager):
         company_pk = user.profile.company.pk if user.profile.company else None
         companies_as_admin = qs.filter(
             Q(administrators__pk__contains=user.profile.pk) |
-            Q(guests__pk__contains=user.profile.pk) |
             Q(pk=company_pk))
         return companies_as_admin
 
@@ -805,8 +804,11 @@ class Profile(models.Model):
         verbose_name=_('updated at'),
         auto_now=True)
 
-    objects = ProfileManager()
-    all_objects = models.Manager()
+    # Default (all objects)
+    objects = models.Manager()
+
+    # Filtered for editable views
+    editable_objects = ProfileManager()
 
     def __str__(self):
         return self.user.username
@@ -880,8 +882,11 @@ class Company(models.Model):
             "remove guests and manage site access")
         )
 
-    objects = CompanyManager()
-    all_objects = models.Manager()
+    # Default (all objects)
+    objects = models.Manager()
+
+    # Filtered for editable views
+    editable_objects = CompanyManager()
 
     def __str__(self):
         return self.name

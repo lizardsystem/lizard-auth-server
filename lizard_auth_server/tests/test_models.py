@@ -289,13 +289,20 @@ class TestProfile(TestCase):
         self.assertTrue(profile.has_access(site))
 
 
-class TestPermissions(TestCase):
+class TestQuerysetPermissions(TestCase):
+    """
+    Note: these tests use the editable_objects queryset. This queryset is
+    used in views where we want this filtering, e.g., either places where we
+    edit objects (e.g. the django admin) or other views where we expose
+    objects to end users.
+    """
+
     @patch('lizard_auth_server.models.request')
     def test_user_cant_access_users(self, mock_class):
         """Normal users can't retrieve users."""
         profile = factories.ProfileF()
         mock_class.user = profile.user
-        self.assertTrue(models.Profile.objects.all().count() == 0)
+        self.assertTrue(models.Profile.editable_objects.all().count() == 0)
 
     @patch('lizard_auth_server.models.request')
     def test_superuser_can_get_users(self, mock_class):
@@ -303,7 +310,7 @@ class TestPermissions(TestCase):
         profile = factories.ProfileF()
         mock_class.user = profile.user
         mock_class.user.is_superuser = True
-        self.assertTrue(models.Profile.objects.all().count() > 0)
+        self.assertTrue(models.Profile.editable_objects.all().count() > 0)
 
     @patch('lizard_auth_server.models.request')
     def test_admins_can_get_users(self, mock_class):
@@ -314,7 +321,7 @@ class TestPermissions(TestCase):
         profile.company = company
         profile.save()  # somehow this save is needed
         company.administrators.add(profile)
-        self.assertTrue(models.Profile.objects.all().count() > 0)
+        self.assertTrue(models.Profile.editable_objects.all().count() > 0)
 
     @patch('lizard_auth_server.models.request')
     def test_admins_cant_get_unmanaged(self, mock_class):
@@ -330,13 +337,13 @@ class TestPermissions(TestCase):
         profile2.save()
         company.administrators.add(profile)
         # When only managing 1 company it can only get that company's users
-        self.assertTrue(models.Profile.objects.all().count() == 1)
-        self.assertTrue(profile in models.Profile.objects.all())
+        self.assertTrue(models.Profile.editable_objects.all().count() == 1)
+        self.assertTrue(profile in models.Profile.editable_objects.all())
 
         # Now also manages company2, thus gets also those users
         company2.administrators.add(profile)
-        self.assertTrue(models.Profile.objects.all().count() == 2)
-        self.assertTrue(profile2 in models.Profile.objects.all())
+        self.assertTrue(models.Profile.editable_objects.all().count() == 2)
+        self.assertTrue(profile2 in models.Profile.editable_objects.all())
 
     @patch('lizard_auth_server.models.request')
     def test_get_companies_normal(self, mock_class):
@@ -347,7 +354,7 @@ class TestPermissions(TestCase):
         profile.save()  # necessary evil for this to work
         mock_class.user = profile.user
         factories.CompanyF()  # Create an extra company in the db
-        self.assertEqual(models.Company.objects.all().count(), 1)
+        self.assertEqual(models.Company.editable_objects.all().count(), 1)
 
     @patch('lizard_auth_server.models.request')
     def test_get_companies_admin(self, mock_class):
@@ -359,21 +366,8 @@ class TestPermissions(TestCase):
         mock_class.user = profile.user
         company2 = factories.CompanyF()
         company2.administrators.add(profile)
-        self.assertEqual(models.Company.objects.all().count(), 2)
-        self.assertTrue(company2 in models.Company.objects.all())
-
-    @patch('lizard_auth_server.models.request')
-    def test_get_companies_guest(self, mock_class):
-        """Guest can get companies where they are guest."""
-        profile = factories.ProfileF(company=None)
-        company = factories.CompanyF()
-        profile.company = company
-        profile.save()  # necessary evil for this to work
-        mock_class.user = profile.user
-        company2 = factories.CompanyF()
-        company2.guests.add(profile)
-        self.assertEqual(models.Company.objects.all().count(), 2)
-        self.assertTrue(company2 in models.Company.objects.all())
+        self.assertEqual(models.Company.editable_objects.all().count(), 2)
+        self.assertTrue(company2 in models.Company.editable_objects.all())
 
     @patch('lizard_auth_server.models.request')
     def test_get_companies_superuser(self, mock_class):
@@ -385,4 +379,4 @@ class TestPermissions(TestCase):
         profile.save()  # necessary evil for this to work
         mock_class.user = profile.user
         factories.CompanyF()  # Create an extra company in the db
-        self.assertEqual(models.Company.objects.all().count(), 2)
+        self.assertEqual(models.Company.editable_objects.all().count(), 2)

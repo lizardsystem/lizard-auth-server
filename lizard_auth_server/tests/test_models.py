@@ -346,9 +346,21 @@ class TestPermissions(TestCase):
         profile.company = company
         profile.save()  # necessary evil for this to work
         mock_class.user = profile.user
-        # Create an extra company in the db
-        factories.CompanyF()
+        factories.CompanyF()  # Create an extra company in the db
         self.assertEqual(models.Company.objects.all().count(), 1)
+
+    @patch('lizard_auth_server.models.request')
+    def test_get_companies_admin(self, mock_class):
+        """Admins can get companies they manage."""
+        profile = factories.ProfileF(company=None)
+        company = factories.CompanyF()
+        profile.company = company
+        profile.save()  # necessary evil for this to work
+        mock_class.user = profile.user
+        company2 = factories.CompanyF()
+        company2.administrators.add(profile)
+        self.assertEqual(models.Company.objects.all().count(), 2)
+        self.assertTrue(company2 in models.Company.objects.all())
 
     @patch('lizard_auth_server.models.request')
     def test_get_companies_superuser(self, mock_class):
@@ -359,6 +371,5 @@ class TestPermissions(TestCase):
         profile.company = company
         profile.save()  # necessary evil for this to work
         mock_class.user = profile.user
-        # Create an extra company in the db
-        factories.CompanyF()
+        factories.CompanyF()  # Create an extra company in the db
         self.assertEqual(models.Company.objects.all().count(), 2)

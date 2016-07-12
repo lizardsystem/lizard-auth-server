@@ -337,3 +337,28 @@ class TestPermissions(TestCase):
         company2.administrators.add(profile)
         self.assertTrue(models.Profile.objects.all().count() == 2)
         self.assertTrue(profile2 in models.Profile.objects.all())
+
+    @patch('lizard_auth_server.models.request')
+    def test_get_companies_normal(self, mock_class):
+        """Normal users can only get their own company."""
+        company = factories.CompanyF()
+        profile = factories.ProfileF(company=None)
+        profile.company = company
+        profile.save()  # necessary evil for this to work
+        mock_class.user = profile.user
+        # Create an extra company in the db
+        factories.CompanyF()
+        self.assertEqual(models.Company.objects.all().count(), 1)
+
+    @patch('lizard_auth_server.models.request')
+    def test_get_companies_superuser(self, mock_class):
+        """Superuser can get all."""
+        profile = factories.ProfileF(company=None)
+        profile.user.is_superuser = True
+        company = factories.CompanyF()
+        profile.company = company
+        profile.save()  # necessary evil for this to work
+        mock_class.user = profile.user
+        # Create an extra company in the db
+        factories.CompanyF()
+        self.assertEqual(models.Company.objects.all().count(), 2)

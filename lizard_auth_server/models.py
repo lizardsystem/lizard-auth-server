@@ -881,6 +881,7 @@ class Company(models.Model):
         )
 
     objects = CompanyManager()
+    all_objects = models.Manager()
 
     def __str__(self):
         return self.name

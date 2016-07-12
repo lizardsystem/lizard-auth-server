@@ -762,7 +762,6 @@ class ProfileManager(models.Manager):
         # belonging to those companies. NOTE: this means an admin is able to
         # edit users that belong to a company other than his or her own!
         if user.profile.companies_as_admin.count() > 0:
-            # return qs.filter(company=user.profile.company)
             return qs.filter(company__in=user.profile.companies_as_admin.all())
         return qs.none()
 
@@ -780,12 +779,6 @@ class CompanyManager(models.Manager):
         companies_as_admin = qs.filter(
             administrators__pk__contains=user.profile.pk)
         return companies_as_admin
-        # Return only your own company.
-        # try:
-        #     company = user.profile.company
-        # except AttributeError:
-        #     company = None
-        # return qs.filter(pk=company.pk)
 
 
 class Profile(models.Model):

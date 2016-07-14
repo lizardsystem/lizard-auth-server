@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import datetime
+import logging
+import pytz
+import uuid
+
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,12 +19,10 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _
+from tls import request
+
 from lizard_auth_server.utils import gen_secret_key
 
-import datetime
-import logging
-import pytz
-import uuid
 
 BILLING_ROLE = 'billing'
 THREEDI_PORTAL = '3Di'
@@ -745,8 +749,51 @@ class OrganisationRole(models.Model):
 # New models
 # ##########
 
+class ProfileManager(models.Manager):
+    def get_queryset(self):
+        qs = super(ProfileManager, self).get_queryset()
+        try:
+            user = request.user
+        except RuntimeError:
+            return qs
+        if user.is_superuser:
+            return qs
+        # If the user is admin of one or more companies return all the users
+        # belonging to those companies.
+        # NOTE 1: this means an admin is able to edit users that belong to a
+        # company other than his or her own!
+        # NOTE 2: to be able to manage your own company's users you have to
+        # be explicitly admin of your company (which is in line with the
+        # implementation).
+        return qs.filter(company__in=user.profile.companies_as_admin.all())
+
+
+class CompanyManager(models.Manager):
+    def get_queryset(self):
+        qs = super(CompanyManager, self).get_queryset()
+        try:
+            user = request.user
+        except RuntimeError:
+            return qs
+        if user.is_superuser:
+            return qs
+        # Return your own company; if you're admin or guest at a company,
+        # return those companies as well.
+        company_pk = user.profile.company.pk if user.profile.company else None
+        companies_as_admin = qs.filter(
+            Q(administrators__pk__contains=user.profile.pk) |
+            Q(pk=company_pk))
+        return companies_as_admin
+
+
 class Profile(models.Model):
-    """Replacement for UserProfile."""
+    """Replacement for UserProfile.
+    
+    Note: this model has two querysets:
+    1. objects: the default queryset with all objects
+    2. editable_objects: a queryset which is filtered w.r.t. the user that
+    accesses it
+    """
     user = models.OneToOneField(
         User,
         verbose_name=_('user'),
@@ -762,6 +809,12 @@ class Profile(models.Model):
     updated_at = models.DateTimeField(
         verbose_name=_('updated at'),
         auto_now=True)
+
+    # Default (all objects)
+    objects = models.Manager()
+
+    # Filtered for editable views
+    editable_objects = ProfileManager()
 
     def __str__(self):
         return self.user.username
@@ -807,7 +860,13 @@ class Profile(models.Model):
 
 
 class Company(models.Model):
-    """Replacement for Organisation."""
+    """Replacement for Organisation.
+
+    Note: this model has two querysets:
+    1. objects: the default queryset with all objects
+    2. editable_objects: a queryset which is filtered w.r.t. the user that
+    accesses it
+    """
     name = models.CharField(
         verbose_name=_('name'),
         max_length=255,
@@ -834,6 +893,12 @@ class Company(models.Model):
             "Admins can add/edit users belonging to the company and can add/"
             "remove guests and manage site access")
         )
+
+    # Default (all objects)
+    objects = models.Manager()
+
+    # Filtered for editable views
+    editable_objects = CompanyManager()
 
     def __str__(self):
         return self.name

@@ -1,7 +1,11 @@
 from __future__ import unicode_literals
+
+from unittest.mock import patch
+
 from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
 from django.test import TestCase
+
 from lizard_auth_server import forms
 from lizard_auth_server import models
 from lizard_auth_server.tests import factories
@@ -283,3 +287,96 @@ class TestProfile(TestCase):
         company = factories.CompanyF.create(guests=[profile])
         site = factories.SiteF.create(available_to=[company])
         self.assertTrue(profile.has_access(site))
+
+
+class TestQuerysetPermissions(TestCase):
+    """
+    Note: these tests use the editable_objects queryset. This queryset is
+    used in views where we want this filtering, e.g., either places where we
+    edit objects (e.g. the django admin) or other views where we expose
+    objects to end users.
+    """
+
+    @patch('lizard_auth_server.models.request')
+    def test_user_cant_access_users(self, mock_class):
+        """Normal users can't retrieve users."""
+        profile = factories.ProfileF()
+        mock_class.user = profile.user
+        self.assertTrue(models.Profile.editable_objects.all().count() == 0)
+
+    @patch('lizard_auth_server.models.request')
+    def test_superuser_can_get_users(self, mock_class):
+        """Superusers can retrieve users."""
+        profile = factories.ProfileF()
+        mock_class.user = profile.user
+        mock_class.user.is_superuser = True
+        self.assertTrue(models.Profile.editable_objects.all().count() > 0)
+
+    @patch('lizard_auth_server.models.request')
+    def test_admins_can_get_users(self, mock_class):
+        """Admins can retrieve users from companies they manage."""
+        profile = factories.ProfileF()
+        mock_class.user = profile.user
+        company = factories.CompanyF()
+        profile.company = company
+        profile.save()  # somehow this save is needed
+        company.administrators.add(profile)
+        self.assertTrue(models.Profile.editable_objects.all().count() > 0)
+
+    @patch('lizard_auth_server.models.request')
+    def test_admins_cant_get_unmanaged(self, mock_class):
+        """Admins can't retrieve users from companies they don't manage."""
+        profile = factories.ProfileF()
+        profile2 = factories.ProfileF()
+        mock_class.user = profile.user
+        company = factories.CompanyF()
+        company2 = factories.CompanyF()
+        profile.company = company
+        profile.save()
+        profile2.company = company2
+        profile2.save()
+        company.administrators.add(profile)
+        # When only managing 1 company it can only get that company's users
+        self.assertTrue(models.Profile.editable_objects.all().count() == 1)
+        self.assertTrue(profile in models.Profile.editable_objects.all())
+
+        # Now also manages company2, thus gets also those users
+        company2.administrators.add(profile)
+        self.assertTrue(models.Profile.editable_objects.all().count() == 2)
+        self.assertTrue(profile2 in models.Profile.editable_objects.all())
+
+    @patch('lizard_auth_server.models.request')
+    def test_get_companies_normal(self, mock_class):
+        """Normal users can only get their own company."""
+        company = factories.CompanyF()
+        profile = factories.ProfileF(company=None)
+        profile.company = company
+        profile.save()  # necessary evil for this to work
+        mock_class.user = profile.user
+        factories.CompanyF()  # Create an extra company in the db
+        self.assertEqual(models.Company.editable_objects.all().count(), 1)
+
+    @patch('lizard_auth_server.models.request')
+    def test_get_companies_admin(self, mock_class):
+        """Admins can get companies they manage."""
+        profile = factories.ProfileF(company=None)
+        company = factories.CompanyF()
+        profile.company = company
+        profile.save()  # necessary evil for this to work
+        mock_class.user = profile.user
+        company2 = factories.CompanyF()
+        company2.administrators.add(profile)
+        self.assertEqual(models.Company.editable_objects.all().count(), 2)
+        self.assertTrue(company2 in models.Company.editable_objects.all())
+
+    @patch('lizard_auth_server.models.request')
+    def test_get_companies_superuser(self, mock_class):
+        """Superuser can get all."""
+        profile = factories.ProfileF(company=None)
+        profile.user.is_superuser = True
+        company = factories.CompanyF()
+        profile.company = company
+        profile.save()  # necessary evil for this to work
+        mock_class.user = profile.user
+        factories.CompanyF()  # Create an extra company in the db
+        self.assertEqual(models.Company.editable_objects.all().count(), 2)

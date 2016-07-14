@@ -309,14 +309,31 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ['username', 'full_name', 'email', 'created_at']
     search_fields = ['user__first_name', 'user__last_name', 'user__email']
     list_filter = ['company']
-    readonly_fields = ['updated_at', 'created_at']
+    readonly_fields = ['full_name', 'email', 'updated_at', 'created_at']
     list_select_related = ['user']
+
+    def get_queryset(self, request):
+        """Select filtered objects because we're in an editable view."""
+        return models.Profile.editable_objects.all()
 
 
 class CompanyAdmin(admin.ModelAdmin):
     model = models.Company
     filter_horizontal = ['guests', 'administrators']
     search_fields = ['name']
+
+    def get_queryset(self, request):
+        """Select filtered objects because we're in an editable view."""
+        return models.Company.editable_objects.all()
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(CompanyAdmin, self).get_form(request, obj, **kwargs)
+        # we want every Profile to be selectable in our guests form
+        form.base_fields['guests'].queryset = models.Profile.objects.all()
+        # we do want a custom filter for administrators
+        form.base_fields['administrators'].queryset = \
+            models.Profile.editable_objects.all()
+        return form
 
 
 class SiteAdmin(admin.ModelAdmin):

@@ -787,7 +787,13 @@ class CompanyManager(models.Manager):
 
 
 class Profile(models.Model):
-    """Replacement for UserProfile."""
+    """Replacement for UserProfile.
+    
+    Note: this model has two querysets:
+    1. objects: the default queryset with all objects
+    2. editable_objects: a queryset which is filtered w.r.t. the user that
+    accesses it
+    """
     user = models.OneToOneField(
         User,
         verbose_name=_('user'),
@@ -854,7 +860,13 @@ class Profile(models.Model):
 
 
 class Company(models.Model):
-    """Replacement for Organisation."""
+    """Replacement for Organisation.
+
+    Note: this model has two querysets:
+    1. objects: the default queryset with all objects
+    2. editable_objects: a queryset which is filtered w.r.t. the user that
+    accesses it
+    """
     name = models.CharField(
         verbose_name=_('name'),
         max_length=255,

@@ -114,8 +114,8 @@ class Portal(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name = _('portal')
-        verbose_name_plural = _('portals')
+        verbose_name = _('(portal)')
+        verbose_name_plural = _('(portals)')
 
 
 class TokenManager(models.Manager):
@@ -171,8 +171,8 @@ class Token(models.Model):
     objects = TokenManager()
 
     class Meta:
-        verbose_name = _('authentication token')
-        verbose_name_plural = _('authentication tokens')
+        verbose_name = _('(authentication token)')
+        verbose_name_plural = _('(authentication tokens)')
         ordering = ('-created',)
 
 
@@ -255,8 +255,8 @@ class UserProfile(models.Model):
     objects = UserProfileManager()
 
     class Meta:
-        verbose_name = _('user profile (old style)')
-        verbose_name_plural = _('user profiles (old style)')
+        verbose_name = _('(user profile)')
+        verbose_name_plural = _('(user profiles)')
         ordering = ['user__username']
 
     def __str__(self):
@@ -454,8 +454,8 @@ class Invitation(models.Model):
         blank=True)
 
     class Meta:
-        verbose_name = _('invitation')
-        verbose_name_plural = _('invitation')
+        verbose_name = _('(invitation)')
+        verbose_name_plural = _('(invitation)')
         ordering = ['is_activated', '-created_at', 'email']
 
     def __str__(self):
@@ -629,8 +629,8 @@ class Role(models.Model):
     class Meta:
         ordering = ['portal', 'name']
         unique_together = (('name', 'portal'), )
-        verbose_name = _('role')
-        verbose_name_plural = _('roles')
+        verbose_name = _('(role)')
+        verbose_name_plural = _('(roles)')
 
     def __str__(self):
         return _('{name} on {portal}').format(name=self.name,
@@ -666,8 +666,8 @@ class Organisation(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = _('organisation')
-        verbose_name_plural = _('organisations')
+        verbose_name = _('(organisation)')
+        verbose_name_plural = _('(organisations)')
 
     def __str__(self):
         return self.name
@@ -706,8 +706,8 @@ class OrganisationRole(models.Model):
 
     class Meta:
         unique_together = (('organisation', 'role'), )
-        verbose_name = _('organisation-role-mapping')
-        verbose_name_plural = _('organisation-role-mappings')
+        verbose_name = _('(organisation-role-mapping)')
+        verbose_name_plural = _('(organisation-role-mappings)')
 
     def __str__(self):
         if self.for_all_users:

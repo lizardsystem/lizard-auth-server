@@ -200,14 +200,12 @@ class UserProfile(models.Model):
         "Organisation",
         verbose_name=_('organisations'),
         related_name='user_profiles',
-        blank=True,
-        null=True)
+        blank=True)
     roles = models.ManyToManyField(
         "OrganisationRole",
         related_name='user_profiles',
         verbose_name=_('roles (via organisation)'),
-        blank=True,
-        null=True)
+        blank=True)
 
     created_at = models.DateTimeField(
         verbose_name=_('created on'),

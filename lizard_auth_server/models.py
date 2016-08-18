@@ -185,15 +185,7 @@ class UserProfileManager(models.Manager):
 
 
 class UserProfile(models.Model):
-    """
-    Note: when migrating to Django 1.5, this is the ideal candidate
-    for using the new custom User model features.
-
-    Note: this is linked via Django's user profile support. This means
-    all fields must be OPTIONAL.
-
-    Note 2: This doesn't work with getprofile() anymore
-    """
+    """Old user profile"""
     user = models.OneToOneField(
         User,
         verbose_name=_('user'),
@@ -788,7 +780,7 @@ class CompanyManager(models.Manager):
 
 class Profile(models.Model):
     """Replacement for UserProfile.
-    
+
     Note: this model has two querysets:
     1. objects: the default queryset with all objects
     2. editable_objects: a queryset which is filtered w.r.t. the user that

@@ -7,6 +7,10 @@ Changelog of lizard-auth-server
 
 - Added custom object managers for Profile and Company.
 
+- The old to-be-removed-eventually models now have their names enclosed in
+  parenthesis. So ``(portal)`` instead of ``portal``. This makes it clear
+  which models are new and which ones are old.
+
 
 2.0 (2016-07-07)
 ----------------

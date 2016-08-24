@@ -2,15 +2,16 @@ language: python
 sudo: false
 python:
   - 3.5
-addons:
-  apt:
-    packages:
-    - python3-psycopg2
+# addons:
+#   apt:
+#     packages:
+#     - python3-psycopg2
 cache:
   directories:
-   - eggs
-   - $HOME/.local
+    - eggs
+    - $HOME/.local
 install:
+  - pip install psycopg2
   - python bootstrap.py
   - bin/buildout -v
 script:

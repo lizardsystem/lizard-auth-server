@@ -67,14 +67,16 @@ ADMINS = (
 )
 MANAGERS = ADMINS
 
+INSIDE_DOCKER = os.path.exists(os.path.join(os.getcwd(), '..', '.dockerenv'))
+
 DATABASES = {
     'default': {
-        'NAME': os.path.join(BUILDOUT_DIR, 'var', 'sqlite', 'test.db'),
-        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'sso',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'buildout',
         'PASSWORD': 'buildout',
-        'HOST': '',
-        'PORT': '',
+        'HOST': (INSIDE_DOCKER and 'db' or 'localhost'),
+        'PORT': 5432,
     }
 }
 

@@ -11,7 +11,7 @@ def add_missing_profiles(apps, schema_editor):
     for old_profile in UserProfile.objects.filter(user__profile__isnull=True):
         new_profile = Profile.objects.create(user=old_profile.user)
         new_profile.save()
-        print("Created new profile %s" % new_profile)
+        print("Created new profile for %s" % old_profile.user)
 
 
 class Migration(migrations.Migration):

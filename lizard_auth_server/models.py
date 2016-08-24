@@ -807,11 +807,15 @@ class Profile(models.Model):
     editable_objects = ProfileManager()
 
     def __str__(self):
-        return self.user.username
+        if self.user:
+            return '{}'.format(self.user.username)
+        else:
+            return 'UserProfile {}'.format(self.pk)
 
     class Meta:
         verbose_name = _("user profile")
         verbose_name_plural = _("user profiles")
+        ordering = ['user__username']
 
     @property
     def username(self):

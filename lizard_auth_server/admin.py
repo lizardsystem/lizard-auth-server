@@ -250,8 +250,9 @@ class OrganisationAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         queryset = super(OrganisationAdmin, self).get_queryset(request)
-        return queryset.annotate(user_profiles_count=Count('user_profiles'),
-                                 roles_count=Count('roles', distinct=True))
+        return queryset.annotate(
+            user_profiles_count=Count('user_profiles', distinct=True),
+            roles_count=Count('roles', distinct=True))
 
     def num_user_profiles(self, obj):
         count = obj.user_profiles_count

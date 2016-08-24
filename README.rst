@@ -60,3 +60,17 @@ The site will now run on http://localhost:5000
 Running the tests::
 
     $ docker-compose run web bin/test
+
+
+Grabbing production database
+----------------------------
+
+Dump::
+
+    $ pg_dump -f sso.dump -F c \
+      -h p-web-db-d7.external-nens.local -U sso \
+      -N topology -T spatial_ref_sys sso
+
+Restore::
+
+    $ pg_restore --no-owner --clean --dbname sso --username buildout --host db

@@ -5,11 +5,15 @@ Changelog of lizard-auth-server
 2.1 (unreleased)
 ----------------
 
-- Added custom object managers for Profile and Company.
+- Added custom object managers for Profile and Company to easily restrict
+  queries to those you can actuall edit.
 
 - The old to-be-removed-eventually models now have their names enclosed in
   parenthesis. So ``(portal)`` instead of ``portal``. This makes it clear
   which models are new and which ones are old.
+
+- Added migration steps that adds a new-style Profile for all users that don't
+  have one yet. Needed when moving from the old to the new system.
 
 
 2.0 (2016-07-07)

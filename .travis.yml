@@ -9,7 +9,7 @@ cache:
     - eggs
     - $HOME/.local
 install:
-  - psql -c 'create user buildout with password "buildout" superuser;' -U postgres
+  - psql -c "create user buildout with password 'buildout' superuser;" -U postgres
   - pip install psycopg2
   - python bootstrap.py
   - bin/buildout -v

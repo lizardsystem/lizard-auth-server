@@ -211,7 +211,7 @@ class RoleAdmin(admin.ModelAdmin):
 class PortalAdmin(admin.ModelAdmin):
     model = models.Portal
     search_fields = ['name', 'visit_url', 'allowed_domain']
-    list_display = ['name', 'visit_url', 'allowed_domain',
+    list_display = ['name', 'already_migrated', 'visit_url', 'allowed_domain',
                     'num_user_profiles', 'num_roles']
     readonly_fields = ['sso_secret', 'sso_key']
     inlines = [RoleInline]

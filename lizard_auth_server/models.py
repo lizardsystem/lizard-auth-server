@@ -88,6 +88,9 @@ class Portal(models.Model):
         unique=True,
         default=GenKey('Portal', 'sso_key'),
         help_text=_('String used to identify the SSO client.'))
+    already_migrated = models.BooleanField(
+        verbose_name=_('already migrated'),
+        default=False)
     allowed_domain = models.CharField(
         verbose_name=_('allowed domain(s)'),
         max_length=255,

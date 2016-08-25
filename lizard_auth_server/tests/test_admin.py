@@ -1,5 +1,6 @@
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth.models import User
+from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test import TestCase
@@ -83,6 +84,41 @@ class TestInvitationAdmin(TestCase):
         # User profle? Link to the user profile.
         self.assertTrue(
             'href' in self.admin_instance.user_profile_link(self.invitation))
+
+
+class TestOrganisationsMigrationAdmin(TestCase):
+
+    def setUp(self):
+        # Three users
+        self.user1 = factories.UserF()
+        self.user2 = factories.UserF()
+        self.user3 = factories.UserF()
+        # Old organisation with two users.
+        self.organisation = factories.OrganisationF()
+        self.user1.user_profile.organisations.add(self.organisation)
+        self.user2.user_profile.organisations.add(self.organisation)
+
+        # Rest of the setup.
+        self.request_factory = RequestFactory()
+        self.some_request = self.request_factory.get('/admin/')
+        site = AdminSite()
+        self.admin_instance = admin.OrganisationAdmin(models.Organisation, site)
+
+        # RequestFactory doesn't support middleware, see
+        # http://stackoverflow.com/a/12011907/27401 for below hack.
+        self.some_request.session = 'session'
+        self.messages = FallbackStorage(self.some_request)
+        self.some_request._messages = self.messages
+
+    def test_test_setup(self):
+        self.assertEquals(models.UserProfile.objects.all().count(), 3)
+        self.assertEquals(models.Profile.objects.all().count(), 3)
+        self.assertEquals(self.organisation.user_profiles.all().count(), 2)
+
+    def test_simple_copy_adds_a_company(self):
+        queryset = models.Organisation.objects.filter(id=self.organisation.id)
+        self.admin_instance.copy_as_company(self.some_request, queryset)
+        self.assertEquals(models.Company.objects.all().count(), 1)
 
 
 class TestSmokeAdminPages(TestCase):

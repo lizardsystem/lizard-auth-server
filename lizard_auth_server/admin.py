@@ -247,6 +247,7 @@ class OrganisationAdmin(admin.ModelAdmin):
     list_display = ['name', 'already_migrated', 'num_user_profiles', 'num_roles']
     readonly_fields = ['unique_id']
     inlines = [OrganisationRoleInline]
+    actions = ['copy_as_company']
 
     def get_queryset(self, request):
         queryset = super(OrganisationAdmin, self).get_queryset(request)
@@ -273,6 +274,14 @@ class OrganisationAdmin(admin.ModelAdmin):
     num_roles.short_description = ugettext_lazy('number of roles')
     num_roles.admin_order_field = 'roles_count'
     num_roles.allow_tags = True
+
+    def copy_as_company(self, request, queryset):
+        """Copy the organisation to a company, taking users along."""
+        num_created = 0
+        for organisation in queryset:
+            company = models.Company.objects.create(name=organisation.name)
+            num_created += 1
+        self.message_user(request, "Created %s companies" % num_created)
 
 
 class TokenAdmin(admin.ModelAdmin):

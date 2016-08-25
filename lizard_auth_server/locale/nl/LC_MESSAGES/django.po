@@ -8,20 +8,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-18 16:52+0200\n"
-"PO-Revision-Date: 2016-08-23 16:34+0200\n"
+"POT-Creation-Date: 2016-08-25 12:52+0200\n"
+"PO-Revision-Date: 2016-08-25 12:55+0200\n"
 "Last-Translator: admin <admin@example.com>\n"
+"Language-Team: \n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language-Team: \n"
 "X-Generator: Poedit 1.8.8\n"
 
 #: admin.py:38
 msgid "Resend the activation email, with a new key"
-msgstr "Stuur een nieuwe activatie e-mail, met een nieuwe sleutel"
+msgstr "Stuur een nieuwe activatie e-mail, met een nieuwe sleutel\t"
 
 #: admin.py:49
 msgid "Activate manually"
@@ -31,7 +31,7 @@ msgstr "Handmatig activeren"
 msgid "Shortcut URLs"
 msgstr "Snelkoppelingen"
 
-#: admin.py:60 models.py:813
+#: admin.py:60 models.py:820
 msgid "user profile"
 msgstr "gebruikersprofiel"
 
@@ -59,15 +59,29 @@ msgstr "basisrol"
 msgid "number of organisation roles"
 msgstr "Aantal organisatierollen"
 
-#: admin.py:230 admin.py:261
+#: admin.py:230 admin.py:263
 msgid "number of user profiles"
 msgstr "Aantal gebruikersprofielen"
 
-#: admin.py:239 admin.py:272
+#: admin.py:239 admin.py:274
 msgid "number of roles"
 msgstr "Aantal rollen"
 
-#: admin.py:285 models.py:413 models.py:696
+#: admin.py:282
+#, python-format
+msgid "Organisation %s has already been migrated"
+msgstr "Organisatie %s is al een keer gemigreerd"
+
+#: admin.py:303
+#, python-format
+msgid "Created company '%s' with %s members, %s guests"
+msgstr "Bedrijf '%s' is aangemaakt met %s leden en %s gastleden"
+
+#: admin.py:307
+msgid "Copy organisation as company"
+msgstr "Kopieer organisatie als bedrijf"
+
+#: admin.py:318 models.py:413 models.py:699
 msgid "organisation"
 msgstr "organisatie"
 
@@ -172,8 +186,8 @@ msgstr "De benodigde \"billing\" rol op 3di mist"
 msgid "Only one 3Di billing role is allowed ({} found)"
 msgstr "Slechts één \"billing\" rol op 3di is toegestaan ({} gevonden)"
 
-#: models.py:73 models.py:404 models.py:605 models.py:651 models.py:861
-#: models.py:904
+#: models.py:73 models.py:404 models.py:605 models.py:651 models.py:869
+#: models.py:912
 msgid "name"
 msgstr "naam"
 
@@ -181,30 +195,30 @@ msgstr "naam"
 msgid "Name used to refer to this portal."
 msgstr "Naam waaronder dit portaal bekend staat."
 
-#: models.py:79 models.py:915
+#: models.py:79 models.py:923
 msgid "shared secret"
 msgstr "gedeelde geheime string"
 
-#: models.py:83 models.py:919
+#: models.py:83 models.py:927
 msgid ""
 "Secret shared between SSO client and server to sign/encrypt communication."
 msgstr ""
 "De geheime code die tussen de SSO client en SSO server gedeeld wordt om de "
 "communicatie te ondertekenen en te versleutelen."
 
-#: models.py:86 models.py:922
+#: models.py:86 models.py:930
 msgid "identifying key"
 msgstr "identificatie-string"
 
-#: models.py:90 models.py:926
+#: models.py:90 models.py:934
 msgid "String used to identify the SSO client."
 msgstr "Code die gebruikt wordt om de SSO client te identificeren."
 
-#: models.py:92 models.py:928
+#: models.py:92 models.py:936
 msgid "allowed domain(s)"
 msgstr "toegestaan domein(en)"
 
-#: models.py:96 models.py:932
+#: models.py:96 models.py:940
 msgid ""
 "Allowed domain suffix for redirects using the next parameter. Multiple, "
 "whitespace-separated suffixes may be specified."
@@ -213,19 +227,19 @@ msgstr ""
 "moet eindigen met wat hier is ingevuld. Meerdere domeinnamen kan je invoeren "
 "door ze met spaties te scheiden."
 
-#: models.py:99 models.py:935
+#: models.py:99 models.py:943
 msgid "redirect url"
 msgstr "redirect-url"
 
-#: models.py:101 models.py:937
+#: models.py:101 models.py:945
 msgid "URL used in the SSO redirection."
 msgstr "URL die standaard voor het redirecten gebruikt wordt."
 
-#: models.py:103 models.py:939
+#: models.py:103 models.py:947
 msgid "visit url"
 msgstr "bezoek-url"
 
-#: models.py:105 models.py:941
+#: models.py:105 models.py:949
 msgid "URL used in the UI to refer to this portal."
 msgstr ""
 "URL van het portal zelf waarnaar we kunnen linken vanuit overzichtspagina's."
@@ -246,7 +260,7 @@ msgstr "token van het request"
 msgid "auth token"
 msgstr "authenticatie token"
 
-#: models.py:163 models.py:191 models.py:452 models.py:789
+#: models.py:163 models.py:191 models.py:452 models.py:792
 msgid "user"
 msgstr "gebruiker"
 
@@ -344,7 +358,7 @@ msgstr "geactiveerd op"
 msgid "(invitation)"
 msgstr "(uitnodiging)"
 
-#: models.py:593 models.py:657 models.py:867
+#: models.py:593 models.py:657 models.py:875
 msgid "unique id"
 msgstr "uniek ID"
 
@@ -394,74 +408,78 @@ msgstr "(rollen)"
 msgid "{name} on {portal}"
 msgstr "{name} op {portal}"
 
-#: models.py:664
+#: models.py:662
+msgid "already migrated"
+msgstr "al gemigreerd"
+
+#: models.py:667
 msgid "roles"
 msgstr "rollen"
 
-#: models.py:669
+#: models.py:672
 msgid "(organisation)"
 msgstr "(organisatie)"
 
-#: models.py:670
+#: models.py:673
 msgid "(organisations)"
 msgstr "(organisaties)"
 
-#: models.py:700
+#: models.py:703
 msgid "role"
 msgstr "rol"
 
-#: models.py:702
+#: models.py:705
 msgid "for all users"
 msgstr "voor alle gebruikers"
 
-#: models.py:709
+#: models.py:712
 msgid "(organisation-role-mapping)"
 msgstr "(organisatie-rol-koppeling)"
 
-#: models.py:710
+#: models.py:713
 msgid "(organisation-role-mappings)"
 msgstr "(organisatie-rol-koppelingen)"
 
-#: models.py:714
+#: models.py:717
 #, python-brace-format
 msgid "{role} for everybody in {org}"
 msgstr "{role} voor iedereen in {org}"
 
-#: models.py:729
+#: models.py:732
 msgid "The special 3di billing role is not allowed \"for all users\""
 msgstr ""
 "De speciale 3di \"billing\" role mag je niet \"voor alle gebruikers\" "
 "instellen"
 
-#: models.py:793 models.py:897
+#: models.py:796 models.py:905
 msgid "company"
 msgstr "bedrijf"
 
-#: models.py:797
+#: models.py:801
 msgid "created at"
 msgstr "aangemaakt op"
 
-#: models.py:800
+#: models.py:804
 msgid "updated at"
 msgstr "geüpdated op"
 
-#: models.py:814
+#: models.py:821
 msgid "user profiles"
 msgstr "gebruikersprofielen"
 
-#: models.py:874
+#: models.py:882
 msgid "guests"
 msgstr "gastleden"
 
-#: models.py:876
+#: models.py:884
 msgid "Guests or external users."
 msgstr "Gastleden of externe gebruikers."
 
-#: models.py:880
+#: models.py:888
 msgid "administrators"
 msgstr "beheerders"
 
-#: models.py:883
+#: models.py:891
 msgid ""
 "Admins can add/edit users belonging to the company and can add/remove guests "
 "and manage site access"
@@ -469,23 +487,23 @@ msgstr ""
 "Beheerders kunnen gebruikers die bij het bedrijf horen toevoegen/bewerken en "
 "gastleden toevoegen/verwijderen en ze kunnen toegang geven tot sites"
 
-#: models.py:898
+#: models.py:906
 msgid "companies"
 msgstr "bedrijven"
 
-#: models.py:908
+#: models.py:916
 msgid "Name used to refer to this site."
 msgstr "Naam waaronder deze site bekend staat."
 
-#: models.py:912
+#: models.py:920
 msgid "available to"
 msgstr "beschikbaar voor"
 
-#: models.py:947
+#: models.py:955
 msgid "site"
 msgstr "site"
 
-#: models.py:948
+#: models.py:956
 msgid "sites"
 msgstr "sites"
 

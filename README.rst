@@ -26,19 +26,15 @@ The workflow follows the django simple sso workflow_.
 Updating translations
 ---------------------
 
-Go to the ``lizard_auth_server`` subdirectory and run makemessages and upload
-the catalog to transifex::
+Go to the ``lizard_auth_server`` subdirectory::
 
     $ cd lizard_auth_server
     $ ../bin/django makemessages --all
-    $ cd ..
-    $ bin/transifex upload_catalog
 
-Then update the NL translation on
-https://translations.lizard.net/projects/p/lizardsystem/resource/lizard-auth-server/
-and afterwards fetch the latest translations::
+Update the translations (for Dutch), for instance with "poedit". Then compile
+the new translations::
 
-    $ bin/transifex fetch
+    $ ../bin/django compilemessages
 
 Note: this also fetches af/vi/zh, but we don't translate into those languages
 currently. They're ignored in the ``.gitignore`` file.

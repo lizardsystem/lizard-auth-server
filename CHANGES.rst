@@ -15,6 +15,8 @@ Changelog of lizard-auth-server
 - Added migration steps that adds a new-style Profile for all users that don't
   have one yet. Needed when moving from the old to the new system.
 
+- Fixed inflated user profile count on Organisation.
+
 
 2.0 (2016-07-07)
 ----------------

@@ -17,6 +17,10 @@ Changelog of lizard-auth-server
 
 - Fixed inflated user profile count on Organisation.
 
+- Added admin action to convert an Organisation into a Company, including
+  moving over user profiles either as member or as guest (when the user is
+  already a member elsewhere).
+
 
 2.0 (2016-07-07)
 ----------------

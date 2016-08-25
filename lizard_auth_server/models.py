@@ -794,6 +794,7 @@ class Profile(models.Model):
     company = models.ForeignKey(
         'Company',
         verbose_name=_('company'),
+        related_name='members',
         blank=True,
         null=True)
     created_at = models.DateTimeField(

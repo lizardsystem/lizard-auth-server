@@ -278,6 +278,13 @@ class OrganisationAdmin(admin.ModelAdmin):
     def copy_as_company(self, request, queryset):
         """Copy the organisation to a company, taking users along."""
         for organisation in queryset:
+            if organisation.already_migrated:
+                msg = _("Organisation %s has already been migrated")
+                self.message_user(
+                    request,
+                    msg % (organisation.name),
+                    level=messages.WARNING)
+                continue
             num_new_members = 0
             num_new_guests = 0
             company = models.Company.objects.create(name=organisation.name)
@@ -291,11 +298,13 @@ class OrganisationAdmin(admin.ModelAdmin):
                     new_profile.save()
                     num_new_members += 1
             company.save()
-
+            organisation.already_migrated = True
+            organisation.save()
+            msg = _("Created company '%s' with %s members, %s guests")
             self.message_user(
                 request,
-                "Created company '%s' with %s members, %s guests" % (
-                    company.name, num_new_members, num_new_guests))
+                msg % (company.name, num_new_members, num_new_guests))
+    copy_as_company.short_description = _("Copy organisation as company")
 
 
 class TokenAdmin(admin.ModelAdmin):

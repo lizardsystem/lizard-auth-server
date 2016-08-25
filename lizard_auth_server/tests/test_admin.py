@@ -151,6 +151,19 @@ class TestOrganisationsMigrationAdmin(TestCase):
             name=self.organisation.name)[0]
         self.assertEquals(created_company.guests.all().count(), 1)
 
+    def test_refuse_already_migrated_organisations(self):
+        self.organisation.already_migrated = True
+        self.organisation.save()
+        queryset = models.Organisation.objects.filter(id=self.organisation.id)
+        self.admin_instance.copy_as_company(self.some_request, queryset)
+        self.assertEquals(models.Company.objects.all().count(), 0)
+
+    def test_copy_sets_migration_checkbox(self):
+        queryset = models.Organisation.objects.filter(id=self.organisation.id)
+        self.admin_instance.copy_as_company(self.some_request, queryset)
+        organisation = models.Organisation.objects.get(id=self.organisation.id)
+        self.assertTrue(organisation.already_migrated)
+
 
 class TestSmokeAdminPages(TestCase):
 

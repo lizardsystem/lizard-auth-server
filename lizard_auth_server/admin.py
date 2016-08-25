@@ -277,11 +277,25 @@ class OrganisationAdmin(admin.ModelAdmin):
 
     def copy_as_company(self, request, queryset):
         """Copy the organisation to a company, taking users along."""
-        num_created = 0
         for organisation in queryset:
+            num_new_members = 0
+            num_new_guests = 0
             company = models.Company.objects.create(name=organisation.name)
-            num_created += 1
-        self.message_user(request, "Created %s companies" % num_created)
+            for old_user_profile in organisation.user_profiles.all():
+                new_profile = old_user_profile.user.profile
+                if new_profile.company:
+                    company.guests.add(new_profile)
+                    num_new_guests += 1
+                else:
+                    new_profile.company = company
+                    new_profile.save()
+                    num_new_members += 1
+            company.save()
+
+            self.message_user(
+                request,
+                "Created company '%s' with %s members, %s guests" % (
+                    company.name, num_new_members, num_new_guests))
 
 
 class TokenAdmin(admin.ModelAdmin):

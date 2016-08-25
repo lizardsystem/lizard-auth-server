@@ -92,7 +92,6 @@ class TestOrganisationsMigrationAdmin(TestCase):
         # Three users
         self.user1 = factories.UserF()
         self.user2 = factories.UserF()
-        self.user3 = factories.UserF()
         # Old organisation with two users.
         self.organisation = factories.OrganisationF()
         self.user1.user_profile.organisations.add(self.organisation)
@@ -111,14 +110,46 @@ class TestOrganisationsMigrationAdmin(TestCase):
         self.some_request._messages = self.messages
 
     def test_test_setup(self):
-        self.assertEquals(models.UserProfile.objects.all().count(), 3)
-        self.assertEquals(models.Profile.objects.all().count(), 3)
+        self.assertEquals(models.UserProfile.objects.all().count(), 2)
+        self.assertEquals(models.Profile.objects.all().count(), 2)
         self.assertEquals(self.organisation.user_profiles.all().count(), 2)
+        self.assertEquals(self.user1.profile,
+                          self.user1.user_profile.user.profile)
 
     def test_simple_copy_adds_a_company(self):
         queryset = models.Organisation.objects.filter(id=self.organisation.id)
         self.admin_instance.copy_as_company(self.some_request, queryset)
         self.assertEquals(models.Company.objects.all().count(), 1)
+
+    def test_simple_copy_also_copies_users(self):
+        queryset = models.Organisation.objects.filter(id=self.organisation.id)
+        self.admin_instance.copy_as_company(self.some_request, queryset)
+        created_company = models.Company.objects.filter(
+            name=self.organisation.name)[0]
+        self.assertEquals(created_company.members.all().count(), 2)
+
+    def test_existing_membership_stays_unchanged(self):
+        some_existing_company = factories.CompanyF()
+        self.user1.profile.company = some_existing_company
+        self.user1.profile.save()
+
+        queryset = models.Organisation.objects.filter(id=self.organisation.id)
+        self.admin_instance.copy_as_company(self.some_request, queryset)
+        created_company = models.Company.objects.filter(
+            name=self.organisation.name)[0]
+        self.assertEquals(some_existing_company.members.all().count(), 1)
+        self.assertEquals(created_company.members.all().count(), 1)
+
+    def test_member_elswhere_means_guest_membership(self):
+        some_existing_company = factories.CompanyF()
+        self.user1.profile.company = some_existing_company
+        self.user1.profile.save()
+
+        queryset = models.Organisation.objects.filter(id=self.organisation.id)
+        self.admin_instance.copy_as_company(self.some_request, queryset)
+        created_company = models.Company.objects.filter(
+            name=self.organisation.name)[0]
+        self.assertEquals(created_company.guests.all().count(), 1)
 
 
 class TestSmokeAdminPages(TestCase):

@@ -339,8 +339,10 @@ class OrganisationRoleAdmin(admin.ModelAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
     model = models.Profile
-    list_display = ['username', 'full_name', 'email', 'created_at']
-    search_fields = ['user__first_name', 'user__last_name', 'user__email']
+    list_display = ['username', 'full_name', 'email', 'company', 'created_at']
+    list_editable = ['company']
+    search_fields = ['user__username', 'user__first_name',
+                     'user__last_name', 'user__email']
     list_filter = ['company']
     readonly_fields = ['full_name', 'email', 'updated_at', 'created_at']
     list_select_related = ['user']
@@ -352,12 +354,18 @@ class ProfileAdmin(admin.ModelAdmin):
 
 class CompanyAdmin(admin.ModelAdmin):
     model = models.Company
+    list_display = ['name', 'num_members', 'num_guests']
     filter_horizontal = ['guests', 'administrators']
     search_fields = ['name']
 
     def get_queryset(self, request):
         """Select filtered objects because we're in an editable view."""
-        return models.Company.editable_objects.all()
+        # First, use the 'editable_objects' manager.
+        queryset = models.Company.editable_objects.all()
+        # Next, annotate with two extra counts.
+        return queryset.annotate(
+            members_count=Count('members', distinct=True),
+            guests_count=Count('guests', distinct=True))
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(CompanyAdmin, self).get_form(request, obj, **kwargs)
@@ -367,6 +375,23 @@ class CompanyAdmin(admin.ModelAdmin):
         form.base_fields['administrators'].queryset = \
             models.Profile.editable_objects.all()
         return form
+
+    def num_members(self, obj):
+        count = obj.members_count
+        url = reverse('admin:lizard_auth_server_profile_changelist')
+        url += '?company__id__exact={}'.format(obj.id)
+        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+    num_members.short_description = ugettext_lazy('number of members')
+    num_members.admin_order_field = 'members_count'
+    num_members.allow_tags = True
+
+    def num_guests(self, obj):
+        count = obj.guests_count
+        if not count:
+            return ''
+        return str(count)
+    num_guests.short_description = ugettext_lazy('number of guests')
+    num_guests.admin_order_field = 'guests_count'
 
 
 class SiteAdmin(admin.ModelAdmin):

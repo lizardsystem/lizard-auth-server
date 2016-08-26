@@ -904,6 +904,7 @@ class Company(models.Model):
     class Meta:
         verbose_name = _('company')
         verbose_name_plural = _('companies')
+        ordering = ('name',)
 
 
 class Site(models.Model):
@@ -954,3 +955,4 @@ class Site(models.Model):
     class Meta:
         verbose_name = _("site")
         verbose_name_plural = _("sites")
+        ordering = ('name',)

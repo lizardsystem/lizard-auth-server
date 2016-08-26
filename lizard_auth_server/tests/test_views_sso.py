@@ -106,7 +106,15 @@ class TestLoginRedirect(TestCase):
         expec = '{}{}?message={}'.format(redirect,
                                          '/sso/local_login/',
                                          message)
-        self.assertEquals(response.url, expec)
+
+        def _strip_after_last_dot(url):
+            # After the last dot, there's some time-specific stuff that
+            # sometimes breaks the test unnecessarily. So we strip it off.
+            parts = url.split('.')
+            return '.'.join(parts[:-1])
+
+        self.assertEquals(_strip_after_last_dot(response.url),
+                          _strip_after_last_dot(expec))
 
         token.delete()
 

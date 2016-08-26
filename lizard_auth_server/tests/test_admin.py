@@ -178,6 +178,9 @@ class TestSmokeAdminPages(TestCase):
         self.token = factories.TokenF()
         self.organisation = factories.OrganisationF()
         self.invitation = factories.InvitationF()
+        self.profile = factories.ProfileF()
+        self.company = factories.CompanyF()
+        self.site = factories.SiteF()
 
     def _check_changelist_page_200(self, model_name):
         url = reverse('admin:lizard_auth_server_%s_changelist' % model_name)
@@ -224,3 +227,12 @@ class TestSmokeAdminPages(TestCase):
 
     def test_invitation_change_page(self):
         self._check_change_page_200(self.invitation)
+
+    def test_profile_change_page(self):
+        self._check_change_page_200(self.profile)
+
+    def test_company_change_page(self):
+        self._check_change_page_200(self.company)
+
+    def test_site_change_page(self):
+        self._check_change_page_200(self.site)

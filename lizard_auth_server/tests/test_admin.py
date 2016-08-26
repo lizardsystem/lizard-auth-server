@@ -165,6 +165,35 @@ class TestOrganisationsMigrationAdmin(TestCase):
         self.assertTrue(organisation.already_migrated)
 
 
+class TestProfileAdmin(TestCase):
+
+    def setUp(self):
+        # Basic setup.
+        self.request_factory = RequestFactory()
+        self.some_request = self.request_factory.get('/admin/')
+        site = AdminSite()
+        self.admin_instance = admin.ProfileAdmin(models.Profile, site)
+
+        # RequestFactory doesn't support middleware, see
+        # http://stackoverflow.com/a/12011907/27401 for below hack.
+        self.some_request.session = 'session'
+        self.messages = FallbackStorage(self.some_request)
+        self.some_request._messages = self.messages
+
+    def test_convert_to_guest(self):
+        company = factories.CompanyF()
+        user = factories.UserF()
+        user.profile.company = company
+        user.profile.save()
+        queryset = models.Profile.objects.filter(id=user.profile.id)
+        self.admin_instance.convert_to_guest(self.some_request, queryset)
+
+        user.profile.refresh_from_db()
+        company.refresh_from_db()
+        self.assertIsNone(user.profile.company)
+        self.assertIn(user.profile, company.guests.all())
+
+
 class TestSmokeAdminPages(TestCase):
     """Smoke tests with the basic test client
 

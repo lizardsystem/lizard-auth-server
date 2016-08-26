@@ -354,8 +354,14 @@ class ProfileAdmin(admin.ModelAdmin):
 
     def convert_to_guest(self, request, queryset):
         """Copy the organisation to a company, taking users along."""
+        num_converted = 0
+        for profile in queryset:
+            profile.company.guests.add(profile)
+            profile.company = None
+            profile.save()
+            num_converted += 1
         self.message_user(
-            request, "didn't do a thing yet")
+            request, _("Converted %s members to guests") % num_converted)
     convert_to_guest.short_description = _("Convert from member to guest")
 
 

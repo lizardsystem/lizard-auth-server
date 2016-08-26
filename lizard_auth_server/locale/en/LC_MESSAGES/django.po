@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-25 12:52+0200\n"
+"POT-Creation-Date: 2016-08-26 10:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,6 +80,14 @@ msgstr ""
 
 #: admin.py:318 models.py:413 models.py:699
 msgid "organisation"
+msgstr ""
+
+#: admin.py:384
+msgid "number of members"
+msgstr ""
+
+#: admin.py:391
+msgid "number of guests"
 msgstr ""
 
 #: forms.py:93

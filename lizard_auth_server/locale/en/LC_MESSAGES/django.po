@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-26 10:31+0200\n"
+"POT-Creation-Date: 2016-08-26 11:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,11 +82,20 @@ msgstr ""
 msgid "organisation"
 msgstr ""
 
-#: admin.py:384
+#: admin.py:364
+#, python-format
+msgid "Converted %s members to guests"
+msgstr ""
+
+#: admin.py:365
+msgid "Convert from member to guest"
+msgstr ""
+
+#: admin.py:398
 msgid "number of members"
 msgstr ""
 
-#: admin.py:391
+#: admin.py:405
 msgid "number of guests"
 msgstr ""
 
@@ -190,7 +199,7 @@ msgid "Only one 3Di billing role is allowed ({} found)"
 msgstr ""
 
 #: models.py:73 models.py:404 models.py:605 models.py:651 models.py:869
-#: models.py:912
+#: models.py:913
 msgid "name"
 msgstr ""
 
@@ -198,46 +207,46 @@ msgstr ""
 msgid "Name used to refer to this portal."
 msgstr ""
 
-#: models.py:79 models.py:923
+#: models.py:79 models.py:924
 msgid "shared secret"
 msgstr ""
 
-#: models.py:83 models.py:927
+#: models.py:83 models.py:928
 msgid ""
 "Secret shared between SSO client and server to sign/encrypt communication."
 msgstr ""
 
-#: models.py:86 models.py:930
+#: models.py:86 models.py:931
 msgid "identifying key"
 msgstr ""
 
-#: models.py:90 models.py:934
+#: models.py:90 models.py:935
 msgid "String used to identify the SSO client."
 msgstr ""
 
-#: models.py:92 models.py:936
+#: models.py:92 models.py:937
 msgid "allowed domain(s)"
 msgstr ""
 
-#: models.py:96 models.py:940
+#: models.py:96 models.py:941
 msgid ""
 "Allowed domain suffix for redirects using the next parameter. Multiple, "
 "whitespace-separated suffixes may be specified."
 msgstr ""
 
-#: models.py:99 models.py:943
+#: models.py:99 models.py:944
 msgid "redirect url"
 msgstr ""
 
-#: models.py:101 models.py:945
+#: models.py:101 models.py:946
 msgid "URL used in the SSO redirection."
 msgstr ""
 
-#: models.py:103 models.py:947
+#: models.py:103 models.py:948
 msgid "visit url"
 msgstr ""
 
-#: models.py:105 models.py:949
+#: models.py:105 models.py:950
 msgid "URL used in the UI to refer to this portal."
 msgstr ""
 
@@ -479,19 +488,19 @@ msgstr ""
 msgid "companies"
 msgstr ""
 
-#: models.py:916
+#: models.py:917
 msgid "Name used to refer to this site."
 msgstr ""
 
-#: models.py:920
+#: models.py:921
 msgid "available to"
 msgstr ""
 
-#: models.py:955
+#: models.py:956
 msgid "site"
 msgstr ""
 
-#: models.py:956
+#: models.py:957
 msgid "sites"
 msgstr ""
 

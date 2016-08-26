@@ -339,12 +339,14 @@ class OrganisationRoleAdmin(admin.ModelAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
     model = models.Profile
-    list_display = ['username', 'full_name', 'email', 'company', 'created_at']
+    list_display = ['username', 'full_name', 'email', 'company',
+                    'company_link', 'created_at']
     list_editable = ['company']
     search_fields = ['user__username', 'user__first_name',
                      'user__last_name', 'user__email']
     list_filter = ['company']
-    readonly_fields = ['full_name', 'email', 'updated_at', 'created_at']
+    readonly_fields = ['full_name', 'email', 'updated_at', 'created_at',
+                       'company_link']
     list_select_related = ['user']
     actions = ['convert_to_guest']
 
@@ -364,13 +366,23 @@ class ProfileAdmin(admin.ModelAdmin):
             request, _("Converted %s members to guests") % num_converted)
     convert_to_guest.short_description = _("Convert from member to guest")
 
+    def company_link(self, obj):
+        if not obj.company:
+            return ''
+        url = reverse('admin:lizard_auth_server_company_change',
+                      args=[obj.company.id])
+        link_text = _("&rarr; company")
+        return '<a href="{}">{}</a>'.format(url, link_text)
+    company_link.short_description = _("link")
+    company_link.allow_tags = True
+
 
 class CompanyAdmin(admin.ModelAdmin):
     model = models.Company
     list_display = ['name', 'num_members', 'num_guests']
     filter_horizontal = ['guests', 'administrators']
     search_fields = ['name']
-    readonly_fields = ['unique_id']
+    readonly_fields = ['unique_id', 'num_members']
 
     def get_queryset(self, request):
         """Select filtered objects because we're in an editable view."""

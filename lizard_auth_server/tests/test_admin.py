@@ -193,6 +193,14 @@ class TestProfileAdmin(TestCase):
         self.assertIsNone(user.profile.company)
         self.assertIn(user.profile, company.guests.all())
 
+    def test_convert_to_guest_without_company(self):
+        user = factories.UserF()
+        queryset = models.Profile.objects.filter(id=user.profile.id)
+        self.admin_instance.convert_to_guest(self.some_request, queryset)
+        user.profile.refresh_from_db()
+        self.assertIsNone(user.profile.company)
+        self.assertEquals(user.profile.companies_as_guest.count(), 0)
+
 
 class TestSmokeAdminPages(TestCase):
     """Smoke tests with the basic test client

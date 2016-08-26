@@ -357,13 +357,24 @@ class ProfileAdmin(admin.ModelAdmin):
     def convert_to_guest(self, request, queryset):
         """Convert a profile from a member to a guest."""
         num_converted = 0
+        num_without_company = 0
         for profile in queryset:
+            if not profile.company:
+                num_without_company += 1
+                continue
             profile.company.guests.add(profile)
             profile.company = None
             profile.save()
             num_converted += 1
         self.message_user(
-            request, _("Converted %s members to guests") % num_converted)
+            request,
+            _("Converted %s members to guests") % num_converted)
+        if num_without_company:
+            self.message_user(
+                request,
+                _("%s profiles aren't members") % num_without_company,
+                level=messages.ERROR)
+
     convert_to_guest.short_description = _("Convert from member to guest")
 
     def company_link(self, obj):

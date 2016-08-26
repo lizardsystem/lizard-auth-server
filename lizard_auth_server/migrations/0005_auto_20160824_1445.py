@@ -11,6 +11,8 @@ def add_missing_profiles(apps, schema_editor):
     for old_profile in UserProfile.objects.filter(user__profile__isnull=True):
         new_profile = Profile.objects.create(user=old_profile.user)
         new_profile.save()
+        new_profile.created_at = old_profile.created_at
+        new_profile.save()
         print("Created new profile for %s" % old_profile.user)
 
 

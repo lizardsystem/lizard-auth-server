@@ -346,10 +346,17 @@ class ProfileAdmin(admin.ModelAdmin):
     list_filter = ['company']
     readonly_fields = ['full_name', 'email', 'updated_at', 'created_at']
     list_select_related = ['user']
+    actions = ['convert_to_guest']
 
     def get_queryset(self, request):
         """Select filtered objects because we're in an editable view."""
         return models.Profile.editable_objects.all()
+
+    def convert_to_guest(self, request, queryset):
+        """Copy the organisation to a company, taking users along."""
+        self.message_user(
+            request, "didn't do a thing yet")
+    convert_to_guest.short_description = _("Convert from member to guest")
 
 
 class CompanyAdmin(admin.ModelAdmin):

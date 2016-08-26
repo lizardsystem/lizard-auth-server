@@ -164,7 +164,7 @@ class Token(models.Model):
         blank=True,
         null=True)
     created = models.DateTimeField(
-        verbose_name=_('created on'),
+        verbose_name=_('created at'),
         default=token_creation_date
         )
 
@@ -208,8 +208,7 @@ class UserProfile(models.Model):
         blank=True)
 
     created_at = models.DateTimeField(
-        verbose_name=_('created on'),
-        # Grrrrrr. "it has been created AT the factory ON 1 october"
+        verbose_name=_('created at'),
         auto_now_add=True)
     updated_at = models.DateTimeField(
         verbose_name=_('updated on'),
@@ -424,7 +423,7 @@ class Invitation(models.Model):
         verbose_name=_('portals'),
         blank=True)
     created_at = models.DateTimeField(
-        verbose_name=_('created on'),
+        verbose_name=_('created at'),
         auto_now_add=True)
     activation_key = models.CharField(
         verbose_name=_('activation key'),

@@ -355,7 +355,7 @@ class ProfileAdmin(admin.ModelAdmin):
         return models.Profile.editable_objects.all()
 
     def convert_to_guest(self, request, queryset):
-        """Copy the organisation to a company, taking users along."""
+        """Convert a profile from a member to a guest."""
         num_converted = 0
         for profile in queryset:
             profile.company.guests.add(profile)

@@ -166,6 +166,11 @@ class TestOrganisationsMigrationAdmin(TestCase):
 
 
 class TestSmokeAdminPages(TestCase):
+    """Smoke tests with the basic test client
+
+    The test calls the list page and the edit page for all models and simply
+    checks if you get a '200 OK' status code back.
+    """
 
     def setUp(self):
         User.objects.create_superuser('admin', 'a@a.nl', 'admin')
@@ -181,6 +186,8 @@ class TestSmokeAdminPages(TestCase):
         self.profile = factories.ProfileF()
         self.company = factories.CompanyF()
         self.site = factories.SiteF()
+
+    # Part one: list pages.
 
     def _check_changelist_page_200(self, model_name):
         url = reverse('admin:lizard_auth_server_%s_changelist' % model_name)
@@ -203,6 +210,17 @@ class TestSmokeAdminPages(TestCase):
 
     def test_invitation_list(self):
         self._check_changelist_page_200('invitation')
+
+    def test_profile_list(self):
+        self._check_changelist_page_200('profile')
+
+    def test_company_list(self):
+        self._check_changelist_page_200('company')
+
+    def test_site_list(self):
+        self._check_changelist_page_200('site')
+
+    # Part one: edit pages.
 
     def _check_change_page_200(self, obj):
         model_name = obj._meta.model_name

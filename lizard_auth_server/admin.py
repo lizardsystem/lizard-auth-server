@@ -387,8 +387,6 @@ class CompanyAdmin(admin.ModelAdmin):
 
     def num_guests(self, obj):
         count = obj.guests_count
-        if not count:
-            return ''
         return str(count)
     num_guests.short_description = ugettext_lazy('number of guests')
     num_guests.admin_order_field = 'guests_count'

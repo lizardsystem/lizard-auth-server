@@ -21,6 +21,11 @@ Changelog of lizard-auth-server
   moving over user profiles either as member or as guest (when the user is
   already a member elsewhere).
 
+- Improved the admin. You can easily switch between Company and Profile
+  now. Added sorting. Added dutch translations.
+
+- Added admin action for Profile to turn a member into a guest instead.
+
 
 2.0 (2016-07-07)
 ----------------

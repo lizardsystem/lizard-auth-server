@@ -357,6 +357,7 @@ class CompanyAdmin(admin.ModelAdmin):
     list_display = ['name', 'num_members', 'num_guests']
     filter_horizontal = ['guests', 'administrators']
     search_fields = ['name']
+    readonly_fields = ['unique_id']
 
     def get_queryset(self, request):
         """Select filtered objects because we're in an editable view."""

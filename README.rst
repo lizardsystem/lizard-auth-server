@@ -8,7 +8,7 @@ lizard-auth-server
 .. image:: https://coveralls.io/repos/lizardsystem/lizard-auth-server/badge.svg?branch=master&service=github
   :target: https://coveralls.io/github/lizardsystem/lizard-auth-server?branch=master
 
-Lizard auth server is build upon django-simple-sso_.
+Lizard auth server was originally build upon django-simple-sso_.
 
 It is installed as https://sso.lizard.net, see https://github.com/nens/sso/
 
@@ -64,7 +64,7 @@ Grabbing production database
 Dump::
 
     $ pg_dump -f sso.dump -F c \
-      -h p-web-db-d7.external-nens.local -U sso \
+      -h DATABASESERVER -U sso \
       -N topology -T spatial_ref_sys sso
 
 Restore::

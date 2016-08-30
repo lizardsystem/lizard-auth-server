@@ -15,7 +15,7 @@ release = ""
 this_year = datetime.date.today().year
 copyright = '%s, %s' % (this_year, author)
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'lizard_auth_server.testsettings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'lizard_auth_server.readthedocssettings'
 django.setup()
 
 # If extensions (or modules to document with autodoc) are in another directory,

@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.1 (unreleased)
+2.1 (2016-08-30)
 ----------------
 
 - Added custom object managers for Profile and Company to easily restrict

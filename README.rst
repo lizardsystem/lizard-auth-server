@@ -1,4 +1,4 @@
-lizard-auth-server
+Lizard-auth-server README
 ==========================================
 
 

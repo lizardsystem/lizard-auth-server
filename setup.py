@@ -18,7 +18,6 @@ install_requires = [
     'pytz',
     'requests',
     'six',
-    'translations',
     ],
 
 tests_require = [

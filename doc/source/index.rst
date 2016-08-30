@@ -8,16 +8,20 @@ The previous version was much too complex, mostly because it mixed
 *authentication* and *authorization*. The new SSO only deals with
 authentication.
 
-- **Authentication** means logging in. You prove who you are by giving your
-  username and password (or a JWT token). "I am Reinout van Rees".
+.. glossary::
 
-- **Authorization** means determining what you're allowed to do after you've
-  authenticated yourself. "Reinout is allowed to delete existing sluices in
-  the Nieuwegein website".
+  authentication
+    Authentication means logging in. You prove who you are by giving your
+    username and password (or a JWT token). "I am Reinout van Rees".
 
-  Authorization thus depends on the kind of contents in the various websites
-  and on their internal rights structure. This is different per site, so you
-  cannot manage that in a central location.
+  authorization
+    Authorization means determining what you're allowed to do after you've
+    authenticated yourself. "Reinout is allowed to delete existing sluices in
+    the Nieuwegein website".
+
+    Authorization thus depends on the kind of contents in the various websites
+    and on their internal rights structure. This is different per site, so you
+    cannot manage that in a central location.
 
 
 Explanation
@@ -30,6 +34,7 @@ Explanation
    explanation_connect_site
    explanation_admin_usage
    explanation_views
+   explanation_api
 
 
 Reference

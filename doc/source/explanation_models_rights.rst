@@ -3,23 +3,28 @@ Models and rights
 
 The SSO has three main models:
 
-- **User profiles**, basically users that log in. Users can belong to one
-  company only. The managers of the company they're a member of can edit their
-  account.
+.. glossary::
 
-- **Company**, basically a "group of user profiles". It has one or more
-  managers that are allowed to add/edit/remove user profiles as members. User
-  profiles that are already a member elsewhere can be made guest members.
+  user profile
+    Basically users that log in. Users can belong to one
+    company only. The managers of the company they're a member of can edit their
+    account.
 
-  Note that the name "company" and the functionality is aimed at officially
-  managing user profiles. This is a consious departure from the old
-  "organisation" functionality which was an unmanageable combination of
-  "membership" and "data access", so: authorization. Which we don't want in
-  the new SSO.
+  company
+    Basically a "group of user profiles". It has one or more
+    managers that are allowed to add/edit/remove user profiles as members. User
+    profiles that are already a member elsewhere can be made guest members.
 
-- **Site**. A site that's using the SSO. Currently you need admin access to
-  add one. A site can be made available to companies, which means that those
-  companies' users can log in on the site.
+    Note that the name "company" and the functionality is aimed at officially
+    managing user profiles. This is a consious departure from the old
+    "organisation" functionality which was an unmanageable combination of
+    "membership" and "data access", so: :term:`authorization`. Which we don't want in
+    the new SSO.
+
+  site
+    A site that's using the SSO. Currently you need admin access to
+    add one. A site can be made available to companies, which means that those
+    companies' users can log in on the site.
 
 
 Central to the SSO's design is correct permissions. A user has no right to

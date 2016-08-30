@@ -5,6 +5,8 @@
 # serve to show the default.
 
 import datetime
+import django
+import os
 
 project = "lizard_auth_server"
 author = ""
@@ -12,9 +14,9 @@ version = ""
 release = ""
 this_year = datetime.date.today().year
 copyright = '%s, %s' % (this_year, author)
-# Comment out one of these if we're a django project.
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'lizard_auth_server.testsettings'
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'lizard_auth_server.settings'
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'lizard_auth_server.testsettings'
+django.setup()
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -81,7 +83,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

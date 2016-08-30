@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y \
     python-dev \
     python-pip \
     python3-psycopg2 \
+    gettext \
+    postgresql-client \
 && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 VOLUME /code

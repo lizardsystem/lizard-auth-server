@@ -2,11 +2,15 @@ language: python
 sudo: false
 python:
   - 3.5
+services:
+  - postgres
 cache:
   directories:
-   - eggs
-   - $HOME/.local
+    - eggs
+    - $HOME/.local
 install:
+  - psql -c "create user buildout with password 'buildout' superuser;" -U postgres
+  - pip install psycopg2
   - python bootstrap.py
   - bin/buildout -v
 script:

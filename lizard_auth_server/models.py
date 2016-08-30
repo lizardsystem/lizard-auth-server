@@ -114,8 +114,8 @@ class Portal(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name = _('portal')
-        verbose_name_plural = _('portals')
+        verbose_name = _('(portal)')
+        verbose_name_plural = _('(portals)')
 
 
 class TokenManager(models.Manager):
@@ -164,15 +164,15 @@ class Token(models.Model):
         blank=True,
         null=True)
     created = models.DateTimeField(
-        verbose_name=_('created on'),
+        verbose_name=_('created at'),
         default=token_creation_date
         )
 
     objects = TokenManager()
 
     class Meta:
-        verbose_name = _('authentication token')
-        verbose_name_plural = _('authentication tokens')
+        verbose_name = _('(authentication token)')
+        verbose_name_plural = _('(authentication tokens)')
         ordering = ('-created',)
 
 
@@ -185,15 +185,7 @@ class UserProfileManager(models.Manager):
 
 
 class UserProfile(models.Model):
-    """
-    Note: when migrating to Django 1.5, this is the ideal candidate
-    for using the new custom User model features.
-
-    Note: this is linked via Django's user profile support. This means
-    all fields must be OPTIONAL.
-
-    Note 2: This doesn't work with getprofile() anymore
-    """
+    """Old user profile"""
     user = models.OneToOneField(
         User,
         verbose_name=_('user'),
@@ -208,18 +200,15 @@ class UserProfile(models.Model):
         "Organisation",
         verbose_name=_('organisations'),
         related_name='user_profiles',
-        blank=True,
-        null=True)
+        blank=True)
     roles = models.ManyToManyField(
         "OrganisationRole",
         related_name='user_profiles',
         verbose_name=_('roles (via organisation)'),
-        blank=True,
-        null=True)
+        blank=True)
 
     created_at = models.DateTimeField(
-        verbose_name=_('created on'),
-        # Grrrrrr. "it has been created AT the factory ON 1 october"
+        verbose_name=_('created at'),
         auto_now_add=True)
     updated_at = models.DateTimeField(
         verbose_name=_('updated on'),
@@ -265,8 +254,8 @@ class UserProfile(models.Model):
     objects = UserProfileManager()
 
     class Meta:
-        verbose_name = _('user profile (old style)')
-        verbose_name_plural = _('user profiles (old style)')
+        verbose_name = _('(user profile)')
+        verbose_name_plural = _('(user profiles)')
         ordering = ['user__username']
 
     def __str__(self):
@@ -434,7 +423,7 @@ class Invitation(models.Model):
         verbose_name=_('portals'),
         blank=True)
     created_at = models.DateTimeField(
-        verbose_name=_('created on'),
+        verbose_name=_('created at'),
         auto_now_add=True)
     activation_key = models.CharField(
         verbose_name=_('activation key'),
@@ -464,8 +453,8 @@ class Invitation(models.Model):
         blank=True)
 
     class Meta:
-        verbose_name = _('invitation')
-        verbose_name_plural = _('invitation')
+        verbose_name = _('(invitation)')
+        verbose_name_plural = _('(invitation)')
         ordering = ['is_activated', '-created_at', 'email']
 
     def __str__(self):
@@ -639,8 +628,8 @@ class Role(models.Model):
     class Meta:
         ordering = ['portal', 'name']
         unique_together = (('name', 'portal'), )
-        verbose_name = _('role')
-        verbose_name_plural = _('roles')
+        verbose_name = _('(role)')
+        verbose_name_plural = _('(roles)')
 
     def __str__(self):
         return _('{name} on {portal}').format(name=self.name,
@@ -668,6 +657,9 @@ class Organisation(models.Model):
         max_length=32,
         unique=True,
         default=create_new_uuid)
+    already_migrated = models.BooleanField(
+        verbose_name=_('already migrated'),
+        default=False)
     roles = models.ManyToManyField(
         Role,
         through='OrganisationRole',
@@ -676,8 +668,8 @@ class Organisation(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = _('organisation')
-        verbose_name_plural = _('organisations')
+        verbose_name = _('(organisation)')
+        verbose_name_plural = _('(organisations)')
 
     def __str__(self):
         return self.name
@@ -716,8 +708,8 @@ class OrganisationRole(models.Model):
 
     class Meta:
         unique_together = (('organisation', 'role'), )
-        verbose_name = _('organisation-role-mapping')
-        verbose_name_plural = _('organisation-role-mappings')
+        verbose_name = _('(organisation-role-mapping)')
+        verbose_name_plural = _('(organisation-role-mappings)')
 
     def __str__(self):
         if self.for_all_users:
@@ -788,7 +780,7 @@ class CompanyManager(models.Manager):
 
 class Profile(models.Model):
     """Replacement for UserProfile.
-    
+
     Note: this model has two querysets:
     1. objects: the default queryset with all objects
     2. editable_objects: a queryset which is filtered w.r.t. the user that
@@ -801,6 +793,7 @@ class Profile(models.Model):
     company = models.ForeignKey(
         'Company',
         verbose_name=_('company'),
+        related_name='members',
         blank=True,
         null=True)
     created_at = models.DateTimeField(
@@ -817,11 +810,15 @@ class Profile(models.Model):
     editable_objects = ProfileManager()
 
     def __str__(self):
-        return self.user.username
+        if self.user:
+            return '{}'.format(self.user.username)
+        else:
+            return 'UserProfile {}'.format(self.pk)
 
     class Meta:
         verbose_name = _("user profile")
         verbose_name_plural = _("user profiles")
+        ordering = ['user__username']
 
     @property
     def username(self):
@@ -906,6 +903,7 @@ class Company(models.Model):
     class Meta:
         verbose_name = _('company')
         verbose_name_plural = _('companies')
+        ordering = ('name',)
 
 
 class Site(models.Model):
@@ -956,3 +954,4 @@ class Site(models.Model):
     class Meta:
         verbose_name = _("site")
         verbose_name_plural = _("sites")
+        ordering = ('name',)

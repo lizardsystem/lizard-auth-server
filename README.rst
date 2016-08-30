@@ -1,4 +1,4 @@
-lizard-auth-server
+Lizard-auth-server README
 ==========================================
 
 
@@ -8,7 +8,7 @@ lizard-auth-server
 .. image:: https://coveralls.io/repos/lizardsystem/lizard-auth-server/badge.svg?branch=master&service=github
   :target: https://coveralls.io/github/lizardsystem/lizard-auth-server?branch=master
 
-Lizard auth server is build upon django-simple-sso_.
+Lizard auth server was originally build upon django-simple-sso_.
 
 It is installed as https://sso.lizard.net, see https://github.com/nens/sso/
 
@@ -26,19 +26,15 @@ The workflow follows the django simple sso workflow_.
 Updating translations
 ---------------------
 
-Go to the ``lizard_auth_server`` subdirectory and run makemessages and upload
-the catalog to transifex::
+Go to the ``lizard_auth_server`` subdirectory::
 
     $ cd lizard_auth_server
     $ ../bin/django makemessages --all
-    $ cd ..
-    $ bin/transifex upload_catalog
 
-Then update the NL translation on
-https://translations.lizard.net/projects/p/lizardsystem/resource/lizard-auth-server/
-and afterwards fetch the latest translations::
+Update the translations (for Dutch), for instance with "poedit". Then compile
+the new translations::
 
-    $ bin/transifex fetch
+    $ ../bin/django compilemessages
 
 Note: this also fetches af/vi/zh, but we don't translate into those languages
 currently. They're ignored in the ``.gitignore`` file.
@@ -60,3 +56,17 @@ The site will now run on http://localhost:5000
 Running the tests::
 
     $ docker-compose run web bin/test
+
+
+Grabbing production database
+----------------------------
+
+Dump::
+
+    $ pg_dump -f sso.dump -F c \
+      -h DATABASESERVER -U sso \
+      -N topology -T spatial_ref_sys sso
+
+Restore::
+
+    $ pg_restore --no-owner --clean --dbname sso --username buildout --host db

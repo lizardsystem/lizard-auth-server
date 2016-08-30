@@ -4,16 +4,13 @@ from __future__ import unicode_literals
 import os
 
 DEBUG = True
-DATABASES = {
-    'default': {
-        'NAME': 'sso',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': 'buildout',
-        'PASSWORD': 'buildout',
-        'HOST': 'localhost',
-        'PORT': 5432,
-    }
-}
+DATABASES = {"default": {
+    "NAME": ":memory:",
+    "ENGINE": "django.db.backends.sqlite3",
+    "USER": '',
+    "PASSWORD": '',
+    "PORT": '',
+}}
 
 
 # Almost always set to 1.  Django allows multiple sites in one database.

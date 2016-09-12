@@ -91,7 +91,7 @@ def construct_user_data(user=None, profile=None):
     return data
 
 
-class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
+class AuthenticateView(FormInvalidMixin, ProcessGetFormView):
     form_class = forms.JWTDecryptForm
 
     def form_valid(self, form):
@@ -122,7 +122,7 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
         params = urlencode([(
             'next',
             '%s?%s' % (
-                reverse('lizard_auth_server.api_v2.authorize'),
+                reverse('lizard_auth_server.api_v2.authenticate'),
                 urlencode(nextparams))
         )])
         return '%s?%s' % (reverse('django.contrib.auth.views.login'), params)

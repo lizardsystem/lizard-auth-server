@@ -99,7 +99,7 @@ urlpatterns = patterns(
     url(r'^api/v2/authorize/$',
         views_api_v2.AuthorizeView.as_view(),
         name='lizard_auth_server.api_v2.authorize'),
-    url(r'^api/v2/authenticate/$',
+    url(r'^api/v2/check_authentication/$',
         views_api_v2.VerifyCredentialsView.as_view(),
         name='lizard_auth_server.api_v2.authenticate'),
     url(r'^api/v2/logout/$',

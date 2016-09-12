@@ -18,6 +18,7 @@ from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
+from django.views.generic.base import View
 import jwt
 
 from lizard_auth_server import forms
@@ -199,8 +200,8 @@ class VerifyCredentialsView(FormInvalidMixin, ProcessGetFormView):
         return super(VerifyCredentialsView, self).dispatch(request, *args, **kwargs)
 
     @method_decorator(sensitive_post_parameters('message'))
-    def post(self, request, *args, **kwargs):
-        return super(VerifyCredentialsView, self).post(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return super(VerifyCredentialsView, self).get(request, *args, **kwargs)
 
     def form_valid(self, form):
         # The JWT message is OK, now verify the username/password and send
@@ -209,8 +210,6 @@ class VerifyCredentialsView(FormInvalidMixin, ProcessGetFormView):
                                    password=form.cleaned_data.get('password'))
         if not user:
             raise PermissionDenied("Login failed")
-        if not not user.is_active:
-            raise PermissionDenied("Account is disabled")
         if not user.profile.has_access(form.site):
             raise PermissionDenied("No access to this site")
 

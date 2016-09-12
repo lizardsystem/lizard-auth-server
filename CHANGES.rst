@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 2.2 (unreleased)
 ----------------
 
-- Added ``/api/v2/check_authentication/`` for checking credentials, analogous
+- Added ``/api/v2/check_credentials/`` for checking credentials, analogous
   to the old ``/api/authenticate/``. Used by APIs to simply verify
   username/password credentials without any html interaction and redirects.
 

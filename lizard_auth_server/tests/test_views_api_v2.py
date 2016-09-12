@@ -22,7 +22,7 @@ class TestVerifyCredentialsView(TestCase):
 
     def test_smoke_get(self):
         client = Client()
-        result = client.get(reverse('lizard_auth_server.api_v2.authenticate'))
+        result = client.get(reverse('lizard_auth_server.api_v2.check_credentials'))
         self.assertEquals(400, result.status_code)
 
     def test_valid_login(self):

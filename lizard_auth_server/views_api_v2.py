@@ -18,6 +18,7 @@ from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
+from django.views.generic import FormView
 import jwt
 
 from lizard_auth_server import forms
@@ -183,7 +184,7 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
         )
 
 
-class VerifyCredentialsView(FormInvalidMixin, ProcessGetFormView):
+class VerifyCredentialsView(FormView):
     """View to simply verify credentials, used by APIs.
 
     A username+password is passed in a JWT signed form (so: in plain text). We

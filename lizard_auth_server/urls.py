@@ -53,6 +53,8 @@ urlpatterns = patterns(
     url(r'^api/authenticate_unsigned/$',
         views_api.AuthenticateUnsignedView.as_view(),
         name='lizard_auth_server.api.authenticate_unsigned'),
+    # The next one is used for direct logins via lizard-auth-client's
+    # ``backends.py``,
     url(r'^api/authenticate/$',
         views_api.AuthenticateView.as_view(),
         name='lizard_auth_server.api.authenticate'),

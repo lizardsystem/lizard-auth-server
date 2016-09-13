@@ -40,20 +40,20 @@ class TestConstructOrganisationRoleDict(TestCase):
         org_role_dicts = views_sso.construct_organisation_role_dict([orgrole])
 
         self.assertEquals(org_role_dicts, {
-                'organisations': [{
-                    'name': 'testorg',
-                    'unique_id': u_org
-                }],
-                'roles': [{
-                    'unique_id': u_role,
-                    'code': 'testrole',
-                    'name': 'Testrole',
-                    'external_description': 'The best role ever',
-                    'internal_description': 'Except for our competitors'
-                }],
-                'organisation_roles': [
-                    [u_org, u_role]
-                ]})
+            'organisations': [{
+                'name': 'testorg',
+                'unique_id': u_org
+            }],
+            'roles': [{
+                'unique_id': u_role,
+                'code': 'testrole',
+                'name': 'Testrole',
+                'external_description': 'The best role ever',
+                'internal_description': 'Except for our competitors'
+            }],
+            'organisation_roles': [
+                [u_org, u_role]
+            ]})
 
 
 class TestLoginRedirect(TestCase):
@@ -90,8 +90,8 @@ class TestLoginRedirect(TestCase):
         auth_token = 'auth_token'
 
         token = factories.TokenF.create(request_token=request_token,
-                                          auth_token=auth_token,
-                                          portal=self.portal)
+                                        auth_token=auth_token,
+                                        portal=self.portal)
 
         msg = {'request_token': request_token,
                'key': self.key,

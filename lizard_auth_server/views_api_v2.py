@@ -18,7 +18,6 @@ from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic.base import View
 import jwt
 
 from lizard_auth_server import forms

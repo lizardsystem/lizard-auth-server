@@ -204,6 +204,23 @@ class VerifyCredentialsView(FormInvalidMixin, ProcessGetFormView):
         return super(VerifyCredentialsView, self).get(request, *args, **kwargs)
 
     def form_valid(self, form):
+        """Return user data when credentials are valid
+
+        Args:
+            form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
+                instance. It will have the JWT message contents in the
+                ``cleaned_data`` attribute. ``form.site`` is set to the site
+                that asks us the question.
+
+        Returns:
+            A dict with key ``user`` with user data like first name, last
+            name.
+
+        Raises:
+            PermissionDenied: when the username/password combo is invalid or
+                when the user has to access to the site (via its company).
+
+        """
         # The JWT message is OK, now verify the username/password and send
         # back a reply
         user = django_authenticate(username=form.cleaned_data.get('username'),

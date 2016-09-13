@@ -57,7 +57,7 @@ class JWTDecryptForm(forms.Form):
 
     key
         ID identifying the :term:`site`. In lizard-auth-client this is the
-       ``SSO_KEY`` setting.
+        ``SSO_KEY`` setting.
     message
         The JWT message containing the payload and the JWT signature.
 
@@ -89,9 +89,9 @@ class JWTDecryptForm(forms.Form):
         Raises:
 
             ValidationError: When the JWT is malformed or expired or when the
-            signature does not match. A :term:`site` should be found
-            that matches ``key``. Likewise, ``key`` in the payload should
-            match the ``key`` form field.
+                signature does not match. A :term:`site` should be found
+                that matches ``key``. Likewise, ``key`` in the payload should
+                match the ``key`` form field.
 
         """
         original_cleaned_data = super(JWTDecryptForm, self).clean()

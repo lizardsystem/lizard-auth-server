@@ -46,5 +46,6 @@ Reference
    reference_models
    reference_views
    reference_api
+   reference_forms
 
    project

@@ -212,6 +212,7 @@ class VerifyCredentialsView(FormInvalidMixin, ProcessGetFormView):
                 ``cleaned_data`` attribute. ``form.site`` is set to the site
                 that asks us the question.
 
+
         Returns:
             A dict with key ``user`` with user data like first name, last
             name.

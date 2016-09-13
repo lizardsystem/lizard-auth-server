@@ -52,31 +52,37 @@ class TestInvitationAdmin(TestCase):
     def test_send_new_activation_email1(self, patched_method):
         # Patch method actually sends the activation email.
         queryset = models.Invitation.objects.filter(id=self.invitation.id)
-        self.admin_instance.send_new_activation_email(self.some_request, queryset)
+        self.admin_instance.send_new_activation_email(self.some_request,
+                                                      queryset)
         self.assertTrue(patched_method.called)
 
     @mock.patch('django.contrib.messages.error')
     def test_send_new_activation_email2(self, patched_method):
-        # Patched method is the error message printing "We are already activated".
+        # Patched method is the error message printing
+        # "We are already activated".
         self.invitation.is_activated = True
         self.invitation.save()
         queryset = models.Invitation.objects.filter(id=self.invitation.id)
-        self.admin_instance.send_new_activation_email(self.some_request, queryset)
+        self.admin_instance.send_new_activation_email(self.some_request,
+                                                      queryset)
         self.assertTrue(patched_method.called)
 
     def test_shortcut_urls1(self):
         # By default, show a shortcut url for manual activation.
-        self.assertTrue('href' in self.admin_instance.shortcut_urls(self.invitation))
+        self.assertTrue('href' in
+                        self.admin_instance.shortcut_urls(self.invitation))
 
     def test_shortcut_urls2(self):
         # If activated, no shortcut url for manual activation.
         self.invitation.is_activated = True
-        self.assertEquals(self.admin_instance.shortcut_urls(self.invitation), '')
+        self.assertEquals(self.admin_instance.shortcut_urls(self.invitation),
+                          '')
 
     def test_user_profile_link1(self):
         # No user profle? No handy link.
-        self.assertEquals(self.admin_instance.user_profile_link(self.invitation),
-                          None)
+        self.assertEquals(
+            self.admin_instance.user_profile_link(self.invitation),
+            None)
 
     def test_user_profile_link2(self):
         user_profile = factories.UserProfileF()
@@ -101,7 +107,8 @@ class TestOrganisationsMigrationAdmin(TestCase):
         self.request_factory = RequestFactory()
         self.some_request = self.request_factory.get('/admin/')
         site = AdminSite()
-        self.admin_instance = admin.OrganisationAdmin(models.Organisation, site)
+        self.admin_instance = admin.OrganisationAdmin(models.Organisation,
+                                                      site)
 
         # RequestFactory doesn't support middleware, see
         # http://stackoverflow.com/a/12011907/27401 for below hack.

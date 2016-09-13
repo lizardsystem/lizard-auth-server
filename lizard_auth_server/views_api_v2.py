@@ -196,7 +196,8 @@ class VerifyCredentialsView(FormInvalidMixin, ProcessGetFormView):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(VerifyCredentialsView, self).dispatch(request, *args, **kwargs)
+        return super(VerifyCredentialsView, self).dispatch(
+            request, *args, **kwargs)
 
     @method_decorator(sensitive_post_parameters('message'))
     def get(self, request, *args, **kwargs):

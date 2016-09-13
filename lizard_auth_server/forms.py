@@ -346,7 +346,8 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         # TODO: 1.8 change
-        fields = '__all__'  # Or a list of the fields that you want to include in your form
+        fields = '__all__'
+        # ^^^ Or a list of the fields that you want to include in your form.
 
     def clean(self):
         """Check 3Di-specific requirements"""

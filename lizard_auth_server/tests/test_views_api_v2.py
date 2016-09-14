@@ -20,9 +20,15 @@ class TestVerifyCredentialsView(TestCase):
                                     password=self.password)
         self.site = factories.SiteF()
 
-    def test_smoke_get(self):
+    def test_disallowed_get(self):
         client = Client()
         result = client.get(
+            reverse('lizard_auth_server.api_v2.check_credentials'))
+        self.assertEquals(405, result.status_code)
+
+    def test_smoke_post(self):
+        client = Client()
+        result = client.post(
             reverse('lizard_auth_server.api_v2.check_credentials'))
         self.assertEquals(400, result.status_code)
 

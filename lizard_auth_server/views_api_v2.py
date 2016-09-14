@@ -18,6 +18,8 @@ from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
+from django.views.generic.edit import FormMixin
+from django.views.generic.edit import ProcessFormView
 import jwt
 
 from lizard_auth_server import forms
@@ -183,7 +185,7 @@ class AuthenticateView(FormInvalidMixin, ProcessGetFormView):
         )
 
 
-class VerifyCredentialsView(FormInvalidMixin, ProcessGetFormView):
+class VerifyCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
     """View to simply verify credentials, used by APIs.
 
     A username+password is passed in a JWT signed form (so: in plain text). We
@@ -191,8 +193,12 @@ class VerifyCredentialsView(FormInvalidMixin, ProcessGetFormView):
     site. No redirects to forms, just a '200 OK' when the credentials are OK
     and an error code if not.
 
+    Only POST is allowed as otherwise the web server's access log would show
+    the GET parameter with the plain encoded password.
+
     """
     form_class = forms.JWTDecryptForm
+    http_method_names = ['post']
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -200,8 +206,8 @@ class VerifyCredentialsView(FormInvalidMixin, ProcessGetFormView):
             request, *args, **kwargs)
 
     @method_decorator(sensitive_post_parameters('message'))
-    def get(self, request, *args, **kwargs):
-        return super(VerifyCredentialsView, self).get(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        return super(VerifyCredentialsView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         """Return user data when credentials are valid

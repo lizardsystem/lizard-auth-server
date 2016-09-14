@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.2 (unreleased)
+2.2 (2016-09-14)
 ----------------
 
 - Added ``/api/v2/check_credentials/`` for checking credentials, analogous

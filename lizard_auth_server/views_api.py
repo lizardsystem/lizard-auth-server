@@ -311,7 +311,7 @@ class RolesView(FormView):
     def form_invalid(self, form):
         logger.error(
             'Error while decrypting roles form: %s',
-                form.errors.as_text())
+            form.errors.as_text())
         return HttpResponseBadRequest('Bad signature')
 
     def get_roles(self, portal):

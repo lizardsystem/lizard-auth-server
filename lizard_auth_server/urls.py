@@ -53,6 +53,8 @@ urlpatterns = patterns(
     url(r'^api/authenticate_unsigned/$',
         views_api.AuthenticateUnsignedView.as_view(),
         name='lizard_auth_server.api.authenticate_unsigned'),
+    # The next one is used for direct logins via lizard-auth-client's
+    # ``backends.py``,
     url(r'^api/authenticate/$',
         views_api.AuthenticateView.as_view(),
         name='lizard_auth_server.api.authenticate'),
@@ -95,8 +97,14 @@ urlpatterns = patterns(
 
     # V2 API
     url(r'^api/v2/authorize/$',
-        views_api_v2.AuthorizeView.as_view(),
-        name='lizard_auth_server.api_v2.authorize'),
+        views_api_v2.AuthenticateView.as_view()),
+    # ^^^^ Very very temporary BBB url
+    url(r'^api/v2/authenticate/$',
+        views_api_v2.AuthenticateView.as_view(),
+        name='lizard_auth_server.api_v2.authenticate'),
+    url(r'^api/v2/check_credentials/$',
+        views_api_v2.VerifyCredentialsView.as_view(),
+        name='lizard_auth_server.api_v2.check_credentials'),
     url(r'^api/v2/logout/$',
         views_api_v2.LogoutView.as_view(),
         name='lizard_auth_server.api_v2.logout'),

@@ -8,10 +8,18 @@ import json
 from urllib.parse import urljoin, urlparse, urlencode
 
 from django.conf import settings
+from django.contrib.auth import authenticate as django_authenticate
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.template.response import TemplateResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.generic.edit import FormMixin
+from django.views.generic.edit import ProcessFormView
 import jwt
 
 from lizard_auth_server import forms
@@ -78,22 +86,13 @@ def construct_user_data(user=None, profile=None):
     for key in ['pk', 'username', 'first_name', 'last_name',
                 'email', 'is_active']:
         data[key] = getattr(user, key)
-    data['permissions'] = []
-    for perm in user.user_permissions.select_related('content_type').all():
-        data['permissions'].append({
-            'content_type': perm.content_type.natural_key(),
-            'codename': perm.codename,
-        })
-
-    # TODO: not sure if needed, but why not..
     data['company'] = str(profile.company)
-
     # datetimes should be serialized to an iso8601 string
     data['created_at'] = profile.created_at.isoformat()
     return data
 
 
-class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
+class AuthenticateView(FormInvalidMixin, ProcessGetFormView):
     form_class = forms.JWTDecryptForm
 
     def form_valid(self, form):
@@ -124,7 +123,7 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
         params = urlencode([(
             'next',
             '%s?%s' % (
-                reverse('lizard_auth_server.api_v2.authorize'),
+                reverse('lizard_auth_server.api_v2.authenticate'),
                 urlencode(nextparams))
         )])
         return '%s?%s' % (reverse('django.contrib.auth.views.login'), params)
@@ -184,6 +183,63 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
             context,
             status=403
         )
+
+
+class VerifyCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
+    """View to simply verify credentials, used by APIs.
+
+    A username+password is passed in a JWT signed form (so: in plain text). We
+    verify if the password is OK and whether the user has access to the
+    site. No redirects to forms, just a '200 OK' when the credentials are OK
+    and an error code if not.
+
+    Only POST is allowed as otherwise the web server's access log would show
+    the GET parameter with the plain encoded password.
+
+    """
+    form_class = forms.JWTDecryptForm
+    http_method_names = ['post']
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(VerifyCredentialsView, self).dispatch(
+            request, *args, **kwargs)
+
+    @method_decorator(sensitive_post_parameters('message'))
+    def post(self, request, *args, **kwargs):
+        return super(VerifyCredentialsView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        """Return user data when credentials are valid
+
+        Args:
+            form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
+                instance. It will have the JWT message contents in the
+                ``cleaned_data`` attribute. ``form.site`` is set to the site
+                that asks us the question.
+
+
+        Returns:
+            A dict with key ``user`` with user data like first name, last
+            name.
+
+        Raises:
+            PermissionDenied: when the username/password combo is invalid or
+                when the user has to access to the site (via its company).
+
+        """
+        # The JWT message is OK, now verify the username/password and send
+        # back a reply
+        user = django_authenticate(username=form.cleaned_data.get('username'),
+                                   password=form.cleaned_data.get('password'))
+        if not user:
+            raise PermissionDenied("Login failed")
+        if not user.profile.has_access(form.site):
+            raise PermissionDenied("No access to this site")
+
+        user_data = construct_user_data(user=user)
+        return HttpResponse(json.dumps({'user': user_data}),
+                            content_type='application/json')
 
 
 class LogoutView(FormInvalidMixin, ProcessGetFormView):

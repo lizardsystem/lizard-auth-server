@@ -81,7 +81,8 @@ class TestUserProfile(TestCase):
 
         role1 = factories.RoleF.create(name='role1', portal=portal1)
         role2 = factories.RoleF.create(name='role2', portal=portal2)
-        role3 = factories.RoleF.create(name='role3', portal=portal2)  # Note: 2, not 3
+        role3 = factories.RoleF.create(name='role3', portal=portal2)
+        # ^^^ Note: portal 2, not 3!
 
         user = factories.UserF.create(username='newuser')
         org = factories.OrganisationF.create()
@@ -174,7 +175,8 @@ class TestUserProfile(TestCase):
     def test_3di_billing_not_allowed_for_all(self):
         threedi_portal = factories.PortalF.create(name='3Di')
         org = factories.OrganisationF.create()
-        billing_role = factories.RoleF.create(portal=threedi_portal, code='billing')
+        billing_role = factories.RoleF.create(portal=threedi_portal,
+                                              code='billing')
 
         orgrole = models.OrganisationRole.objects.create(
             organisation=org, role=billing_role, for_all_users=True)
@@ -188,7 +190,8 @@ class TestUserProfile(TestCase):
         profile = models.UserProfile.objects.fetch_for_user(user)
         org1 = factories.OrganisationF.create()
         org2 = factories.OrganisationF.create()
-        billing_role = factories.RoleF.create(portal=threedi_portal, code='billing')
+        billing_role = factories.RoleF.create(portal=threedi_portal,
+                                              code='billing')
         profile.portals.add(threedi_portal)
 
         orgrole1 = models.OrganisationRole.objects.create(
@@ -216,7 +219,8 @@ class TestUserProfile(TestCase):
         profile = models.UserProfile.objects.fetch_for_user(user)
         org1 = factories.OrganisationF.create()
         org2 = factories.OrganisationF.create()
-        billing_role = factories.RoleF.create(portal=threedi_portal, code='billing')
+        billing_role = factories.RoleF.create(portal=threedi_portal,
+                                              code='billing')
         # Explicitly missing: adding threedi_portal to profile.portals!
 
         orgrole1 = models.OrganisationRole.objects.create(

@@ -139,7 +139,8 @@ class RoleInline(admin.TabularInline):
         url = reverse('admin:lizard_auth_server_role_changelist')
         url += '?base_role={}'.format(obj.id)
         return '<a href="{}">&rarr; {}</a>'.format(url, count)
-    num_inheriting_roles.short_description = ugettext_lazy('number of inheriting roles')
+    num_inheriting_roles.short_description = ugettext_lazy(
+        'number of inheriting roles')
     num_inheriting_roles.admin_order_field = 'inheriting_roles_count'
     num_inheriting_roles.allow_tags = True
 
@@ -182,8 +183,10 @@ class RoleAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super(RoleAdmin, self).get_queryset(request)
         return queryset.annotate(
-            organisation_roles_count=Count('organisation_roles', distinct=True),
-            inheriting_roles_count=Count('inheriting_roles', distinct=True))
+            organisation_roles_count=Count('organisation_roles',
+                                           distinct=True),
+            inheriting_roles_count=Count('inheriting_roles',
+                                         distinct=True))
 
     def num_organisation_roles(self, obj):
         count = obj.organisation_roles_count
@@ -192,7 +195,8 @@ class RoleAdmin(admin.ModelAdmin):
         url = reverse('admin:lizard_auth_server_organisationrole_changelist')
         url += '?role__id__exact={}'.format(obj.id)
         return '<a href="{}">&rarr; {}</a>'.format(url, count)
-    num_organisation_roles.short_description = ugettext_lazy('number of organisation roles')
+    num_organisation_roles.short_description = ugettext_lazy(
+        'number of organisation roles')
     num_organisation_roles.admin_order_field = 'organisation_roles_count'
     num_organisation_roles.allow_tags = True
 
@@ -203,7 +207,8 @@ class RoleAdmin(admin.ModelAdmin):
         url = reverse('admin:lizard_auth_server_role_changelist')
         url += '?base_role={}'.format(obj.id)
         return '<a href="{}">&rarr; {}</a>'.format(url, count)
-    num_inheriting_roles.short_description = ugettext_lazy('number of inheriting roles')
+    num_inheriting_roles.short_description = ugettext_lazy(
+        'number of inheriting roles')
     num_inheriting_roles.admin_order_field = 'inheriting_roles_count'
     num_inheriting_roles.allow_tags = True
 
@@ -227,7 +232,8 @@ class PortalAdmin(admin.ModelAdmin):
         url = reverse('admin:lizard_auth_server_userprofile_changelist')
         url += '?portals__id__exact={}'.format(obj.id)
         return '<a href="{}">&rarr; {}</a>'.format(url, count)
-    num_user_profiles.short_description = ugettext_lazy('number of user profiles')
+    num_user_profiles.short_description = ugettext_lazy(
+        'number of user profiles')
     num_user_profiles.admin_order_field = 'user_profiles_count'
     num_user_profiles.allow_tags = True
 
@@ -244,7 +250,8 @@ class PortalAdmin(admin.ModelAdmin):
 class OrganisationAdmin(admin.ModelAdmin):
     model = models.Organisation
     search_fields = ['name']
-    list_display = ['name', 'already_migrated', 'num_user_profiles', 'num_roles']
+    list_display = ['name', 'already_migrated', 'num_user_profiles',
+                    'num_roles']
     readonly_fields = ['unique_id']
     inlines = [OrganisationRoleInline]
     actions = ['copy_as_company']
@@ -260,7 +267,8 @@ class OrganisationAdmin(admin.ModelAdmin):
         url = reverse('admin:lizard_auth_server_userprofile_changelist')
         url += '?organisations__id__exact={}'.format(obj.id)
         return '<a href="{}">&rarr; {}</a>'.format(url, count)
-    num_user_profiles.short_description = ugettext_lazy('number of user profiles')
+    num_user_profiles.short_description = ugettext_lazy(
+        'number of user profiles')
     num_user_profiles.admin_order_field = 'user_profiles_count'
     num_user_profiles.allow_tags = True
 
@@ -309,7 +317,8 @@ class OrganisationAdmin(admin.ModelAdmin):
 
 class TokenAdmin(admin.ModelAdmin):
     model = models.Token
-    search_fields = ['portal__name', 'portal__visit_url', 'portal__allowed_domain']
+    search_fields = ['portal__name', 'portal__visit_url',
+                     'portal__allowed_domain']
     list_display = ['created', 'portal', 'user']
     readonly_fields = ['created', 'request_token', 'auth_token']
 

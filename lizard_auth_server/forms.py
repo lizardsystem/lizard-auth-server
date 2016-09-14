@@ -45,32 +45,66 @@ class DecryptForm(forms.Form):
 
 
 class JWTDecryptForm(forms.Form):
-    """Form for decrypting JWTs"""
+    """Form for decoding and validating JWT messages
+
+    The form is different from regular django forms. There are two
+    **incoming** form fields, but the message payload is used as the
+    **outgoing** ``cleaned_data``.
+
+    Note: there is *no* form validation on the actual message contents.
+
+    The "incoming" form fields:
+
+    key
+        ID identifying the :term:`site`. In lizard-auth-client this is the
+        ``SSO_KEY`` setting.
+    message
+        The JWT message containing the payload and the JWT signature.
+
+    The :meth:`.clean` method does the actual JWT decoding and validation.
+
+    """
     key = forms.CharField(max_length=1024)
     message = forms.CharField(max_length=8192)
 
     def clean(self):
-        """Verifies the JWT from the site and returns the JWT payload.
+        """Verify the JWT signature and return the JWT payload
 
-        Note: replaces the original form data with JWT payload, which should
-        contain a dictionary with the following keys:
+        The ``key`` field is used to look up the relevant :term:`Site`. That
+        site's ``sso_secret`` is used to validate the signature on the JWT
+        payload. This way we can be sure that the payload has been really send
+        by the :term:`Site` we think send it and that the payload has not been
+        tampered with.
 
-        ['key',
-         'domain',
-         'force_sso_login', (this is optional)
-         ]
+        The payload MUST contain a value for ``key`` that matches the ``key``
+        form field: this is needed to verify that the payload has not been
+        tampered with.
+
+        Returns:
+
+            The JWT payload is returned **instead of** the original form
+            data. So the JWT payload ends up in the form's ``cleaned_data``
+            attribute instead of the original key+message fields!
+
+        Raises:
+
+            ValidationError: When the JWT is malformed or expired or when the
+                signature does not match. A :term:`site` should be found
+                that matches ``key``. Likewise, ``key`` in the payload should
+                match the ``key`` form field.
+
         """
-        cleaned_data = super(JWTDecryptForm, self).clean()
-        if 'key' not in cleaned_data:
+        original_cleaned_data = super(JWTDecryptForm, self).clean()
+        if 'key' not in original_cleaned_data:
             raise ValidationError('No SSO key')
         try:
-            self.site = Site.objects.get(sso_key=cleaned_data['key'])
+            self.site = Site.objects.get(sso_key=original_cleaned_data['key'])
         except Site.DoesNotExist:
             raise ValidationError('Invalid SSO key')
         try:
-            new_data = jwt.decode(cleaned_data['message'],
-                                  self.site.sso_secret,
-                                  algorithms=['HS256'])
+            new_cleaned_data = jwt.decode(original_cleaned_data['message'],
+                                          self.site.sso_secret,
+                                          algorithms=['HS256'])
         except jwt.exceptions.DecodeError:
             raise ValidationError("Failed to decode JWT.")
         except jwt.exceptions.ExpiredSignatureError:
@@ -78,9 +112,9 @@ class JWTDecryptForm(forms.Form):
 
         # This is useful for verifying if the key of the GET parameter (which
         # could be tampered with) is same as the key in the payload.
-        if cleaned_data['key'] != new_data['key']:
+        if original_cleaned_data['key'] != new_cleaned_data['key']:
             raise ValidationError('Public SSO key does not match signed key')
-        return new_data
+        return new_cleaned_data
 
 
 def validate_password(cleaned_password):
@@ -312,7 +346,8 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         # TODO: 1.8 change
-        fields = '__all__'  # Or a list of the fields that you want to include in your form
+        fields = '__all__'
+        # ^^^ Or a list of the fields that you want to include in your form.
 
     def clean(self):
         """Check 3Di-specific requirements"""

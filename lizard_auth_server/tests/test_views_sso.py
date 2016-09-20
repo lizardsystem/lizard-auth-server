@@ -154,7 +154,7 @@ class TestLoginRedirectV2(TestCase):
         self.password = 'bla'
         self.sso_key = 'ssokey'
         self.secret_key = 'a secret'
-        redirect = 'http://default.site.net'
+        redirect = 'http://default.portal.net'
         allowed_domain = 'custom.net'
 
         self.client = Client()
@@ -162,19 +162,19 @@ class TestLoginRedirectV2(TestCase):
         user = factories.UserF.create(username=self.username)
         user.set_password(self.password)
         user.save()
-        company = factories.CompanyF.create(name='Some org')
-        self.profile = factories.ProfileF(user=user)
-        self.profile.company = company
-        self.profile.save()
+        organisation = factories.OrganisationF.create(name='Some org')
+        self.user_profile = factories.UserProfileF(user=user)
+        self.user_profile.organisation = organisation
+        self.user_profile.save()
 
-        self.site = factories.SiteF.create(
+        self.portal = factories.PortalF.create(
             sso_key=self.sso_key,
             sso_secret=self.secret_key,
             redirect_url=redirect,
             allowed_domain=allowed_domain,
-            available_to=[company],
+            available_to=[organisation],
         )
-        self.site.save()
+        self.portal.save()
 
         import jwt
         self.payload = {
@@ -205,8 +205,8 @@ class TestLoginRedirectV2(TestCase):
             'http://very.custom.net/sso/local_login/' in resp2.url)
 
     def test_inactive_user_cant_login(self):
-        self.profile.user.is_active = False
-        self.profile.user.save()
+        self.user_profile.user.is_active = False
+        self.user_profile.user.save()
 
         params = {
             'username': self.username,

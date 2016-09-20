@@ -13,12 +13,12 @@ class TestVerifyCredentialsView(TestCase):
         self.view = views_api_v2.VerifyCredentialsView()
         self.request_factory = RequestFactory()
         self.some_request = self.request_factory.get('/some/url/')
-        self.company = factories.CompanyF()
+        self.organisation = factories.OrganisationF()
         self.username = 'reinout'
         self.password = 'annie'
         self.user = factories.UserF(username=self.username,
                                     password=self.password)
-        self.site = factories.SiteF()
+        self.portal = factories.PortalF()
 
     def test_disallowed_get(self):
         client = Client()
@@ -33,15 +33,15 @@ class TestVerifyCredentialsView(TestCase):
         self.assertEquals(400, result.status_code)
 
     def test_valid_login(self):
-        self.site.available_to = [self.company]
-        self.site.save()
-        self.user.profile.company = self.company
-        self.user.profile.save()
+        self.portal.available_to = [self.organisation]
+        self.portal.save()
+        self.user.user_profile.organisation = self.organisation
+        self.user.user_profile.save()
 
         form = Mock()
         form.cleaned_data = {'username': self.username,
                              'password': self.password}
-        form.site = self.site  # This is extracted by the form.
+        form.portal = self.portal  # This is extracted by the form.
 
         result = self.view.form_valid(form)
         self.assertEquals(200, result.status_code)
@@ -52,10 +52,10 @@ class TestVerifyCredentialsView(TestCase):
                              'password': 'ikkanniettypen'}
         self.assertRaises(PermissionDenied, self.view.form_valid, form)
 
-    def test_no_access_to_site(self):
+    def test_no_access_to_portal(self):
         form = Mock()
         form.cleaned_data = {'username': self.username,
                              'password': self.password}
-        form.site = self.site
+        form.portal = self.portal
 
         self.assertRaises(PermissionDenied, self.view.form_valid, form)

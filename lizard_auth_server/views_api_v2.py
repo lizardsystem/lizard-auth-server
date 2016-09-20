@@ -36,7 +36,7 @@ JWT_EXPIRATION = datetime.timedelta(minutes=settings.JWT_EXPIRATION_MINUTES)
 
 # Copied from views_sso.py
 def get_domain(form):
-    """Return domain for the redirect back to the site.
+    """Return domain for the redirect back to the portal.
 
     Normally, the ``redirect_url`` is used. If your server is known under
     several domains, you can pass a ``domain`` GET parameter.
@@ -45,7 +45,7 @@ def get_domain(form):
     http://some.where/something is allowed, if needed.
 
     """
-    portal_redirect = form.site.redirect_url
+    portal_redirect = form.portal.redirect_url
     domain = form.cleaned_data.get('domain', None)
 
     # BBB, previously the "next" parameter was used, but django itself also
@@ -61,14 +61,14 @@ def get_domain(form):
     netloc = urlparse(domain)[1]
     if netloc == '':
         return urljoin(portal_redirect, domain)
-    if form.site.allowed_domain != '' \
-            and domain_match(netloc, form.site.allowed_domain):
+    if form.portal.allowed_domain != '' \
+            and domain_match(netloc, form.portal.allowed_domain):
         return domain
     return portal_redirect
 
 
 # Copied from views_sso.py
-def construct_user_data(user=None, profile=None):
+def construct_user_data(user=None, user_profile=None):
     """
     Construct a dict of information about a user object,
     like first_name, and permissions.
@@ -78,16 +78,16 @@ def construct_user_data(user=None, profile=None):
     expect that, so we need to stay backward compatible.
     """
     if user is None:
-        user = profile.user
-    if profile is None:
-        profile = user.profile
+        user = user_profile.user
+    if user_profile is None:
+        user_profile = user.user_profile
     data = {}
     for key in ['pk', 'username', 'first_name', 'last_name',
                 'email', 'is_active']:
         data[key] = getattr(user, key)
-    data['company'] = str(profile.company)
+    data['organisation'] = str(user_profile.organisation)
     # datetimes should be serialized to an iso8601 string
-    data['created_at'] = profile.created_at.isoformat()
+    data['created_at'] = user_profile.created_at.isoformat()
     return data
 
 
@@ -96,7 +96,7 @@ class AuthenticateView(FormInvalidMixin, ProcessGetFormView):
 
     def form_valid(self, form):
         self.domain = get_domain(form)
-        self.site = form.site
+        self.portal = form.portal
         if self.request.user.is_authenticated():
             return self.form_valid_authenticated()
         return self.form_valid_unauthenticated(
@@ -145,23 +145,23 @@ class AuthenticateView(FormInvalidMixin, ProcessGetFormView):
 
     def has_access(self):
         """
-        Check whether the user has access to the site.
+        Check whether the user has access to the portal.
         """
         try:
-            profile = self.request.user.profile
-        except Profile.DoesNotExist:
+            user_profile = self.request.user.user_profile
+        except User_Profile.DoesNotExist:
             return False
-        return profile.has_access(self.site)
+        return user_profile.has_access(self.portal)
 
     def success(self):
         payload = {
-            'key': self.site.sso_key,
+            'key': self.portal.sso_key,
             # Dump all relevant data:
             'user': json.dumps(construct_user_data(self.request.user)),
             # Set timeout
             'exp': datetime.datetime.utcnow() + JWT_EXPIRATION,
             }
-        signed_message = jwt.encode(payload, self.site.sso_secret,
+        signed_message = jwt.encode(payload, self.portal.sso_secret,
                                     algorithm='HS256')
         params = {
             'message': signed_message,
@@ -189,7 +189,7 @@ class VerifyCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
 
     A username+password is passed in a JWT signed form (so: in plain text). We
     verify if the password is OK and whether the user has access to the
-    site. No redirects to forms, just a '200 OK' when the credentials are OK
+    portal. No redirects to forms, just a '200 OK' when the credentials are OK
     and an error code if not.
 
     Only POST is allowed as otherwise the web server's access log would show
@@ -214,7 +214,7 @@ class VerifyCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
         Args:
             form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
                 instance. It will have the JWT message contents in the
-                ``cleaned_data`` attribute. ``form.site`` is set to the site
+                ``cleaned_data`` attribute. ``form.portal`` is set to the portal
                 that asks us the question.
 
 
@@ -224,7 +224,7 @@ class VerifyCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
 
         Raises:
             PermissionDenied: when the username/password combo is invalid or
-                when the user has to access to the site (via its company).
+                when the user has to access to the portal (via its organisation).
 
         """
         # The JWT message is OK, now verify the username/password and send
@@ -233,8 +233,8 @@ class VerifyCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
                                    password=form.cleaned_data.get('password'))
         if not user:
             raise PermissionDenied("Login failed")
-        if not user.profile.has_access(form.site):
-            raise PermissionDenied("No access to this site")
+        if not user.user_profile.has_access(form.portal):
+            raise PermissionDenied("No access to this portal")
 
         user_data = construct_user_data(user=user)
         return HttpResponse(json.dumps({'user': user_data}),
@@ -254,13 +254,13 @@ class LogoutView(FormInvalidMixin, ProcessGetFormView):
             'key': self.request.GET['key'],
         }
 
-        # after logout redirect user to the site
+        # after logout redirect user to the portal
         params = urlencode({
             'next': '%s?%s' % (next_url, urlencode(next_params))
             })
         url = '%s?%s' % (reverse('django.contrib.auth.views.logout'),
                          params)
-        # TODO: why can't I redirect immediately to the Site using
+        # TODO: why can't I redirect immediately to the Portal using
         # the next parameter?
         return HttpResponseRedirect(url)
 

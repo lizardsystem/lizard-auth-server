@@ -17,7 +17,6 @@ from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 from lizard_auth_server.models import THREEDI_PORTAL
 from lizard_auth_server.models import UserProfile
-from lizard_auth_server.models import Site
 
 MIN_LENGTH = 8
 

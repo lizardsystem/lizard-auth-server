@@ -28,7 +28,6 @@ from lizard_auth_server.views_sso import (
     domain_match,
     FormInvalidMixin,
 )
-from lizard_auth_server.models import Profile
 
 
 logger = logging.getLogger(__name__)

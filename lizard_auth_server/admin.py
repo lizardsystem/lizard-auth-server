@@ -254,7 +254,6 @@ class OrganisationAdmin(admin.ModelAdmin):
                     'num_roles']
     readonly_fields = ['unique_id']
     inlines = [OrganisationRoleInline]
-    actions = ['copy_as_company']
 
     def get_queryset(self, request):
         queryset = super(OrganisationAdmin, self).get_queryset(request)
@@ -282,37 +281,6 @@ class OrganisationAdmin(admin.ModelAdmin):
     num_roles.short_description = ugettext_lazy('number of roles')
     num_roles.admin_order_field = 'roles_count'
     num_roles.allow_tags = True
-
-    def copy_as_company(self, request, queryset):
-        """Copy the organisation to a company, taking users along."""
-        for organisation in queryset:
-            if organisation.already_migrated:
-                msg = _("Organisation %s has already been migrated")
-                self.message_user(
-                    request,
-                    msg % (organisation.name),
-                    level=messages.WARNING)
-                continue
-            num_new_members = 0
-            num_new_guests = 0
-            company = models.Company.objects.create(name=organisation.name)
-            for old_user_profile in organisation.user_profiles.all():
-                new_profile = old_user_profile.user.profile
-                if new_profile.company:
-                    company.guests.add(new_profile)
-                    num_new_guests += 1
-                else:
-                    new_profile.company = company
-                    new_profile.save()
-                    num_new_members += 1
-            company.save()
-            organisation.already_migrated = True
-            organisation.save()
-            msg = _("Created company '%s' with %s members, %s guests")
-            self.message_user(
-                request,
-                msg % (company.name, num_new_members, num_new_guests))
-    copy_as_company.short_description = _("Copy organisation as company")
 
 
 class TokenAdmin(admin.ModelAdmin):
@@ -346,105 +314,6 @@ class OrganisationRoleAdmin(admin.ModelAdmin):
     search_fields = ['organisation__name', 'role__name', 'role__portal__name']
 
 
-class ProfileAdmin(admin.ModelAdmin):
-    model = models.Profile
-    list_display = ['username', 'full_name', 'email', 'company',
-                    'company_link', 'created_at']
-    list_editable = ['company']
-    search_fields = ['user__username', 'user__first_name',
-                     'user__last_name', 'user__email']
-    list_filter = ['company']
-    readonly_fields = ['full_name', 'email', 'updated_at', 'created_at',
-                       'company_link']
-    list_select_related = ['user']
-    actions = ['convert_to_guest']
-
-    def get_queryset(self, request):
-        """Select filtered objects because we're in an editable view."""
-        return models.Profile.editable_objects.all()
-
-    def convert_to_guest(self, request, queryset):
-        """Convert a profile from a member to a guest."""
-        num_converted = 0
-        num_without_company = 0
-        for profile in queryset:
-            if not profile.company:
-                num_without_company += 1
-                continue
-            profile.company.guests.add(profile)
-            profile.company = None
-            profile.save()
-            num_converted += 1
-        self.message_user(
-            request,
-            _("Converted %s members to guests") % num_converted)
-        if num_without_company:
-            self.message_user(
-                request,
-                _("%s profiles aren't members") % num_without_company,
-                level=messages.ERROR)
-
-    convert_to_guest.short_description = _("Convert from member to guest")
-
-    def company_link(self, obj):
-        if not obj.company:
-            return ''
-        url = reverse('admin:lizard_auth_server_company_change',
-                      args=[obj.company.id])
-        link_text = _("&rarr; company")
-        return '<a href="{}">{}</a>'.format(url, link_text)
-    company_link.short_description = _("link")
-    company_link.allow_tags = True
-
-
-class CompanyAdmin(admin.ModelAdmin):
-    model = models.Company
-    list_display = ['name', 'num_members', 'num_guests']
-    filter_horizontal = ['guests', 'administrators']
-    search_fields = ['name']
-    readonly_fields = ['unique_id', 'num_members']
-
-    def get_queryset(self, request):
-        """Select filtered objects because we're in an editable view."""
-        # First, use the 'editable_objects' manager.
-        queryset = models.Company.editable_objects.all()
-        # Next, annotate with two extra counts.
-        return queryset.annotate(
-            members_count=Count('members', distinct=True),
-            guests_count=Count('guests', distinct=True))
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super(CompanyAdmin, self).get_form(request, obj, **kwargs)
-        # we want every Profile to be selectable in our guests form
-        form.base_fields['guests'].queryset = models.Profile.objects.all()
-        # we do want a custom filter for administrators
-        form.base_fields['administrators'].queryset = \
-            models.Profile.editable_objects.all()
-        return form
-
-    def num_members(self, obj):
-        count = obj.members_count
-        url = reverse('admin:lizard_auth_server_profile_changelist')
-        url += '?company__id__exact={}'.format(obj.id)
-        return '<a href="{}">&rarr; {}</a>'.format(url, count)
-    num_members.short_description = ugettext_lazy('number of members')
-    num_members.admin_order_field = 'members_count'
-    num_members.allow_tags = True
-
-    def num_guests(self, obj):
-        count = obj.guests_count
-        return str(count)
-    num_guests.short_description = ugettext_lazy('number of guests')
-    num_guests.admin_order_field = 'guests_count'
-
-
-class SiteAdmin(admin.ModelAdmin):
-    model = models.Site
-    filter_horizontal = ['available_to']
-    list_display = ['name', 'visit_url', 'allowed_domain']
-    search_fields = ['name', 'visit_url' 'allowed_domain']
-
-
 admin.site.register(models.Portal, PortalAdmin)
 admin.site.register(models.Token, TokenAdmin)
 admin.site.register(models.Invitation, InvitationAdmin)
@@ -452,6 +321,3 @@ admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Role, RoleAdmin)
 admin.site.register(models.Organisation, OrganisationAdmin)
 admin.site.register(models.OrganisationRole, OrganisationRoleAdmin)
-admin.site.register(models.Profile, ProfileAdmin)
-admin.site.register(models.Company, CompanyAdmin)
-admin.site.register(models.Site, SiteAdmin)

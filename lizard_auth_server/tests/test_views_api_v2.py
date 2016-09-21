@@ -11,9 +11,19 @@ from lizard_auth_server.tests import factories
 from mock import Mock
 
 
-class TestVerifyCredentialsView(TestCase):
+
+class TestStartView(TestCase):
+
+    def test_smoke(self):
+        client = Client()
+        result = client.get(
+            reverse('lizard_auth_server.api_v2.start'))
+        self.assertEquals(200, result.status_code)
+
+
+class TestCheckCredentialsView(TestCase):
     def setUp(self):
-        self.view = views_api_v2.VerifyCredentialsView()
+        self.view = views_api_v2.CheckCredentialsView()
         self.request_factory = RequestFactory()
         self.some_request = self.request_factory.get('/some/url/')
         self.organisation = factories.OrganisationF()
@@ -89,7 +99,7 @@ class TestLoginRedirectV2(TestCase):
         params = {
             'username': self.username,
             'password': self.password,
-            'next': '/api/v2/authenticate'
+            'next': '/api/v2/login/'
         }
         resp1 = self.client.post('/accounts/login/', params)
         self.assertEquals(resp1.status_code, 302)
@@ -98,9 +108,9 @@ class TestLoginRedirectV2(TestCase):
             'key': self.sso_key,
             'message': self.message,
             }
-        self.assertEqual(resp1.url, '/api/v2/authenticate')
+        self.assertEqual(resp1.url, '/api/v2/login/')
 
-        resp2 = self.client.get('/api/v2/authenticate/', jwt_params)
+        resp2 = self.client.get('/api/v2/login/', jwt_params)
         self.assertEqual(resp2.status_code, 302)
         print(resp2.url)
         self.assertTrue(
@@ -114,7 +124,7 @@ class TestLoginRedirectV2(TestCase):
         params = {
             'username': self.username,
             'password': self.password,
-            'next': '/api/v2/authenticate'
+            'next': '/api/v2/login/'
         }
         resp1 = self.client.post('/accounts/login/', params)
         # Basically this means that the redirect failed and the user couldn't

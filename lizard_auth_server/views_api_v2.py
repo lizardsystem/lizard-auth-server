@@ -17,6 +17,7 @@ from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
+from django.views.generic import View
 from django.views.generic.edit import FormMixin
 from django.views.generic.edit import ProcessFormView
 import jwt
@@ -29,8 +30,10 @@ from lizard_auth_server.views_sso import domain_match
 
 
 logger = logging.getLogger(__name__)
+
 JWT_EXPIRATION = datetime.timedelta(minutes=settings.JWT_EXPIRATION_MINUTES)
 JWT_ALGORITHM = settings.LIZARD_AUTH_SERVER_JWT_ALGORITHM
+
 LOGIN_SUCCESS_URL_KEY = 'login_success_url'
 UNAUTHENTICATED_IS_OK_URL_KEY = 'unauthenticated_is_ok_url'
 
@@ -92,7 +95,40 @@ def construct_user_data(user=None, user_profile=None):
     return data
 
 
-class AuthenticateView(FormInvalidMixin, ProcessGetFormView):
+class StartView(View):
+    """V2 API startpoint that lists the available endpoints.
+
+    This discouples lizard-auth-client from lizard-auth-server by removing
+    hardcoded URLs from lizard-auth-client. You only need to specify the url
+    of this startview.
+
+    """
+
+    def get(self, request):
+        """Return available endpoints
+
+        The available endpoints:
+
+        - ``check-credentials``: :class:`lizard_auth_server.views_api_v2.CheckCredentialsView`
+
+        - ``login``: :class:`lizard_auth_server.views_api_v2.LoginView`
+
+        - ``logout``: :class:`lizard_auth_server.views_api_v2.LogoutView`
+
+        Returns: json dict with available endpoints
+
+        """
+        endpoints = {
+            'check-credentials':
+            reverse('lizard_auth_server.api_v2.check_credentials'),
+            'login': reverse('lizard_auth_server.api_v2.login'),
+            'logout': reverse('lizard_auth_server.api_v2.logout'),
+        }
+        return HttpResponse(json.dumps(endpoints),
+                            content_type='application/json')
+
+
+class LoginView(FormInvalidMixin, ProcessGetFormView):
     form_class = forms.JWTDecryptForm
 
     def form_valid(self, form):
@@ -142,7 +178,7 @@ class AuthenticateView(FormInvalidMixin, ProcessGetFormView):
         params = urlencode([(
             'next',
             '%s?%s' % (
-                reverse('lizard_auth_server.api_v2.authenticate'),
+                reverse('lizard_auth_server.api_v2.login'),
                 urlencode(nextparams))
         )])
         return '%s?%s' % (reverse('django.contrib.auth.views.login'), params)
@@ -180,7 +216,7 @@ class AuthenticateView(FormInvalidMixin, ProcessGetFormView):
         return HttpResponseRedirect(url_with_params)
 
 
-class VerifyCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
+class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
     """View to simply verify credentials, used by APIs.
 
     A username+password is passed in a JWT signed form (so: in plain text). We
@@ -197,12 +233,12 @@ class VerifyCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(VerifyCredentialsView, self).dispatch(
+        return super(CheckCredentialsView, self).dispatch(
             request, *args, **kwargs)
 
     @method_decorator(sensitive_post_parameters('message'))
     def post(self, request, *args, **kwargs):
-        return super(VerifyCredentialsView, self).post(request, *args, **kwargs)
+        return super(CheckCredentialsView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
         """Return user data when credentials are valid

@@ -75,9 +75,10 @@ class JWTDecryptForm(forms.Form):
         by the :term:`portal` we think send it and that the payload has not been
         tampered with.
 
-        The payload MUST contain a value for ``key`` that matches the ``key``
+        The payload MUST contain a value for ``iss`` that matches the ``key``
         form field: this is needed to verify that the payload has not been
-        tampered with.
+        tampered with. ``iss`` is a standard fieldname in the jwt standard: it
+        means "issuer".
 
         Returns:
 
@@ -89,7 +90,7 @@ class JWTDecryptForm(forms.Form):
 
             ValidationError: When the JWT is malformed or expired or when the
                 signature does not match. A :term:`portal` should be found
-                that matches ``key``. Likewise, ``key`` in the payload should
+                that matches ``key``. Likewise, ``iss`` in the payload should
                 match the ``key`` form field.
 
         """
@@ -97,21 +98,23 @@ class JWTDecryptForm(forms.Form):
         if 'key' not in original_cleaned_data:
             raise ValidationError('No SSO key')
         try:
-            self.portal = Portal.objects.get(sso_key=original_cleaned_data['key'])
+            portal = Portal.objects.get(sso_key=original_cleaned_data['key'])
         except Portal.DoesNotExist:
             raise ValidationError('Invalid SSO key')
         try:
             new_cleaned_data = jwt.decode(original_cleaned_data['message'],
-                                          self.portal.sso_secret)
+                                          portal.sso_secret,
+                                          issuer=original_cleaned_data['key'])
         except jwt.exceptions.DecodeError:
-            raise ValidationError("Failed to decode JWT.")
+            raise ValidationError("Failed to decode JWT")
         except jwt.exceptions.ExpiredSignatureError:
-            raise ValidationError("JWT has expired.")
+            raise ValidationError("JWT has expired")
+        except jwt.exceptions.InvalidIssuerError:
+            raise ValidationError(
+                "Public SSO key does not match signed issuer")
+        except jwt.exceptions.MissingRequiredClaimError:
+            raise ValidationError("JWT message misses 'iss' field (=SSO_KEY)")
 
-        # This is useful for verifying if the key of the GET parameter (which
-        # could be tampered with) is same as the key in the payload.
-        if original_cleaned_data['key'] != new_cleaned_data['key']:
-            raise ValidationError('Public SSO key does not match signed key')
         return new_cleaned_data
 
 

@@ -1,6 +1,5 @@
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth.models import User
-from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test import TestCase

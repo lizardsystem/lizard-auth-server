@@ -40,26 +40,20 @@ UNAUTHENTICATED_IS_OK_URL_KEY = 'unauthenticated_is_ok_url'
 
 # Copied from views_sso.py
 def construct_user_data(user=None, user_profile=None):
-    """
-    Construct a dict of information about a user object,
-    like first_name, and permissions.
+    """Return dict with user data
 
-    Older versions of this server did not send information about
-    roles, and only a single organisation name. Older clients still
-    expect that, so we need to stay backward compatible.
+    The returned keys are the bare minimum: username, first_name, last_name
+    and email. No permissions or is_superuser flags!
+
     """
     if user is None:
         user = user_profile.user
     if user_profile is None:
         user_profile = user.user_profile
-    data = {}
-    for key in ['pk', 'username', 'first_name', 'last_name',
-                'email', 'is_active']:
-        data[key] = getattr(user, key)
-    data['organisation'] = str(user_profile.organisation)
-    # datetimes should be serialized to an iso8601 string
-    data['created_at'] = user_profile.created_at.isoformat()
-    return data
+    user_data = {}
+    for key in ['username', 'first_name', 'last_name', 'email']:
+        user_data[key] = getattr(user, key)
+    return user_data
 
 
 class StartView(View):

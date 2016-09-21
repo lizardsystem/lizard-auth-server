@@ -114,8 +114,8 @@ class Portal(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name = _('(portal)')
-        verbose_name_plural = _('(portals)')
+        verbose_name = _('portal')
+        verbose_name_plural = _('portals')
 
 
 class TokenManager(models.Manager):
@@ -254,8 +254,8 @@ class UserProfile(models.Model):
     objects = UserProfileManager()
 
     class Meta:
-        verbose_name = _('(user profile)')
-        verbose_name_plural = _('(user profiles)')
+        verbose_name = _('user profile')
+        verbose_name_plural = _('user profiles')
         ordering = ['user__username']
 
     def __str__(self):
@@ -668,8 +668,8 @@ class Organisation(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = _('(organisation)')
-        verbose_name_plural = _('(organisations)')
+        verbose_name = _('organisation')
+        verbose_name_plural = _('organisations')
 
     def __str__(self):
         return self.name

@@ -39,39 +39,6 @@ UNAUTHENTICATED_IS_OK_URL_KEY = 'unauthenticated_is_ok_url'
 
 
 # Copied from views_sso.py
-def get_domain(form):
-    """Return domain for the redirect back to the portal.
-
-    Normally, the ``redirect_url`` is used. If your server is known under
-    several domains, you can pass a ``domain`` GET parameter.
-
-    Note: the domain can also have an extra path element, so
-    http://some.where/something is allowed, if needed.
-
-    """
-    portal_redirect = form.portal.redirect_url
-    domain = form.cleaned_data.get('domain', None)
-
-    # BBB, previously the "next" parameter was used, but django itself also
-    # uses it, leading to conflicts. IF "next" starts with "http", we use it
-    # and otherwise we omit it.
-    next = form.cleaned_data.get('next', None)
-    if next:
-        if next.startswith('http'):  # Includes https :-)
-            domain = next
-
-    if domain is None:
-        return portal_redirect
-    netloc = urlparse(domain)[1]
-    if netloc == '':
-        return urljoin(portal_redirect, domain)
-    if form.portal.allowed_domain != '' \
-            and domain_match(netloc, form.portal.allowed_domain):
-        return domain
-    return portal_redirect
-
-
-# Copied from views_sso.py
 def construct_user_data(user=None, user_profile=None):
     """
     Construct a dict of information about a user object,

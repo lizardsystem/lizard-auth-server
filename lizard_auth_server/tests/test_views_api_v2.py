@@ -33,11 +33,7 @@ class TestVerifyCredentialsView(TestCase):
         self.assertEquals(400, result.status_code)
 
     def test_valid_login(self):
-        self.portal.available_to = [self.organisation]
-        self.portal.save()
-        self.user.user_profile.organisation = self.organisation
-        self.user.user_profile.save()
-
+        # We don't need to check portal access anymore.
         form = Mock()
         form.cleaned_data = {'username': self.username,
                              'password': self.password}
@@ -50,12 +46,4 @@ class TestVerifyCredentialsView(TestCase):
         form = Mock()
         form.cleaned_data = {'username': 'pietje',
                              'password': 'ikkanniettypen'}
-        self.assertRaises(PermissionDenied, self.view.form_valid, form)
-
-    def test_no_access_to_portal(self):
-        form = Mock()
-        form.cleaned_data = {'username': self.username,
-                             'password': self.password}
-        form.portal = self.portal
-
         self.assertRaises(PermissionDenied, self.view.form_valid, form)

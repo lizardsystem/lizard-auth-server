@@ -55,7 +55,7 @@ class JWTDecryptForm(forms.Form):
     The "incoming" form fields:
 
     key
-        ID identifying the :term:`site`. In lizard-auth-client this is the
+        ID identifying the :term:`portal`. In lizard-auth-client this is the
         ``SSO_KEY`` setting.
     message
         The JWT message containing the payload and the JWT signature.
@@ -69,10 +69,10 @@ class JWTDecryptForm(forms.Form):
     def clean(self):
         """Verify the JWT signature and return the JWT payload
 
-        The ``key`` field is used to look up the relevant :term:`Site`. That
+        The ``key`` field is used to look up the relevant :term:`portal`. That
         site's ``sso_secret`` is used to validate the signature on the JWT
         payload. This way we can be sure that the payload has been really send
-        by the :term:`Site` we think send it and that the payload has not been
+        by the :term:`portal` we think send it and that the payload has not been
         tampered with.
 
         The payload MUST contain a value for ``key`` that matches the ``key``
@@ -88,7 +88,7 @@ class JWTDecryptForm(forms.Form):
         Raises:
 
             ValidationError: When the JWT is malformed or expired or when the
-                signature does not match. A :term:`site` should be found
+                signature does not match. A :term:`portal` should be found
                 that matches ``key``. Likewise, ``key`` in the payload should
                 match the ``key`` form field.
 
@@ -97,12 +97,12 @@ class JWTDecryptForm(forms.Form):
         if 'key' not in original_cleaned_data:
             raise ValidationError('No SSO key')
         try:
-            self.site = Site.objects.get(sso_key=original_cleaned_data['key'])
-        except Site.DoesNotExist:
+            self.portal = Portal.objects.get(sso_key=original_cleaned_data['key'])
+        except Portal.DoesNotExist:
             raise ValidationError('Invalid SSO key')
         try:
             new_cleaned_data = jwt.decode(original_cleaned_data['message'],
-                                          self.site.sso_secret,
+                                          self.portal.sso_secret,
                                           algorithms=['HS256'])
         except jwt.exceptions.DecodeError:
             raise ValidationError("Failed to decode JWT.")

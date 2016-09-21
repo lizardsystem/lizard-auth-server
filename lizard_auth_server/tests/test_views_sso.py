@@ -162,17 +162,13 @@ class TestLoginRedirectV2(TestCase):
         user = factories.UserF.create(username=self.username)
         user.set_password(self.password)
         user.save()
-        organisation = factories.OrganisationF.create(name='Some org')
         self.user_profile = factories.UserProfileF(user=user)
-        self.user_profile.organisation = organisation
-        self.user_profile.save()
 
         self.portal = factories.PortalF.create(
             sso_key=self.sso_key,
             sso_secret=self.secret_key,
             redirect_url=redirect,
             allowed_domain=allowed_domain,
-            available_to=[organisation],
         )
         self.portal.save()
 

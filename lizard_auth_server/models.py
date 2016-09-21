@@ -91,13 +91,14 @@ class Portal(models.Model):
     allowed_domain = models.CharField(
         verbose_name=_('allowed domain(s)'),
         max_length=255,
-        default='',
+        default='unused in v2 api',
         help_text=_(
             'Allowed domain suffix for redirects using the next parameter. '
             'Multiple, whitespace-separated suffixes may be specified.'))
     redirect_url = models.CharField(
         verbose_name=_('redirect url'),
         max_length=255,
+        default='http://unused.in/v2/api',
         help_text=_('URL used in the SSO redirection.'))
     visit_url = models.CharField(
         verbose_name=_('visit url'),

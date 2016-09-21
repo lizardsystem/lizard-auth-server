@@ -38,7 +38,6 @@ LOGIN_SUCCESS_URL_KEY = 'login_success_url'
 UNAUTHENTICATED_IS_OK_URL_KEY = 'unauthenticated_is_ok_url'
 
 
-# Copied from views_sso.py
 def construct_user_data(user=None, user_profile=None):
     """Return dict with user data
 
@@ -86,6 +85,69 @@ class StartView(View):
             'logout': reverse('lizard_auth_server.api_v2.logout'),
         }
         return HttpResponse(json.dumps(endpoints),
+                            content_type='application/json')
+
+
+class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
+    """View to simply verify credentials, used by APIs.
+
+    A username+password is passed in a JWT signed form (so: in plain text). We
+    verify if the password is OK and whether the user has access to the
+    portal. No redirects to forms, just a '200 OK' when the credentials are OK
+    and an error code if not.
+
+    Only POST is allowed as otherwise the web server's access log would show
+    the GET parameter with the plain encoded password.
+
+    """
+    form_class = forms.JWTDecryptForm
+    http_method_names = ['post']
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(CheckCredentialsView, self).dispatch(
+            request, *args, **kwargs)
+
+    @method_decorator(sensitive_post_parameters('message'))
+    def post(self, request, *args, **kwargs):
+        return super(CheckCredentialsView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        """Return user data when credentials are valid
+
+        The JWT message's content is now the form's cleaned data. So we start
+        out by extracting the contents. Then we check the credentials.
+
+        Args:
+            form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
+                instance. It will have the JWT message contents in the
+                ``cleaned_data`` attribute. ``username`` and ``password`` are
+                mandatory keys in the message.
+
+        Returns:
+            A dict with key ``user`` with user data like first name, last
+            name.
+
+        Raises:
+            PermissionDenied: when the username/password combo is invalid.
+
+            ValidationError: when username and/or password keys are missing
+                from the decoded JWT message.
+
+        """
+        # The JWT message is validated; now check the message's contents.
+        if ((not 'username' in form.cleaned_data) or
+            (not 'password' in form.cleaned_data)):
+            raise ValidationError(
+                "username and/or password are missing from the JWT message")
+        # Verify the username/password
+        user = django_authenticate(username=form.cleaned_data.get('username'),
+                                   password=form.cleaned_data.get('password'))
+        if not user:
+            raise PermissionDenied("Login failed")
+
+        user_data = construct_user_data(user=user)
+        return HttpResponse(json.dumps({'user': user_data}),
                             content_type='application/json')
 
 
@@ -175,69 +237,6 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
         params = {'message': signed_message}
         url_with_params = '%s?%s' % (self.login_success_url, urlencode(params))
         return HttpResponseRedirect(url_with_params)
-
-
-class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
-    """View to simply verify credentials, used by APIs.
-
-    A username+password is passed in a JWT signed form (so: in plain text). We
-    verify if the password is OK and whether the user has access to the
-    portal. No redirects to forms, just a '200 OK' when the credentials are OK
-    and an error code if not.
-
-    Only POST is allowed as otherwise the web server's access log would show
-    the GET parameter with the plain encoded password.
-
-    """
-    form_class = forms.JWTDecryptForm
-    http_method_names = ['post']
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(CheckCredentialsView, self).dispatch(
-            request, *args, **kwargs)
-
-    @method_decorator(sensitive_post_parameters('message'))
-    def post(self, request, *args, **kwargs):
-        return super(CheckCredentialsView, self).post(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        """Return user data when credentials are valid
-
-        The JWT message's content is now the form's cleaned data. So we start
-        out by extracting the contents. Then we check the credentials.
-
-        Args:
-            form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
-                instance. It will have the JWT message contents in the
-                ``cleaned_data`` attribute. ``username`` and ``password`` are
-                mandatory keys in the message.
-
-        Returns:
-            A dict with key ``user`` with user data like first name, last
-            name.
-
-        Raises:
-            PermissionDenied: when the username/password combo is invalid.
-
-            ValidationError: when username and/or password keys are missing
-                from the decoded JWT message.
-
-        """
-        # The JWT message is validated; now check the message's contents.
-        if ((not 'username' in form.cleaned_data) or
-            (not 'password' in form.cleaned_data)):
-            raise ValidationError(
-                "username and/or password are missing from the JWT message")
-        # Verify the username/password
-        user = django_authenticate(username=form.cleaned_data.get('username'),
-                                   password=form.cleaned_data.get('password'))
-        if not user:
-            raise PermissionDenied("Login failed")
-
-        user_data = construct_user_data(user=user)
-        return HttpResponse(json.dumps({'user': user_data}),
-                            content_type='application/json')
 
 
 class LogoutView(FormInvalidMixin, ProcessGetFormView):

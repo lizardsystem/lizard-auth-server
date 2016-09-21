@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-26 11:51+0200\n"
+"POT-Creation-Date: 2016-09-21 15:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 msgid "Shortcut URLs"
 msgstr ""
 
-#: admin.py:60 models.py:820
+#: admin.py:60 models.py:258
 msgid "user profile"
 msgstr ""
 
@@ -40,166 +40,134 @@ msgstr ""
 msgid "Personal data"
 msgstr ""
 
-#: admin.py:105 models.py:152 models.py:591
+#: admin.py:105 models.py:118 models.py:153 models.py:591
 msgid "portal"
 msgstr ""
 
-#: admin.py:142 admin.py:206
+#: admin.py:143 admin.py:211
 msgid "number of inheriting roles"
 msgstr ""
 
-#: admin.py:153
+#: admin.py:154
 msgid "base role"
 msgstr ""
 
-#: admin.py:195
+#: admin.py:199
 msgid "number of organisation roles"
 msgstr ""
 
-#: admin.py:230 admin.py:263
+#: admin.py:236 admin.py:270
 msgid "number of user profiles"
 msgstr ""
 
-#: admin.py:239 admin.py:274
+#: admin.py:245 admin.py:281
 msgid "number of roles"
 msgstr ""
 
-#: admin.py:282
-#, python-format
-msgid "Organisation %s has already been migrated"
-msgstr ""
-
-#: admin.py:303
-#, python-format
-msgid "Created company '%s' with %s members, %s guests"
-msgstr ""
-
-#: admin.py:307
-msgid "Copy organisation as company"
-msgstr ""
-
-#: admin.py:318 models.py:413 models.py:699
+#: admin.py:295 models.py:413 models.py:672 models.py:699
 msgid "organisation"
 msgstr ""
 
-#: admin.py:364
-#, python-format
-msgid "Converted %s members to guests"
-msgstr ""
-
-#: admin.py:365
-msgid "Convert from member to guest"
-msgstr ""
-
-#: admin.py:398
-msgid "number of members"
-msgstr ""
-
-#: admin.py:405
-msgid "number of guests"
-msgstr ""
-
-#: forms.py:93
+#: forms.py:128
 #, python-format
 msgid "The new password must be at least %d characters long."
 msgstr ""
 
-#: forms.py:109
+#: forms.py:144
 msgid ""
 "The new password must contain at least two numeric digits, one uppercase and "
 "one lowercase character."
 msgstr ""
 
-#: forms.py:167 templates/lizard_auth_server/profile.html:15
+#: forms.py:202 templates/lizard_auth_server/profile.html:15
 msgid "Name"
 msgstr ""
 
-#: forms.py:170
+#: forms.py:205
 msgid "For the purpose of an invitation email (not the username)"
 msgstr ""
 
-#: forms.py:173 forms.py:255 templates/lizard_auth_server/profile.html:19
+#: forms.py:208 forms.py:290 templates/lizard_auth_server/profile.html:19
 msgid "Email"
 msgstr ""
 
-#: forms.py:175
+#: forms.py:210
 msgid "Organisation"
 msgstr ""
 
-#: forms.py:180
+#: forms.py:215
 msgid "Language"
 msgstr ""
 
-#: forms.py:191
+#: forms.py:226
 msgid "Portals"
 msgstr ""
 
-#: forms.py:201 forms.py:234 forms.py:306
+#: forms.py:236 forms.py:269 forms.py:341
 msgid "{} is already taken."
 msgstr ""
 
-#: forms.py:212 templates/lizard_auth_server/profile.html:17
+#: forms.py:247 templates/lizard_auth_server/profile.html:17
 msgid "Username"
 msgstr ""
 
-#: forms.py:216
+#: forms.py:251
 msgid "New password"
 msgstr ""
 
-#: forms.py:220
+#: forms.py:255
 msgid "New password confirmation"
 msgstr ""
 
-#: forms.py:225
+#: forms.py:260
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: forms.py:231
+#: forms.py:266
 msgid "Whitespace not allowed."
 msgstr ""
 
-#: forms.py:258
+#: forms.py:293
 msgid "First name"
 msgstr ""
 
-#: forms.py:263
+#: forms.py:298
 msgid "Last name"
 msgstr ""
 
-#: forms.py:266 templates/lizard_auth_server/profile.html:21
+#: forms.py:301 templates/lizard_auth_server/profile.html:21
 msgid "Title"
 msgstr ""
 
-#: forms.py:267 templates/lizard_auth_server/profile.html:23
+#: forms.py:302 templates/lizard_auth_server/profile.html:23
 msgid "Street"
 msgstr ""
 
-#: forms.py:270 templates/lizard_auth_server/profile.html:25
+#: forms.py:305 templates/lizard_auth_server/profile.html:25
 msgid "Postal code"
 msgstr ""
 
-#: forms.py:273 templates/lizard_auth_server/profile.html:27
+#: forms.py:308 templates/lizard_auth_server/profile.html:27
 msgid "Town"
 msgstr ""
 
-#: forms.py:276 templates/lizard_auth_server/profile.html:29
+#: forms.py:311 templates/lizard_auth_server/profile.html:29
 msgid "Phone number"
 msgstr ""
 
-#: forms.py:281 templates/lizard_auth_server/profile.html:31
+#: forms.py:316 templates/lizard_auth_server/profile.html:31
 msgid "Mobile phone number"
 msgstr ""
 
-#: forms.py:332
+#: forms.py:368
 msgid "required 3Di billing role is missing"
 msgstr ""
 
-#: forms.py:335
+#: forms.py:371
 msgid "Only one 3Di billing role is allowed ({} found)"
 msgstr ""
 
-#: models.py:73 models.py:404 models.py:605 models.py:651 models.py:869
-#: models.py:913
+#: models.py:73 models.py:404 models.py:605 models.py:651
 msgid "name"
 msgstr ""
 
@@ -207,90 +175,82 @@ msgstr ""
 msgid "Name used to refer to this portal."
 msgstr ""
 
-#: models.py:79 models.py:924
+#: models.py:79
 msgid "shared secret"
 msgstr ""
 
-#: models.py:83 models.py:928
+#: models.py:83
 msgid ""
 "Secret shared between SSO client and server to sign/encrypt communication."
 msgstr ""
 
-#: models.py:86 models.py:931
+#: models.py:86
 msgid "identifying key"
 msgstr ""
 
-#: models.py:90 models.py:935
+#: models.py:90
 msgid "String used to identify the SSO client."
 msgstr ""
 
-#: models.py:92 models.py:937
+#: models.py:92
 msgid "allowed domain(s)"
 msgstr ""
 
-#: models.py:96 models.py:941
+#: models.py:96
 msgid ""
 "Allowed domain suffix for redirects using the next parameter. Multiple, "
 "whitespace-separated suffixes may be specified."
 msgstr ""
 
-#: models.py:99 models.py:944
+#: models.py:99
 msgid "redirect url"
 msgstr ""
 
-#: models.py:101 models.py:946
+#: models.py:102
 msgid "URL used in the SSO redirection."
 msgstr ""
 
-#: models.py:103 models.py:948
+#: models.py:104
 msgid "visit url"
 msgstr ""
 
-#: models.py:105 models.py:950
+#: models.py:106
 msgid "URL used in the UI to refer to this portal."
 msgstr ""
 
-#: models.py:117
-msgid "(portal)"
-msgstr ""
-
-#: models.py:118
-msgid "(portals)"
-msgstr ""
-
-#: models.py:154
-msgid "request token"
-msgstr ""
-
-#: models.py:158
-msgid "auth token"
-msgstr ""
-
-#: models.py:163 models.py:191 models.py:452 models.py:792
-msgid "user"
-msgstr ""
-
-#: models.py:167 models.py:211 models.py:427
-msgid "created on"
-msgstr ""
-
-#: models.py:174
-msgid "(authentication token)"
-msgstr ""
-
-#: models.py:175
-msgid "(authentication tokens)"
-msgstr ""
-
-#: models.py:196 models.py:424
+#: models.py:119 models.py:197 models.py:424
 msgid "portals"
 msgstr ""
 
-#: models.py:201
+#: models.py:155
+msgid "request token"
+msgstr ""
+
+#: models.py:159
+msgid "auth token"
+msgstr ""
+
+#: models.py:164 models.py:192 models.py:452
+msgid "user"
+msgstr ""
+
+#: models.py:168 models.py:212 models.py:427
+msgid "created at"
+msgstr ""
+
+#: models.py:175
+msgid "(authentication token)"
+msgstr ""
+
+#: models.py:176
+msgid "(authentication tokens)"
+msgstr ""
+
+#: models.py:202 models.py:673
 msgid "organisations"
 msgstr ""
 
-#: models.py:207
+#: models.py:208
 msgid "roles (via organisation)"
 msgstr ""
 
@@ -322,12 +282,8 @@ msgstr ""
 msgid "mobile phone number"
 msgstr ""
 
-#: models.py:258
-msgid "(user profile)"
-msgstr ""
-
 #: models.py:259
-msgid "(user profiles)"
+msgid "user profiles"
 msgstr ""
 
 #: models.py:409
@@ -362,7 +318,7 @@ msgstr ""
 msgid "(invitation)"
 msgstr ""
 
-#: models.py:593 models.py:657 models.py:875
+#: models.py:593 models.py:657
 msgid "unique id"
 msgstr ""
 
@@ -417,14 +373,6 @@ msgstr ""
 msgid "roles"
 msgstr ""
 
-#: models.py:672
-msgid "(organisation)"
-msgstr ""
-
-#: models.py:673
-msgid "(organisations)"
-msgstr ""
-
 #: models.py:703
 msgid "role"
 msgstr ""
@@ -450,60 +398,6 @@ msgstr ""
 msgid "The special 3di billing role is not allowed \"for all users\""
 msgstr ""
 
-#: models.py:796 models.py:905
-msgid "company"
-msgstr ""
-
-#: models.py:801
-msgid "created at"
-msgstr ""
-
-#: models.py:804
-msgid "updated at"
-msgstr ""
-
-#: models.py:821
-msgid "user profiles"
-msgstr ""
-
-#: models.py:882
-msgid "guests"
-msgstr ""
-
-#: models.py:884
-msgid "Guests or external users."
-msgstr ""
-
-#: models.py:888
-msgid "administrators"
-msgstr ""
-
-#: models.py:891
-msgid ""
-"Admins can add/edit users belonging to the company and can add/remove guests "
-"and manage site access"
-msgstr ""
-
-#: models.py:906
-msgid "companies"
-msgstr ""
-
-#: models.py:917
-msgid "Name used to refer to this site."
-msgstr ""
-
-#: models.py:921
-msgid "available to"
-msgstr ""
-
-#: models.py:956
-msgid "site"
-msgstr ""
-
-#: models.py:957
-msgid "sites"
-msgstr ""
-
 #: templates/admin/base_site.html:7
 msgid "Lizard SSO"
 msgstr ""
@@ -525,7 +419,7 @@ msgstr ""
 msgid "Access denied"
 msgstr ""
 
-#: templates/lizard_auth_server/access_denied.html:10 views.py:446
+#: templates/lizard_auth_server/access_denied.html:10 views.py:429
 msgid "You do not have access to this portal."
 msgstr ""
 
@@ -874,27 +768,27 @@ msgstr ""
 msgid "You are a member of the following organisations:"
 msgstr ""
 
-#: views.py:78
+#: views.py:61
 msgid "An unknown error occurred."
 msgstr ""
 
-#: views.py:137
+#: views.py:120
 msgid "Access to portal {} for {}"
 msgstr ""
 
-#: views.py:284
+#: views.py:267
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 
-#: views.py:432
+#: views.py:415
 msgid "Invalid `next` query string parameter."
 msgstr ""
 
-#: views.py:436
+#: views.py:419
 msgid "Missing `portal` query string parameter."
 msgstr ""
 
-#: views.py:440
+#: views.py:423
 msgid "Invalid `portal` query string parameter."
 msgstr ""
 

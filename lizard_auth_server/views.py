@@ -40,23 +40,6 @@ JWT_EXPIRATION_DELTA = settings.LIZARD_AUTH_SERVER_JWT_EXPIRATION_DELTA
 logger = logging.getLogger(__name__)
 
 
-class ViewContextMixin(object):
-    """
-    Adds the view object to the template context.
-
-    Ensure this is first in the inheritance list!
-    """
-
-    # TODO: zap this after some tests have been added. Django 1.4 or so
-    # already includes this!
-
-    def get_context_data(self, **kwargs):
-        return {
-            'params': kwargs,
-            'view': self
-        }
-
-
 class StaffOnlyMixin(object):
     """
     Ensures access by staff members (user.is_staff is True) only to all
@@ -94,7 +77,7 @@ class ErrorMessageResponse(TemplateResponse):
 ##################################################
 
 
-class ProfileView(ViewContextMixin, TemplateView):
+class ProfileView(TemplateView):
     """
     Straightforward view which displays a user's profile.
     """
@@ -119,7 +102,7 @@ class ProfileView(ViewContextMixin, TemplateView):
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
 
 
-class AccessToPortalView(ViewContextMixin, TemplateView):
+class AccessToPortalView(TemplateView):
     template_name = 'lizard_auth_server/access-to-portal.html'
 
     @method_decorator(login_required)
@@ -243,7 +226,7 @@ class InviteUserView(StaffOnlyMixin, FormView):
                 kwargs={'invitation_pk': inv.pk}))
 
 
-class InviteUserCompleteView(StaffOnlyMixin, ViewContextMixin, TemplateView):
+class InviteUserCompleteView(StaffOnlyMixin, TemplateView):
     template_name = 'lizard_auth_server/invite_user_complete.html'
 
     def get(self, request, invitation_pk, *args, **kwargs):

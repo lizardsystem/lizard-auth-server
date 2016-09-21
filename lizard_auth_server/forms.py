@@ -102,8 +102,7 @@ class JWTDecryptForm(forms.Form):
             raise ValidationError('Invalid SSO key')
         try:
             new_cleaned_data = jwt.decode(original_cleaned_data['message'],
-                                          self.portal.sso_secret,
-                                          algorithms=['HS256'])
+                                          self.portal.sso_secret)
         except jwt.exceptions.DecodeError:
             raise ValidationError("Failed to decode JWT.")
         except jwt.exceptions.ExpiredSignatureError:

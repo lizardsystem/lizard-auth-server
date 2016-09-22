@@ -92,9 +92,8 @@ class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
     """View to simply verify credentials, used by APIs.
 
     A username+password is passed in a JWT signed form (so: in plain text). We
-    verify if the password is OK and whether the user has access to the
-    portal. No redirects to forms, just a '200 OK' when the credentials are OK
-    and an error code if not.
+    verify if the password is OK. No redirects to forms, just a '200 OK' when
+    the credentials are OK and an error code if not.
 
     Only POST is allowed as otherwise the web server's access log would show
     the GET parameter with the plain encoded password.

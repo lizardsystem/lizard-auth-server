@@ -121,7 +121,8 @@ class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
             form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
                 instance. It will have the JWT message contents in the
                 ``cleaned_data`` attribute. ``username`` and ``password`` are
-                mandatory keys in the message.
+                mandatory keys in the message. (In addition to ``iss``, see
+                the form documentation).
 
         Returns:
             A dict with key ``user`` with user data like first name, last

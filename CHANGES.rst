@@ -5,7 +5,17 @@ Changelog of lizard-auth-server
 2.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- V2 2.0..... Removed the new profile/company/site models.
+
+- The new v2 API now uses the existing userprofile/organisation/portal models.
+
+- The new v2 API doesn't use the still-existing roles stuff and it also
+  doesn't look at whether a userprofile is configured to access a portal: it
+  only does authentication.
+
+- The v2 API urls have been renamed for consistency/clarity. A new
+  ``/api/v2/`` endpoint lists the URLs of the other API endpoints, so moving
+  over to the new structure should be easy.
 
 
 2.2 (2016-09-14)

@@ -14,8 +14,11 @@ Changelog of lizard-auth-server
   only does authentication.
 
 - The v2 API urls have been renamed for consistency/clarity. A new
-  ``/api/v2/`` endpoint lists the URLs of the other API endpoints, so moving
+  ``/api2/`` endpoint lists the URLs of the other API endpoints, so moving
   over to the new structure should be easy.
+
+- The ``/api/v2/`` urls now start with ``/api2/`` as ``/api/*`` is blocked by
+  nginx as that was previously internal-network-only accessible.
 
 
 2.2 (2016-09-14)

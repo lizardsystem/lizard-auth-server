@@ -99,7 +99,7 @@ class TestLoginRedirectV2(TestCase):
         params = {
             'username': self.username,
             'password': self.password,
-            'next': '/api/v2/login/'
+            'next': '/api2/login/'
         }
         resp1 = self.client.post('/accounts/login/', params)
         self.assertEquals(resp1.status_code, 302)
@@ -108,9 +108,9 @@ class TestLoginRedirectV2(TestCase):
             'key': self.sso_key,
             'message': self.message,
             }
-        self.assertEqual(resp1.url, '/api/v2/login/')
+        self.assertEqual(resp1.url, '/api2/login/')
 
-        resp2 = self.client.get('/api/v2/login/', jwt_params)
+        resp2 = self.client.get('/api2/login/', jwt_params)
         self.assertEqual(resp2.status_code, 302)
         print(resp2.url)
         self.assertTrue(
@@ -124,7 +124,7 @@ class TestLoginRedirectV2(TestCase):
         params = {
             'username': self.username,
             'password': self.password,
-            'next': '/api/v2/login/'
+            'next': '/api2/login/'
         }
         resp1 = self.client.post('/accounts/login/', params)
         # Basically this means that the redirect failed and the user couldn't
@@ -176,7 +176,7 @@ class TestLogoutViewV2(TestCase):
         }
         self.assertRaises(ValidationError,
                           self.client.get,
-                          '/api/v2/logout/',
+                          '/api2/logout/',
                           params)
 
     def test_logout_phase_one(self):
@@ -184,7 +184,7 @@ class TestLogoutViewV2(TestCase):
             'key': self.sso_key,
             'message': self.message
         }
-        response = self.client.get('/api/v2/logout/', params)
+        response = self.client.get('/api2/logout/', params)
         self.assertEqual(response.status_code, 302)
         print(response.url)
         self.assertTrue(
@@ -197,7 +197,7 @@ class TestLogoutViewV2(TestCase):
             'key': self.sso_key,
             'message': self.message
         }
-        response = self.client.get('/api/v2/logout_redirect_back_to_portal/',
+        response = self.client.get('/api2/logout_redirect_back_to_portal/',
                                    params)
         self.assertEqual(response.status_code, 302)
         self.assertEqual('http://very.custom.net/sso/logout/',

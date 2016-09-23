@@ -1,6 +1,7 @@
 import json
 import jwt
 
+from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.forms import ValidationError
@@ -35,7 +36,6 @@ class TestCheckCredentialsView(TestCase):
         self.password = 'annie'
         self.user = factories.UserF(username=self.username,
                                     password=self.password)
-        self.portal = factories.PortalF()
 
     def test_disallowed_get(self):
         client = Client()
@@ -50,11 +50,9 @@ class TestCheckCredentialsView(TestCase):
         self.assertEquals(400, result.status_code)
 
     def test_valid_login(self):
-        # We don't need to check portal access anymore.
         form = Mock()
         form.cleaned_data = {'username': self.username,
                              'password': self.password}
-        form.portal = self.portal  # This is extracted by the form.
 
         result = self.view.form_valid(form)
         self.assertEquals(200, result.status_code)
@@ -73,8 +71,6 @@ class TestLoginRedirectV2(TestCase):
         self.password = 'bla'
         self.sso_key = 'ssokey'
         self.secret_key = 'a secret'
-        redirect = 'http://default.portal.net'
-        allowed_domain = 'custom.net'
 
         self.client = Client()
 
@@ -86,8 +82,6 @@ class TestLoginRedirectV2(TestCase):
         self.portal = factories.PortalF.create(
             sso_key=self.sso_key,
             sso_secret=self.secret_key,
-            redirect_url=redirect,
-            allowed_domain=allowed_domain,
         )
         self.portal.save()
 
@@ -206,3 +200,42 @@ class TestLogoutViewV2(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual('http://very.custom.net/sso/logout/',
                          response.url)
+
+
+class TestNewUserView(TestCase):
+    def setUp(self):
+        self.view = views_api_v2.NewUserView()
+        self.request_factory = RequestFactory()
+        self.some_request = self.request_factory.get('/some/url/')
+        self.user_data = {'username': 'pietje',
+                          'email': 'pietje@klaasje.test.com',
+                          'first_name': 'pietje',
+                          'last_name': 'klaasje'}
+
+    def test_disallowed_get(self):
+        client = Client()
+        result = client.get(
+            reverse('lizard_auth_server.api_v2.new_user'))
+        self.assertEquals(405, result.status_code)
+
+    def test_new_user(self):
+        form = Mock()
+        form.cleaned_data = self.user_data
+        result = self.view.form_valid(form)
+        self.assertEquals(201, result.status_code)
+        self.assertTrue(User.objects.get(username='pietje'))
+
+    def test_exiting_user(self):
+        factories.UserF(email='pietje@klaasje.test.com')
+        form = Mock()
+        form.cleaned_data = self.user_data
+        result = self.view.form_valid(form)
+        self.assertEquals(200, result.status_code)
+
+    def test_exiting_user_duplicate_email(self):
+        factories.UserF(email='pietje@klaasje.test.com')
+        factories.UserF(email='pietje@klaasje.test.com')
+        form = Mock()
+        form.cleaned_data = self.user_data
+        result = self.view.form_valid(form)
+        self.assertEquals(200, result.status_code)

@@ -1,3 +1,4 @@
+import json
 import jwt
 
 from django.core.exceptions import PermissionDenied
@@ -11,7 +12,6 @@ from lizard_auth_server.tests import factories
 from mock import Mock
 
 
-
 class TestStartView(TestCase):
 
     def test_smoke(self):
@@ -19,6 +19,10 @@ class TestStartView(TestCase):
         result = client.get(
             reverse('lizard_auth_server.api_v2.start'))
         self.assertEquals(200, result.status_code)
+
+    def test_url_includes_host(self):
+        response = self.client.get('https://some.server/api2/')
+        self.assertIn('http', str(response.content))
 
 
 class TestCheckCredentialsView(TestCase):

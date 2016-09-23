@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- The endpoint URLs returned by ``/api2/`` are inclusive the domain name,
+  now.
 
 
 2.3 (2016-09-23)

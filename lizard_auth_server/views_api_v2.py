@@ -78,11 +78,14 @@ class StartView(View):
         Returns: json dict with available endpoints
 
         """
+        def abs_reverse(url_name):
+            return request.build_absolute_uri(reverse(url_name))
+
         endpoints = {
             'check-credentials':
-            reverse('lizard_auth_server.api_v2.check_credentials'),
-            'login': reverse('lizard_auth_server.api_v2.login'),
-            'logout': reverse('lizard_auth_server.api_v2.logout'),
+            abs_reverse('lizard_auth_server.api_v2.check_credentials'),
+            'login': abs_reverse('lizard_auth_server.api_v2.login'),
+            'logout': abs_reverse('lizard_auth_server.api_v2.logout'),
         }
         return HttpResponse(json.dumps(endpoints),
                             content_type='application/json')

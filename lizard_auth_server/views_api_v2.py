@@ -74,6 +74,8 @@ class StartView(View):
 
         - ``logout``: :class:`lizard_auth_server.views_api_v2.LogoutView`
 
+        - ``new-user``: :class:`lizard_auth_server.views_api_v2.NewUserView`
+
         Returns: json dict with available endpoints
 
         """

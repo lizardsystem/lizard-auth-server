@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.5 (unreleased)
+2.5 (2016-09-23)
 ----------------
 
 - Added a ``/api2/new_user/`` endpoint that a site can use to create/find a

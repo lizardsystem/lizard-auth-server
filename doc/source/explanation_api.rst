@@ -16,8 +16,22 @@ See :class:`lizard_auth_server.views_api_v2.StartView`
 
 Use it to directly check username/password credentials with the SSO. So:
 without any user-facing html pages and redirects. Just a check if the
-credentials are OK and if the site is allowed.
+credentials are OK.
 
 This way it can be used by lizard-auth-client's authentication backend.
 
+It returns a dict with the user's username, email, first name and last name.
+
 See :class:`lizard_auth_server.views_api_v2.CheckCredentialsView`
+
+
+``/api2/new_user/``
+------------------------------
+
+Use it to add a new user on a local site and on the SSO. It looks up users by
+email and returns the first one found. If not found, it creates a user (in the
+SSO).
+
+The call returns the same dict as the api method above.
+
+See :class:`lizard_auth_server.views_api_v2.NewUserView`

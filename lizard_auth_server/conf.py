@@ -20,3 +20,4 @@ class LizardAuthServerAppConf(AppConf):
     """
     JWT_ALGORITHM = 'HS256'
     JWT_EXPIRATION_DELTA = timedelta(seconds=300)
+    DIRTY_HARDCODED_PASSWORD = 'dirtyhardcodedpassword'

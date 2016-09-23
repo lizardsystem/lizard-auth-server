@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Added a ``/api2/new_user/`` endpoint that a site can use to create/find a
+  user based on their email address.
 
 
 2.4 (2016-09-23)

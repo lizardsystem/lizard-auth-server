@@ -4,11 +4,11 @@ V2 API
 import datetime
 import logging
 import json
-# py3 only:
-from urllib.parse import urljoin, urlparse, urlencode
+from urllib.parse import urlencode  # py3 only!
 
 from django.conf import settings
 from django.contrib.auth import authenticate as django_authenticate
+from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.forms import ValidationError
@@ -26,7 +26,6 @@ from lizard_auth_server import forms
 from lizard_auth_server.models import Portal
 from lizard_auth_server.views_sso import FormInvalidMixin
 from lizard_auth_server.views_sso import ProcessGetFormView
-from lizard_auth_server.views_sso import domain_match
 
 
 logger = logging.getLogger(__name__)
@@ -75,6 +74,8 @@ class StartView(View):
 
         - ``logout``: :class:`lizard_auth_server.views_api_v2.LogoutView`
 
+        - ``new-user``: :class:`lizard_auth_server.views_api_v2.NewUserView`
+
         Returns: json dict with available endpoints
 
         """
@@ -86,6 +87,7 @@ class StartView(View):
             abs_reverse('lizard_auth_server.api_v2.check_credentials'),
             'login': abs_reverse('lizard_auth_server.api_v2.login'),
             'logout': abs_reverse('lizard_auth_server.api_v2.logout'),
+            'new-user': abs_reverse('lizard_auth_server.api_v2.new_user'),
         }
         return HttpResponse(json.dumps(endpoints),
                             content_type='application/json')
@@ -331,3 +333,86 @@ class LogoutRedirectBackView(FormInvalidMixin, ProcessGetFormView):
         # checked there. So we don't need to check for a missing logout_url
         # parameter.
         return HttpResponseRedirect(form.cleaned_data['logout_url'])
+
+
+class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
+    """View to create a new user (or return the existing one)
+
+    Username/email/first_name/last_name is passed in a JWT signed form (so: in
+    plain text). We verify if the password is OK. No redirects to forms, just
+    a '200 OK' when the credentials are OK and an error code if not.
+
+    Only POST is allowed as it could alter the database.
+
+    """
+    form_class = forms.JWTDecryptForm
+    http_method_names = ['post']
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(NewUserView, self).dispatch(
+            request, *args, **kwargs)
+
+    @method_decorator(sensitive_post_parameters('message'))
+    def post(self, request, *args, **kwargs):
+        return super(NewUserView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        """Return user data of a new or the existing user
+
+        The JWT message's content is now the form's cleaned data. So we start
+        out by extracting the contents. Then we find/create the user and
+        return it.
+
+        Args:
+            form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
+                instance. It will have the JWT message contents in the
+                ``cleaned_data`` attribute. ``username``, ``email``,
+                ``first_name`` and ``last_name`` are mandatory keys in the
+                message. (In addition to ``iss``, see the form
+                documentation).
+
+        Returns:
+            A dict with key ``user`` with user data like first name, last
+            name.
+
+        Raises:
+            ValidationError: when mandatory keys are missing from the decoded
+                JWT message.
+
+        """
+        # The JWT message is validated; now check the message's contents.
+        mandatory_keys = ['username', 'email', 'first_name', 'last_name']
+        for key in mandatory_keys:
+            if not key in form.cleaned_data:
+                raise ValidationError(
+                    "Key '%s' is missing from the JWT message" % key)
+
+        # Try to find the user first. You can have multiple
+        matching_users = User.objects.filter(email=form.cleaned_data['email'])
+        user = None
+        status_code = 200
+        if matching_users:
+            if len(matching_users) > 1:
+                logger.debug(
+                    "More than one user found for '%s', returning the first",
+                    form.cleaned_data['email'])
+            user = matching_users[0]
+
+        if not user:
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],  # can be duplicate...
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                email=form.cleaned_data['email'],
+                password=settings.LIZARD_AUTH_SERVER_DIRTY_HARDCODED_PASSWORD)
+            status_code = 201  # Created
+            logger.warn("We just created a user with password '%s': TODO!!!",
+                        settings.LIZARD_AUTH_SERVER_DIRTY_HARDCODED_PASSWORD)
+            # TODO: include django-registration to add password reset and
+            # invitation mails.
+
+        user_data = construct_user_data(user=user)
+        return HttpResponse(json.dumps({'user': user_data}),
+                            content_type='application/json',
+                            status=status_code)

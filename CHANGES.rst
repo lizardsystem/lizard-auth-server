@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.3 (unreleased)
+2.3 (2016-09-23)
 ----------------
 
 - V2 2.0..... Removed the new profile/company/site models.

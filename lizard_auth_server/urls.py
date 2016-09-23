@@ -96,21 +96,21 @@ urlpatterns = patterns(
         name='lizard_auth_server.sso.api.verify'),
 
     # V2 API
-    url(r'^api/v2/authorize/$',
-        views_api_v2.AuthenticateView.as_view()),
-    # ^^^^ Very very temporary BBB url
-    url(r'^api/v2/authenticate/$',
-        views_api_v2.AuthenticateView.as_view(),
-        name='lizard_auth_server.api_v2.authenticate'),
-    url(r'^api/v2/check_credentials/$',
-        views_api_v2.VerifyCredentialsView.as_view(),
+    url(r'^api2/$',
+        views_api_v2.StartView.as_view(),
+        name='lizard_auth_server.api_v2.start'),
+    url(r'^api2/login/$',
+        views_api_v2.LoginView.as_view(),
+        name='lizard_auth_server.api_v2.login'),
+    url(r'^api2/check_credentials/$',
+        views_api_v2.CheckCredentialsView.as_view(),
         name='lizard_auth_server.api_v2.check_credentials'),
-    url(r'^api/v2/logout/$',
+    url(r'^api2/logout/$',
         views_api_v2.LogoutView.as_view(),
         name='lizard_auth_server.api_v2.logout'),
-    url(r'^api/v2/logout_redirect/$',
-        views_api_v2.LogoutRedirectView.as_view(),
-        name='lizard_auth_server.api_v2.logout_redirect'),
+    url(r'^api2/logout_redirect_back_to_portal/$',
+        views_api_v2.LogoutRedirectBackView.as_view(),
+        name='lizard_auth_server.api_v2.logout_redirect_back'),
 
     # Override django-auth's default login/logout URLs
     # Note: ensure LOGIN_URL isn't defined in the settings

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-26 11:51+0200\n"
-"PO-Revision-Date: 2016-08-26 11:52+0200\n"
+"POT-Creation-Date: 2016-09-21 15:54+0200\n"
+"PO-Revision-Date: 2016-09-21 15:56+0200\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: admin.py:38
 msgid "Resend the activation email, with a new key"
-msgstr "Stuur een nieuwe activatie e-mail, met een nieuwe sleutel\t"
+msgstr "Stuur een nieuwe activatie e-mail, met een nieuwe sleutel"
 
 #: admin.py:49
 msgid "Activate manually"
@@ -31,7 +31,7 @@ msgstr "Handmatig activeren"
 msgid "Shortcut URLs"
 msgstr "Snelkoppelingen"
 
-#: admin.py:60 models.py:820
+#: admin.py:60 models.py:258
 msgid "user profile"
 msgstr "gebruikersprofiel"
 
@@ -43,71 +43,40 @@ msgstr "Datums"
 msgid "Personal data"
 msgstr "Persoonsgegevens"
 
-#: admin.py:105 models.py:152 models.py:591
+#: admin.py:105 models.py:118 models.py:153 models.py:591
 msgid "portal"
 msgstr "portaal"
 
-#: admin.py:142 admin.py:206
+#: admin.py:143 admin.py:211
 msgid "number of inheriting roles"
 msgstr "aantal overervende rollen"
 
-#: admin.py:153
+#: admin.py:154
 msgid "base role"
 msgstr "basisrol"
 
-#: admin.py:195
+#: admin.py:199
 msgid "number of organisation roles"
 msgstr "Aantal organisatierollen"
 
-#: admin.py:230 admin.py:263
+#: admin.py:236 admin.py:270
 msgid "number of user profiles"
 msgstr "Aantal gebruikersprofielen"
 
-#: admin.py:239 admin.py:274
+#: admin.py:245 admin.py:281
 msgid "number of roles"
 msgstr "Aantal rollen"
 
-#: admin.py:282
-#, python-format
-msgid "Organisation %s has already been migrated"
-msgstr "Organisatie %s is al een keer gemigreerd"
-
-#: admin.py:303
-#, python-format
-msgid "Created company '%s' with %s members, %s guests"
-msgstr "Bedrijf '%s' is aangemaakt met %s leden en %s gastleden"
-
-#: admin.py:307
-msgid "Copy organisation as company"
-msgstr "Kopieer organisatie als bedrijf"
-
-#: admin.py:318 models.py:413 models.py:699
+#: admin.py:295 models.py:413 models.py:672 models.py:699
 msgid "organisation"
 msgstr "organisatie"
 
-#: admin.py:364
-#, python-format
-msgid "Converted %s members to guests"
-msgstr "%s leden zijn omgezet naar gastleden"
-
-#: admin.py:365
-msgid "Convert from member to guest"
-msgstr "Zet lid om in gastlid"
-
-#: admin.py:398
-msgid "number of members"
-msgstr "Aantal leden"
-
-#: admin.py:405
-msgid "number of guests"
-msgstr "Aantal gastleden"
-
-#: forms.py:93
+#: forms.py:128
 #, python-format
 msgid "The new password must be at least %d characters long."
 msgstr "Het nieuwe wachtwoord moet minimaal %d karakters lang zijn."
 
-#: forms.py:109
+#: forms.py:144
 msgid ""
 "The new password must contain at least two numeric digits, one uppercase and "
 "one lowercase character."
@@ -115,96 +84,95 @@ msgstr ""
 "Het nieuwe wachtwoord moet minstens twee cijfers, een hoofdletter en een "
 "kleine letter bevatten."
 
-#: forms.py:167 templates/lizard_auth_server/profile.html:15
+#: forms.py:202 templates/lizard_auth_server/profile.html:15
 msgid "Name"
 msgstr "Naam"
 
-#: forms.py:170
+#: forms.py:205
 msgid "For the purpose of an invitation email (not the username)"
 msgstr "T.b.v. de aanhef in een e-mail (niet de gebruikersnaam)"
 
-#: forms.py:173 forms.py:255 templates/lizard_auth_server/profile.html:19
+#: forms.py:208 forms.py:290 templates/lizard_auth_server/profile.html:19
 msgid "Email"
 msgstr "E-mail"
 
-#: forms.py:175
+#: forms.py:210
 msgid "Organisation"
 msgstr "Organisatie"
 
-#: forms.py:180
+#: forms.py:215
 msgid "Language"
 msgstr "Taal"
 
-#: forms.py:191
+#: forms.py:226
 msgid "Portals"
 msgstr "Portalen"
 
-#: forms.py:201 forms.py:234 forms.py:306
+#: forms.py:236 forms.py:269 forms.py:341
 msgid "{} is already taken."
 msgstr "{} wordt al gebruikt."
 
-#: forms.py:212 templates/lizard_auth_server/profile.html:17
+#: forms.py:247 templates/lizard_auth_server/profile.html:17
 msgid "Username"
 msgstr "Gebruikersnaam"
 
-#: forms.py:216
+#: forms.py:251
 msgid "New password"
 msgstr "Nieuw wachtwoord"
 
-#: forms.py:220
+#: forms.py:255
 msgid "New password confirmation"
 msgstr "Niew wachtwoord (bevestiging)"
 
-#: forms.py:225
+#: forms.py:260
 msgid "The two password fields didn't match."
 msgstr "De twee wachtwoorden zijn niet identiek"
 
-#: forms.py:231
+#: forms.py:266
 msgid "Whitespace not allowed."
 msgstr "Spaties niet toegestaan."
 
-#: forms.py:258
+#: forms.py:293
 msgid "First name"
 msgstr "Voornaam"
 
-#: forms.py:263
+#: forms.py:298
 msgid "Last name"
 msgstr "Achternaam"
 
-#: forms.py:266 templates/lizard_auth_server/profile.html:21
+#: forms.py:301 templates/lizard_auth_server/profile.html:21
 msgid "Title"
 msgstr "Titel"
 
-#: forms.py:267 templates/lizard_auth_server/profile.html:23
+#: forms.py:302 templates/lizard_auth_server/profile.html:23
 msgid "Street"
 msgstr "Straat"
 
-#: forms.py:270 templates/lizard_auth_server/profile.html:25
+#: forms.py:305 templates/lizard_auth_server/profile.html:25
 msgid "Postal code"
 msgstr "Postcode"
 
-#: forms.py:273 templates/lizard_auth_server/profile.html:27
+#: forms.py:308 templates/lizard_auth_server/profile.html:27
 msgid "Town"
 msgstr "Plaats"
 
-#: forms.py:276 templates/lizard_auth_server/profile.html:29
+#: forms.py:311 templates/lizard_auth_server/profile.html:29
 msgid "Phone number"
 msgstr "Telefoonnummer"
 
-#: forms.py:281 templates/lizard_auth_server/profile.html:31
+#: forms.py:316 templates/lizard_auth_server/profile.html:31
 msgid "Mobile phone number"
 msgstr "Telefoonnummer (mobiel)"
 
-#: forms.py:332
+#: forms.py:368
 msgid "required 3Di billing role is missing"
 msgstr "De benodigde \"billing\" rol op 3di mist"
 
-#: forms.py:335
+#: forms.py:371
 msgid "Only one 3Di billing role is allowed ({} found)"
 msgstr "Slechts één \"billing\" rol op 3di is toegestaan ({} gevonden)"
 
-#: models.py:73 models.py:404 models.py:605 models.py:651 models.py:869
-#: models.py:913
+#: models.py:73 models.py:404 models.py:605 models.py:651
 msgid "name"
 msgstr "naam"
 
@@ -212,30 +180,30 @@ msgstr "naam"
 msgid "Name used to refer to this portal."
 msgstr "Naam waaronder dit portaal bekend staat."
 
-#: models.py:79 models.py:924
+#: models.py:79
 msgid "shared secret"
 msgstr "gedeelde geheime string"
 
-#: models.py:83 models.py:928
+#: models.py:83
 msgid ""
 "Secret shared between SSO client and server to sign/encrypt communication."
 msgstr ""
 "De geheime code die tussen de SSO client en SSO server gedeeld wordt om de "
 "communicatie te ondertekenen en te versleutelen."
 
-#: models.py:86 models.py:931
+#: models.py:86
 msgid "identifying key"
 msgstr "identificatie-string"
 
-#: models.py:90 models.py:935
+#: models.py:90
 msgid "String used to identify the SSO client."
 msgstr "Code die gebruikt wordt om de SSO client te identificeren."
 
-#: models.py:92 models.py:937
+#: models.py:92
 msgid "allowed domain(s)"
 msgstr "toegestaan domein(en)"
 
-#: models.py:96 models.py:941
+#: models.py:96
 msgid ""
 "Allowed domain suffix for redirects using the next parameter. Multiple, "
 "whitespace-separated suffixes may be specified."
@@ -244,64 +212,56 @@ msgstr ""
 "moet eindigen met wat hier is ingevuld. Meerdere domeinnamen kan je invoeren "
 "door ze met spaties te scheiden."
 
-#: models.py:99 models.py:944
+#: models.py:99
 msgid "redirect url"
 msgstr "redirect-url"
 
-#: models.py:101 models.py:946
+#: models.py:102
 msgid "URL used in the SSO redirection."
 msgstr "URL die standaard voor het redirecten gebruikt wordt."
 
-#: models.py:103 models.py:948
+#: models.py:104
 msgid "visit url"
 msgstr "bezoek-url"
 
-#: models.py:105 models.py:950
+#: models.py:106
 msgid "URL used in the UI to refer to this portal."
 msgstr ""
 "URL van het portal zelf waarnaar we kunnen linken vanuit overzichtspagina's."
 
-#: models.py:117
-msgid "(portal)"
-msgstr "(portaal)"
-
-#: models.py:118
-msgid "(portals)"
-msgstr "(portalen)"
-
-#: models.py:154
-msgid "request token"
-msgstr "token van het request"
-
-#: models.py:158
-msgid "auth token"
-msgstr "authenticatie token"
-
-#: models.py:163 models.py:191 models.py:452 models.py:792
-msgid "user"
-msgstr "gebruiker"
-
-#: models.py:167 models.py:211 models.py:427
-msgid "created on"
-msgstr "aangemaakt op"
-
-#: models.py:174
-msgid "(authentication token)"
-msgstr "(authenticatieteken)"
-
-#: models.py:175
-msgid "(authentication tokens)"
-msgstr "(authenticatietekens)"
-
-#: models.py:196 models.py:424
+#: models.py:119 models.py:197 models.py:424
 msgid "portals"
 msgstr "portalen"
 
-#: models.py:201
+#: models.py:155
+msgid "request token"
+msgstr "token van het request"
+
+#: models.py:159
+msgid "auth token"
+msgstr "authenticatie token"
+
+#: models.py:164 models.py:192 models.py:452
+msgid "user"
+msgstr "gebruiker"
+
+#: models.py:168 models.py:212 models.py:427
+msgid "created at"
+msgstr "aangemaakt op"
+
+#: models.py:175
+msgid "(authentication token)"
+msgstr "(authenticatieteken)"
+
+#: models.py:176
+msgid "(authentication tokens)"
+msgstr "(authenticatietekens)"
+
+#: models.py:202 models.py:673
 msgid "organisations"
 msgstr "organisaties"
 
-#: models.py:207
+#: models.py:208
 msgid "roles (via organisation)"
 msgstr "rollen (via organisatie)"
 
@@ -333,13 +293,9 @@ msgstr "telefoonnummer"
 msgid "mobile phone number"
 msgstr "mobiele telefoonnummer"
 
-#: models.py:258
-msgid "(user profile)"
-msgstr "(gebruikersprofiel)"
-
 #: models.py:259
-msgid "(user profiles)"
-msgstr "(gebruikersprofielen)"
+msgid "user profiles"
+msgstr "gebruikersprofielen"
 
 #: models.py:409
 msgid "e-mail"
@@ -375,7 +331,7 @@ msgstr "geactiveerd op"
 msgid "(invitation)"
 msgstr "(uitnodiging)"
 
-#: models.py:593 models.py:657 models.py:875
+#: models.py:593 models.py:657
 msgid "unique id"
 msgstr "uniek ID"
 
@@ -433,14 +389,6 @@ msgstr "al gemigreerd"
 msgid "roles"
 msgstr "rollen"
 
-#: models.py:672
-msgid "(organisation)"
-msgstr "(organisatie)"
-
-#: models.py:673
-msgid "(organisations)"
-msgstr "(organisaties)"
-
 #: models.py:703
 msgid "role"
 msgstr "rol"
@@ -468,62 +416,6 @@ msgstr ""
 "De speciale 3di \"billing\" role mag je niet \"voor alle gebruikers\" "
 "instellen"
 
-#: models.py:796 models.py:905
-msgid "company"
-msgstr "bedrijf"
-
-#: models.py:801
-msgid "created at"
-msgstr "aangemaakt op"
-
-#: models.py:804
-msgid "updated at"
-msgstr "geüpdated op"
-
-#: models.py:821
-msgid "user profiles"
-msgstr "gebruikersprofielen"
-
-#: models.py:882
-msgid "guests"
-msgstr "gastleden"
-
-#: models.py:884
-msgid "Guests or external users."
-msgstr "Gastleden of externe gebruikers."
-
-#: models.py:888
-msgid "administrators"
-msgstr "beheerders"
-
-#: models.py:891
-msgid ""
-"Admins can add/edit users belonging to the company and can add/remove guests "
-"and manage site access"
-msgstr ""
-"Beheerders kunnen gebruikers die bij het bedrijf horen toevoegen/bewerken en "
-"gastleden toevoegen/verwijderen en ze kunnen toegang geven tot sites"
-
-#: models.py:906
-msgid "companies"
-msgstr "bedrijven"
-
-#: models.py:917
-msgid "Name used to refer to this site."
-msgstr "Naam waaronder deze site bekend staat."
-
-#: models.py:921
-msgid "available to"
-msgstr "beschikbaar voor"
-
-#: models.py:956
-msgid "site"
-msgstr "site"
-
-#: models.py:957
-msgid "sites"
-msgstr "sites"
-
 #: templates/admin/base_site.html:7
 msgid "Lizard SSO"
 msgstr "Lizard SSO"
@@ -545,7 +437,7 @@ msgstr "Afgezien van inloggen heeft u geen speciale rechten."
 msgid "Access denied"
 msgstr "Geen toegang"
 
-#: templates/lizard_auth_server/access_denied.html:10 views.py:446
+#: templates/lizard_auth_server/access_denied.html:10 views.py:429
 msgid "You do not have access to this portal."
 msgstr "U heeft geen toegang tot dit portaal."
 
@@ -912,29 +804,29 @@ msgstr "Organisaties"
 msgid "You are a member of the following organisations:"
 msgstr "U behoort tot de volgende organisaties:"
 
-#: views.py:78
+#: views.py:61
 msgid "An unknown error occurred."
 msgstr "Onbekende fout."
 
-#: views.py:137
+#: views.py:120
 msgid "Access to portal {} for {}"
 msgstr "Toegang tot portaal {} voor {}"
 
-#: views.py:284
+#: views.py:267
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 "Ongeldige activatiesleutel. Dit betekent waarschijnlijk dat het account al "
 "geactiveerd is."
 
-#: views.py:432
+#: views.py:415
 msgid "Invalid `next` query string parameter."
 msgstr "De `next` parameter klopt niet."
 
-#: views.py:436
+#: views.py:419
 msgid "Missing `portal` query string parameter."
 msgstr "De `portal` parameter mist."
 
-#: views.py:440
+#: views.py:423
 msgid "Invalid `portal` query string parameter."
 msgstr "De `portal` parameter klopt niet."
 
@@ -945,6 +837,85 @@ msgstr "Communicatiefout."
 #: views_sso.py:164
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr "Token is verlopen. Ga terug naar het portaal, en log daar opnieuw in."
+
+#~ msgid "Organisation %s has already been migrated"
+#~ msgstr "Organisatie %s is al een keer gemigreerd"
+
+#~ msgid "Created company '%s' with %s members, %s guests"
+#~ msgstr "Bedrijf '%s' is aangemaakt met %s leden en %s gastleden"
+
+#~ msgid "Copy organisation as company"
+#~ msgstr "Kopieer organisatie als bedrijf"
+
+#~ msgid "Converted %s members to guests"
+#~ msgstr "%s leden zijn omgezet naar gastleden"
+
+#~ msgid "Convert from member to guest"
+#~ msgstr "Zet lid om in gastlid"
+
+#~ msgid "number of members"
+#~ msgstr "Aantal leden"
+
+#~ msgid "number of guests"
+#~ msgstr "Aantal gastleden"
+
+#~ msgid "(portal)"
+#~ msgstr "(portaal)"
+
+#~ msgid "(portals)"
+#~ msgstr "(portalen)"
+
+#~ msgid "created on"
+#~ msgstr "aangemaakt op"
+
+#~ msgid "(user profile)"
+#~ msgstr "(gebruikersprofiel)"
+
+#~ msgid "(user profiles)"
+#~ msgstr "(gebruikersprofielen)"
+
+#~ msgid "(organisation)"
+#~ msgstr "(organisatie)"
+
+#~ msgid "(organisations)"
+#~ msgstr "(organisaties)"
+
+#~ msgid "company"
+#~ msgstr "bedrijf"
+
+#~ msgid "updated at"
+#~ msgstr "geüpdated op"
+
+#~ msgid "guests"
+#~ msgstr "gastleden"
+
+#~ msgid "Guests or external users."
+#~ msgstr "Gastleden of externe gebruikers."
+
+#~ msgid "administrators"
+#~ msgstr "beheerders"
+
+#~ msgid ""
+#~ "Admins can add/edit users belonging to the company and can add/remove "
+#~ "guests and manage site access"
+#~ msgstr ""
+#~ "Beheerders kunnen gebruikers die bij het bedrijf horen toevoegen/bewerken "
+#~ "en gastleden toevoegen/verwijderen en ze kunnen toegang geven tot sites"
+
+#~ msgid "companies"
+#~ msgstr "bedrijven"
+
+#~ msgid "Name used to refer to this site."
+#~ msgstr "Naam waaronder deze site bekend staat."
+
+#~ msgid "available to"
+#~ msgstr "beschikbaar voor"
+
+#~ msgid "site"
+#~ msgstr "site"
+
+#~ msgid "sites"
+#~ msgstr "sites"
 
 #~ msgid ""
 #~ "Please enter a correct username and password. Note that both fields are "

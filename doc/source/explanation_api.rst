@@ -1,11 +1,17 @@
 Explanation of how to use the API
 =================================
 
-TODO: provide a good entry point at ``/api/v2/`` that points at the various
-sub-urls.
+
+``/api2/``
+------------
+
+Startpoint of the API that returns the available urls. This way there's no
+need for hardcoded URLs in lizard-auth-client anymore!
+
+See :class:`lizard_auth_server.views_api_v2.StartView`
 
 
-``/api/v2/check_credentials/``
+``/api2/check_credentials/``
 ------------------------------
 
 Use it to directly check username/password credentials with the SSO. So:
@@ -14,4 +20,4 @@ credentials are OK and if the site is allowed.
 
 This way it can be used by lizard-auth-client's authentication backend.
 
-See :class:`lizard_auth_server.views_api_v2.VerifyCredentialsView`
+See :class:`lizard_auth_server.views_api_v2.CheckCredentialsView`

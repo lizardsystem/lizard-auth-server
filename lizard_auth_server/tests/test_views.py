@@ -18,7 +18,6 @@ from lizard_auth_server.models import GenKey
 from lizard_auth_server.tests import factories
 from lizard_auth_server.views import JWTView
 
-JWT_ALGORITHM = settings.LIZARD_AUTH_SERVER_JWT_ALGORITHM
 JWT_EXPIRATION_DELTA = settings.LIZARD_AUTH_SERVER_JWT_EXPIRATION_DELTA
 
 fake = Faker()
@@ -80,8 +79,7 @@ class JWTViewTestCase(TestCase):
         self.user.user_profile.portals.add(self.portal)
         token = JWTView.get_token(self.user, self.portal, exp)
         expected_payload = {'username': self.user.username, 'exp': exp}
-        actual_payload = jwt.decode(
-            token, self.portal.sso_secret, [JWT_ALGORITHM])
+        actual_payload = jwt.decode(token, self.portal.sso_secret)
         self.assertDictEqual(expected_payload, actual_payload)
 
     def test_token_with_exp_as_datetime(self):
@@ -91,16 +89,14 @@ class JWTViewTestCase(TestCase):
         self.user.user_profile.portals.add(self.portal)
         token = JWTView.get_token(self.user, self.portal, dt)
         expected_payload = {'username': self.user.username, 'exp': exp}
-        actual_payload = jwt.decode(
-            token, self.portal.sso_secret, [JWT_ALGORITHM])
+        actual_payload = jwt.decode(token, self.portal.sso_secret)
         self.assertDictEqual(expected_payload, actual_payload)
 
     def test_token_with_default_exp(self):
         self.user.user_profile.portals.add(self.portal)
         token = JWTView.get_token(self.user, self.portal)
         expected_payload = {'username': self.user.username}
-        actual_payload = jwt.decode(
-            token, self.portal.sso_secret, [JWT_ALGORITHM])
+        actual_payload = jwt.decode(token, self.portal.sso_secret)
         self.assertTrue(isinstance(actual_payload.pop('exp'), int))
         self.assertDictEqual(expected_payload, actual_payload)
 
@@ -108,7 +104,7 @@ class JWTViewTestCase(TestCase):
     def test_expired_token(self):
         self.user.user_profile.portals.add(self.portal)
         token = JWTView.get_token(self.user, self.portal, 0)
-        jwt.decode(token, self.portal.sso_secret, [JWT_ALGORITHM])
+        jwt.decode(token, self.portal.sso_secret)
 
     def test_get_request_with_invalid_next_parameter(self):
         request = self.factory.get(
@@ -191,7 +187,7 @@ class JWTViewTestCase(TestCase):
         actual_content_type = response.get('Content-Type')
         self.assertEqual(expected_content_type, actual_content_type)
         token = response.content
-        payload = jwt.decode(token, self.portal.sso_secret, JWT_ALGORITHM)
+        payload = jwt.decode(token, self.portal.sso_secret)
         self.assertTrue(payload['username'] == self.user.username)
         self.assertTrue('exp' in payload)
 

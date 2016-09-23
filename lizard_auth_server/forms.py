@@ -17,7 +17,6 @@ from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 from lizard_auth_server.models import THREEDI_PORTAL
 from lizard_auth_server.models import UserProfile
-from lizard_auth_server.models import Site
 
 MIN_LENGTH = 8
 
@@ -56,7 +55,7 @@ class JWTDecryptForm(forms.Form):
     The "incoming" form fields:
 
     key
-        ID identifying the :term:`site`. In lizard-auth-client this is the
+        ID identifying the :term:`portal`. In lizard-auth-client this is the
         ``SSO_KEY`` setting.
     message
         The JWT message containing the payload and the JWT signature.
@@ -70,15 +69,16 @@ class JWTDecryptForm(forms.Form):
     def clean(self):
         """Verify the JWT signature and return the JWT payload
 
-        The ``key`` field is used to look up the relevant :term:`Site`. That
+        The ``key`` field is used to look up the relevant :term:`portal`. That
         site's ``sso_secret`` is used to validate the signature on the JWT
         payload. This way we can be sure that the payload has been really send
-        by the :term:`Site` we think send it and that the payload has not been
+        by the :term:`portal` we think send it and that the payload has not been
         tampered with.
 
-        The payload MUST contain a value for ``key`` that matches the ``key``
+        The payload MUST contain a value for ``iss`` that matches the ``key``
         form field: this is needed to verify that the payload has not been
-        tampered with.
+        tampered with. ``iss`` is a standard fieldname in the jwt standard: it
+        means "issuer".
 
         Returns:
 
@@ -89,8 +89,8 @@ class JWTDecryptForm(forms.Form):
         Raises:
 
             ValidationError: When the JWT is malformed or expired or when the
-                signature does not match. A :term:`site` should be found
-                that matches ``key``. Likewise, ``key`` in the payload should
+                signature does not match. A :term:`portal` should be found
+                that matches ``key``. Likewise, ``iss`` in the payload should
                 match the ``key`` form field.
 
         """
@@ -98,22 +98,23 @@ class JWTDecryptForm(forms.Form):
         if 'key' not in original_cleaned_data:
             raise ValidationError('No SSO key')
         try:
-            self.site = Site.objects.get(sso_key=original_cleaned_data['key'])
-        except Site.DoesNotExist:
+            portal = Portal.objects.get(sso_key=original_cleaned_data['key'])
+        except Portal.DoesNotExist:
             raise ValidationError('Invalid SSO key')
         try:
             new_cleaned_data = jwt.decode(original_cleaned_data['message'],
-                                          self.site.sso_secret,
-                                          algorithms=['HS256'])
+                                          portal.sso_secret,
+                                          issuer=original_cleaned_data['key'])
         except jwt.exceptions.DecodeError:
-            raise ValidationError("Failed to decode JWT.")
+            raise ValidationError("Failed to decode JWT")
         except jwt.exceptions.ExpiredSignatureError:
-            raise ValidationError("JWT has expired.")
+            raise ValidationError("JWT has expired")
+        except jwt.exceptions.InvalidIssuerError:
+            raise ValidationError(
+                "Public SSO key does not match signed issuer")
+        except jwt.exceptions.MissingRequiredClaimError:
+            raise ValidationError("JWT message misses 'iss' field (=SSO_KEY)")
 
-        # This is useful for verifying if the key of the GET parameter (which
-        # could be tampered with) is same as the key in the payload.
-        if original_cleaned_data['key'] != new_cleaned_data['key']:
-            raise ValidationError('Public SSO key does not match signed key')
         return new_cleaned_data
 
 

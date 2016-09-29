@@ -239,3 +239,17 @@ class TestNewUserView(TestCase):
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
         self.assertEquals(200, result.status_code)
+
+
+class TestOrganisationsView(TestCase):
+
+    def test_smoke(self):
+        client = Client()
+        result = client.get(
+            reverse('lizard_auth_server.api_v2.start'))
+        self.assertEquals(200, result.status_code)
+
+    def test_result(self):
+        factories.OrganisationF(name="Signalmanufaktur Neuwitz")
+        response = self.client.get('/api2/organisations/')
+        self.assertIn('Neuwitz', str(response.content))

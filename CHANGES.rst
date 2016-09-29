@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Added ``/api2/organisations/`` that lists the organisation names plus
+  unique ID.
 
 
 2.5 (2016-09-23)

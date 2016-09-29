@@ -426,14 +426,13 @@ class OrganisationsView(View):
     The UID of organisations is used by several portals. The "V2" api doesn't
     sync them anymore with the portal, so this endpoint simply provides the list.
 
-    TODO: currently this endpoint isn't protected. Should it be?
-
     """
 
     def get(self, request):
         """Return all organisations.
 
-        Returns: json dict with organisations.
+        Returns: json dict with the unique ID as key and the organisation's
+            name as value.
 
         """
         result = {organisation.unique_id: organisation.name

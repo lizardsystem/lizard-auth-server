@@ -23,6 +23,7 @@ from django.views.generic.edit import ProcessFormView
 import jwt
 
 from lizard_auth_server import forms
+from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 from lizard_auth_server.views_sso import FormInvalidMixin
 from lizard_auth_server.views_sso import ProcessGetFormView
@@ -88,6 +89,7 @@ class StartView(View):
             'login': abs_reverse('lizard_auth_server.api_v2.login'),
             'logout': abs_reverse('lizard_auth_server.api_v2.logout'),
             'new-user': abs_reverse('lizard_auth_server.api_v2.new_user'),
+            'organisations': abs_reverse('lizard_auth_server.api_v2.organisations'),
         }
         return HttpResponse(json.dumps(endpoints),
                             content_type='application/json')
@@ -416,3 +418,25 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
         return HttpResponse(json.dumps({'user': user_data}),
                             content_type='application/json',
                             status=status_code)
+
+
+class OrganisationsView(View):
+    """API endpoint that simply lists the organisations and their UIDs.
+
+    The UID of organisations is used by several portals. The "V2" api doesn't
+    sync them anymore with the portal, so this endpoint simply provides the list.
+
+    TODO: currently this endpoint isn't protected. Should it be?
+
+    """
+
+    def get(self, request):
+        """Return all organisations.
+
+        Returns: json dict with organisations.
+
+        """
+        result = {organisation.unique_id: organisation.name
+                  for organisation in Organisation.objects.all()}
+        return HttpResponse(json.dumps(result),
+                            content_type='application/json')

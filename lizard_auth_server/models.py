@@ -658,9 +658,6 @@ class Organisation(models.Model):
         max_length=32,
         unique=True,
         default=create_new_uuid)
-    already_migrated = models.BooleanField(
-        verbose_name=_('already migrated'),
-        default=False)
     roles = models.ManyToManyField(
         Role,
         through='OrganisationRole',

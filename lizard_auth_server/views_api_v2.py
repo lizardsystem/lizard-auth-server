@@ -11,8 +11,10 @@ from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.db.utils import IntegrityError
 from django.forms import ValidationError
 from django.http import HttpResponse
+from django.http import HttpResponseBadRequest
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -358,7 +360,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
         return super(NewUserView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        """Return user data of a new or the existing user
+        """Return user data of a new or existing user
 
         The JWT message's content is now the form's cleaned data. So we start
         out by extracting the contents. Then we find/create the user and
@@ -378,7 +380,10 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
         Raises:
             ValidationError: when mandatory keys are missing from the decoded
-                JWT message.
+                JWT message. A ValidationError is also raised when a duplicate
+                username is found. Note: a ValidationError results in a http
+                400 response. Normally, what gets passed to us should be OK, so
+                an 'error 400' ought to be equivalent to 'duplicate username'.
 
         """
         # The JWT message is validated; now check the message's contents.
@@ -388,7 +393,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 raise ValidationError(
                     "Key '%s' is missing from the JWT message" % key)
 
-        # Try to find the user first. You can have multiple
+        # Try to find the user first. You can have multiple matches.
         matching_users = User.objects.filter(email=form.cleaned_data['email'])
         user = None
         status_code = 200
@@ -400,15 +405,21 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             user = matching_users[0]
 
         if not user:
-            user = User.objects.create_user(
-                username=form.cleaned_data['username'],  # can be duplicate...
-                first_name=form.cleaned_data['first_name'],
-                last_name=form.cleaned_data['last_name'],
-                email=form.cleaned_data['email'],
-                password=settings.LIZARD_AUTH_SERVER_DIRTY_HARDCODED_PASSWORD)
+            try:
+                user = User.objects.create_user(
+                    username=form.cleaned_data['username'],  # can be duplicate...
+                    first_name=form.cleaned_data['first_name'],
+                    last_name=form.cleaned_data['last_name'],
+                    email=form.cleaned_data['email'],
+                    password=settings.LIZARD_AUTH_SERVER_DIRTY_HARDCODED_PASSWORD)
+            except IntegrityError:
+                logger.exception("Probably duplicate username")
+                raise ValidationError("Duplicate username")
             status_code = 201  # Created
-            logger.warn("We just created a user with password '%s': TODO!!!",
-                        settings.LIZARD_AUTH_SERVER_DIRTY_HARDCODED_PASSWORD)
+            logger.warn(
+                "We just created a user '%s' with password '%s': TODO!!!",
+                user.username,
+                settings.LIZARD_AUTH_SERVER_DIRTY_HARDCODED_PASSWORD)
             # TODO: include django-registration to add password reset and
             # invitation mails.
 

@@ -239,3 +239,23 @@ class TestNewUserView(TestCase):
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
         self.assertEquals(200, result.status_code)
+
+    def test_duplicate_username(self):
+        factories.UserF(username='pietje',
+                        email='nietpietje@example.com')
+        form = Mock()
+        form.cleaned_data = self.user_data
+        self.assertRaises(ValidationError,
+                          self.view.form_valid,
+                          form)
+
+    def test_duplicate_username_http_response(self):
+        client = Client()
+        params = {'username': 'pietje',
+                  'email': 'nietpietje@example.com',
+                  'first_name': 'pietje',
+                  'last_name': 'pietje',
+        }
+        response = client.post(
+            reverse('lizard_auth_server.api_v2.new_user'), params)
+        self.assertEquals(400, response.status_code)

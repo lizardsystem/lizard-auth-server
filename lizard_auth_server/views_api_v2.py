@@ -459,19 +459,31 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                             status=status_code)
 
 
-class OrganisationsView(View):
+class OrganisationsView(FormInvalidMixin, ProcessGetFormView):
     """API endpoint that simply lists the organisations and their UIDs.
 
     The UID of organisations is used by several portals. The "V2" api doesn't
     sync them anymore with the portal, so this endpoint simply provides the list.
 
-    """
+    Note that you need to authenticate yourself as a portal by passing an
+    (otherwise empty) JTW message. We don't want the info to be public.
 
-    def get(self, request):
-        """Return all organisations.
+    """
+    form_class = forms.JWTDecryptForm
+
+    def form_valid(self, form):
+        """Return all organisations
+
+        Args:
+            form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
+                instance. We only use it to limit access to portals, so the
+                message only has to include the standard JWT ``iss`` key.
 
         Returns: json dict with the unique ID as key and the organisation's
             name as value.
+
+        Raises:
+            ValidationError: when the JWT checks fail.
 
         """
         result = {organisation.unique_id: organisation.name

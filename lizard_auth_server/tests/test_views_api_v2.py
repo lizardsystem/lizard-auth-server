@@ -28,6 +28,8 @@ class TestStartView(TestCase):
 
 class TestCheckCredentialsView(TestCase):
     def setUp(self):
+        self.sso_key = 'sso key'
+        factories.PortalF.create(sso_key=self.sso_key)
         self.view = views_api_v2.CheckCredentialsView()
         self.request_factory = RequestFactory()
         self.some_request = self.request_factory.get('/some/url/')
@@ -51,7 +53,8 @@ class TestCheckCredentialsView(TestCase):
 
     def test_valid_login(self):
         form = Mock()
-        form.cleaned_data = {'username': self.username,
+        form.cleaned_data = {'iss': self.sso_key,
+                             'username': self.username,
                              'password': self.password}
 
         result = self.view.form_valid(form)
@@ -59,7 +62,8 @@ class TestCheckCredentialsView(TestCase):
 
     def test_invalid_login(self):
         form = Mock()
-        form.cleaned_data = {'username': 'pietje',
+        form.cleaned_data = {'iss': self.sso_key,
+                             'username': 'pietje',
                              'password': 'ikkanniettypen'}
         self.assertRaises(PermissionDenied, self.view.form_valid, form)
 
@@ -205,9 +209,12 @@ class TestLogoutViewV2(TestCase):
 class TestNewUserView(TestCase):
     def setUp(self):
         self.view = views_api_v2.NewUserView()
+        sso_key = 'sso key'
+        factories.PortalF.create(sso_key=sso_key)
         self.request_factory = RequestFactory()
         self.some_request = self.request_factory.get('/some/url/')
-        self.user_data = {'username': 'pietje',
+        self.user_data = {'iss': sso_key,
+                          'username': 'pietje',
                           'email': 'pietje@klaasje.test.com',
                           'first_name': 'pietje',
                           'last_name': 'klaasje'}

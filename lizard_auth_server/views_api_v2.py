@@ -146,12 +146,20 @@ class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
             (not 'password' in form.cleaned_data)):
             raise ValidationError(
                 "username and/or password are missing from the JWT message")
+        portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
         # Verify the username/password
         user = django_authenticate(username=form.cleaned_data.get('username'),
                                    password=form.cleaned_data.get('password'))
         if not user:
+            logger.info(
+                "Credentials for %s don't match (requested by portal %s)",
+                form.cleaned_data.get('username'),
+                portal)
             raise PermissionDenied("Login failed")
 
+        logger.info(
+            "Credentials for user %s checked succesfully for portal %s",
+            user, portal)
         user_data = construct_user_data(user=user)
         return HttpResponse(json.dumps({'user': user_data}),
                             content_type='application/json')
@@ -167,6 +175,8 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
         out by extracting the contents. Then depending on whether the user is
         authenticated, we call :meth:`.form_valid_and_authenticated` or
         :meth:`.form_valid_but_unauthenticated`.
+
+        We set ``self.portal`` so that it can be used in logging.
 
         Args:
             form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
@@ -224,8 +234,13 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
 
         """
         if not self.unauthenticated_is_ok_url:
+            logger.info("User needs to log in first for %s: redirecting",
+                        self.portal)
             return HttpResponseRedirect(self.our_login_page_url())
         else:
+            logger.info(
+                "User isn't logged in, but that's OK. Redirecting back to %s",
+                self.portal)
             return HttpResponseRedirect(self.unauthenticated_is_ok_url)
 
     def form_valid_and_authenticated(self):
@@ -241,7 +256,10 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
                                     self.portal.sso_secret,
                                     algorithm=JWT_ALGORITHM)
         params = {'message': signed_message}
-        url_with_params = '%s?%s' % (self.login_success_url, urlencode(params))
+        url_with_params = '%s?%s' % (self.login_success_url,
+                                     urlencode(params))
+        logger.info("User %s is logged in: sending user info back to %s",
+                    self.request.user, self.portal)
         return HttpResponseRedirect(url_with_params)
 
 
@@ -303,6 +321,8 @@ class LogoutView(FormInvalidMixin, ProcessGetFormView):
                                urlencode(params_for_logout_redirect_back_view))
             })
         url = '%s?%s' % (djangos_logout_url, params)
+        logger.debug("Redirecting user %s to django's logout page...",
+                     self.request.user)
         return HttpResponseRedirect(url)
 
 
@@ -333,6 +353,10 @@ class LogoutRedirectBackView(FormInvalidMixin, ProcessGetFormView):
         # JWT message contents is the same as in LogoutView and has been
         # checked there. So we don't need to check for a missing logout_url
         # parameter.
+        portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
+        logger.info(
+            "User is logged out. Redirecting to logout page of %s itself",
+            portal)
         return HttpResponseRedirect(form.cleaned_data['logout_url'])
 
 
@@ -385,6 +409,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 an 'error 400' ought to be equivalent to 'duplicate username'.
 
         """
+        portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
         # The JWT message is validated; now check the message's contents.
         mandatory_keys = ['username', 'email', 'first_name', 'last_name']
         for key in mandatory_keys:
@@ -402,6 +427,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                     "More than one user found for '%s', returning the first",
                     form.cleaned_data['email'])
             user = matching_users[0]
+            logger.info("Found existing user %s, giving that one to %s",
+                        user, portal)
 
         if not user:
             try:
@@ -415,6 +442,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 logger.exception("Probably duplicate username")
                 raise ValidationError("Duplicate username")
             status_code = 201  # Created
+            logger.info("Created user %s as requested by portal %s",
+                        user, portal)
             logger.warn(
                 "We just created a user '%s' with password '%s': TODO!!!",
                 user.username,

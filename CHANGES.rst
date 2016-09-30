@@ -5,6 +5,9 @@ Changelog of lizard-auth-server
 2.6 (unreleased)
 ----------------
 
+- Added ``/api2/organisations/`` that lists the organisation names plus
+  unique ID.
+
 - Added more logging and made 'duplicate username' error, when creating a
   user, more explicit.
 

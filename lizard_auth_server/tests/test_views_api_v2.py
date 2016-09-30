@@ -266,3 +266,39 @@ class TestNewUserView(TestCase):
         response = client.post(
             reverse('lizard_auth_server.api_v2.new_user'), params)
         self.assertEquals(400, response.status_code)
+
+
+class TestOrganisationsView(TestCase):
+
+    def setUp(self):
+        sso_key = 'ssokey'
+        secret_key = 'a secret'
+        factories.PortalF.create(
+            sso_key=sso_key,
+            sso_secret=secret_key,
+        )
+
+        payload = {'iss': sso_key}
+        message = jwt.encode(payload,
+                             secret_key,
+                             algorithm='HS256')
+        self.jwt_params = {
+            'key': sso_key,
+            'message': message,
+        }
+
+    def test_unauthenticated_denied(self):
+        # You need an sso key (=an empty jwt message)
+        response = self.client.get('/api2/organisations/')
+        self.assertEquals(400, response.status_code)
+
+    def test_smoke(self):
+        response = self.client.get('/api2/organisations/',
+                                   self.jwt_params)
+        self.assertEquals(200, response.status_code)
+
+    def test_result(self):
+        factories.OrganisationF(name="Signalmanufaktur Neuwitz")
+        response = self.client.get('/api2/organisations/',
+                                   self.jwt_params)
+        self.assertIn('Neuwitz', str(response.content))

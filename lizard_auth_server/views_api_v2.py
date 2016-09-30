@@ -24,6 +24,7 @@ from django.views.generic.edit import ProcessFormView
 import jwt
 
 from lizard_auth_server import forms
+from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 from lizard_auth_server.views_sso import FormInvalidMixin
 from lizard_auth_server.views_sso import ProcessGetFormView
@@ -89,6 +90,7 @@ class StartView(View):
             'login': abs_reverse('lizard_auth_server.api_v2.login'),
             'logout': abs_reverse('lizard_auth_server.api_v2.logout'),
             'new-user': abs_reverse('lizard_auth_server.api_v2.new_user'),
+            'organisations': abs_reverse('lizard_auth_server.api_v2.organisations'),
         }
         return HttpResponse(json.dumps(endpoints),
                             content_type='application/json')
@@ -455,3 +457,36 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
         return HttpResponse(json.dumps({'user': user_data}),
                             content_type='application/json',
                             status=status_code)
+
+
+class OrganisationsView(FormInvalidMixin, ProcessGetFormView):
+    """API endpoint that simply lists the organisations and their UIDs.
+
+    The UID of organisations is used by several portals. The "V2" api doesn't
+    sync them anymore with the portal, so this endpoint simply provides the list.
+
+    Note that you need to authenticate yourself as a portal by passing an
+    (otherwise empty) JTW message. We don't want the info to be public.
+
+    """
+    form_class = forms.JWTDecryptForm
+
+    def form_valid(self, form):
+        """Return all organisations
+
+        Args:
+            form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
+                instance. We only use it to limit access to portals, so the
+                message only has to include the standard JWT ``iss`` key.
+
+        Returns: json dict with the unique ID as key and the organisation's
+            name as value.
+
+        Raises:
+            ValidationError: when the JWT checks fail.
+
+        """
+        result = {organisation.unique_id: organisation.name
+                  for organisation in Organisation.objects.all()}
+        return HttpResponse(json.dumps(result),
+                            content_type='application/json')

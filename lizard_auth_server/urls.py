@@ -114,6 +114,9 @@ urlpatterns = patterns(
     url(r'^api2/new_user/$',
         views_api_v2.NewUserView.as_view(),
         name='lizard_auth_server.api_v2.new_user'),
+    url(r'^api2/organisations/$',
+        views_api_v2.OrganisationsView.as_view(),
+        name='lizard_auth_server.api_v2.organisations'),
 
     # Override django-auth's default login/logout URLs
     # Note: ensure LOGIN_URL isn't defined in the settings

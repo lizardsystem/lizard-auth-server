@@ -35,3 +35,12 @@ SSO).
 The call returns the same dict as the api method above.
 
 See :class:`lizard_auth_server.views_api_v2.NewUserView`
+
+
+``/api2/organisations/``
+------------------------
+
+The SSO maintains a list of organisations so that sites can coordinate data
+ownership. The call returns a dict with unique IDs and organisation names.
+
+See :class:`lizard_auth_server.views_api_v2.OrganisationsView`

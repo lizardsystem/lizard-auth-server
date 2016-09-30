@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.6 (unreleased)
+2.6 (2016-09-30)
 ----------------
 
 - Added ``/api2/organisations/`` that lists the organisation names plus

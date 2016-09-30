@@ -247,20 +247,6 @@ class TestNewUserView(TestCase):
         result = self.view.form_valid(form)
         self.assertEquals(200, result.status_code)
 
-
-class TestOrganisationsView(TestCase):
-
-    def test_smoke(self):
-        client = Client()
-        result = client.get(
-            reverse('lizard_auth_server.api_v2.start'))
-        self.assertEquals(200, result.status_code)
-
-    def test_result(self):
-        factories.OrganisationF(name="Signalmanufaktur Neuwitz")
-        response = self.client.get('/api2/organisations/')
-        self.assertIn('Neuwitz', str(response.content))
-
     def test_duplicate_username(self):
         factories.UserF(username='pietje',
                         email='nietpietje@example.com')
@@ -280,3 +266,17 @@ class TestOrganisationsView(TestCase):
         response = client.post(
             reverse('lizard_auth_server.api_v2.new_user'), params)
         self.assertEquals(400, response.status_code)
+
+
+class TestOrganisationsView(TestCase):
+
+    def test_smoke(self):
+        client = Client()
+        result = client.get(
+            reverse('lizard_auth_server.api_v2.start'))
+        self.assertEquals(200, result.status_code)
+
+    def test_result(self):
+        factories.OrganisationF(name="Signalmanufaktur Neuwitz")
+        response = self.client.get('/api2/organisations/')
+        self.assertIn('Neuwitz', str(response.content))

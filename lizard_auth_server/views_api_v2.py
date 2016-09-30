@@ -14,7 +14,6 @@ from django.core.urlresolvers import reverse
 from django.db.utils import IntegrityError
 from django.forms import ValidationError
 from django.http import HttpResponse
-from django.http import HttpResponseBadRequest
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt

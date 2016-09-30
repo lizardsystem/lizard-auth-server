@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Added more logging and made 'duplicate username' error, when creating a
+  user, more explicit.
 
 
 2.5 (2016-09-23)

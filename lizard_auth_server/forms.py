@@ -98,7 +98,8 @@ class JWTDecryptForm(forms.Form):
         if 'key' not in original_cleaned_data:
             raise ValidationError('No SSO key')
         try:
-            portal = Portal.objects.get(sso_key=original_cleaned_data['key'])
+            portal = Portal.objects.get(
+                sso_key=original_cleaned_data['key'])
         except Portal.DoesNotExist:
             raise ValidationError('Invalid SSO key')
         try:

@@ -13,5 +13,5 @@ The SSO has three main models:
     with users and portals whatsoever.
 
   portal
-    A portal that's using the SSO. You need admin access to add one. Used to
-    protect the traffic between portal and SSO.
+    A portal that's using the SSO. You need SSO admin access to add one. Used
+    to protect the traffic between portal and SSO.

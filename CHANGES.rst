@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Bugfix: fixed password reset email template, it didn't work with newer
+  django versions.
 
 
 2.6 (2016-09-30)

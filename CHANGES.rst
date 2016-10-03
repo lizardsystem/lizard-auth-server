@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.7 (unreleased)
+2.7 (2016-10-03)
 ----------------
 
 - Bugfix: fixed password reset email template, it didn't work with newer

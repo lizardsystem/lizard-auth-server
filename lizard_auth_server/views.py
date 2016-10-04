@@ -85,9 +85,6 @@ class ProfileView(TemplateView):
 
     @cached_property
     def profile(self):
-        # TODO: clean this up, tests, etc.
-        # User.get_profile is deprecated since Django 1.7
-        # return self.request.user.get_profile()
         return self.request.user.user_profile
 
     @property

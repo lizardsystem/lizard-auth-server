@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -348,7 +349,8 @@ class UserOrganisationRolesView(FormView):
         """
         Return the serialized model instances.
         """
-        user_profile = models.UserProfile.objects.get(user__username=username)
+        user_profile = get_object_or_404(models.UserProfile,
+                                         user__username=username)
         return {"user_organisation_roles_data": [
             uor.as_dict() for uor in
             user_profile.all_organisation_roles(portal)]}

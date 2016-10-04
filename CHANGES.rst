@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.8 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Bugfix: invitations didn't work because ``transaction.commit_on_success()``
+  is ``transaction.atomic()`` now.
 
 
 2.7 (2016-10-03)

@@ -525,7 +525,7 @@ class Invitation(models.Model):
         send_mail(subject, message, None, [self.email])
 
     def create_user(self, data):
-        with transaction.commit_on_success():
+        with transaction.atomic():
             if self.user is None:
                 # create the Django auth user
                 user = User.objects.create_user(
@@ -546,7 +546,7 @@ class Invitation(models.Model):
                     self.user)
 
     def activate(self, data):
-        with transaction.commit_on_success():
+        with transaction.atomic():
             user = self.user
 
             # create and fill the profile

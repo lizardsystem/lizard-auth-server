@@ -6,8 +6,9 @@ from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
-from lizard_auth_server import models
 from lizard_auth_server import forms
+from lizard_auth_server import models
+from tls import request as tls_request
 
 
 class InvitationAdmin(admin.ModelAdmin):
@@ -218,7 +219,7 @@ class PortalAdmin(admin.ModelAdmin):
     search_fields = ['name', 'visit_url', 'allowed_domain']
     list_display = ['name', 'visit_url', 'allowed_domain',
                     'num_user_profiles', 'num_roles']
-    readonly_fields = ['sso_secret', 'sso_key']
+    readonly_fields = ['sso_secret', 'sso_key', 'v2_config']
     inlines = [RoleInline]
 
     def get_queryset(self, request):
@@ -245,6 +246,20 @@ class PortalAdmin(admin.ModelAdmin):
     num_roles.short_description = ugettext_lazy('number of roles')
     num_roles.admin_order_field = 'roles_count'
     num_roles.allow_tags = True
+
+    def v2_config(self, obj):
+        config_lines = [
+            "SSO_ENABLED = True",
+            "SSO_USE_V2_login = True",
+            "SSO_SERVER_API_START_URL = '{}'".format(
+                tls_request.build_absolute_uri(
+                    reverse('lizard_auth_server.api_v2.start'))),
+            "SSO_KEY = '{}'".format(obj.sso_key),
+            "SSO_SECRET = '{}'".format(obj.sso_secret),
+            ]
+        return '<pre>{}</pre>'.format('\n'.join(config_lines))
+    v2_config.short_description = ugettext_lazy('settings for the v2 API')
+    v2_config.allow_tags = True
 
 
 class OrganisationAdmin(admin.ModelAdmin):

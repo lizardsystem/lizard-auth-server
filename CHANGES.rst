@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.8 (unreleased)
+2.8 (2016-10-04)
 ----------------
 
 - Bugfix: invitations didn't work because ``transaction.commit_on_success()``

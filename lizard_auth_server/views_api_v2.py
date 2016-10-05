@@ -10,12 +10,16 @@ from django.conf import settings
 from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.db import transaction
 from django.db.utils import IntegrityError
 from django.forms import ValidationError
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
+from django.utils.http import urlquote
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View
@@ -377,6 +381,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
+        self.request = request
+        # ^^^ It appears not to be set, so we set it ourselves.
         return super(NewUserView, self).dispatch(
             request, *args, **kwargs)
 
@@ -433,30 +439,60 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                         user, portal)
 
         if not user:
-            try:
-                user = User.objects.create_user(
-                    username=form.cleaned_data['username'],  # can be duplicate...
-                    first_name=form.cleaned_data['first_name'],
-                    last_name=form.cleaned_data['last_name'],
-                    email=form.cleaned_data['email'],
-                    password=settings.LIZARD_AUTH_SERVER_DIRTY_HARDCODED_PASSWORD)
-            except IntegrityError:
-                logger.exception("Probably duplicate username")
-                raise ValidationError("Duplicate username")
+            user = self.create_and_mail_user(
+                username=form.cleaned_data['username'],  # can be duplicate...
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                email=form.cleaned_data['email'],
+                portal=portal)
             status_code = 201  # Created
-            logger.info("Created user %s as requested by portal %s",
-                        user, portal)
-            logger.warn(
-                "We just created a user '%s' with password '%s': TODO!!!",
-                user.username,
-                settings.LIZARD_AUTH_SERVER_DIRTY_HARDCODED_PASSWORD)
-            # TODO: include django-registration to add password reset and
-            # invitation mails.
 
         user_data = construct_user_data(user=user)
         return HttpResponse(json.dumps({'user': user_data}),
                             content_type='application/json',
                             status=status_code)
+
+    def create_and_mail_user(self, username, first_name, last_name, email,
+                             portal):
+        with transaction.atomic():
+            try:
+                user = User.objects.create_user(
+                    username=username,
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email)
+            except IntegrityError:
+                logger.exception("Probably duplicate username")
+                raise ValidationError("Duplicate username")
+            user.is_active = False
+            user.save()
+            logger.info("Created user %s as requested by portal %s",
+                        user, portal)
+            # Prepare jtw message
+            key = portal.sso_key
+            expiration = datetime.datetime.utcnow() + datetime.timedelta(
+                days=settings.LIZARD_AUTH_SERVER_ACCOUNT_ACTIVATION_DAYS)
+            payload = {'aud': key,
+                       'exp': expiration,
+                       'user_id': user.id}
+            signed_message = jwt.encode(payload,
+                                        portal.sso_secret,
+                                        algorithm=JWT_ALGORITHM)
+            activation_url = 'TODO/%s/%s/%s' % (user.id,
+                                                key,
+                                                urlquote(signed_message))
+            # TODO translations
+            subject = "Account %s" % portal.name
+            context = {'portal_url': portal.visit_url,
+                       'activation_url': activation_url,
+                       'name': ' '.join([first_name, last_name]),
+                       'sso_hostname': self.request.get_host(),
+            }
+            email_message = render_to_string(
+                'lizard_auth_server/activation_email.txt', context)
+            send_mail(subject, email_message, None, [email])
+
+        return user
 
 
 class OrganisationsView(FormInvalidMixin, ProcessGetFormView):

@@ -19,7 +19,6 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _
-from tls import request
 
 from lizard_auth_server.utils import gen_secret_key
 

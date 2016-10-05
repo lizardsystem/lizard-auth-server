@@ -1,20 +1,13 @@
 {% spaceless %}
 {% load i18n %}
-{% endspaceless %}{% autoescape off %}{% blocktrans %}Hello {{ name }},{% endblocktrans %}
+{% endspaceless %}{% blocktrans %}Hello {{ name }},{% endblocktrans %}
 
-{% blocktrans %}An account has been created for you at {{ site_name }}.{% endblocktrans %}
+{% blocktrans %}An account has been created for you at {{ sso_hostname }}.{% endblocktrans %}
+{% blocktrans %}You can use it to log in on {{ portal_url }}.{% endblocktrans %}
 
-{% trans "Please go to the following page and fill in your details, to activate your account:" %}
-{{ site_public_url_prefix }}{% url "lizard_auth_server.activate" activation_key=activation_key %}
+{% trans "Please go to the following page to set a password and activate your account:" %}
+{{ activation_url }}
 
-{% trans "With this account, you can access the following sites:" %}
-{% for portal in invitation.portals.all %}
-- {{ portal.name }} ({{ portal.visit_url }})
-{% empty %}
-- {% trans "No portals found." %}
-{% endfor %}
 {% trans "Sincerely," %}
 
-{% blocktrans %}The {{ site_name }} team{% endblocktrans %}
-
-{% endautoescape %}
+{% blocktrans %}The {{ sso_hostname }} team{% endblocktrans %}

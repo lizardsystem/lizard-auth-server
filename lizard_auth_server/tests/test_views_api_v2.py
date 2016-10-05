@@ -1,5 +1,6 @@
 import json
 import jwt
+import mock
 
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
@@ -10,7 +11,6 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from lizard_auth_server import views_api_v2
 from lizard_auth_server.tests import factories
-from mock import Mock
 
 
 class TestStartView(TestCase):
@@ -52,7 +52,7 @@ class TestCheckCredentialsView(TestCase):
         self.assertEquals(400, result.status_code)
 
     def test_valid_login(self):
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = {'iss': self.sso_key,
                              'username': self.username,
                              'password': self.password}
@@ -61,7 +61,7 @@ class TestCheckCredentialsView(TestCase):
         self.assertEquals(200, result.status_code)
 
     def test_invalid_login(self):
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = {'iss': self.sso_key,
                              'username': 'pietje',
                              'password': 'ikkanniettypen'}
@@ -209,11 +209,12 @@ class TestLogoutViewV2(TestCase):
 class TestNewUserView(TestCase):
     def setUp(self):
         self.view = views_api_v2.NewUserView()
-        sso_key = 'sso key'
-        factories.PortalF.create(sso_key=sso_key)
+        self.sso_key = 'sso key'
+        factories.PortalF.create(sso_key=self.sso_key)
         self.request_factory = RequestFactory()
-        self.some_request = self.request_factory.get('/some/url/')
-        self.user_data = {'iss': sso_key,
+        self.some_request = self.request_factory.get(
+            'http://some.site/some/url/')
+        self.user_data = {'iss': self.sso_key,
                           'username': 'pietje',
                           'email': 'pietje@klaasje.test.com',
                           'first_name': 'pietje',
@@ -226,15 +227,34 @@ class TestNewUserView(TestCase):
         self.assertEquals(405, result.status_code)
 
     def test_new_user(self):
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = self.user_data
+        self.view.request = self.some_request
         result = self.view.form_valid(form)
         self.assertEquals(201, result.status_code)
         self.assertTrue(User.objects.get(username='pietje'))
 
+    def test_new_user_starts_inactive(self):
+        form = mock.Mock()
+        form.cleaned_data = self.user_data
+        self.view.request = self.some_request
+        self.view.form_valid(form)
+        self.assertFalse(User.objects.get(username='pietje').is_active)
+
+    def test_new_user_sends_email(self):
+        form = mock.Mock()
+        form.cleaned_data = self.user_data
+        self.view.request = self.some_request
+        with mock.patch('lizard_auth_server.views_api_v2.send_mail') as mocked_send_mail:
+            self.view.form_valid(form)
+            arguments = mocked_send_mail.call_args[0]
+            print(arguments)
+            message = arguments[1]
+            self.assertIn(self.sso_key, message)
+
     def test_exiting_user(self):
         factories.UserF(email='pietje@klaasje.test.com')
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
         self.assertEquals(200, result.status_code)
@@ -242,7 +262,7 @@ class TestNewUserView(TestCase):
     def test_exiting_user_duplicate_email(self):
         factories.UserF(email='pietje@klaasje.test.com')
         factories.UserF(email='pietje@klaasje.test.com')
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
         self.assertEquals(200, result.status_code)
@@ -250,7 +270,7 @@ class TestNewUserView(TestCase):
     def test_duplicate_username(self):
         factories.UserF(username='pietje',
                         email='nietpietje@example.com')
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = self.user_data
         self.assertRaises(ValidationError,
                           self.view.form_valid,

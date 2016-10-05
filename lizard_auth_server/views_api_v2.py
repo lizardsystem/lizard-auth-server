@@ -8,6 +8,7 @@ from urllib.parse import urlencode  # py3 only!
 
 from django.conf import settings
 from django.contrib.auth import authenticate as django_authenticate
+from django.contrib.auth import login as django_login
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
@@ -513,10 +514,41 @@ class ActivateAndSetPasswordView(FormView):
         sso_key = self.kwargs['sso_key']
         return Portal.objects.get(sso_key=sso_key)
 
-    def get_form_kwargs(self):
-        return {'user': self.user}
+    @cached_property
+    def message(self):
+        return self.kwargs['message']
 
-    # xxxx
+    def get_form_kwargs(self):
+        kwargs = super(ActivateAndSetPasswordView, self).get_form_kwargs()
+        kwargs['user'] = self.user
+        return kwargs
+
+    def form_valid(self, form):
+        try:
+            signed_data = jwt.decode(self.message,
+                                     self.portal.sso_secret,
+                                     audience=self.portal.sso_key)
+        except jwt.exceptions.ExpiredSignatureError:
+            raise ValidationError("Activation link has expired")
+        except Exception as e:
+            logger.exception("JWT validation of activation link failed")
+            raise ValidationError("Activation link is invalid: %s" % e)
+
+        if not signed_data.get('user_id') == self.user.id:
+            raise ValidationError("Activation link is not for this user")
+
+        self.user.is_active = True
+        password = form.cleaned_data.get('new_password1')
+        self.user.set_password(password)
+        self.user.save()
+        # Immediately log in the user.
+        user = django_authenticate(username=self.user.username,
+                                   password=password)
+        django_login(self.request, user)
+
+        return HttpResponseRedirect('/TODO/')
+
+    # xxx
 
 
 class OrganisationsView(FormInvalidMixin, ProcessGetFormView):

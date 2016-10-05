@@ -317,6 +317,16 @@ class TestActivateAndSetPasswordView(TestCase):
         response = client.get(self.activation_url)
         self.assertEquals(200, response.status_code)
 
+    def test_post_smoke(self):
+        client = Client()
+        response = client.post(self.activation_url,
+                               {'new_password1': 'Pietje123',
+                                'new_password2': 'Pietje123'})
+        self.assertEquals(302, response.status_code)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_active)
+        self.assertTrue(self.user.has_usable_password())
+
 
 class TestOrganisationsView(TestCase):
 

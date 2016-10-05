@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Removed virtually unused address/phone/title fields on user profile. The new
+  v2 api won't use them anyway.
 
 
 2.8 (2016-10-04)

@@ -1,4 +1,4 @@
-import json
+import datetime
 import jwt
 import mock
 
@@ -209,12 +209,12 @@ class TestLogoutViewV2(TestCase):
 class TestNewUserView(TestCase):
     def setUp(self):
         self.view = views_api_v2.NewUserView()
-        self.sso_key = 'sso key'
-        factories.PortalF.create(sso_key=self.sso_key)
+        sso_key = 'sso key'
+        factories.PortalF.create(sso_key=sso_key)
         self.request_factory = RequestFactory()
         self.some_request = self.request_factory.get(
             'http://some.site/some/url/')
-        self.user_data = {'iss': self.sso_key,
+        self.user_data = {'iss': sso_key,
                           'username': 'pietje',
                           'email': 'pietje@klaasje.test.com',
                           'first_name': 'pietje',
@@ -250,7 +250,7 @@ class TestNewUserView(TestCase):
             arguments = mocked_send_mail.call_args[0]
             print(arguments)
             message = arguments[1]
-            self.assertIn(self.sso_key, message)
+            self.assertIn('sso%20key', message)
 
     def test_exiting_user(self):
         factories.UserF(email='pietje@klaasje.test.com')
@@ -286,6 +286,36 @@ class TestNewUserView(TestCase):
         response = client.post(
             reverse('lizard_auth_server.api_v2.new_user'), params)
         self.assertEquals(400, response.status_code)
+
+
+class TestActivateAndSetPasswordView(TestCase):
+
+    def setUp(self):
+        self.user = factories.UserF.create()
+        self.user.set_unusable_password()
+        self.user.is_active = False
+        self.user.save()
+        self.portal = factories.PortalF.create()
+        # Mimick url creation. See create_and_mail_user()
+        key = self.portal.sso_key
+        expiration = datetime.datetime.utcnow() + datetime.timedelta(
+            days=1)
+        payload = {'aud': key,
+                   'exp': expiration,
+                   'user_id': self.user.id}
+        signed_message = jwt.encode(payload,
+                                    self.portal.sso_secret,
+                                    algorithm='HS256')
+        self.activation_url = reverse(
+            'lizard_auth_server.api_v2.activate-and-set-password',
+            kwargs={'user_id': self.user.id,
+                    'sso_key': key,
+                    'message': signed_message})
+
+    def test_get_smoke(self):
+        client = Client()
+        response = client.get(self.activation_url)
+        self.assertEquals(200, response.status_code)
 
 
 class TestOrganisationsView(TestCase):

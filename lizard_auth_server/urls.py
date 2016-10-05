@@ -92,7 +92,7 @@ urlpatterns = patterns(
         views_sso.VerifyView.as_view(),
         name='lizard_auth_server.sso.api.verify'),
 
-    # Version 1 API
+    # Version 2 API
     #
     # API calls
     url(r'^api2/$',
@@ -104,6 +104,9 @@ urlpatterns = patterns(
     url(r'^api2/organisations/$',
         views_api_v2.OrganisationsView.as_view(),
         name='lizard_auth_server.api_v2.organisations'),
+    url(r'^api2/new_user/$',
+        views_api_v2.NewUserView.as_view(),
+        name='lizard_auth_server.api_v2.new_user'),
     # Views for visitors
     url(r'^api2/login/$',
         views_api_v2.LoginView.as_view(),
@@ -114,9 +117,13 @@ urlpatterns = patterns(
     url(r'^api2/logout_redirect_back_to_portal/$',
         views_api_v2.LogoutRedirectBackView.as_view(),
         name='lizard_auth_server.api_v2.logout_redirect_back'),
-    url(r'^api2/new_user/$',
-        views_api_v2.NewUserView.as_view(),
-        name='lizard_auth_server.api_v2.new_user'),
+    url(r'^api2/activate/' +
+        '(?P<user_id>[^/]+)/' +
+        '(?P<sso_key>[^/]+)/' +
+        '(?P<message>[^/]+)$',
+        views_api_v2.ActivateAndSetPasswordView.as_view(),
+        name='lizard_auth_server.api_v2.activate-and-set-password'),
+    # xxxx
 
     # Override django-auth's default login/logout URLs
     # Note: ensure LOGIN_URL isn't defined in the settings
@@ -193,7 +200,7 @@ urlpatterns = patterns(
         },
         name='password_reset_complete'
     ),
-    # URLs for user invitation / activation
+    # v1 URLs for user invitation / activation
     url(
         r'^invite/$',
         views.InviteUserView.as_view(),

@@ -19,11 +19,13 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
+from django.utils.functional import cached_property
 from django.utils.http import urlquote
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View
 from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormView
 from django.views.generic.edit import ProcessFormView
 import jwt
 
@@ -468,7 +470,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             user.save()
             logger.info("Created user %s as requested by portal %s",
                         user, portal)
-            # Prepare jtw message
+            # Prepare jwt message
             key = portal.sso_key
             expiration = datetime.datetime.utcnow() + datetime.timedelta(
                 days=settings.LIZARD_AUTH_SERVER_ACCOUNT_ACTIVATION_DAYS)
@@ -478,9 +480,11 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             signed_message = jwt.encode(payload,
                                         portal.sso_secret,
                                         algorithm=JWT_ALGORITHM)
-            activation_url = 'TODO/%s/%s/%s' % (user.id,
-                                                key,
-                                                urlquote(signed_message))
+            activation_url = self.request.build_absolute_uri(
+                reverse('lizard_auth_server.api_v2.activate-and-set-password',
+                        kwargs={'user_id': user.id,
+                                'sso_key': key,
+                                'message': signed_message}))
             # TODO translations
             subject = "Account %s" % portal.name
             context = {'portal_url': portal.visit_url,
@@ -493,6 +497,26 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             send_mail(subject, email_message, None, [email])
 
         return user
+
+
+class ActivateAndSetPasswordView(FormView):
+    form_class = forms.SetPasswordForm
+    template_name = 'lizard_auth_server/activate-set-password.html'
+
+    @cached_property
+    def user(self):
+        user_id = self.kwargs['user_id']
+        return User.objects.get(id=user_id)
+
+    @cached_property
+    def portal(self):
+        sso_key = self.kwargs['sso_key']
+        return Portal.objects.get(sso_key=sso_key)
+
+    def get_form_kwargs(self):
+        return {'user': self.user}
+
+    # xxxx
 
 
 class OrganisationsView(FormInvalidMixin, ProcessGetFormView):

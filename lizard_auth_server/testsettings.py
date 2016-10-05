@@ -180,14 +180,9 @@ INSTALLED_APPS = (
     'django_extensions',
 )
 
-# TODO: add gauges ID here. Generate one separately for the staging, too.
-UI_GAUGES_SITE_ID = ''  # Staging has a separate one.
-
 DEFAULT_FROM_EMAIL = 'noreply@nelen-schuurmans.nl'
-EMAIL_HOST = '100-mail-d03.external-nens.local'
-
-# TODO: this deprecated, should be removed?
-# AUTH_PROFILE_MODULE = 'lizard_auth_server.UserProfile'
+# EMAIL_HOST = '100-mail-d03.external-nens.local'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 try:
     # Import local settings that aren't stored in svn/git.

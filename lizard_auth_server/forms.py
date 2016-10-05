@@ -140,9 +140,9 @@ def validate_password(cleaned_password):
             uppers += 1
         if char.isupper():
             lowers += 1
-    if digits < 2 or uppers < 1 or lowers < 1:
+    if digits < 1 or uppers < 1 or lowers < 1:
         raise ValidationError(
-            _("The new password must contain at least two numeric digits, "
+            _("The new password must contain at least one number, "
               "one uppercase and one lowercase character.")
         )
 

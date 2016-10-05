@@ -91,14 +91,6 @@ class UserProfileAdmin(admin.ModelAdmin):
             'fields': ['created_at',
                        'updated_at',
                    ]}),
-        (ugettext_lazy('Personal data'), {
-            'fields': ['title',
-                       'street',
-                       'postal_code',
-                       'town',
-                       'phone_number',
-                       'mobile_phone_number',
-                   ]}),
     )
 
 

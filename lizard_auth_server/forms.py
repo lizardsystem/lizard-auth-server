@@ -299,24 +299,6 @@ class EditProfileForm(forms.Form):
         label=_('Last name'),
         required=True
     )
-    title = forms.CharField(max_length=255, label=_('Title'), required=False)
-    street = forms.CharField(max_length=255, label=_('Street'), required=False)
-    postal_code = forms.CharField(
-        max_length=255,
-        label=_('Postal code'),
-        required=False
-    )
-    town = forms.CharField(max_length=255, label=_('Town'), required=False)
-    phone_number = forms.CharField(
-        max_length=255,
-        label=_('Phone number'),
-        required=False
-    )
-    mobile_phone_number = forms.CharField(
-        max_length=255,
-        label=_('Mobile phone number'),
-        required=False
-    )
 
     def __init__(self, user=None, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
@@ -325,12 +307,6 @@ class EditProfileForm(forms.Form):
             'email',
             'first_name',
             'last_name',
-            'title',
-            'street',
-            'postal_code',
-            'town',
-            'phone_number',
-            'mobile_phone_number',
         ]
 
     def clean_email(self):

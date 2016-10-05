@@ -186,7 +186,6 @@ class UserProfileManager(models.Manager):
 
 
 class UserProfile(models.Model):
-    """Old user profile"""
     user = models.OneToOneField(
         User,
         verbose_name=_('user'),
@@ -195,16 +194,19 @@ class UserProfile(models.Model):
     portals = models.ManyToManyField(
         Portal,
         verbose_name=_('portals'),
+        help_text="only used in the old v1 api",
         related_name='user_profiles',
         blank=True)
     organisations = models.ManyToManyField(
         "Organisation",
         verbose_name=_('organisations'),
+        help_text="only used in the old v1 api",
         related_name='user_profiles',
         blank=True)
     roles = models.ManyToManyField(
         "OrganisationRole",
         related_name='user_profiles',
+        help_text="only used in the old v1 api",
         verbose_name=_('roles (via organisation)'),
         blank=True)
 
@@ -214,43 +216,6 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(
         verbose_name=_('updated on'),
         auto_now=True)
-
-    title = models.CharField(
-        verbose_name=_('title'),
-        max_length=255,
-        null=True,
-        blank=True,
-        default='')
-    street = models.CharField(
-        verbose_name=_('street'),
-        max_length=255,
-        null=True,
-        blank=True,
-        default='')
-    postal_code = models.CharField(
-        verbose_name=_('postal code'),
-        max_length=255,
-        null=True,
-        blank=True,
-        default='')
-    town = models.CharField(
-        verbose_name=_('town'),
-        max_length=255,
-        null=True,
-        blank=True,
-        default='')
-    phone_number = models.CharField(
-        verbose_name=_('phone number'),
-        max_length=255,
-        null=True,
-        blank=True,
-        default='')
-    mobile_phone_number = models.CharField(
-        verbose_name=_('mobile phone number'),
-        max_length=255,
-        null=True,
-        blank=True,
-        default='')
 
     objects = UserProfileManager()
 
@@ -266,20 +231,10 @@ class UserProfile(models.Model):
             return 'UserProfile {}'.format(self.pk)
 
     def update_all(self, data):
-        user = self.user
-
-        user.email = data['email']
-        user.first_name = data['first_name']
-        user.last_name = data['last_name']
-        user.save()
-
-        self.title = data['title']
-        self.street = data['street']
-        self.postal_code = data['postal_code']
-        self.town = data['town']
-        self.phone_number = data['phone_number']
-        self.mobile_phone_number = data['mobile_phone_number']
-        self.save()
+        self.user.email = data['email']
+        self.user.first_name = data['first_name']
+        self.user.last_name = data['last_name']
+        self.user.save()
 
     @property
     def username(self):

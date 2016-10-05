@@ -181,7 +181,6 @@ INSTALLED_APPS = (
 )
 
 DEFAULT_FROM_EMAIL = 'noreply@nelen-schuurmans.nl'
-# EMAIL_HOST = '100-mail-d03.external-nens.local'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 try:

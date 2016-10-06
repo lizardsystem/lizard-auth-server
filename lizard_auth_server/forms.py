@@ -72,8 +72,8 @@ class JWTDecryptForm(forms.Form):
         The ``key`` field is used to look up the relevant :term:`portal`. That
         site's ``sso_secret`` is used to validate the signature on the JWT
         payload. This way we can be sure that the payload has been really send
-        by the :term:`portal` we think send it and that the payload has not been
-        tampered with.
+        by the :term:`portal` we think send it and that the payload has not
+        been tampered with.
 
         The payload MUST contain a value for ``iss`` that matches the ``key``
         form field: this is needed to verify that the payload has not been

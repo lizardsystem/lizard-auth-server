@@ -97,7 +97,8 @@ class StartView(View):
             'login': abs_reverse('lizard_auth_server.api_v2.login'),
             'logout': abs_reverse('lizard_auth_server.api_v2.logout'),
             'new-user': abs_reverse('lizard_auth_server.api_v2.new_user'),
-            'organisations': abs_reverse('lizard_auth_server.api_v2.organisations'),
+            'organisations': abs_reverse(
+                'lizard_auth_server.api_v2.organisations'),
         }
         return HttpResponse(json.dumps(endpoints),
                             content_type='application/json')
@@ -151,8 +152,8 @@ class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
 
         """
         # The JWT message is validated; now check the message's contents.
-        if ((not 'username' in form.cleaned_data) or
-            (not 'password' in form.cleaned_data)):
+        if (('username' not in form.cleaned_data) or
+            ('password' not in form.cleaned_data)):
             raise ValidationError(
                 "username and/or password are missing from the JWT message")
         portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
@@ -202,7 +203,7 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
         """
         # Extract data from the JWT message including validation.
         self.portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
-        if not LOGIN_SUCCESS_URL_KEY in form.cleaned_data:
+        if LOGIN_SUCCESS_URL_KEY not in form.cleaned_data:
             raise ValidationError(
                 "Mandatory key '%s' is missing from JWT message" %
                 LOGIN_SUCCESS_URL_KEY)
@@ -313,12 +314,13 @@ class LogoutView(FormInvalidMixin, ProcessGetFormView):
 
         """
         # Check JWT message contents
-        if not 'logout_url' in form.cleaned_data:
+        if 'logout_url' not in form.cleaned_data:
             raise ValidationError(
                 "'logout_url' is missing from the JWT message")
         # Handle the logout.
         djangos_logout_url = reverse('django.contrib.auth.views.logout')
-        logout_redirect_back_url = reverse('lizard_auth_server.api_v2.logout_redirect_back')
+        logout_redirect_back_url = reverse(
+            'lizard_auth_server.api_v2.logout_redirect_back')
         params_for_logout_redirect_back_view = {
             'message': self.request.GET['message'],
             'key': self.request.GET['key'],
@@ -424,7 +426,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
         # The JWT message is validated; now check the message's contents.
         mandatory_keys = ['username', 'email', 'first_name', 'last_name']
         for key in mandatory_keys:
-            if not key in form.cleaned_data:
+            if key not in form.cleaned_data:
                 raise ValidationError(
                     "Key '%s' is missing from the JWT message" % key)
 
@@ -491,8 +493,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             context = {'portal_url': portal.visit_url,
                        'activation_url': activation_url,
                        'name': ' '.join([first_name, last_name]),
-                       'sso_hostname': self.request.get_host(),
-            }
+                       'sso_hostname': self.request.get_host()}
             email_message = render_to_string(
                 'lizard_auth_server/activation_email.txt', context)
             send_mail(subject, email_message, None, [email])
@@ -550,8 +551,6 @@ class ActivateAndSetPasswordView(FormView):
             reverse('lizard_auth_server.api_v2.activated-go-to-portal',
                     kwargs={'portal_pk': self.portal.id}))
 
-    # xxx
-
 
 class ActivatedGoToPortalView(TemplateView):
     template_name = 'lizard_auth_server/activated-go-to-portal.html'
@@ -562,13 +561,12 @@ class ActivatedGoToPortalView(TemplateView):
         return Portal.objects.get(pk=portal_pk)
 
 
-
-
 class OrganisationsView(FormInvalidMixin, ProcessGetFormView):
     """API endpoint that simply lists the organisations and their UIDs.
 
     The UID of organisations is used by several portals. The "V2" api doesn't
-    sync them anymore with the portal, so this endpoint simply provides the list.
+    sync them anymore with the portal, so this endpoint simply provides the
+    list.
 
     Note that you need to authenticate yourself as a portal by passing an
     (otherwise empty) JTW message. We don't want the info to be public.

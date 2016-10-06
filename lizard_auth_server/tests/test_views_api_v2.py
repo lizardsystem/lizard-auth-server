@@ -245,9 +245,10 @@ class TestNewUserView(TestCase):
         form = mock.Mock()
         form.cleaned_data = self.user_data
         self.view.request = self.some_request
-        with mock.patch('lizard_auth_server.views_api_v2.send_mail') as mocked_send_mail:
+        with mock.patch(
+                'lizard_auth_server.views_api_v2.send_mail') as mocked:
             self.view.form_valid(form)
-            arguments = mocked_send_mail.call_args[0]
+            arguments = mocked.call_args[0]
             print(arguments)
             message = arguments[1]
             self.assertIn('sso%20key', message)
@@ -282,7 +283,7 @@ class TestNewUserView(TestCase):
                   'email': 'nietpietje@example.com',
                   'first_name': 'pietje',
                   'last_name': 'pietje',
-        }
+              }
         response = client.post(
             reverse('lizard_auth_server.api_v2.new_user'), params)
         self.assertEquals(400, response.status_code)

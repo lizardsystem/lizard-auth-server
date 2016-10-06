@@ -83,7 +83,9 @@ class UserProfileAdmin(admin.ModelAdmin):
             'fields': ['user',
                        'first_name',
                        'last_name',
-                       'portals',
+                   ]}),
+        (ugettext_lazy('V1 authorization'), {
+            'fields': ['portals',
                        'organisations',
                        'roles',
                    ]}),

@@ -8,18 +8,25 @@ from urllib.parse import urlencode  # py3 only!
 
 from django.conf import settings
 from django.contrib.auth import authenticate as django_authenticate
+from django.contrib.auth import login as django_login
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.db import transaction
 from django.db.utils import IntegrityError
 from django.forms import ValidationError
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
+from django.utils.functional import cached_property
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormView
 from django.views.generic.edit import ProcessFormView
 import jwt
 
@@ -90,7 +97,8 @@ class StartView(View):
             'login': abs_reverse('lizard_auth_server.api_v2.login'),
             'logout': abs_reverse('lizard_auth_server.api_v2.logout'),
             'new-user': abs_reverse('lizard_auth_server.api_v2.new_user'),
-            'organisations': abs_reverse('lizard_auth_server.api_v2.organisations'),
+            'organisations': abs_reverse(
+                'lizard_auth_server.api_v2.organisations'),
         }
         return HttpResponse(json.dumps(endpoints),
                             content_type='application/json')
@@ -144,8 +152,8 @@ class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
 
         """
         # The JWT message is validated; now check the message's contents.
-        if ((not 'username' in form.cleaned_data) or
-            (not 'password' in form.cleaned_data)):
+        if (('username' not in form.cleaned_data) or
+            ('password' not in form.cleaned_data)):
             raise ValidationError(
                 "username and/or password are missing from the JWT message")
         portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
@@ -195,7 +203,7 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
         """
         # Extract data from the JWT message including validation.
         self.portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
-        if not LOGIN_SUCCESS_URL_KEY in form.cleaned_data:
+        if LOGIN_SUCCESS_URL_KEY not in form.cleaned_data:
             raise ValidationError(
                 "Mandatory key '%s' is missing from JWT message" %
                 LOGIN_SUCCESS_URL_KEY)
@@ -306,12 +314,13 @@ class LogoutView(FormInvalidMixin, ProcessGetFormView):
 
         """
         # Check JWT message contents
-        if not 'logout_url' in form.cleaned_data:
+        if 'logout_url' not in form.cleaned_data:
             raise ValidationError(
                 "'logout_url' is missing from the JWT message")
         # Handle the logout.
         djangos_logout_url = reverse('django.contrib.auth.views.logout')
-        logout_redirect_back_url = reverse('lizard_auth_server.api_v2.logout_redirect_back')
+        logout_redirect_back_url = reverse(
+            'lizard_auth_server.api_v2.logout_redirect_back')
         params_for_logout_redirect_back_view = {
             'message': self.request.GET['message'],
             'key': self.request.GET['key'],
@@ -363,11 +372,10 @@ class LogoutRedirectBackView(FormInvalidMixin, ProcessGetFormView):
 
 
 class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
-    """View to create a new user (or return the existing one)
+    """View to create a new user (or return an existing one based on email)
 
     Username/email/first_name/last_name is passed in a JWT signed form (so: in
-    plain text). We verify if the password is OK. No redirects to forms, just
-    a '200 OK' when the credentials are OK and an error code if not.
+    plain text).
 
     Only POST is allowed as it could alter the database.
 
@@ -377,6 +385,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
+        self.request = request
+        # ^^^ It appears not to be set, so we set it ourselves.
         return super(NewUserView, self).dispatch(
             request, *args, **kwargs)
 
@@ -390,6 +400,9 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
         The JWT message's content is now the form's cleaned data. So we start
         out by extracting the contents. Then we find/create the user and
         return it.
+
+        If a new user has been created, we send an email with an activation
+        link.
 
         Args:
             form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
@@ -415,7 +428,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
         # The JWT message is validated; now check the message's contents.
         mandatory_keys = ['username', 'email', 'first_name', 'last_name']
         for key in mandatory_keys:
-            if not key in form.cleaned_data:
+            if key not in form.cleaned_data:
                 raise ValidationError(
                     "Key '%s' is missing from the JWT message" % key)
 
@@ -433,37 +446,184 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                         user, portal)
 
         if not user:
-            try:
-                user = User.objects.create_user(
-                    username=form.cleaned_data['username'],  # can be duplicate...
-                    first_name=form.cleaned_data['first_name'],
-                    last_name=form.cleaned_data['last_name'],
-                    email=form.cleaned_data['email'],
-                    password=settings.LIZARD_AUTH_SERVER_DIRTY_HARDCODED_PASSWORD)
-            except IntegrityError:
-                logger.exception("Probably duplicate username")
-                raise ValidationError("Duplicate username")
+            user = self.create_and_mail_user(
+                username=form.cleaned_data['username'],  # can be duplicate...
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                email=form.cleaned_data['email'],
+                portal=portal)
             status_code = 201  # Created
-            logger.info("Created user %s as requested by portal %s",
-                        user, portal)
-            logger.warn(
-                "We just created a user '%s' with password '%s': TODO!!!",
-                user.username,
-                settings.LIZARD_AUTH_SERVER_DIRTY_HARDCODED_PASSWORD)
-            # TODO: include django-registration to add password reset and
-            # invitation mails.
 
         user_data = construct_user_data(user=user)
         return HttpResponse(json.dumps({'user': user_data}),
                             content_type='application/json',
                             status=status_code)
 
+    def create_and_mail_user(self, username, first_name, last_name, email,
+                             portal):
+        """Return freshly created user (the user gets an activation email)
+
+
+        Args:
+            username/first_name/last_name/email: the four arguments needed
+                for django's ``create_user()`` method.
+            portal: the portal that requested the new user. We use it for
+                logging and for telling the user which website requested their
+                account.
+
+        Returns:
+            The created user object. The user has no password set and is
+            inactive.
+
+        Raises:
+            ValidationError: when a duplicate username is found.
+
+        """
+        with transaction.atomic():
+            try:
+                user = User.objects.create_user(
+                    username=username,
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email)
+            except IntegrityError:
+                logger.exception("Probably duplicate username")
+                raise ValidationError("Duplicate username")
+            user.is_active = False
+            user.save()
+            logger.info("Created user %s as requested by portal %s",
+                        user, portal)
+            # Prepare jwt message
+            key = portal.sso_key
+            expiration = datetime.datetime.utcnow() + datetime.timedelta(
+                days=settings.LIZARD_AUTH_SERVER_ACCOUNT_ACTIVATION_DAYS)
+            payload = {'aud': key,
+                       'exp': expiration,
+                       'user_id': user.id}
+            signed_message = jwt.encode(payload,
+                                        portal.sso_secret,
+                                        algorithm=JWT_ALGORITHM)
+            activation_url = self.request.build_absolute_uri(
+                reverse('lizard_auth_server.api_v2.activate-and-set-password',
+                        kwargs={'user_id': user.id,
+                                'sso_key': key,
+                                'message': signed_message}))
+            # TODO translations
+            subject = "Account %s" % portal.name
+            context = {'portal_url': portal.visit_url,
+                       'activation_url': activation_url,
+                       'name': ' '.join([first_name, last_name]),
+                       'sso_hostname': self.request.get_host()}
+            email_message = render_to_string(
+                'lizard_auth_server/activation_email.txt', context)
+            send_mail(subject, email_message, None, [email])
+
+        return user
+
+
+class ActivateAndSetPasswordView(FormView):
+    """View (linked in activation email) for activating your account
+
+    The activation email link contains a jwt key/message embedded in the
+    URL. This way, the form is available for django's regular password
+    form. We need to do a bit of validation that would normally be done by
+    :class:`lizard_auth_server.forms.JWTDecryptForm`.
+
+    Also in the URL: the user id. This must match the user id found in the
+    signed JWT message.
+
+    This view first shows a form to enter your password. A successful submit
+    will log in the user and redirect them to a 'success' page.
+
+    """
+    form_class = forms.SetPasswordForm
+    template_name = 'lizard_auth_server/activate-set-password.html'
+
+    @cached_property
+    def user(self):
+        user_id = self.kwargs['user_id']
+        return User.objects.get(id=user_id)
+
+    @cached_property
+    def portal(self):
+        sso_key = self.kwargs['sso_key']
+        return Portal.objects.get(sso_key=sso_key)
+
+    @cached_property
+    def message(self):
+        return self.kwargs['message']
+
+    def get_form_kwargs(self):
+        kwargs = super(ActivateAndSetPasswordView, self).get_form_kwargs()
+        # Django's set-password-form needs a 'user' kwarg.
+        kwargs['user'] = self.user
+        return kwargs
+
+    def form_valid(self, form):
+        """Activate user and redirect to 'success' page if everything's ok
+
+        Args:
+            form: an instance of django's default set-password-form.
+
+        Returns:
+            A redirect to the success page
+            :class:`lizard_auth_server.views_api_v2.ActivatedGoToPortalView`
+
+        Raises:
+            ValidationError: if the JWT is incorrect (wrong user id, expired,
+               etc).
+
+        """
+        try:
+            signed_data = jwt.decode(self.message,
+                                     self.portal.sso_secret,
+                                     audience=self.portal.sso_key)
+        except jwt.exceptions.ExpiredSignatureError:
+            raise ValidationError("Activation link has expired")
+        except Exception as e:
+            logger.exception("JWT validation of activation link failed")
+            raise ValidationError("Activation link is invalid: %s" % e)
+
+        if not signed_data.get('user_id') == self.user.id:
+            raise ValidationError("Activation link is not for this user")
+
+        self.user.is_active = True
+        password = form.cleaned_data.get('new_password1')
+        self.user.set_password(password)
+        self.user.save()
+        # Immediately log in the user.
+        user = django_authenticate(username=self.user.username,
+                                   password=password)
+        django_login(self.request, user)
+
+        return HttpResponseRedirect(
+            reverse('lizard_auth_server.api_v2.activated-go-to-portal',
+                    kwargs={'portal_pk': self.portal.id}))
+
+
+class ActivatedGoToPortalView(TemplateView):
+    """Success page for the activation process
+
+    We're the success page for
+    :class:`lizard_auth_server.views_api_v2.ActivateAndSetPasswordView`. We
+    simply show a 'success!' message and a link to the portal that requested
+    the user originally.
+
+    """
+    template_name = 'lizard_auth_server/activated-go-to-portal.html'
+
+    @cached_property
+    def portal(self):
+        portal_pk = self.kwargs['portal_pk']
+        return Portal.objects.get(pk=portal_pk)
+
 
 class OrganisationsView(FormInvalidMixin, ProcessGetFormView):
     """API endpoint that simply lists the organisations and their UIDs.
 
     The UID of organisations is used by several portals. The "V2" api doesn't
-    sync them anymore with the portal, so this endpoint simply provides the list.
+    sync them anymore with the portal, so this endpoint simply provides the
+    list.
 
     Note that you need to authenticate yourself as a portal by passing an
     (otherwise empty) JTW message. We don't want the info to be public.

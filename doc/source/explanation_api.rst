@@ -30,7 +30,8 @@ See :class:`lizard_auth_server.views_api_v2.CheckCredentialsView`
 
 Use it to add a new user on a local site and on the SSO. It looks up users by
 email and returns the first one found. If not found, it creates a user (in the
-SSO).
+SSO). The user has no password and is inactive: they get an activation email
+where they can set their password themselves.
 
 The call returns the same dict as the api method above.
 

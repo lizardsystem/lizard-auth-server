@@ -72,8 +72,8 @@ class JWTDecryptForm(forms.Form):
         The ``key`` field is used to look up the relevant :term:`portal`. That
         site's ``sso_secret`` is used to validate the signature on the JWT
         payload. This way we can be sure that the payload has been really send
-        by the :term:`portal` we think send it and that the payload has not been
-        tampered with.
+        by the :term:`portal` we think send it and that the payload has not
+        been tampered with.
 
         The payload MUST contain a value for ``iss`` that matches the ``key``
         form field: this is needed to verify that the payload has not been
@@ -140,9 +140,9 @@ def validate_password(cleaned_password):
             uppers += 1
         if char.isupper():
             lowers += 1
-    if digits < 2 or uppers < 1 or lowers < 1:
+    if digits < 1 or uppers < 1 or lowers < 1:
         raise ValidationError(
-            _("The new password must contain at least two numeric digits, "
+            _("The new password must contain at least one number, "
               "one uppercase and one lowercase character.")
         )
 
@@ -299,24 +299,6 @@ class EditProfileForm(forms.Form):
         label=_('Last name'),
         required=True
     )
-    title = forms.CharField(max_length=255, label=_('Title'), required=False)
-    street = forms.CharField(max_length=255, label=_('Street'), required=False)
-    postal_code = forms.CharField(
-        max_length=255,
-        label=_('Postal code'),
-        required=False
-    )
-    town = forms.CharField(max_length=255, label=_('Town'), required=False)
-    phone_number = forms.CharField(
-        max_length=255,
-        label=_('Phone number'),
-        required=False
-    )
-    mobile_phone_number = forms.CharField(
-        max_length=255,
-        label=_('Mobile phone number'),
-        required=False
-    )
 
     def __init__(self, user=None, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
@@ -325,12 +307,6 @@ class EditProfileForm(forms.Form):
             'email',
             'first_name',
             'last_name',
-            'title',
-            'street',
-            'postal_code',
-            'town',
-            'phone_number',
-            'mobile_phone_number',
         ]
 
     def clean_email(self):

@@ -1,5 +1,6 @@
-import json
+import datetime
 import jwt
+import mock
 
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
@@ -10,7 +11,6 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from lizard_auth_server import views_api_v2
 from lizard_auth_server.tests import factories
-from mock import Mock
 
 
 class TestStartView(TestCase):
@@ -52,7 +52,7 @@ class TestCheckCredentialsView(TestCase):
         self.assertEquals(400, result.status_code)
 
     def test_valid_login(self):
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = {'iss': self.sso_key,
                              'username': self.username,
                              'password': self.password}
@@ -61,7 +61,7 @@ class TestCheckCredentialsView(TestCase):
         self.assertEquals(200, result.status_code)
 
     def test_invalid_login(self):
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = {'iss': self.sso_key,
                              'username': 'pietje',
                              'password': 'ikkanniettypen'}
@@ -212,7 +212,8 @@ class TestNewUserView(TestCase):
         sso_key = 'sso key'
         factories.PortalF.create(sso_key=sso_key)
         self.request_factory = RequestFactory()
-        self.some_request = self.request_factory.get('/some/url/')
+        self.some_request = self.request_factory.get(
+            'http://some.site/some/url/')
         self.user_data = {'iss': sso_key,
                           'username': 'pietje',
                           'email': 'pietje@klaasje.test.com',
@@ -226,15 +227,35 @@ class TestNewUserView(TestCase):
         self.assertEquals(405, result.status_code)
 
     def test_new_user(self):
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = self.user_data
+        self.view.request = self.some_request
         result = self.view.form_valid(form)
         self.assertEquals(201, result.status_code)
         self.assertTrue(User.objects.get(username='pietje'))
 
+    def test_new_user_starts_inactive(self):
+        form = mock.Mock()
+        form.cleaned_data = self.user_data
+        self.view.request = self.some_request
+        self.view.form_valid(form)
+        self.assertFalse(User.objects.get(username='pietje').is_active)
+
+    def test_new_user_sends_email(self):
+        form = mock.Mock()
+        form.cleaned_data = self.user_data
+        self.view.request = self.some_request
+        with mock.patch(
+                'lizard_auth_server.views_api_v2.send_mail') as mocked:
+            self.view.form_valid(form)
+            arguments = mocked.call_args[0]
+            print(arguments)
+            message = arguments[1]
+            self.assertIn('sso%20key', message)
+
     def test_exiting_user(self):
         factories.UserF(email='pietje@klaasje.test.com')
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
         self.assertEquals(200, result.status_code)
@@ -242,7 +263,7 @@ class TestNewUserView(TestCase):
     def test_exiting_user_duplicate_email(self):
         factories.UserF(email='pietje@klaasje.test.com')
         factories.UserF(email='pietje@klaasje.test.com')
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
         self.assertEquals(200, result.status_code)
@@ -250,7 +271,7 @@ class TestNewUserView(TestCase):
     def test_duplicate_username(self):
         factories.UserF(username='pietje',
                         email='nietpietje@example.com')
-        form = Mock()
+        form = mock.Mock()
         form.cleaned_data = self.user_data
         self.assertRaises(ValidationError,
                           self.view.form_valid,
@@ -262,10 +283,67 @@ class TestNewUserView(TestCase):
                   'email': 'nietpietje@example.com',
                   'first_name': 'pietje',
                   'last_name': 'pietje',
-        }
+              }
         response = client.post(
             reverse('lizard_auth_server.api_v2.new_user'), params)
         self.assertEquals(400, response.status_code)
+
+
+class TestActivateAndSetPasswordView(TestCase):
+
+    def setUp(self):
+        self.user = factories.UserF.create()
+        self.user.set_unusable_password()
+        self.user.is_active = False
+        self.user.save()
+        self.portal = factories.PortalF.create()
+        # Mimick url creation. See create_and_mail_user()
+        key = self.portal.sso_key
+        expiration = datetime.datetime.utcnow() + datetime.timedelta(
+            days=1)
+        payload = {'aud': key,
+                   'exp': expiration,
+                   'user_id': self.user.id}
+        signed_message = jwt.encode(payload,
+                                    self.portal.sso_secret,
+                                    algorithm='HS256')
+        self.activation_url = reverse(
+            'lizard_auth_server.api_v2.activate-and-set-password',
+            kwargs={'user_id': self.user.id,
+                    'sso_key': key,
+                    'message': signed_message})
+
+    def test_get_smoke(self):
+        client = Client()
+        response = client.get(self.activation_url)
+        self.assertEquals(200, response.status_code)
+
+    def test_post_smoke(self):
+        client = Client()
+        response = client.post(self.activation_url,
+                               {'new_password1': 'Pietje123',
+                                'new_password2': 'Pietje123'})
+        self.assertEquals(302, response.status_code)
+
+    def test_user_activated(self):
+        client = Client()
+        client.post(self.activation_url,
+                    {'new_password1': 'Pietje123',
+                     'new_password2': 'Pietje123'})
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_active)
+        self.assertTrue(self.user.has_usable_password())
+
+
+class TestActivatedGoToPortalView(TestCase):
+
+    def setUp(self):
+        self.portal = factories.PortalF.create()
+
+    def test_smoke(self):
+        client = Client()
+        response = client.get('/api2/activated/%s/' % self.portal.id)
+        self.assertEquals(200, response.status_code)
 
 
 class TestOrganisationsView(TestCase):

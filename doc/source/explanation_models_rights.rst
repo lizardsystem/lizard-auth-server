@@ -15,3 +15,10 @@ The SSO has three main models:
   portal
     A portal that's using the SSO. You need SSO admin access to add one. Used
     to protect the traffic between portal and SSO.
+
+
+User profile
+------------
+
+Users can be created via the API by a portal. They then get an email
+with an activation link to set their password.

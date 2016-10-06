@@ -85,9 +85,6 @@ class ProfileView(TemplateView):
 
     @cached_property
     def profile(self):
-        # TODO: clean this up, tests, etc.
-        # User.get_profile is deprecated since Django 1.7
-        # return self.request.user.get_profile()
         return self.request.user.user_profile
 
     @property
@@ -126,11 +123,7 @@ class AccessToPortalView(TemplateView):
             user_id = self.kwargs.get('user_pk')
             if user_id:
                 user = User.objects.get(id=user_id)
-                # User.get_profile is deprecated since Django 1.7
-                # return user.get_profile()
                 return user.user_profile
-        # User.get_profile is deprecated since Django 1.7
-        # return self.request.user.get_profile()
         return self.request.user.user_profile
 
     @cached_property
@@ -168,8 +161,6 @@ class EditProfileView(FormView):
     @property
     def profile(self):
         if not self._profile:
-            # User.get_profile is deprecated since Django 1.7
-            # self._profile = self.request.user.get_profile()
             self._profile = self.request.user.user_profile
         return self._profile
 
@@ -178,12 +169,6 @@ class EditProfileView(FormView):
             'email': self.profile.email,
             'first_name': self.profile.first_name,
             'last_name': self.profile.last_name,
-            'title': self.profile.title,
-            'street': self.profile.street,
-            'postal_code': self.profile.postal_code,
-            'town': self.profile.town,
-            'phone_number': self.profile.phone_number,
-            'mobile_phone_number': self.profile.mobile_phone_number
         }
 
     def get_form(self, form_class):

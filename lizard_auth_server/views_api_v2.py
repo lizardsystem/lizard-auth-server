@@ -372,11 +372,10 @@ class LogoutRedirectBackView(FormInvalidMixin, ProcessGetFormView):
 
 
 class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
-    """View to create a new user (or return the existing one)
+    """View to create a new user (or return an existing one based on email)
 
     Username/email/first_name/last_name is passed in a JWT signed form (so: in
-    plain text). We verify if the password is OK. No redirects to forms, just
-    a '200 OK' when the credentials are OK and an error code if not.
+    plain text).
 
     Only POST is allowed as it could alter the database.
 

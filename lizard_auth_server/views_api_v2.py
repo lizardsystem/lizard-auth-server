@@ -402,6 +402,9 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
         out by extracting the contents. Then we find/create the user and
         return it.
 
+        If a new user has been created, we send an email with an activation
+        link.
+
         Args:
             form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
                 instance. It will have the JWT message contents in the
@@ -459,6 +462,24 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
     def create_and_mail_user(self, username, first_name, last_name, email,
                              portal):
+        """Return freshly created user (the user gets an activation email)
+
+
+        Args:
+            username, first_name, last_name, email: the four arguments needed
+                for django's ``create_user()`` method.
+            portal: the portal that requested the new user. We use it for
+                logging and for telling the user which website requested their
+                account.
+
+        Returns:
+            The created user object. The user has no password set and is
+            inactive.
+
+        Raises:
+            ValidationError: when a duplicate username is found.
+
+        """
         with transaction.atomic():
             try:
                 user = User.objects.create_user(

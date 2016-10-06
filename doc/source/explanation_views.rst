@@ -25,3 +25,24 @@ URL. The end result is that the user is logged out of both the SSO and the
 site.
 
 See :class:`lizard_auth_server.views_api_v2.LogoutView`
+
+
+``/api2/activate/``
+-------------------
+
+Target of the activation email sent by
+:class:`lizard_auth_server.views_api_v2.NewUserView`. The user gets the
+standard enter-your-password django form. Afterwards, their account is
+activated and they are immediately logged in and redirected to the "success!"
+view below.
+
+See :class:`lizard_auth_server.views_api_v2.ActivateAndSetPasswordView`
+
+
+``/api2/activated/PORTAL_ID/``
+------------------------------
+
+"Success!" page after successful activation. It shows a link to the portal
+that requested the user creation.
+
+See :class:`lizard_auth_server.views_api_v2.ActivatedGoToPortalView`

@@ -20,33 +20,5 @@ The SSO has three main models:
 User profile
 ------------
 
-Users can be created via the API by a portal. They then need to get an email
-with an invitation to set their password (and thereby to enable their
-account).
-
-Alternative: a user creates their own account. No password, that's handled in
-the invitation email. Note: not directly needed.
-
-Edit page for name and email.
-
-"forgot my account" page
-
-
-Notities
---------
-
-Beetje naar django-registration gekeken. Lijkt toch geen goede match. Wel een
-paar goede ideeen zoals methodes op de objectmanager
-(.send_activation_email(), .create_inactive_user()).
-
-Wijziging tov vorige: je wilt gelijk een gebruiker hebben!!! Dus heb je de
-username nodig.
-
-
-api komt binnen, user wordt aangemaakt.
-
-=> huidige methode naar manager verplaatsen.
-
-TODO: Unusable wachtwoord instellen. Activatiemail sturen.
-
-Hiervoor huidige code bekijken.
+Users can be created via the API by a portal. They then get an email
+with an activation link to set their password.

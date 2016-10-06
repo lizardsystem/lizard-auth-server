@@ -523,6 +523,20 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
 
 class ActivateAndSetPasswordView(FormView):
+    """View (linked in activation email) for activating your account
+
+    The activation email link contains a jwt key/message embedded in the
+    URL. This way, the form is available for django's regular password
+    form. We need to do a bit of validation that would normally be done by
+    :class:`lizard_auth_server.forms.JWTDecryptForm`.
+
+    Also in the URL: the user id. This must match the user id found in the
+    signed JWT message.
+
+    This view first shows a form to enter your password. A successful submit
+    will log in the user and redirect them to a 'success' page.
+
+    """
     form_class = forms.SetPasswordForm
     template_name = 'lizard_auth_server/activate-set-password.html'
 
@@ -542,10 +556,25 @@ class ActivateAndSetPasswordView(FormView):
 
     def get_form_kwargs(self):
         kwargs = super(ActivateAndSetPasswordView, self).get_form_kwargs()
+        # Django's set-password-form needs a 'user' kwarg.
         kwargs['user'] = self.user
         return kwargs
 
     def form_valid(self, form):
+        """Activate user and redirect to 'success' page if everything's ok
+
+        Args:
+            form: an instance of django's default set-password-form.
+
+        Returns:
+            A redirect to the success page
+            :class:`lizard_auth_server.views_api_v2.ActivatedGoToPortalView`
+
+        Raises:
+            ValidationError: if the JWT is incorrect (wrong user id, expired,
+               etc).
+
+        """
         try:
             signed_data = jwt.decode(self.message,
                                      self.portal.sso_secret,
@@ -574,6 +603,14 @@ class ActivateAndSetPasswordView(FormView):
 
 
 class ActivatedGoToPortalView(TemplateView):
+    """Success page for the activation process
+
+    We're the success page for
+    :class:`lizard_auth_server.views_api_v2.ActivateAndSetPasswordView`. We
+    simply show a 'success!' message and a link to the portal that requested
+    the user originally.
+
+    """
     template_name = 'lizard_auth_server/activated-go-to-portal.html'
 
     @cached_property

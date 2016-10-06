@@ -465,7 +465,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
 
         Args:
-            username, first_name, last_name, email: the four arguments needed
+            username/first_name/last_name/email: the four arguments needed
                 for django's ``create_user()`` method.
             portal: the portal that requested the new user. We use it for
                 logging and for telling the user which website requested their

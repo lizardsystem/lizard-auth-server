@@ -21,10 +21,10 @@ from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.utils.http import urlquote
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormMixin
 from django.views.generic.edit import FormView
 from django.views.generic.edit import ProcessFormView
@@ -546,9 +546,22 @@ class ActivateAndSetPasswordView(FormView):
                                    password=password)
         django_login(self.request, user)
 
-        return HttpResponseRedirect('/TODO/')
+        return HttpResponseRedirect(
+            reverse('lizard_auth_server.api_v2.activated-go-to-portal',
+                    kwargs={'portal_pk': self.portal.id}))
 
     # xxx
+
+
+class ActivatedGoToPortalView(TemplateView):
+    template_name = 'lizard_auth_server/activated-go-to-portal.html'
+
+    @cached_property
+    def portal(self):
+        portal_pk = self.kwargs['portal_pk']
+        return Portal.objects.get(pk=portal_pk)
+
+
 
 
 class OrganisationsView(FormInvalidMixin, ProcessGetFormView):

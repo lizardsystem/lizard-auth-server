@@ -123,7 +123,9 @@ urlpatterns = patterns(
         '(?P<message>[^/]+)$',
         views_api_v2.ActivateAndSetPasswordView.as_view(),
         name='lizard_auth_server.api_v2.activate-and-set-password'),
-    # xxxx
+    url(r'^api2/activated/(?P<portal_pk>[^/]+)/$',
+        views_api_v2.ActivatedGoToPortalView.as_view(),
+        name='lizard_auth_server.api_v2.activated-go-to-portal'),
 
     # Override django-auth's default login/logout URLs
     # Note: ensure LOGIN_URL isn't defined in the settings

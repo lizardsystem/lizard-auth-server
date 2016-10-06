@@ -323,9 +323,26 @@ class TestActivateAndSetPasswordView(TestCase):
                                {'new_password1': 'Pietje123',
                                 'new_password2': 'Pietje123'})
         self.assertEquals(302, response.status_code)
+
+    def test_user_activated(self):
+        client = Client()
+        client.post(self.activation_url,
+                    {'new_password1': 'Pietje123',
+                     'new_password2': 'Pietje123'})
         self.user.refresh_from_db()
         self.assertTrue(self.user.is_active)
         self.assertTrue(self.user.has_usable_password())
+
+
+class TestActivatedGoToPortalView(TestCase):
+
+    def setUp(self):
+        self.portal = factories.PortalF.create()
+
+    def test_smoke(self):
+        client = Client()
+        response = client.get('/api2/activated/%s/' % self.portal.id)
+        self.assertEquals(200, response.status_code)
 
 
 class TestOrganisationsView(TestCase):

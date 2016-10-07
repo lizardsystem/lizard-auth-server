@@ -563,6 +563,10 @@ class ActivateAndSetPasswordView(FormView):
     def message(self):
         return self.kwargs['message']
 
+    @cached_property
+    def language(self):
+        return self.kwargs['language']
+
     def get_form_kwargs(self):
         kwargs = super(ActivateAndSetPasswordView, self).get_form_kwargs()
         # Django's set-password-form needs a 'user' kwarg.
@@ -601,10 +605,13 @@ class ActivateAndSetPasswordView(FormView):
         password = form.cleaned_data.get('new_password1')
         self.user.set_password(password)
         self.user.save()
-        # Immediately log in the user.
+        # Immediately log in the user
         user = django_authenticate(username=self.user.username,
                                    password=password)
         django_login(self.request, user)
+        # Set the language
+        translation.activate(self.language)
+        self.request.session[translation.LANGUAGE_SESSION_KEY] = self.language
 
         return HttpResponseRedirect(
             reverse('lizard_auth_server.api_v2.activated-go-to-portal',

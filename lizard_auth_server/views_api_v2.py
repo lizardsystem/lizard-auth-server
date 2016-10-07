@@ -19,8 +19,10 @@ from django.forms import ValidationError
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
+from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
+from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View
@@ -508,8 +510,10 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                         kwargs={'user_id': user.id,
                                 'sso_key': key,
                                 'message': signed_message}))
-            # TODO translations
-            subject = "Account %s" % portal.name
+
+            language = 'en'
+            translation.activate(language)
+            subject = _("Account invitation for %s") % portal.name
             context = {'portal_url': portal.visit_url,
                        'activation_url': activation_url,
                        'name': ' '.join([first_name, last_name]),

@@ -5,7 +5,9 @@ Changelog of lizard-auth-server
 2.10 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Allowing to pass a language code when adding a new user.
+
+- Updated translations.
 
 
 2.9 (2016-10-06)

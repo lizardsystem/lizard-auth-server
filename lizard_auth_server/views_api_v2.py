@@ -46,6 +46,7 @@ JWT_ALGORITHM = settings.LIZARD_AUTH_SERVER_JWT_ALGORITHM
 
 LOGIN_SUCCESS_URL_KEY = 'login_success_url'
 UNAUTHENTICATED_IS_OK_URL_KEY = 'unauthenticated_is_ok_url'
+AVAILABLE_LANGUAGES = ['en', 'nl']
 
 
 def construct_user_data(user=None, user_profile=None):
@@ -106,7 +107,7 @@ class StartView(View):
             'new-user': abs_reverse('lizard_auth_server.api_v2.new_user'),
             'organisations': abs_reverse(
                 'lizard_auth_server.api_v2.organisations'),
-            'available-languages': ['en', 'nl'],
+            'available-languages': AVAILABLE_LANGUAGES,
         }
         return HttpResponse(json.dumps(endpoints),
                             content_type='application/json')
@@ -457,6 +458,10 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
         if not user:
             language = form.cleaned_data.get('language', 'en')
+            if language not in AVAILABLE_LANGUAGES:
+                raise ValidationError("Language %s is not in %s" % (
+                    language,
+                    AVAILABLE_LANGUAGES))
             user = self.create_and_mail_user(
                 username=form.cleaned_data['username'],  # can be duplicate...
                 first_name=form.cleaned_data['first_name'],
@@ -606,6 +611,10 @@ class ActivateAndSetPasswordView(FormView):
 
         if not signed_data.get('user_id') == self.user.id:
             raise ValidationError("Activation link is not for this user")
+        if self.language not in AVAILABLE_LANGUAGES:
+            raise ValidationError("Language %s is not in %s" % (
+                self.language,
+                AVAILABLE_LANGUAGES))
 
         self.user.is_active = True
         password = form.cleaned_data.get('new_password1')

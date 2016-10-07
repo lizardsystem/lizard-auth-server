@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-21 15:54+0200\n"
-"PO-Revision-Date: 2016-09-21 15:56+0200\n"
+"POT-Creation-Date: 2016-10-07 15:52+0200\n"
+"PO-Revision-Date: 2016-10-07 15:58+0200\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -17,193 +17,173 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.9\n"
 
-#: admin.py:38
+#: admin.py:39
 msgid "Resend the activation email, with a new key"
 msgstr "Stuur een nieuwe activatie e-mail, met een nieuwe sleutel"
 
-#: admin.py:49
+#: admin.py:50
 msgid "Activate manually"
 msgstr "Handmatig activeren"
 
-#: admin.py:51
+#: admin.py:52
 msgid "Shortcut URLs"
 msgstr "Snelkoppelingen"
 
-#: admin.py:60 models.py:258
+#: admin.py:61 models.py:222
 msgid "user profile"
 msgstr "gebruikersprofiel"
 
-#: admin.py:89
+#: admin.py:87
+msgid "V1 authorization"
+msgstr "V1 authorisatie"
+
+#: admin.py:92
 msgid "Dates"
 msgstr "Datums"
 
-#: admin.py:93
-msgid "Personal data"
-msgstr "Persoonsgegevens"
-
-#: admin.py:105 models.py:118 models.py:153 models.py:591
+#: admin.py:100 models.py:117 models.py:152 models.py:545
 msgid "portal"
 msgstr "portaal"
 
-#: admin.py:143 admin.py:211
+#: admin.py:138 admin.py:206
 msgid "number of inheriting roles"
 msgstr "aantal overervende rollen"
 
-#: admin.py:154
+#: admin.py:149
 msgid "base role"
 msgstr "basisrol"
 
-#: admin.py:199
+#: admin.py:194
 msgid "number of organisation roles"
 msgstr "Aantal organisatierollen"
 
-#: admin.py:236 admin.py:270
+#: admin.py:231 admin.py:278
 msgid "number of user profiles"
 msgstr "Aantal gebruikersprofielen"
 
-#: admin.py:245 admin.py:281
+#: admin.py:240 admin.py:289
 msgid "number of roles"
 msgstr "Aantal rollen"
 
-#: admin.py:295 models.py:413 models.py:672 models.py:699
+#: admin.py:255
+msgid "settings for the v2 API"
+msgstr "settings voor de v2 API"
+
+#: admin.py:303 models.py:367 models.py:623 models.py:650
 msgid "organisation"
 msgstr "organisatie"
 
-#: forms.py:128
+#: forms.py:129
 #, python-format
 msgid "The new password must be at least %d characters long."
 msgstr "Het nieuwe wachtwoord moet minimaal %d karakters lang zijn."
 
-#: forms.py:144
+#: forms.py:145
 msgid ""
-"The new password must contain at least two numeric digits, one uppercase and "
-"one lowercase character."
+"The new password must contain at least one number, one uppercase and one "
+"lowercase character."
 msgstr ""
-"Het nieuwe wachtwoord moet minstens twee cijfers, een hoofdletter en een "
+"Het nieuwe wachtwoord moet minstens een cijfer, een hoofdletter en een "
 "kleine letter bevatten."
 
-#: forms.py:202 templates/lizard_auth_server/profile.html:15
+#: forms.py:203 templates/lizard_auth_server/profile.html:15
 msgid "Name"
 msgstr "Naam"
 
-#: forms.py:205
+#: forms.py:206
 msgid "For the purpose of an invitation email (not the username)"
 msgstr "T.b.v. de aanhef in een e-mail (niet de gebruikersnaam)"
 
-#: forms.py:208 forms.py:290 templates/lizard_auth_server/profile.html:19
+#: forms.py:209 forms.py:291 templates/lizard_auth_server/profile.html:19
 msgid "Email"
 msgstr "E-mail"
 
-#: forms.py:210
+#: forms.py:211
 msgid "Organisation"
 msgstr "Organisatie"
 
-#: forms.py:215
+#: forms.py:216
 msgid "Language"
 msgstr "Taal"
 
-#: forms.py:226
+#: forms.py:227
 msgid "Portals"
 msgstr "Portalen"
 
-#: forms.py:236 forms.py:269 forms.py:341
+#: forms.py:237 forms.py:270 forms.py:318
 msgid "{} is already taken."
 msgstr "{} wordt al gebruikt."
 
-#: forms.py:247 templates/lizard_auth_server/profile.html:17
+#: forms.py:248 templates/lizard_auth_server/profile.html:17
 msgid "Username"
 msgstr "Gebruikersnaam"
 
-#: forms.py:251
+#: forms.py:252
 msgid "New password"
 msgstr "Nieuw wachtwoord"
 
-#: forms.py:255
+#: forms.py:256
 msgid "New password confirmation"
 msgstr "Niew wachtwoord (bevestiging)"
 
-#: forms.py:260
+#: forms.py:261
 msgid "The two password fields didn't match."
 msgstr "De twee wachtwoorden zijn niet identiek"
 
-#: forms.py:266
+#: forms.py:267
 msgid "Whitespace not allowed."
 msgstr "Spaties niet toegestaan."
 
-#: forms.py:293
+#: forms.py:294
 msgid "First name"
 msgstr "Voornaam"
 
-#: forms.py:298
+#: forms.py:299
 msgid "Last name"
 msgstr "Achternaam"
 
-#: forms.py:301 templates/lizard_auth_server/profile.html:21
-msgid "Title"
-msgstr "Titel"
-
-#: forms.py:302 templates/lizard_auth_server/profile.html:23
-msgid "Street"
-msgstr "Straat"
-
-#: forms.py:305 templates/lizard_auth_server/profile.html:25
-msgid "Postal code"
-msgstr "Postcode"
-
-#: forms.py:308 templates/lizard_auth_server/profile.html:27
-msgid "Town"
-msgstr "Plaats"
-
-#: forms.py:311 templates/lizard_auth_server/profile.html:29
-msgid "Phone number"
-msgstr "Telefoonnummer"
-
-#: forms.py:316 templates/lizard_auth_server/profile.html:31
-msgid "Mobile phone number"
-msgstr "Telefoonnummer (mobiel)"
-
-#: forms.py:368
+#: forms.py:345
 msgid "required 3Di billing role is missing"
 msgstr "De benodigde \"billing\" rol op 3di mist"
 
-#: forms.py:371
+#: forms.py:348
 msgid "Only one 3Di billing role is allowed ({} found)"
 msgstr "Slechts één \"billing\" rol op 3di is toegestaan ({} gevonden)"
 
-#: models.py:73 models.py:404 models.py:605 models.py:651
+#: models.py:72 models.py:358 models.py:559 models.py:605
 msgid "name"
 msgstr "naam"
 
-#: models.py:77
+#: models.py:76
 msgid "Name used to refer to this portal."
 msgstr "Naam waaronder dit portaal bekend staat."
 
-#: models.py:79
+#: models.py:78
 msgid "shared secret"
 msgstr "gedeelde geheime string"
 
-#: models.py:83
+#: models.py:82
 msgid ""
 "Secret shared between SSO client and server to sign/encrypt communication."
 msgstr ""
 "De geheime code die tussen de SSO client en SSO server gedeeld wordt om de "
 "communicatie te ondertekenen en te versleutelen."
 
-#: models.py:86
+#: models.py:85
 msgid "identifying key"
 msgstr "identificatie-string"
 
-#: models.py:90
+#: models.py:89
 msgid "String used to identify the SSO client."
 msgstr "Code die gebruikt wordt om de SSO client te identificeren."
 
-#: models.py:92
+#: models.py:91
 msgid "allowed domain(s)"
 msgstr "toegestaan domein(en)"
 
-#: models.py:96
+#: models.py:95
 msgid ""
 "Allowed domain suffix for redirects using the next parameter. Multiple, "
 "whitespace-separated suffixes may be specified."
@@ -212,147 +192,123 @@ msgstr ""
 "moet eindigen met wat hier is ingevuld. Meerdere domeinnamen kan je invoeren "
 "door ze met spaties te scheiden."
 
-#: models.py:99
+#: models.py:98
 msgid "redirect url"
 msgstr "redirect-url"
 
-#: models.py:102
+#: models.py:101
 msgid "URL used in the SSO redirection."
 msgstr "URL die standaard voor het redirecten gebruikt wordt."
 
-#: models.py:104
+#: models.py:103
 msgid "visit url"
 msgstr "bezoek-url"
 
-#: models.py:106
+#: models.py:105
 msgid "URL used in the UI to refer to this portal."
 msgstr ""
 "URL van het portal zelf waarnaar we kunnen linken vanuit overzichtspagina's."
 
-#: models.py:119 models.py:197 models.py:424
+#: models.py:118 models.py:195 models.py:378
 msgid "portals"
 msgstr "portalen"
 
-#: models.py:155
+#: models.py:154
 msgid "request token"
 msgstr "token van het request"
 
-#: models.py:159
+#: models.py:158
 msgid "auth token"
 msgstr "authenticatie token"
 
-#: models.py:164 models.py:192 models.py:452
+#: models.py:163 models.py:190 models.py:406
 msgid "user"
 msgstr "gebruiker"
 
-#: models.py:168 models.py:212 models.py:427
+#: models.py:167 models.py:213 models.py:381
 msgid "created at"
 msgstr "aangemaakt op"
 
-#: models.py:175
+#: models.py:174
 msgid "(authentication token)"
 msgstr "(authenticatieteken)"
 
-#: models.py:176
+#: models.py:175
 msgid "(authentication tokens)"
 msgstr "(authenticatietekens)"
 
-#: models.py:202 models.py:673
+#: models.py:201 models.py:624
 msgid "organisations"
 msgstr "organisaties"
 
-#: models.py:208
+#: models.py:209
 msgid "roles (via organisation)"
 msgstr "rollen (via organisatie)"
 
-#: models.py:215
+#: models.py:216
 msgid "updated on"
 msgstr "geüpdated op"
 
-#: models.py:219
-msgid "title"
-msgstr "titel"
-
-#: models.py:225
-msgid "street"
-msgstr "straat"
-
-#: models.py:231
-msgid "postal code"
-msgstr "postcode"
-
-#: models.py:237
-msgid "town"
-msgstr "plaats"
-
-#: models.py:243
-msgid "phone number"
-msgstr "telefoonnummer"
-
-#: models.py:249
-msgid "mobile phone number"
-msgstr "mobiele telefoonnummer"
-
-#: models.py:259
+#: models.py:223
 msgid "user profiles"
 msgstr "gebruikersprofielen"
 
-#: models.py:409
+#: models.py:363
 msgid "e-mail"
 msgstr "e-mail"
 
-#: models.py:418
+#: models.py:372
 msgid "language"
 msgstr "taal"
 
-#: models.py:430
+#: models.py:384
 msgid "activation key"
 msgstr "activatiecode"
 
-#: models.py:436
+#: models.py:390
 msgid "activation key date"
 msgstr "datum van de activatiecode"
 
-#: models.py:440
+#: models.py:394
 msgid "Date on which the activation key was generated. Used for expiration."
 msgstr ""
 "Datum waarop de activatiecode is gegenereerd. Wordt gebruikt om de code "
 "automatisch te laten verlopen."
 
-#: models.py:444
+#: models.py:398
 msgid "is activated"
 msgstr "is geactiveerd"
 
-#: models.py:447
+#: models.py:401
 msgid "activated on"
 msgstr "geactiveerd op"
 
-#: models.py:457 models.py:458
+#: models.py:411 models.py:412
 msgid "(invitation)"
 msgstr "(uitnodiging)"
 
-#: models.py:593 models.py:657
+#: models.py:547 models.py:611
 msgid "unique id"
 msgstr "uniek ID"
 
-#: models.py:599
+#: models.py:553
 msgid "code"
 msgstr "code"
 
-#: models.py:601
+#: models.py:555
 msgid "name used internally by the portal to identify the role"
 msgstr ""
 "naam die intern door het portaal gebruikt wordt om de rol te identificeren"
 
-#: models.py:606
+#: models.py:560
 msgid "human-readable name"
 msgstr "naam die aan de gebruiker getoond wordt"
 
-#: models.py:612
+#: models.py:566
 msgid "inheriting roles"
 msgstr "overervende rollen"
 
-#: models.py:615
+#: models.py:569
 msgid ""
 "roles that are automatically inherited from us for organisations that have "
 "organisation roles pointing at both base and inheriting role."
@@ -360,57 +316,53 @@ msgstr ""
 "rollen die je automatisch meekrijgt voor organisaties die organisatie-rol-"
 "koppelingen hebben naar zowel de basisrol als naar de overervende rol."
 
-#: models.py:621
+#: models.py:575
 msgid "external description"
 msgstr "omschrijving voor eindgebruikers"
 
-#: models.py:624
+#: models.py:578
 msgid "internal description"
 msgstr "interne omschrijving"
 
-#: models.py:632
+#: models.py:586
 msgid "(role)"
 msgstr "(rol)"
 
-#: models.py:633
+#: models.py:587
 msgid "(roles)"
 msgstr "(rollen)"
 
-#: models.py:636
+#: models.py:590
 #, python-brace-format
 msgid "{name} on {portal}"
 msgstr "{name} op {portal}"
 
-#: models.py:662
-msgid "already migrated"
-msgstr "al gemigreerd"
-
-#: models.py:667
+#: models.py:618
 msgid "roles"
 msgstr "rollen"
 
-#: models.py:703
+#: models.py:654
 msgid "role"
 msgstr "rol"
 
-#: models.py:705
+#: models.py:656
 msgid "for all users"
 msgstr "voor alle gebruikers"
 
-#: models.py:712
+#: models.py:663
 msgid "(organisation-role-mapping)"
 msgstr "(organisatie-rol-koppeling)"
 
-#: models.py:713
+#: models.py:664
 msgid "(organisation-role-mappings)"
 msgstr "(organisatie-rol-koppelingen)"
 
-#: models.py:717
+#: models.py:668
 #, python-brace-format
 msgid "{role} for everybody in {org}"
 msgstr "{role} voor iedereen in {org}"
 
-#: models.py:732
+#: models.py:683
 msgid "The special 3di billing role is not allowed \"for all users\""
 msgstr ""
 "De speciale 3di \"billing\" role mag je niet \"voor alle gebruikers\" "
@@ -437,7 +389,7 @@ msgstr "Afgezien van inloggen heeft u geen speciale rechten."
 msgid "Access denied"
 msgstr "Geen toegang"
 
-#: templates/lizard_auth_server/access_denied.html:10 views.py:429
+#: templates/lizard_auth_server/access_denied.html:10 views.py:414
 msgid "You do not have access to this portal."
 msgstr "U heeft geen toegang tot dit portaal."
 
@@ -459,13 +411,12 @@ msgstr ""
 "<a href=\"%(profile_url)s\">Bekijk uw profiel</a>, om te zien tot welke "
 "portalen u toegang heeft."
 
-#: templates/lizard_auth_server/activate_user.html:4
-#: templates/lizard_auth_server/activate_user.html:16
-#: templates/lizard_auth_server/activate_user_step_2.html:4
-#: templates/lizard_auth_server/activate_user_step_2.html:16
-msgid "Activate user"
-msgstr "Activeer gebruiker"
+#: templates/lizard_auth_server/activate-set-password.html:4
+#: templates/lizard_auth_server/activate-set-password.html:16
+msgid "Activate and set password"
+msgstr "Activeer en stel het wachtwoord in"
 
+#: templates/lizard_auth_server/activate-set-password.html:11
 #: templates/lizard_auth_server/activate_user.html:11
 #: templates/lizard_auth_server/activate_user_step_2.html:11
 #: templates/lizard_auth_server/edit_profile.html:11
@@ -478,10 +429,21 @@ msgid_plural "Please correct the errors below."
 msgstr[0] "Corrigeer onderstaande fout"
 msgstr[1] "Corrigeer onderstaande fouten"
 
-#: templates/lizard_auth_server/activate_user.html:21
-msgid "Continue to next step"
-msgstr "Ga door naar de volgende stap"
+#: templates/lizard_auth_server/activate-set-password.html:18
+msgid ""
+"To activate your account, please set a password (minimum of 8 characters and "
+"a mix of numbers and upper- and lowercase letters."
+msgstr ""
+"Voer a.u.b. een wachtwoord in (minimaal 8 karakters en met een mix van "
+"getallen en grote en kleine letters) om uw account te activeren."
 
+#: templates/lizard_auth_server/activate-set-password.html:27
+#: templates/lizard_auth_server/password_change_form.html:24
+#: templates/lizard_auth_server/password_reset_confirm.html:31
+msgid "Change my password"
+msgstr "Verander mijn wachtwoord"
+
+#: templates/lizard_auth_server/activate-set-password.html:30
 #: templates/lizard_auth_server/activate_user.html:21
 #: templates/lizard_auth_server/activate_user_step_2.html:21
 #: templates/lizard_auth_server/edit_profile.html:21
@@ -491,14 +453,35 @@ msgstr "Ga door naar de volgende stap"
 msgid "Reset values"
 msgstr "Beginwaarden"
 
+#: templates/lizard_auth_server/activate_user.html:4
+#: templates/lizard_auth_server/activate_user.html:16
+#: templates/lizard_auth_server/activate_user_step_2.html:4
+#: templates/lizard_auth_server/activate_user_step_2.html:16
+msgid "Activate user"
+msgstr "Activeer gebruiker"
+
+#: templates/lizard_auth_server/activate_user.html:21
+msgid "Continue to next step"
+msgstr "Ga door naar de volgende stap"
+
 #: templates/lizard_auth_server/activate_user_step_2.html:21
 msgid "Complete registration"
 msgstr "Rond registratie af"
 
+#: templates/lizard_auth_server/activated-go-to-portal.html:4
+#: templates/lizard_auth_server/activated-go-to-portal.html:8
 #: templates/lizard_auth_server/activation_complete.html:4
 #: templates/lizard_auth_server/activation_complete.html:8
 msgid "Activation complete"
 msgstr "Activatie afgerond"
+
+#: templates/lizard_auth_server/activated-go-to-portal.html:9
+msgid "Your account has been activated."
+msgstr "Uw account is geactiveerd."
+
+#: templates/lizard_auth_server/activated-go-to-portal.html:10
+msgid "You can go to the site that requested your account now:"
+msgstr "U kan nu doorklikken naar de site die uw account heeft aangemaakt:"
 
 #: templates/lizard_auth_server/activation_complete.html:9
 msgid "Your account has been activated.  You may go ahead and log in now."
@@ -513,6 +496,39 @@ msgstr "Uw account is geactiveerd. U kunt verder gaan door in te loggen."
 #: templates/lizard_auth_server/password_reset_complete.html:10
 msgid "Log in"
 msgstr "Inloggen"
+
+#: templates/lizard_auth_server/activation_email.txt:3
+#: templates/lizard_auth_server/invitation_email.html:3
+#, python-format
+msgid "Hello %(name)s,"
+msgstr "Hallo %(name)s,"
+
+#: templates/lizard_auth_server/activation_email.txt:5
+#, python-format
+msgid "An account has been created for you at %(sso_hostname)s."
+msgstr "Er is een account voor u aangemaakt op %(sso_hostname)s."
+
+#: templates/lizard_auth_server/activation_email.txt:6
+#, python-format
+msgid "You can use it to log in on %(portal_url)s."
+msgstr "U kunt het gebruiken om in te loggen op %(portal_url)s."
+
+#: templates/lizard_auth_server/activation_email.txt:8
+msgid ""
+"Please go to the following page to set a password and activate your account:"
+msgstr ""
+"Ga naar de volgende pagina om een wachtwoord in te vullen en uw account te "
+"activeren:"
+
+#: templates/lizard_auth_server/activation_email.txt:11
+#: templates/lizard_auth_server/invitation_email.html:16
+msgid "Sincerely,"
+msgstr "Met vriendelijke groet,"
+
+#: templates/lizard_auth_server/activation_email.txt:13
+#, python-format
+msgid "The %(sso_hostname)s team"
+msgstr "Het %(sso_hostname)s team"
 
 #: templates/lizard_auth_server/base.html:54
 #, python-format
@@ -529,7 +545,7 @@ msgid "Log out"
 msgstr "Afmelden"
 
 #: templates/lizard_auth_server/base.html:75
-#: templates/lizard_auth_server/profile.html:49
+#: templates/lizard_auth_server/profile.html:37
 msgid "Change password"
 msgstr "Verander het wachtwoord"
 
@@ -561,11 +577,6 @@ msgstr "Er heeft zich een fout voorgedaan"
 msgid "Back to the home page"
 msgstr "Terug naar de beginpagina"
 
-#: templates/lizard_auth_server/invitation_email.html:3
-#, python-format
-msgid "Hello %(name)s,"
-msgstr "Hallo %(name)s,"
-
 #: templates/lizard_auth_server/invitation_email.html:5
 #, python-format
 msgid "An account has been created for you at %(site_name)s."
@@ -584,13 +595,9 @@ msgid "With this account, you can access the following sites:"
 msgstr "Met dit account kunt u de volgende portalen benaderen:"
 
 #: templates/lizard_auth_server/invitation_email.html:14
-#: templates/lizard_auth_server/profile.html:95
+#: templates/lizard_auth_server/profile.html:83
 msgid "No portals found."
 msgstr "Geen portalen gevonden."
-
-#: templates/lizard_auth_server/invitation_email.html:16
-msgid "Sincerely,"
-msgstr "Met vriendelijke groet,"
 
 #: templates/lizard_auth_server/invitation_email.html:18
 #, python-format
@@ -622,7 +629,7 @@ msgid ""
 msgstr "Het account is geregisteerd, en een activatie e-mail is verstuurt naar"
 
 #: templates/lizard_auth_server/invite_user_complete.html:13
-#: templates/lizard_auth_server/profile.html:40
+#: templates/lizard_auth_server/profile.html:28
 msgid "Actions"
 msgstr "Acties"
 
@@ -672,11 +679,6 @@ msgid ""
 msgstr ""
 "Voer uw oude wachtwoord in (ter controle) en daarna twee keer uw nieuwe "
 "wachtwoord (om zeker te zijn dat er geen typfout in staat)."
-
-#: templates/lizard_auth_server/password_change_form.html:24
-#: templates/lizard_auth_server/password_reset_confirm.html:31
-msgid "Change my password"
-msgstr "Verander mijn wachtwoord"
 
 #: templates/lizard_auth_server/password_reset_complete.html:4
 #: templates/lizard_auth_server/password_reset_complete.html:8
@@ -764,43 +766,43 @@ msgstr "Uw profiel"
 msgid "Your data"
 msgstr "Uw gegevens"
 
-#: templates/lizard_auth_server/profile.html:33
+#: templates/lizard_auth_server/profile.html:21
 msgid "Created on"
 msgstr "Aangemaakt op"
 
-#: templates/lizard_auth_server/profile.html:44
+#: templates/lizard_auth_server/profile.html:32
 msgid "Edit my profile"
 msgstr "Bewerk mijn profiel"
 
-#: templates/lizard_auth_server/profile.html:55
+#: templates/lizard_auth_server/profile.html:43
 msgid "Register a new user"
 msgstr "Registreer een nieuwe gebruiker"
 
-#: templates/lizard_auth_server/profile.html:62
+#: templates/lizard_auth_server/profile.html:50
 msgid "Manage SSO portals"
 msgstr "Beheer SSO portalen"
 
-#: templates/lizard_auth_server/profile.html:74
+#: templates/lizard_auth_server/profile.html:62
 msgid "Available portals"
 msgstr "Beschikbare portalen"
 
-#: templates/lizard_auth_server/profile.html:76
+#: templates/lizard_auth_server/profile.html:64
 msgid "All portals (staff member):"
 msgstr "Alle portalen (vanwege admin-rechten):"
 
-#: templates/lizard_auth_server/profile.html:78
+#: templates/lizard_auth_server/profile.html:66
 msgid "You have access to the following portals:"
 msgstr "Dit zijn de portalen waar u toegang tot heeft:"
 
-#: templates/lizard_auth_server/profile.html:90
+#: templates/lizard_auth_server/profile.html:78
 msgid "permissions"
 msgstr "rechten"
 
-#: templates/lizard_auth_server/profile.html:102
+#: templates/lizard_auth_server/profile.html:90
 msgid "Organisations"
 msgstr "Organisaties"
 
-#: templates/lizard_auth_server/profile.html:103
+#: templates/lizard_auth_server/profile.html:91
 msgid "You are a member of the following organisations:"
 msgstr "U behoort tot de volgende organisaties:"
 
@@ -808,27 +810,32 @@ msgstr "U behoort tot de volgende organisaties:"
 msgid "An unknown error occurred."
 msgstr "Onbekende fout."
 
-#: views.py:120
+#: views.py:117
 msgid "Access to portal {} for {}"
 msgstr "Toegang tot portaal {} voor {}"
 
-#: views.py:267
+#: views.py:252
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 "Ongeldige activatiesleutel. Dit betekent waarschijnlijk dat het account al "
 "geactiveerd is."
 
-#: views.py:415
+#: views.py:400
 msgid "Invalid `next` query string parameter."
 msgstr "De `next` parameter klopt niet."
 
-#: views.py:419
+#: views.py:404
 msgid "Missing `portal` query string parameter."
 msgstr "De `portal` parameter mist."
 
-#: views.py:423
+#: views.py:408
 msgid "Invalid `portal` query string parameter."
 msgstr "De `portal` parameter klopt niet."
+
+#: views_api_v2.py:529
+#, python-format
+msgid "Account invitation for %s"
+msgstr "Account uitnodiging voor %s"
 
 #: views_sso.py:63
 msgid "Communication error."
@@ -837,6 +844,48 @@ msgstr "Communicatiefout."
 #: views_sso.py:164
 msgid "Token timed out. Please return to the portal to get a fresh token."
 msgstr "Token is verlopen. Ga terug naar het portaal, en log daar opnieuw in."
+
+#~ msgid "Personal data"
+#~ msgstr "Persoonsgegevens"
+
+#~ msgid "Title"
+#~ msgstr "Titel"
+
+#~ msgid "Street"
+#~ msgstr "Straat"
+
+#~ msgid "Postal code"
+#~ msgstr "Postcode"
+
+#~ msgid "Town"
+#~ msgstr "Plaats"
+
+#~ msgid "Phone number"
+#~ msgstr "Telefoonnummer"
+
+#~ msgid "Mobile phone number"
+#~ msgstr "Telefoonnummer (mobiel)"
+
+#~ msgid "title"
+#~ msgstr "titel"
+
+#~ msgid "street"
+#~ msgstr "straat"
+
+#~ msgid "postal code"
+#~ msgstr "postcode"
+
+#~ msgid "town"
+#~ msgstr "plaats"
+
+#~ msgid "phone number"
+#~ msgstr "telefoonnummer"
+
+#~ msgid "mobile phone number"
+#~ msgstr "mobiele telefoonnummer"
+
+#~ msgid "already migrated"
+#~ msgstr "al gemigreerd"
 
 #~ msgid "Organisation %s has already been migrated"
 #~ msgstr "Organisatie %s is al een keer gemigreerd"

@@ -87,6 +87,11 @@ class StartView(View):
 
         - ``new-user``: :class:`lizard_auth_server.views_api_v2.NewUserView`
 
+        In addition, the list of supported language codes is returned:
+
+        - ``available-languages``: language codes we support so that you can
+           optionally pass the desired one along when creating a new user.
+
         Returns: json dict with available endpoints
 
         """
@@ -101,6 +106,7 @@ class StartView(View):
             'new-user': abs_reverse('lizard_auth_server.api_v2.new_user'),
             'organisations': abs_reverse(
                 'lizard_auth_server.api_v2.organisations'),
+            'available-languages': ['en', 'nl'],
         }
         return HttpResponse(json.dumps(endpoints),
                             content_type='application/json')

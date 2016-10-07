@@ -412,7 +412,9 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 ``cleaned_data`` attribute. ``username``, ``email``,
                 ``first_name`` and ``last_name`` are mandatory keys in the
                 message. (In addition to ``iss``, see the form
-                documentation).
+                documentation). You can also pass a language code in
+                ``language``, this is used for translating the invitation
+                email (default is ``en``).
 
         Returns:
             A dict with key ``user`` with user data like first name, last
@@ -448,12 +450,14 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                         user, portal)
 
         if not user:
+            language = form.cleaned_data.get('language', 'en')
             user = self.create_and_mail_user(
                 username=form.cleaned_data['username'],  # can be duplicate...
                 first_name=form.cleaned_data['first_name'],
                 last_name=form.cleaned_data['last_name'],
                 email=form.cleaned_data['email'],
-                portal=portal)
+                portal=portal,
+                language=language)
             status_code = 201  # Created
 
         user_data = construct_user_data(user=user)
@@ -462,7 +466,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                             status=status_code)
 
     def create_and_mail_user(self, username, first_name, last_name, email,
-                             portal):
+                             portal, language):
         """Return freshly created user (the user gets an activation email)
 
 
@@ -472,6 +476,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             portal: the portal that requested the new user. We use it for
                 logging and for telling the user which website requested their
                 account.
+            language: language code to use for translating the invitation
+                email.
 
         Returns:
             The created user object. The user has no password set and is
@@ -511,7 +517,6 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                                 'sso_key': key,
                                 'message': signed_message}))
 
-            language = 'en'
             translation.activate(language)
             subject = _("Account invitation for %s") % portal.name
             context = {'portal_url': portal.visit_url,

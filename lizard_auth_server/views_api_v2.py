@@ -515,6 +515,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 reverse('lizard_auth_server.api_v2.activate-and-set-password',
                         kwargs={'user_id': user.id,
                                 'sso_key': key,
+                                'language': language,
                                 'message': signed_message}))
 
             translation.activate(language)

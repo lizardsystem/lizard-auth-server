@@ -311,6 +311,7 @@ class TestActivateAndSetPasswordView(TestCase):
             'lizard_auth_server.api_v2.activate-and-set-password',
             kwargs={'user_id': self.user.id,
                     'sso_key': key,
+                    'language': 'en',
                     'message': signed_message})
 
     def test_get_smoke(self):

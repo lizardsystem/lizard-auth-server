@@ -19,8 +19,10 @@ from django.forms import ValidationError
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
+from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
+from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View
@@ -44,19 +46,16 @@ JWT_ALGORITHM = settings.LIZARD_AUTH_SERVER_JWT_ALGORITHM
 
 LOGIN_SUCCESS_URL_KEY = 'login_success_url'
 UNAUTHENTICATED_IS_OK_URL_KEY = 'unauthenticated_is_ok_url'
+AVAILABLE_LANGUAGES = ['en', 'nl']
 
 
-def construct_user_data(user=None, user_profile=None):
+def construct_user_data(user=None):
     """Return dict with user data
 
     The returned keys are the bare minimum: username, first_name, last_name
     and email. No permissions or is_superuser flags!
 
     """
-    if user is None:
-        user = user_profile.user
-    if user_profile is None:
-        user_profile = user.user_profile
     user_data = {}
     for key in ['username', 'first_name', 'last_name', 'email']:
         user_data[key] = getattr(user, key)
@@ -85,6 +84,11 @@ class StartView(View):
 
         - ``new-user``: :class:`lizard_auth_server.views_api_v2.NewUserView`
 
+        In addition, the list of supported language codes is returned:
+
+        - ``available-languages``: language codes we support so that you can
+           optionally pass the desired one along when creating a new user.
+
         Returns: json dict with available endpoints
 
         """
@@ -99,6 +103,7 @@ class StartView(View):
             'new-user': abs_reverse('lizard_auth_server.api_v2.new_user'),
             'organisations': abs_reverse(
                 'lizard_auth_server.api_v2.organisations'),
+            'available-languages': AVAILABLE_LANGUAGES,
         }
         return HttpResponse(json.dumps(endpoints),
                             content_type='application/json')
@@ -410,7 +415,9 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 ``cleaned_data`` attribute. ``username``, ``email``,
                 ``first_name`` and ``last_name`` are mandatory keys in the
                 message. (In addition to ``iss``, see the form
-                documentation).
+                documentation). You can also pass a language code in
+                ``language``, this is used for translating the invitation
+                email (default is ``en``).
 
         Returns:
             A dict with key ``user`` with user data like first name, last
@@ -446,12 +453,18 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                         user, portal)
 
         if not user:
+            language = form.cleaned_data.get('language', 'en')
+            if language not in AVAILABLE_LANGUAGES:
+                raise ValidationError("Language %s is not in %s" % (
+                    language,
+                    AVAILABLE_LANGUAGES))
             user = self.create_and_mail_user(
                 username=form.cleaned_data['username'],  # can be duplicate...
                 first_name=form.cleaned_data['first_name'],
                 last_name=form.cleaned_data['last_name'],
                 email=form.cleaned_data['email'],
-                portal=portal)
+                portal=portal,
+                language=language)
             status_code = 201  # Created
 
         user_data = construct_user_data(user=user)
@@ -460,7 +473,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                             status=status_code)
 
     def create_and_mail_user(self, username, first_name, last_name, email,
-                             portal):
+                             portal, language):
         """Return freshly created user (the user gets an activation email)
 
 
@@ -470,6 +483,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             portal: the portal that requested the new user. We use it for
                 logging and for telling the user which website requested their
                 account.
+            language: language code to use for translating the invitation
+                email.
 
         Returns:
             The created user object. The user has no password set and is
@@ -507,9 +522,11 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 reverse('lizard_auth_server.api_v2.activate-and-set-password',
                         kwargs={'user_id': user.id,
                                 'sso_key': key,
+                                'language': language,
                                 'message': signed_message}))
-            # TODO translations
-            subject = "Account %s" % portal.name
+
+            translation.activate(language)
+            subject = _("Account invitation for %s") % portal.name
             context = {'portal_url': portal.visit_url,
                        'activation_url': activation_url,
                        'name': ' '.join([first_name, last_name]),
@@ -553,6 +570,10 @@ class ActivateAndSetPasswordView(FormView):
     def message(self):
         return self.kwargs['message']
 
+    @cached_property
+    def language(self):
+        return self.kwargs['language']
+
     def get_form_kwargs(self):
         kwargs = super(ActivateAndSetPasswordView, self).get_form_kwargs()
         # Django's set-password-form needs a 'user' kwarg.
@@ -586,15 +607,22 @@ class ActivateAndSetPasswordView(FormView):
 
         if not signed_data.get('user_id') == self.user.id:
             raise ValidationError("Activation link is not for this user")
+        if self.language not in AVAILABLE_LANGUAGES:
+            raise ValidationError("Language %s is not in %s" % (
+                self.language,
+                AVAILABLE_LANGUAGES))
 
         self.user.is_active = True
         password = form.cleaned_data.get('new_password1')
         self.user.set_password(password)
         self.user.save()
-        # Immediately log in the user.
+        # Immediately log in the user
         user = django_authenticate(username=self.user.username,
                                    password=password)
         django_login(self.request, user)
+        # Set the language
+        translation.activate(self.language)
+        self.request.session[translation.LANGUAGE_SESSION_KEY] = self.language
 
         return HttpResponseRedirect(
             reverse('lizard_auth_server.api_v2.activated-go-to-portal',

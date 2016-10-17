@@ -1,3 +1,4 @@
+import copy
 import datetime
 import jwt
 import mock
@@ -67,9 +68,16 @@ class TestCheckCredentialsView(TestCase):
                              'password': 'ikkanniettypen'}
         self.assertRaises(PermissionDenied, self.view.form_valid, form)
 
+    def test_missing_username(self):
+        form = mock.Mock()
+        form.cleaned_data = {'iss': self.sso_key,
+                             'password': 'ikkanniettypen'}
+        self.assertRaises(ValidationError, self.view.form_valid, form)
 
-class TestLoginRedirectV2(TestCase):
-    """Test the V2 API redirects"""
+
+class TestLoginView(TestCase):
+    """Test the V2 API login view"""
+
     def setUp(self):
         self.username = 'me'
         self.password = 'bla'
@@ -97,7 +105,7 @@ class TestLoginRedirectV2(TestCase):
                                   self.secret_key,
                                   algorithm='HS256')
 
-    def test_login_redirect(self):
+    def test_login_redirect_back_to_site(self):
         params = {
             'username': self.username,
             'password': self.password,
@@ -118,8 +126,39 @@ class TestLoginRedirectV2(TestCase):
         self.assertTrue(
             'http://very.custom.net/sso/local_login/' in resp2.url)
 
-    # Note: does the test below really belong here? [reinout 2016-09-21]
+    def test_no_login_redirect_back_to_site(self):
+        payload = {
+            'iss': self.sso_key,
+            'login_success_url': 'http://custom.net/sso/local_login/',
+            'unauthenticated_is_ok_url': 'http://cstm.net/not_logged_in/',
+            }
+        message = jwt.encode(payload,
+                                  self.secret_key,
+                                  algorithm='HS256')
+        jwt_params = {
+            'key': self.sso_key,
+            'message': message,
+            }
+        response = self.client.get('/api2/login/', jwt_params)
+        self.assertEqual(response.status_code, 302)
+        print(response.url)
+        self.assertTrue(
+            'http://cstm.net/not_logged_in/' in response.url)
+
+
+    def test_redirect_to_login_page(self):
+        jwt_params = {
+            'key': self.sso_key,
+            'message': self.message,
+            }
+        response = self.client.get('/api2/login/', jwt_params)
+        self.assertEqual(response.status_code, 302)
+        print(response.url)
+        self.assertTrue(
+            '/accounts/login/' in response.url)
+
     def test_inactive_user_cant_login(self):
+        # We're basically testing django functionality here. Ah well.
         self.user_profile.user.is_active = False
         self.user_profile.user.save()
 
@@ -128,11 +167,27 @@ class TestLoginRedirectV2(TestCase):
             'password': self.password,
             'next': '/api2/login/'
         }
-        resp1 = self.client.post('/accounts/login/', params)
+        response = self.client.post('/accounts/login/', params)
         # Basically this means that the redirect failed and the user couldn't
         # log in, which is in line with what we expect with an inactive user.
-        self.assertTrue(resp1.status_code != 302)
-        self.assertEqual(resp1.status_code, 200)
+        self.assertTrue(response.status_code != 302)
+        self.assertEqual(response.status_code, 200)
+
+    def test_missing_success_url(self):
+        faulty_payload = {
+            'iss': self.sso_key,
+            }
+        faulty_message = jwt.encode(faulty_payload,
+                                    self.secret_key,
+                                    algorithm='HS256')
+        jwt_params = {
+            'key': self.sso_key,
+            'message': faulty_message,
+            }
+        self.assertRaises(ValidationError,
+                          self.client.get,
+                          '/api2/login/',
+                          jwt_params)
 
 
 class TestLogoutViewV2(TestCase):
@@ -143,7 +198,6 @@ class TestLogoutViewV2(TestCase):
         self.sso_key = 'ssokey'
         self.secret_key = 'a secret'
         redirect = 'http://default.portal.net'
-        allowed_domain = 'custom.net'
 
         self.client = Client()
 
@@ -156,7 +210,6 @@ class TestLogoutViewV2(TestCase):
             sso_key=self.sso_key,
             sso_secret=self.secret_key,
             redirect_url=redirect,
-            allowed_domain=allowed_domain,
         )
         self.portal.save()
 
@@ -288,6 +341,22 @@ class TestNewUserView(TestCase):
             reverse('lizard_auth_server.api_v2.new_user'), params)
         self.assertEquals(400, response.status_code)
 
+    def test_missing_mandatory_field(self):
+        form = mock.Mock()
+        form.cleaned_data = copy.deepcopy(self.user_data)
+        del form.cleaned_data['first_name']
+        self.assertRaises(ValidationError,
+                          self.view.form_valid,
+                          form)
+
+    def test_failure_on_unavailable_language(self):
+        form = mock.Mock()
+        form.cleaned_data = copy.deepcopy(self.user_data)
+        form.cleaned_data['language'] = 'tlh'
+        self.assertRaises(ValidationError,
+                          self.view.form_valid,
+                          form)
+
 
 class TestActivateAndSetPasswordView(TestCase):
 
@@ -311,6 +380,7 @@ class TestActivateAndSetPasswordView(TestCase):
             'lizard_auth_server.api_v2.activate-and-set-password',
             kwargs={'user_id': self.user.id,
                     'sso_key': key,
+                    'language': 'en',
                     'message': signed_message})
 
     def test_get_smoke(self):
@@ -333,6 +403,98 @@ class TestActivateAndSetPasswordView(TestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.is_active)
         self.assertTrue(self.user.has_usable_password())
+
+    def test_checks1(self):
+        # Fail on expired JTW token
+        key = self.portal.sso_key
+        expiration = datetime.datetime.utcnow() - datetime.timedelta(
+            days=1)
+        payload = {'aud': key,
+                   'exp': expiration,
+                   'user_id': self.user.id}
+        signed_message = jwt.encode(payload,
+                                    self.portal.sso_secret,
+                                    algorithm='HS256')
+        activation_url = reverse(
+            'lizard_auth_server.api_v2.activate-and-set-password',
+            kwargs={'user_id': self.user.id,
+                    'sso_key': key,
+                    'language': 'en',
+                    'message': signed_message})
+        client = Client()
+        self.assertRaises(ValidationError,
+                          client.post,
+                          activation_url,
+                          {'new_password1': 'Pietje123',
+                           'new_password2': 'Pietje123'})
+
+    def test_checks2(self):
+        # Fail on missing 'aud' and 'exp' JWT fields.
+        key = self.portal.sso_key
+        payload = {'user_id': self.user.id}
+        signed_message = jwt.encode(payload,
+                                    self.portal.sso_secret,
+                                    algorithm='HS256')
+        activation_url = reverse(
+            'lizard_auth_server.api_v2.activate-and-set-password',
+            kwargs={'user_id': self.user.id,
+                    'sso_key': key,
+                    'language': 'en',
+                    'message': signed_message})
+        client = Client()
+        self.assertRaises(ValidationError,
+                          client.post,
+                          activation_url,
+                          {'new_password1': 'Pietje123',
+                           'new_password2': 'Pietje123'})
+
+    def test_checks3(self):
+        # Fail on non-matching user id
+        key = self.portal.sso_key
+        expiration = datetime.datetime.utcnow() + datetime.timedelta(
+            days=1)
+        payload = {'aud': key,
+                   'exp': expiration,
+                   'user_id': 12345}
+        signed_message = jwt.encode(payload,
+                                    self.portal.sso_secret,
+                                    algorithm='HS256')
+        activation_url = reverse(
+            'lizard_auth_server.api_v2.activate-and-set-password',
+            kwargs={'user_id': self.user.id,
+                    'sso_key': key,
+                    'language': 'en',
+                    'message': signed_message})
+        client = Client()
+        self.assertRaises(ValidationError,
+                          client.post,
+                          activation_url,
+                          {'new_password1': 'Pietje123',
+                           'new_password2': 'Pietje123'})
+
+    def test_checks4(self):
+        # Fail on unavailable language
+        key = self.portal.sso_key
+        expiration = datetime.datetime.utcnow() + datetime.timedelta(
+            days=1)
+        payload = {'aud': key,
+                   'exp': expiration,
+                   'user_id': self.user.id}
+        signed_message = jwt.encode(payload,
+                                    self.portal.sso_secret,
+                                    algorithm='HS256')
+        activation_url = reverse(
+            'lizard_auth_server.api_v2.activate-and-set-password',
+            kwargs={'user_id': self.user.id,
+                    'sso_key': key,
+                    'language': 'tlh',
+                    'message': signed_message})
+        client = Client()
+        self.assertRaises(ValidationError,
+                          client.post,
+                          activation_url,
+                          {'new_password1': 'Pietje123',
+                           'new_password2': 'Pietje123'})
 
 
 class TestActivatedGoToPortalView(TestCase):

@@ -120,6 +120,7 @@ urlpatterns = patterns(
     url(r'^api2/activate/' +
         '(?P<user_id>[^/]+)/' +
         '(?P<sso_key>[^/]+)/' +
+        '(?P<language>[^/]+)/' +
         '(?P<message>[^/]+)$',
         views_api_v2.ActivateAndSetPasswordView.as_view(),
         name='lizard_auth_server.api_v2.activate-and-set-password'),

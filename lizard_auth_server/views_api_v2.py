@@ -657,6 +657,13 @@ class ActivatedGoToPortalView(TemplateView):
         portal_pk = self.kwargs['portal_pk']
         return Portal.objects.get(pk=portal_pk)
 
+    @cached_property
+    def visit_url(self):
+        from_get = self.request.GET.get('visit_url')
+        if from_get:
+            return from_get
+        return self.portal.visit_url
+
 
 class OrganisationsView(FormInvalidMixin, ProcessGetFormView):
     """API endpoint that simply lists the organisations and their UIDs.

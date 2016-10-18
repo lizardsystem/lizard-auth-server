@@ -559,6 +559,13 @@ class TestActivatedGoToPortalView(TestCase):
         response = client.get('/api2/activated/%s/' % self.portal.id)
         self.assertEquals(200, response.status_code)
 
+    def test_visit_url(self):
+        client = Client()
+        url = '/api2/activated/%s/?visit_url=%s'
+        response = client.get(url % (self.portal.id,
+                                     'http%3A%2F%2Freinout.vanrees.org%2F'))
+        self.assertIn('http://reinout.vanrees.org/', str(response.content))
+
 
 class TestOrganisationsView(TestCase):
 

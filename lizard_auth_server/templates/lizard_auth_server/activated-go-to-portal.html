@@ -8,9 +8,9 @@
     <h3>{% trans 'Activation complete' %}</h3>
     <p>{% trans "Your account has been activated." %}</p>
     <p>{% trans "You can go to the site that requested your account now:" %}</p>
-    <p><a href="{{ view.portal.visit_url }}">
+    <p><a href="{{ view.visit_url }}">
         {{ view.portal.name }}
-        ({{ view.portal.visit_url }})
+        ({{ view.visit_url }})
     </a></p>
 
   </div>

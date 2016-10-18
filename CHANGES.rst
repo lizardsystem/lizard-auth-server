@@ -16,6 +16,9 @@ Changelog of lizard-auth-server
   on the "ready to go to the portal" page instead of the portal's default
   ``visit_url`` when available. Fixes #61.
 
+- Username field on the login form now has autofocus. Fixes #11. See
+  http://stackoverflow.com/a/31032262/27401 .
+
 
 2.9 (2016-10-06)
 ----------------

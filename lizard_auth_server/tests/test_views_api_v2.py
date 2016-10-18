@@ -68,6 +68,15 @@ class TestCheckCredentialsView(TestCase):
                              'password': 'ikkanniettypen'}
         self.assertRaises(PermissionDenied, self.view.form_valid, form)
 
+    def test_inactive_user(self):
+        self.user.active = False
+        self.user.save()
+        form = mock.Mock()
+        form.cleaned_data = {'iss': self.sso_key,
+                             'username': self.username,
+                             'password': self.password}
+        self.assertRaises(PermissionDenied, self.view.form_valid, form)
+
     def test_missing_username(self):
         form = mock.Mock()
         form.cleaned_data = {'iss': self.sso_key,

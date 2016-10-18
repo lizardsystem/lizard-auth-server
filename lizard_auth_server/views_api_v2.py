@@ -633,9 +633,12 @@ class ActivateAndSetPasswordView(FormView):
         translation.activate(self.language)
         self.request.session[translation.LANGUAGE_SESSION_KEY] = self.language
 
-        return HttpResponseRedirect(
-            reverse('lizard_auth_server.api_v2.activated-go-to-portal',
-                    kwargs={'portal_pk': self.portal.id}))
+        visit_url = signed_data.get('visit_url')
+        url = reverse('lizard_auth_server.api_v2.activated-go-to-portal',
+                      kwargs={'portal_pk': self.portal.id})
+        if visit_url:
+            url += '?%s' % urlencode({'visit_url': visit_url})
+        return HttpResponseRedirect(url)
 
 
 class ActivatedGoToPortalView(TemplateView):

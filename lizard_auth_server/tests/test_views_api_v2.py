@@ -423,7 +423,7 @@ class TestActivateAndSetPasswordView(TestCase):
                                 'new_password2': 'Pietje123'})
         self.assertEquals(302, response.status_code)
 
-    def test_user_activated(self):
+    def test_user_is_activated(self):
         client = Client()
         client.post(self.activation_url,
                     {'new_password1': 'Pietje123',
@@ -431,6 +431,30 @@ class TestActivateAndSetPasswordView(TestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.is_active)
         self.assertTrue(self.user.has_usable_password())
+
+    def test_visit_url(self):
+        key = self.portal.sso_key
+        expiration = datetime.datetime.utcnow() + datetime.timedelta(
+            days=1)
+        payload = {'aud': key,
+                   'exp': expiration,
+                   'user_id': self.user.id,
+                   'visit_url': 'http://reinout.vanrees.org/'}
+        signed_message = jwt.encode(payload,
+                                    self.portal.sso_secret,
+                                    algorithm='HS256')
+        activation_url = reverse(
+            'lizard_auth_server.api_v2.activate-and-set-password',
+            kwargs={'user_id': self.user.id,
+                    'sso_key': key,
+                    'language': 'en',
+                    'message': signed_message})
+        client = Client()
+        response = client.post(activation_url,
+                               {'new_password1': 'Pietje123',
+                                'new_password2': 'Pietje123'})
+        self.assertEquals(302, response.status_code)
+        self.assertIn('reinout.vanrees.org', response.url)
 
     def test_checks1(self):
         # Fail on expired JTW token

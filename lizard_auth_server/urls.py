@@ -132,7 +132,8 @@ urlpatterns = patterns(
     # Note: ensure LOGIN_URL isn't defined in the settings
     url(r'^accounts/login/$',
         'django.contrib.auth.views.login',
-        {'template_name': 'lizard_auth_server/login.html'},
+        {'template_name': 'lizard_auth_server/login.html',
+         'authentication_form': forms.LoginForm},
         name='login'),
     url(r'^accounts/logout/$',
         'django.contrib.auth.views.logout',

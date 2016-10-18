@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from django import forms
 from django.conf import settings
 from django.contrib.auth import forms as authforms
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -19,6 +20,13 @@ from lizard_auth_server.models import THREEDI_PORTAL
 from lizard_auth_server.models import UserProfile
 
 MIN_LENGTH = 8
+
+
+class LoginForm(AuthenticationForm):
+
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'autofocus': ''})
 
 
 class DecryptForm(forms.Form):

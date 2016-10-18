@@ -9,6 +9,9 @@ Changelog of lizard-auth-server
 
 - Updated translations.
 
+- The ``/api2/check_credentials/`` check now also verifies if a user is
+  active. Fixes #62.
+
 
 2.9 (2016-10-06)
 ----------------

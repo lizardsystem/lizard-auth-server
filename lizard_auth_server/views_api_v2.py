@@ -649,6 +649,9 @@ class ActivatedGoToPortalView(TemplateView):
     simply show a 'success!' message and a link to the portal that requested
     the user originally.
 
+    If ``visit_url`` is passed as a GET parameter, it will be shown instead of
+    the portal's default ``visit_url``.
+
     """
     template_name = 'lizard_auth_server/activated-go-to-portal.html'
 

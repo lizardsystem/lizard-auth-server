@@ -12,6 +12,10 @@ Changelog of lizard-auth-server
 - The ``/api2/check_credentials/`` check now also verifies if a user is
   active. Fixes #62.
 
+- A ``visit_url`` can now be passed when creating a new user. It will be shown
+  on the "ready to go to the portal" page instead of the portal's default
+  ``visit_url`` when available. Fixes #61.
+
 
 2.9 (2016-10-06)
 ----------------

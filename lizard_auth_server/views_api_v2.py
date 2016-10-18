@@ -165,15 +165,14 @@ class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
         # Verify the username/password
         user = django_authenticate(username=form.cleaned_data.get('username'),
                                    password=form.cleaned_data.get('password'))
-        if not user.is_active:
-            raise PermissionDenied("User is inactive")
         if not user:
             logger.info(
                 "Credentials for %s don't match (requested by portal %s)",
                 form.cleaned_data.get('username'),
                 portal)
             raise PermissionDenied("Login failed")
-
+        if not user.is_active:
+            raise PermissionDenied("User is inactive")
         logger.info(
             "Credentials for user %s checked succesfully for portal %s",
             user, portal)

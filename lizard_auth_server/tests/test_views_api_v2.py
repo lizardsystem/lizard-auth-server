@@ -271,12 +271,12 @@ class TestLogoutViewV2(TestCase):
 class TestNewUserView(TestCase):
     def setUp(self):
         self.view = views_api_v2.NewUserView()
-        sso_key = 'sso key'
-        factories.PortalF.create(sso_key=sso_key)
+        self.sso_key = 'sso key'
+        factories.PortalF.create(sso_key=self.sso_key)
         self.request_factory = RequestFactory()
         self.some_request = self.request_factory.get(
             'http://some.site/some/url/')
-        self.user_data = {'iss': sso_key,
+        self.user_data = {'iss': self.sso_key,
                           'username': 'pietje',
                           'email': 'pietje@klaasje.test.com',
                           'first_name': 'pietje',
@@ -349,6 +349,25 @@ class TestNewUserView(TestCase):
         response = client.post(
             reverse('lizard_auth_server.api_v2.new_user'), params)
         self.assertEquals(400, response.status_code)
+
+    def test_optional_visit_url(self):
+        user_data = {'iss': self.sso_key,
+                     'username': 'pietje',
+                     'email': 'pietje@klaasje.test.com',
+                     'first_name': 'pietje',
+                     'last_name': 'klaasje',
+                     'visit_url': 'http://reinout.vanrees.org/'}
+        form = mock.Mock()
+        form.cleaned_data = user_data
+        self.view.request = self.some_request
+
+        with mock.patch('jwt.encode') as mocked:
+            mocked.return_value = 'something'
+            self.view.form_valid(form)
+            args, kwargs = mocked.call_args
+            payload = args[0]
+            self.assertEquals('http://reinout.vanrees.org/',
+                              payload['visit_url'])
 
     def test_missing_mandatory_field(self):
         form = mock.Mock()

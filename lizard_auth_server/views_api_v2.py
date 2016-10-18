@@ -418,7 +418,10 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 message. (In addition to ``iss``, see the form
                 documentation). You can also pass a language code in
                 ``language``, this is used for translating the invitation
-                email (default is ``en``).
+                email (default is ``en``). The optional ``visit_url`` will be
+                used as the url presented to the user later on after they set
+                their password (the default is the ``visit_url`` of the
+                portal).
 
         Returns:
             A dict with key ``user`` with user data like first name, last
@@ -455,6 +458,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
         if not user:
             language = form.cleaned_data.get('language', 'en')
+            visit_url = form.cleaned_data.get('visit_url')
             if language not in AVAILABLE_LANGUAGES:
                 raise ValidationError("Language %s is not in %s" % (
                     language,
@@ -465,7 +469,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 last_name=form.cleaned_data['last_name'],
                 email=form.cleaned_data['email'],
                 portal=portal,
-                language=language)
+                language=language,
+                visit_url=visit_url)
             status_code = 201  # Created
 
         user_data = construct_user_data(user=user)
@@ -474,7 +479,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                             status=status_code)
 
     def create_and_mail_user(self, username, first_name, last_name, email,
-                             portal, language):
+                             portal, language, visit_url):
         """Return freshly created user (the user gets an activation email)
 
 
@@ -486,6 +491,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 account.
             language: language code to use for translating the invitation
                 email.
+            visit_url: optional url to show to the user after logging in.
 
         Returns:
             The created user object. The user has no password set and is
@@ -516,6 +522,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             payload = {'aud': key,
                        'exp': expiration,
                        'user_id': user.id}
+            if visit_url:
+                payload['visit_url'] = visit_url
             signed_message = jwt.encode(payload,
                                         portal.sso_secret,
                                         algorithm=JWT_ALGORITHM)

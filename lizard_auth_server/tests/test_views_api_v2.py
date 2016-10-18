@@ -69,7 +69,7 @@ class TestCheckCredentialsView(TestCase):
         self.assertRaises(PermissionDenied, self.view.form_valid, form)
 
     def test_inactive_user(self):
-        self.user.active = False
+        self.user.is_active = False
         self.user.save()
         form = mock.Mock()
         form.cleaned_data = {'iss': self.sso_key,

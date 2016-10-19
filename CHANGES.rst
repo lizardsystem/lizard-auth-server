@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.12 (unreleased)
+2.12 (2016-10-19)
 -----------------
 
 - Only showing the ``visit_url`` in the "you have activated your account"

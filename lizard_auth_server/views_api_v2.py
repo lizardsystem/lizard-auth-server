@@ -536,7 +536,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
             translation.activate(language)
             subject = _("Account invitation for %s") % portal.name
-            context = {'portal_url': portal.visit_url,
+            context = {'portal_url': visit_url or portal.visit_url,
                        'activation_url': activation_url,
                        'name': ' '.join([first_name, last_name]),
                        'sso_hostname': self.request.get_host()}

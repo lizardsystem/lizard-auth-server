@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.11 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Bugfix: the optional ``visit_url`` is now also used in the email that is
+  send out to the new user.
 
 
 2.10 (2016-10-19)

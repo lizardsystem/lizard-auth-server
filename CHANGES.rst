@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.12 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Only showing the ``visit_url`` in the "you have activated your account"
+  template instead of also the (mostly internally used) portal name.
 
 
 2.11 (2016-10-19)

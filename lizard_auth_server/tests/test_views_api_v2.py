@@ -369,6 +369,24 @@ class TestNewUserView(TestCase):
             self.assertEquals('http://reinout.vanrees.org/',
                               payload['visit_url'])
 
+    def test_optional_visit_url_in_email(self):
+        user_data = {'iss': self.sso_key,
+                     'username': 'pietje',
+                     'email': 'pietje@klaasje.test.com',
+                     'first_name': 'pietje',
+                     'last_name': 'klaasje',
+                     'visit_url': 'http://reinout.vanrees.org/'}
+        form = mock.Mock()
+        form.cleaned_data = user_data
+        self.view.request = self.some_request
+        with mock.patch(
+                'lizard_auth_server.views_api_v2.send_mail') as mocked:
+            self.view.form_valid(form)
+            arguments = mocked.call_args[0]
+            print(arguments)
+            message = arguments[1]
+            self.assertIn('http://reinout.vanrees.org/', message)
+
     def test_missing_mandatory_field(self):
         form = mock.Mock()
         form.cleaned_data = copy.deepcopy(self.user_data)

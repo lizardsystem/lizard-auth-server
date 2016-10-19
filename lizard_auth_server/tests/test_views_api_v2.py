@@ -68,6 +68,15 @@ class TestCheckCredentialsView(TestCase):
                              'password': 'ikkanniettypen'}
         self.assertRaises(PermissionDenied, self.view.form_valid, form)
 
+    def test_inactive_user(self):
+        self.user.is_active = False
+        self.user.save()
+        form = mock.Mock()
+        form.cleaned_data = {'iss': self.sso_key,
+                             'username': self.username,
+                             'password': self.password}
+        self.assertRaises(PermissionDenied, self.view.form_valid, form)
+
     def test_missing_username(self):
         form = mock.Mock()
         form.cleaned_data = {'iss': self.sso_key,
@@ -262,12 +271,12 @@ class TestLogoutViewV2(TestCase):
 class TestNewUserView(TestCase):
     def setUp(self):
         self.view = views_api_v2.NewUserView()
-        sso_key = 'sso key'
-        factories.PortalF.create(sso_key=sso_key)
+        self.sso_key = 'sso key'
+        factories.PortalF.create(sso_key=self.sso_key)
         self.request_factory = RequestFactory()
         self.some_request = self.request_factory.get(
             'http://some.site/some/url/')
-        self.user_data = {'iss': sso_key,
+        self.user_data = {'iss': self.sso_key,
                           'username': 'pietje',
                           'email': 'pietje@klaasje.test.com',
                           'first_name': 'pietje',
@@ -341,6 +350,25 @@ class TestNewUserView(TestCase):
             reverse('lizard_auth_server.api_v2.new_user'), params)
         self.assertEquals(400, response.status_code)
 
+    def test_optional_visit_url(self):
+        user_data = {'iss': self.sso_key,
+                     'username': 'pietje',
+                     'email': 'pietje@klaasje.test.com',
+                     'first_name': 'pietje',
+                     'last_name': 'klaasje',
+                     'visit_url': 'http://reinout.vanrees.org/'}
+        form = mock.Mock()
+        form.cleaned_data = user_data
+        self.view.request = self.some_request
+
+        with mock.patch('jwt.encode') as mocked:
+            mocked.return_value = 'something'
+            self.view.form_valid(form)
+            args, kwargs = mocked.call_args
+            payload = args[0]
+            self.assertEquals('http://reinout.vanrees.org/',
+                              payload['visit_url'])
+
     def test_missing_mandatory_field(self):
         form = mock.Mock()
         form.cleaned_data = copy.deepcopy(self.user_data)
@@ -395,7 +423,7 @@ class TestActivateAndSetPasswordView(TestCase):
                                 'new_password2': 'Pietje123'})
         self.assertEquals(302, response.status_code)
 
-    def test_user_activated(self):
+    def test_user_is_activated(self):
         client = Client()
         client.post(self.activation_url,
                     {'new_password1': 'Pietje123',
@@ -403,6 +431,30 @@ class TestActivateAndSetPasswordView(TestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.is_active)
         self.assertTrue(self.user.has_usable_password())
+
+    def test_visit_url(self):
+        key = self.portal.sso_key
+        expiration = datetime.datetime.utcnow() + datetime.timedelta(
+            days=1)
+        payload = {'aud': key,
+                   'exp': expiration,
+                   'user_id': self.user.id,
+                   'visit_url': 'http://reinout.vanrees.org/'}
+        signed_message = jwt.encode(payload,
+                                    self.portal.sso_secret,
+                                    algorithm='HS256')
+        activation_url = reverse(
+            'lizard_auth_server.api_v2.activate-and-set-password',
+            kwargs={'user_id': self.user.id,
+                    'sso_key': key,
+                    'language': 'en',
+                    'message': signed_message})
+        client = Client()
+        response = client.post(activation_url,
+                               {'new_password1': 'Pietje123',
+                                'new_password2': 'Pietje123'})
+        self.assertEquals(302, response.status_code)
+        self.assertIn('reinout.vanrees.org', response.url)
 
     def test_checks1(self):
         # Fail on expired JTW token
@@ -506,6 +558,13 @@ class TestActivatedGoToPortalView(TestCase):
         client = Client()
         response = client.get('/api2/activated/%s/' % self.portal.id)
         self.assertEquals(200, response.status_code)
+
+    def test_visit_url(self):
+        client = Client()
+        url = '/api2/activated/%s/?visit_url=%s'
+        response = client.get(url % (self.portal.id,
+                                     'http%3A%2F%2Freinout.vanrees.org%2F'))
+        self.assertIn('http://reinout.vanrees.org/', str(response.content))
 
 
 class TestOrganisationsView(TestCase):

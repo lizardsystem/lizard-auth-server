@@ -171,7 +171,8 @@ class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
                 form.cleaned_data.get('username'),
                 portal)
             raise PermissionDenied("Login failed")
-
+        if not user.is_active:
+            raise PermissionDenied("User is inactive")
         logger.info(
             "Credentials for user %s checked succesfully for portal %s",
             user, portal)
@@ -417,7 +418,10 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 message. (In addition to ``iss``, see the form
                 documentation). You can also pass a language code in
                 ``language``, this is used for translating the invitation
-                email (default is ``en``).
+                email (default is ``en``). The optional ``visit_url`` will be
+                used as the url presented to the user later on after they set
+                their password (the default is the ``visit_url`` of the
+                portal).
 
         Returns:
             A dict with key ``user`` with user data like first name, last
@@ -454,6 +458,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
         if not user:
             language = form.cleaned_data.get('language', 'en')
+            visit_url = form.cleaned_data.get('visit_url')
             if language not in AVAILABLE_LANGUAGES:
                 raise ValidationError("Language %s is not in %s" % (
                     language,
@@ -464,7 +469,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 last_name=form.cleaned_data['last_name'],
                 email=form.cleaned_data['email'],
                 portal=portal,
-                language=language)
+                language=language,
+                visit_url=visit_url)
             status_code = 201  # Created
 
         user_data = construct_user_data(user=user)
@@ -473,7 +479,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                             status=status_code)
 
     def create_and_mail_user(self, username, first_name, last_name, email,
-                             portal, language):
+                             portal, language, visit_url):
         """Return freshly created user (the user gets an activation email)
 
 
@@ -485,6 +491,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                 account.
             language: language code to use for translating the invitation
                 email.
+            visit_url: optional url to show to the user after logging in.
 
         Returns:
             The created user object. The user has no password set and is
@@ -515,6 +522,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             payload = {'aud': key,
                        'exp': expiration,
                        'user_id': user.id}
+            if visit_url:
+                payload['visit_url'] = visit_url
             signed_message = jwt.encode(payload,
                                         portal.sso_secret,
                                         algorithm=JWT_ALGORITHM)
@@ -624,9 +633,12 @@ class ActivateAndSetPasswordView(FormView):
         translation.activate(self.language)
         self.request.session[translation.LANGUAGE_SESSION_KEY] = self.language
 
-        return HttpResponseRedirect(
-            reverse('lizard_auth_server.api_v2.activated-go-to-portal',
-                    kwargs={'portal_pk': self.portal.id}))
+        visit_url = signed_data.get('visit_url')
+        url = reverse('lizard_auth_server.api_v2.activated-go-to-portal',
+                      kwargs={'portal_pk': self.portal.id})
+        if visit_url:
+            url += '?%s' % urlencode({'visit_url': visit_url})
+        return HttpResponseRedirect(url)
 
 
 class ActivatedGoToPortalView(TemplateView):
@@ -637,6 +649,9 @@ class ActivatedGoToPortalView(TemplateView):
     simply show a 'success!' message and a link to the portal that requested
     the user originally.
 
+    If ``visit_url`` is passed as a GET parameter, it will be shown instead of
+    the portal's default ``visit_url``.
+
     """
     template_name = 'lizard_auth_server/activated-go-to-portal.html'
 
@@ -644,6 +659,13 @@ class ActivatedGoToPortalView(TemplateView):
     def portal(self):
         portal_pk = self.kwargs['portal_pk']
         return Portal.objects.get(pk=portal_pk)
+
+    @cached_property
+    def visit_url(self):
+        from_get = self.request.GET.get('visit_url')
+        if from_get:
+            return from_get
+        return self.portal.visit_url
 
 
 class OrganisationsView(FormInvalidMixin, ProcessGetFormView):

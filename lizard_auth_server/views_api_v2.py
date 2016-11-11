@@ -715,12 +715,17 @@ class FindUserView(FormInvalidMixin, FormMixin, ProcessFormView):
     GET is allowed as it doesn't alter the database.
 
     """
+    http_method_names = ['get', 'post']
     form_class = forms.JWTDecryptForm
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(FindUserView, self).dispatch(
             request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        # Just handle the form as usual.
+        return self.post(request, *args, **kwargs)
 
     def form_valid(self, form):
         """Return user data of an existing user, if found

@@ -626,3 +626,44 @@ class TestOrganisationsView(TestCase):
         response = self.client.get('/api2/organisations/',
                                    self.jwt_params)
         self.assertIn('Neuwitz', str(response.content))
+
+
+class TestFindUserView(TestCase):
+
+    def setUp(self):
+        self.view = views_api_v2.FindUserView()
+        self.sso_key = 'sso key'
+        factories.PortalF.create(sso_key=self.sso_key)
+        self.request_factory = RequestFactory()
+        self.some_request = self.request_factory.get(
+            'http://some.site/some/url/')
+        self.user_data = {'iss': self.sso_key,
+                          'email': 'pietje@klaasje.test.com'}
+
+    def test_exiting_user(self):
+        factories.UserF(email='pietje@klaasje.test.com')
+        form = mock.Mock()
+        form.cleaned_data = self.user_data
+        result = self.view.form_valid(form)
+        self.assertEquals(200, result.status_code)
+
+    def test_exiting_user_different_case(self):
+        factories.UserF(email='Pietje@Klaasje.Test.Com')
+        form = mock.Mock()
+        form.cleaned_data = self.user_data
+        result = self.view.form_valid(form)
+        self.assertEquals(200, result.status_code)
+
+    def test_nonexiting_user(self):
+        form = mock.Mock()
+        form.cleaned_data = self.user_data
+        result = self.view.form_valid(form)
+        self.assertEquals(404, result.status_code)
+
+    def test_get_allowed(self):
+        client = Client()
+        result = client.get(
+            reverse('lizard_auth_server.api_v2.find_user'))
+        # Status code should be 400 because of an invalid form. It should not
+        # be 405 because of a wrong method.
+        self.assertEquals(400, result.status_code)

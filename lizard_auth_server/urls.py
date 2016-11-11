@@ -107,6 +107,9 @@ urlpatterns = patterns(
     url(r'^api2/new_user/$',
         views_api_v2.NewUserView.as_view(),
         name='lizard_auth_server.api_v2.new_user'),
+    url(r'^api2/find_user/$',
+        views_api_v2.FindUserView.as_view(),
+        name='lizard_auth_server.api_v2.find_user'),
     # Views for visitors
     url(r'^api2/login/$',
         views_api_v2.LoginView.as_view(),

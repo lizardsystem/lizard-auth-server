@@ -8,6 +8,11 @@ Changelog of lizard-auth-server
 - Bugfix: email lookup, when looking for users in the V2 API, is now
   case-insensitive.
 
+- Added ``/api2/find_user/`` in addition to ``/api2/new_user/``. This new view
+  only needs an email address and then looks up a matching user. So you don't
+  need to pass first/last/username. It will only look, though, it won't
+  create.
+
 
 2.12 (2016-10-19)
 -----------------

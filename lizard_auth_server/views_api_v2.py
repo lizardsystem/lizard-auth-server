@@ -444,7 +444,8 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
                     "Key '%s' is missing from the JWT message" % key)
 
         # Try to find the user first. You can have multiple matches.
-        matching_users = User.objects.filter(email=form.cleaned_data['email'])
+        matching_users = User.objects.filter(
+            email__iexact=form.cleaned_data['email'])
         user = None
         status_code = 200
         if matching_users:

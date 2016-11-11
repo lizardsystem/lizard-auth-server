@@ -38,6 +38,18 @@ The call returns the same dict as the api method above.
 See :class:`lizard_auth_server.views_api_v2.NewUserView`
 
 
+``/api2/find_user/``
+------------------------------
+
+Use it to find a user on the SSO based on email. It returns the first one
+found. If not found, a 404 is returned.
+
+The call returns the same dict as the api method above. Note: this view
+doesn't change the database, so you can call it with a ``GET``.
+
+See :class:`lizard_auth_server.views_api_v2.FindUserView`
+
+
 ``/api2/organisations/``
 ------------------------
 

@@ -12,3 +12,6 @@ API reference
 
 .. autoclass:: lizard_auth_server.views_api_v2.NewUserView
    :members:
+
+.. autoclass:: lizard_auth_server.views_api_v2.FindUserView
+   :members:

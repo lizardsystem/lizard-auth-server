@@ -707,7 +707,7 @@ class OrganisationsView(FormInvalidMixin, ProcessGetFormView):
                             content_type='application/json')
 
 
-class FindUserView(FormInvalidMixin, FormMixin, ProcessFormView):
+class FindUserView(FormInvalidMixin, ProcessGetFormView):
     """View to return an existing user based on email address
 
     The email adress is passed in a JWT signed form.
@@ -717,15 +717,6 @@ class FindUserView(FormInvalidMixin, FormMixin, ProcessFormView):
     """
     http_method_names = ['get', 'post']
     form_class = forms.JWTDecryptForm
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(FindUserView, self).dispatch(
-            request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        # Just handle the form as usual.
-        return self.post(request, *args, **kwargs)
 
     def form_valid(self, form):
         """Return user data of an existing user, if found

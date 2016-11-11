@@ -667,11 +667,3 @@ class TestFindUserView(TestCase):
         # Status code should be 400 because of an invalid form. It should not
         # be 405 because of a wrong method.
         self.assertEquals(400, result.status_code)
-
-    def test_post_allowed(self):
-        client = Client()
-        result = client.post(
-            reverse('lizard_auth_server.api_v2.find_user'))
-        # Status code should be 400 because of an invalid form. It should not
-        # be 405 because of a wrong method.
-        self.assertEquals(400, result.status_code)

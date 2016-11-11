@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.13 (unreleased)
+2.13 (2016-11-11)
 -----------------
 
 - Bugfix: email lookup, when looking for users in the V2 API, is now

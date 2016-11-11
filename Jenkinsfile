@@ -9,6 +9,7 @@ node {
 
    stage "Test"
    sh "docker-compose run web bin/test"
+   sh "docker-compose down"
    step $class: 'JUnitResultArchiver', testResults: 'nosetests.xml'
    publishHTML target: [reportDir: 'htmlcov', reportFiles: 'index.html', reportName: 'Coverage report']
 }

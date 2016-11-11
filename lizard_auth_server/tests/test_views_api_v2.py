@@ -640,12 +640,6 @@ class TestFindUserView(TestCase):
         self.user_data = {'iss': self.sso_key,
                           'email': 'pietje@klaasje.test.com'}
 
-    def test_disallowed_get(self):
-        client = Client()
-        result = client.get(
-            reverse('lizard_auth_server.api_v2.find_user'))
-        self.assertEquals(405, result.status_code)
-
     def test_exiting_user(self):
         factories.UserF(email='pietje@klaasje.test.com')
         form = mock.Mock()
@@ -665,3 +659,19 @@ class TestFindUserView(TestCase):
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
         self.assertEquals(404, result.status_code)
+
+    def test_get_allowed(self):
+        client = Client()
+        result = client.get(
+            reverse('lizard_auth_server.api_v2.find_user'))
+        # Status code should be 400 because of an invalid form. It should not
+        # be 405 because of a wrong method.
+        self.assertEquals(400, result.status_code)
+
+    def test_post_allowed(self):
+        client = Client()
+        result = client.post(
+            reverse('lizard_auth_server.api_v2.find_user'))
+        # Status code should be 400 because of an invalid form. It should not
+        # be 405 because of a wrong method.
+        self.assertEquals(400, result.status_code)

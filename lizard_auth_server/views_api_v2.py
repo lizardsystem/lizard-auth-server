@@ -17,6 +17,7 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 from django.forms import ValidationError
 from django.http import HttpResponse
+from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -84,6 +85,8 @@ class StartView(View):
 
         - ``new-user``: :class:`lizard_auth_server.views_api_v2.NewUserView`
 
+        - ``find-user``: :class:`lizard_auth_server.views_api_v2.FindUserView`
+
         In addition, the list of supported language codes is returned:
 
         - ``available-languages``: language codes we support so that you can
@@ -101,6 +104,7 @@ class StartView(View):
             'login': abs_reverse('lizard_auth_server.api_v2.login'),
             'logout': abs_reverse('lizard_auth_server.api_v2.logout'),
             'new-user': abs_reverse('lizard_auth_server.api_v2.new_user'),
+            'find-user': abs_reverse('lizard_auth_server.api_v2.find_user'),
             'organisations': abs_reverse(
                 'lizard_auth_server.api_v2.organisations'),
             'available-languages': AVAILABLE_LANGUAGES,
@@ -700,4 +704,66 @@ class OrganisationsView(FormInvalidMixin, ProcessGetFormView):
         result = {organisation.unique_id: organisation.name
                   for organisation in Organisation.objects.all()}
         return HttpResponse(json.dumps(result),
+                            content_type='application/json')
+
+
+class FindUserView(FormInvalidMixin, FormMixin, ProcessFormView):
+    """View to return an existing user based on email address
+
+    The email adress is passed in a JWT signed form.
+
+    GET is allowed as it doesn't alter the database.
+
+    """
+    form_class = forms.JWTDecryptForm
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(FindUserView, self).dispatch(
+            request, *args, **kwargs)
+
+    def form_valid(self, form):
+        """Return user data of an existing user, if found
+
+        The JWT message's content is now the form's cleaned data. So we start
+        out by extracting the contents. Then we find the user and return it.
+
+        Args:
+            form: A :class:`lizard_auth_server.forms.JWTDecryptForm`
+                instance. It will have the JWT message contents in the
+                ``cleaned_data`` attribute. ``email`` is the sole mandatory
+                keys in the message. (In addition to ``iss``, see the form
+                documentation).
+
+        Returns:
+            A dict with key ``user`` with user data like first name, last
+            name. Or a "404 not found" when there's no user with this email
+            address.
+
+        Raises:
+            ValidationError: when mandatory keys are missing from the decoded
+                JWT message.
+
+        """
+        # The JWT message is validated; now check the message's contents.
+        if 'email' not in form.cleaned_data:
+            raise ValidationError("Key 'email' is missing from the JWT message")
+
+        # Try to find the user first. You can have multiple matches.
+        email = form.cleaned_data['email']
+        matching_users = User.objects.filter(email__iexact=email)
+        if not matching_users:
+            return HttpResponseNotFound("User %s not found" % email)
+
+        if len(matching_users) > 1:
+            logger.debug(
+                "More than one user found for '%s', returning the first",
+                email)
+        user = matching_users[0]
+        portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
+        logger.info("Found existing user %s, returning that one to %s",
+                    user, portal)
+
+        user_data = construct_user_data(user=user)
+        return HttpResponse(json.dumps({'user': user_data}),
                             content_type='application/json')

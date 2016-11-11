@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.13 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Bugfix: email lookup, when looking for users in the V2 API, is now
+  case-insensitive.
 
 
 2.12 (2016-10-19)

@@ -5,7 +5,9 @@ Changelog of lizard-auth-server
 2.14 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fixed blunder in the example settings you should paste from the admin into
+  your site: ``SSO_USE_V2_LOGIN`` was shown as ``SSO_USE_V2_login`` (note the
+  lowercase "login").... Reinout says sorry.
 
 
 2.13 (2016-11-11)

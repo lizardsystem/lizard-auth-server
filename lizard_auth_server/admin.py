@@ -244,7 +244,7 @@ class PortalAdmin(admin.ModelAdmin):
     def v2_config(self, obj):
         config_lines = [
             "SSO_ENABLED = True",
-            "SSO_USE_V2_login = True",
+            "SSO_USE_V2_LOGIN = True",
             "SSO_SERVER_API_START_URL = '{}'".format(
                 tls_request.build_absolute_uri(
                     reverse('lizard_auth_server.api_v2.start'))),

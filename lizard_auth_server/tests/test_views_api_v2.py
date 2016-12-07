@@ -81,7 +81,8 @@ class TestCheckCredentialsView(TestCase):
         form = mock.Mock()
         form.cleaned_data = {'iss': self.sso_key,
                              'password': 'ikkanniettypen'}
-        self.assertRaises(ValidationError, self.view.form_valid, form)
+        response = self.view.form_valid(form)
+        self.assertEqual(400, response.status_code)
 
 
 class TestLoginView(TestCase):
@@ -193,10 +194,8 @@ class TestLoginView(TestCase):
             'key': self.sso_key,
             'message': faulty_message,
             }
-        self.assertRaises(ValidationError,
-                          self.client.get,
-                          '/api2/login/',
-                          jwt_params)
+        response = self.client.get('/api2/login/', jwt_params)
+        self.assertEqual(response.status_code, 400)
 
 
 class TestLogoutViewV2(TestCase):
@@ -238,10 +237,8 @@ class TestLogoutViewV2(TestCase):
             'key': self.sso_key,
             'message': faulty_message
         }
-        self.assertRaises(ValidationError,
-                          self.client.get,
-                          '/api2/logout/',
-                          params)
+        response = self.client.get('/api2/logout/', params)
+        self.assertEqual(response.status_code, 400)
 
     def test_logout_phase_one(self):
         params = {
@@ -342,9 +339,8 @@ class TestNewUserView(TestCase):
                         email='nietpietje@example.com')
         form = mock.Mock()
         form.cleaned_data = self.user_data
-        self.assertRaises(ValidationError,
-                          self.view.form_valid,
-                          form)
+        response = self.view.form_valid(form)
+        self.assertEqual(500, response.status_code)
 
     def test_duplicate_username_http_response(self):
         client = Client()
@@ -398,17 +394,15 @@ class TestNewUserView(TestCase):
         form = mock.Mock()
         form.cleaned_data = copy.deepcopy(self.user_data)
         del form.cleaned_data['first_name']
-        self.assertRaises(ValidationError,
-                          self.view.form_valid,
-                          form)
+        response = self.view.form_valid(form)
+        self.assertEqual(400, response.status_code)
 
     def test_failure_on_unavailable_language(self):
         form = mock.Mock()
         form.cleaned_data = copy.deepcopy(self.user_data)
         form.cleaned_data['language'] = 'tlh'
-        self.assertRaises(ValidationError,
-                          self.view.form_valid,
-                          form)
+        response = self.view.form_valid(form)
+        self.assertEqual(400, response.status_code)
 
 
 class TestActivateAndSetPasswordView(TestCase):
@@ -499,11 +493,10 @@ class TestActivateAndSetPasswordView(TestCase):
                     'language': 'en',
                     'message': signed_message})
         client = Client()
-        self.assertRaises(ValidationError,
-                          client.post,
-                          activation_url,
-                          {'new_password1': 'Pietje123',
-                           'new_password2': 'Pietje123'})
+        response = client.post(activation_url,
+                               {'new_password1': 'Pietje123',
+                                'new_password2': 'Pietje123'})
+        self.assertEqual(400, response.status_code)
 
     def test_checks2(self):
         # Fail on missing 'aud' and 'exp' JWT fields.
@@ -519,11 +512,10 @@ class TestActivateAndSetPasswordView(TestCase):
                     'language': 'en',
                     'message': signed_message})
         client = Client()
-        self.assertRaises(ValidationError,
-                          client.post,
-                          activation_url,
-                          {'new_password1': 'Pietje123',
-                           'new_password2': 'Pietje123'})
+        response = client.post(activation_url,
+                               {'new_password1': 'Pietje123',
+                                'new_password2': 'Pietje123'})
+        self.assertEqual(400, response.status_code)
 
     def test_checks3(self):
         # Fail on non-matching user id
@@ -543,11 +535,10 @@ class TestActivateAndSetPasswordView(TestCase):
                     'language': 'en',
                     'message': signed_message})
         client = Client()
-        self.assertRaises(ValidationError,
-                          client.post,
-                          activation_url,
-                          {'new_password1': 'Pietje123',
-                           'new_password2': 'Pietje123'})
+        response = client.post(activation_url,
+                               {'new_password1': 'Pietje123',
+                                'new_password2': 'Pietje123'})
+        self.assertEqual(400, response.status_code)
 
     def test_checks4(self):
         # Fail on unavailable language
@@ -567,11 +558,10 @@ class TestActivateAndSetPasswordView(TestCase):
                     'language': 'tlh',
                     'message': signed_message})
         client = Client()
-        self.assertRaises(ValidationError,
-                          client.post,
-                          activation_url,
-                          {'new_password1': 'Pietje123',
-                           'new_password2': 'Pietje123'})
+        response = client.post(activation_url,
+                               {'new_password1': 'Pietje123',
+                                'new_password2': 'Pietje123'})
+        self.assertEqual(400, response.status_code)
 
 
 class TestActivatedGoToPortalView(TestCase):

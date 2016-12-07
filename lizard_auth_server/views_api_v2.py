@@ -430,10 +430,10 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
         Returns:
             A dict with key ``user`` with user data like first name, last
-                name.
+            name.
 
             An error 400 when mandatory keys are missing from the decoded
-                JWT message or when the language is unknown.
+            JWT message or when the language is unknown.
 
             An error 500 when a duplicate username is found.
 
@@ -507,9 +507,9 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             inactive.
 
         Raises:
-            IntegrityError: when a duplicate username is found. (Django's
-            database mechanism raises it; this exception is explicitly
-            catched by :meth:`.form_valid`)
+            IntegrityError: automatically raised by Django's database
+                mechanism when a duplicate username is found. This exception
+                is explicitly catched by :meth:`.form_valid`
 
         """
         with transaction.atomic():

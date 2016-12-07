@@ -4,7 +4,7 @@ Explanation of the user-facing views
 Note: the actual URLs need to be taken from the ``/api2/`` endpoint. Don't
 hardcode them.
 
-See :meth:`lizard_auth_server.views_api_v2.LogoutView.get`
+See :meth:`lizard_auth_server.views_api_v2.StartView.get`
 
 
 ``/api2/login/``

@@ -9,6 +9,13 @@ Changelog of lizard-auth-server
   your site: ``SSO_USE_V2_LOGIN`` was shown as ``SSO_USE_V2_login`` (note the
   lowercase "login").... Reinout says sorry.
 
+- Not raising ValidationError anymore in form_valid(). In form_valid, all
+  validation has already happend, so a ValidationError results in a generic
+  "error 500" page.
+
+  The SSO now returns return meaningful HTTP responses with some explanatory
+  text. Much easier to debug on the receiving end.
+
 
 2.13 (2016-11-11)
 -----------------

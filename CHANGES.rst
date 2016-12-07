@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.14 (unreleased)
+2.14 (2016-12-07)
 -----------------
 
 - Fixed blunder in the example settings you should paste from the admin into

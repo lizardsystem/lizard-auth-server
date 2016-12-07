@@ -17,8 +17,10 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 from django.forms import ValidationError
 from django.http import HttpResponse
+from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
+from django.http import HttpResponseServerError
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.decorators import method_decorator
@@ -151,19 +153,18 @@ class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
 
         Returns:
             A dict with key ``user`` with user data like first name, last
-            name.
+                name.
 
-        Raises:
-            PermissionDenied: when the username/password combo is invalid.
+            A 400 error when there's something really wrong with the JWT
+                contents like missing keys.
 
-            ValidationError: when username and/or password keys are missing
-                from the decoded JWT message.
+            A 403 error on faulty credentials or an inactive user.
 
         """
         # The JWT message is validated; now check the message's contents.
         if (('username' not in form.cleaned_data) or
             ('password' not in form.cleaned_data)):
-            raise ValidationError(
+            return HttpResponseBadRequest(
                 "username and/or password are missing from the JWT message")
         portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
         # Verify the username/password
@@ -206,15 +207,15 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
                 optional. When present, if unauthenticated, the user is
                 redirected back to the site without being forced to log in.
 
-        Raises:
-            ValidationError: when necessary keys are missing from the decoded
-                JWT message.
+        Returns:
+            A 400 error when there's something really wrong with the JWT
+               contents like missing keys.
 
         """
         # Extract data from the JWT message including validation.
         self.portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
         if LOGIN_SUCCESS_URL_KEY not in form.cleaned_data:
-            raise ValidationError(
+            return HttpResponseBadRequest(
                 "Mandatory key '%s' is missing from JWT message" %
                 LOGIN_SUCCESS_URL_KEY)
         self.login_success_url = form.cleaned_data[LOGIN_SUCCESS_URL_KEY]
@@ -318,14 +319,14 @@ class LogoutView(FormInvalidMixin, ProcessGetFormView):
                 ``cleaned_data`` attribute. ``logout_url`` is a mandatory key
                 in the message.
 
-        Raises:
-            ValidationError: when the logout url is missing from the decoded
+        Returns:
+            A 400 error when the logout url is missing from the decoded
                 JWT message.
 
         """
         # Check JWT message contents
         if 'logout_url' not in form.cleaned_data:
-            raise ValidationError(
+            return HttpResponseBadRequest(
                 "'logout_url' is missing from the JWT message")
         # Handle the logout.
         djangos_logout_url = reverse('django.contrib.auth.views.logout')
@@ -429,14 +430,12 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
 
         Returns:
             A dict with key ``user`` with user data like first name, last
-            name.
+                name.
 
-        Raises:
-            ValidationError: when mandatory keys are missing from the decoded
-                JWT message. A ValidationError is also raised when a duplicate
-                username is found. Note: a ValidationError results in a http
-                400 response. Normally, what gets passed to us should be OK, so
-                an 'error 400' ought to be equivalent to 'duplicate username'.
+            An error 400 when mandatory keys are missing from the decoded
+                JWT message or when the language is unknown.
+
+            An error 500 when a duplicate username is found.
 
         """
         portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
@@ -444,7 +443,7 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
         mandatory_keys = ['username', 'email', 'first_name', 'last_name']
         for key in mandatory_keys:
             if key not in form.cleaned_data:
-                raise ValidationError(
+                return HttpResponseBadRequest(
                     "Key '%s' is missing from the JWT message" % key)
 
         # Try to find the user first. You can have multiple matches.
@@ -465,17 +464,22 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             language = form.cleaned_data.get('language', 'en')
             visit_url = form.cleaned_data.get('visit_url')
             if language not in AVAILABLE_LANGUAGES:
-                raise ValidationError("Language %s is not in %s" % (
+                return HttpResponseBadRequest("Language %s is not in %s" % (
                     language,
                     AVAILABLE_LANGUAGES))
-            user = self.create_and_mail_user(
-                username=form.cleaned_data['username'],  # can be duplicate...
-                first_name=form.cleaned_data['first_name'],
-                last_name=form.cleaned_data['last_name'],
-                email=form.cleaned_data['email'],
-                portal=portal,
-                language=language,
-                visit_url=visit_url)
+            try:
+                user = self.create_and_mail_user(
+                    username=form.cleaned_data['username'],
+                    first_name=form.cleaned_data['first_name'],
+                    last_name=form.cleaned_data['last_name'],
+                    email=form.cleaned_data['email'],
+                    portal=portal,
+                    language=language,
+                    visit_url=visit_url)
+            except IntegrityError as e:
+                logger.exception("Probably duplicate username")
+                return HttpResponseServerError(
+                    "Probably duplicate username: %s" % str(e))
             status_code = 201  # Created
 
         user_data = construct_user_data(user=user)
@@ -503,19 +507,17 @@ class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
             inactive.
 
         Raises:
-            ValidationError: when a duplicate username is found.
+            IntegrityError: when a duplicate username is found. (Django's
+            database mechanism raises it; this exception is explicitly
+            catched by :meth:`.form_valid`)
 
         """
         with transaction.atomic():
-            try:
-                user = User.objects.create_user(
-                    username=username,
-                    first_name=first_name,
-                    last_name=last_name,
-                    email=email)
-            except IntegrityError:
-                logger.exception("Probably duplicate username")
-                raise ValidationError("Duplicate username")
+            user = User.objects.create_user(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                email=email)
             user.is_active = False
             user.save()
             logger.info("Created user %s as requested by portal %s",
@@ -602,11 +604,10 @@ class ActivateAndSetPasswordView(FormView):
 
         Returns:
             A redirect to the success page
-            :class:`lizard_auth_server.views_api_v2.ActivatedGoToPortalView`
+               :class:`lizard_auth_server.views_api_v2.ActivatedGoToPortalView`
 
-        Raises:
-            ValidationError: if the JWT is incorrect (wrong user id, expired,
-               etc).
+            An error 400 if the JWT is incorrect (wrong user id, expired,
+               etc). Also when the language is unknown.
 
         """
         try:
@@ -614,15 +615,16 @@ class ActivateAndSetPasswordView(FormView):
                                      self.portal.sso_secret,
                                      audience=self.portal.sso_key)
         except jwt.exceptions.ExpiredSignatureError:
-            raise ValidationError("Activation link has expired")
+            return HttpResponseBadRequest("Activation link has expired")
         except Exception as e:
             logger.exception("JWT validation of activation link failed")
-            raise ValidationError("Activation link is invalid: %s" % e)
+            return HttpResponseBadRequest("Activation link is invalid: %s" % e)
 
         if not signed_data.get('user_id') == self.user.id:
-            raise ValidationError("Activation link is not for this user")
+            return HttpResponseBadRequest(
+                "Activation link is not for this user")
         if self.language not in AVAILABLE_LANGUAGES:
-            raise ValidationError("Language %s is not in %s" % (
+            return HttpResponseBadRequest("Language %s is not in %s" % (
                 self.language,
                 AVAILABLE_LANGUAGES))
 
@@ -694,11 +696,9 @@ class OrganisationsView(FormInvalidMixin, ProcessGetFormView):
                 instance. We only use it to limit access to portals, so the
                 message only has to include the standard JWT ``iss`` key.
 
-        Returns: json dict with the unique ID as key and the organisation's
-            name as value.
-
-        Raises:
-            ValidationError: when the JWT checks fail.
+        Returns:
+            json dict with the unique ID as key and the organisation's
+              name as value.
 
         """
         result = {organisation.unique_id: organisation.name
@@ -736,14 +736,14 @@ class FindUserView(FormInvalidMixin, ProcessGetFormView):
             name. Or a "404 not found" when there's no user with this email
             address.
 
-        Raises:
-            ValidationError: when mandatory keys are missing from the decoded
+            An error 400 when mandatory keys are missing from the decoded
                 JWT message.
 
         """
         # The JWT message is validated; now check the message's contents.
         if 'email' not in form.cleaned_data:
-            raise ValidationError("Key 'email' is missing from the JWT message")
+            return HttpResponseBadRequest(
+                "Key 'email' is missing from the JWT message")
 
         # Try to find the user first. You can have multiple matches.
         email = form.cleaned_data['email']

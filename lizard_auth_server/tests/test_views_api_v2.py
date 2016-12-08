@@ -657,3 +657,11 @@ class TestFindUserView(TestCase):
         # Status code should be 400 because of an invalid form. It should not
         # be 405 because of a wrong method.
         self.assertEquals(400, result.status_code)
+
+    def test_useful_api_error_response(self):
+        client = Client()
+        result = client.get(
+            reverse('lizard_auth_server.api_v2.find_user'))
+        # The returned content should be a textual message about the jwt
+        # error, not a html page.
+        self.assertNotIn('html', str(result.content))

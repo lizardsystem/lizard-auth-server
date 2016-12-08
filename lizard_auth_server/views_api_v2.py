@@ -65,6 +65,24 @@ def construct_user_data(user=None):
     return user_data
 
 
+class ApiJWTFormInvalidMixin(object):
+    """Provides a default error message for form_invalid.
+
+    In contrast to the FormInvalidMixin, it doesn't return an HTML page but a
+    plain textual error.
+
+    It'll always be a JWT error. The JWT form returns "bare" ValidationErrors,
+    so we can use the ``__all__`` error message.
+
+    """
+
+    def form_invalid(self, form):
+        logger.error('Error while decrypting form: %s',
+                     form.errors.as_text())
+        message = form.errors['__all__']
+        return HttpResponseBadRequest(message)
+
+
 class StartView(View):
     """V2 API startpoint that lists the available endpoints.
 
@@ -115,7 +133,7 @@ class StartView(View):
                             content_type='application/json')
 
 
-class CheckCredentialsView(FormInvalidMixin, FormMixin, ProcessFormView):
+class CheckCredentialsView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
     """View to simply verify credentials, used by APIs.
 
     A username+password is passed in a JWT signed form (so: in plain text). We
@@ -382,7 +400,7 @@ class LogoutRedirectBackView(FormInvalidMixin, ProcessGetFormView):
         return HttpResponseRedirect(form.cleaned_data['logout_url'])
 
 
-class NewUserView(FormInvalidMixin, FormMixin, ProcessFormView):
+class NewUserView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
     """View to create a new user (or return an existing one based on email)
 
     Username/email/first_name/last_name is passed in a JWT signed form (so: in
@@ -675,7 +693,7 @@ class ActivatedGoToPortalView(TemplateView):
         return self.portal.visit_url
 
 
-class OrganisationsView(FormInvalidMixin, ProcessGetFormView):
+class OrganisationsView(ApiJWTFormInvalidMixin, ProcessGetFormView):
     """API endpoint that simply lists the organisations and their UIDs.
 
     The UID of organisations is used by several portals. The "V2" api doesn't
@@ -707,7 +725,7 @@ class OrganisationsView(FormInvalidMixin, ProcessGetFormView):
                             content_type='application/json')
 
 
-class FindUserView(FormInvalidMixin, ProcessGetFormView):
+class FindUserView(ApiJWTFormInvalidMixin, ProcessGetFormView):
     """View to return an existing user based on email address
 
     The email adress is passed in a JWT signed form.

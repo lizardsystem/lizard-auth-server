@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.15 (unreleased)
+2.15 (2016-12-08)
 -----------------
 
 - JWT form errors in API requests now return a text message instead of

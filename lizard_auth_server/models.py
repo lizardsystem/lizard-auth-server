@@ -437,6 +437,20 @@ class Invitation(models.Model):
         self.activation_key_date = datetime.datetime.now(tz=pytz.UTC)
         self.save()
 
+    def get_context(self, **extra):
+        """Create the context for rendering the invitation email."""
+        username = self.user.username if self.user else self.name
+        context = {
+            'name': username,
+            'activation_key': self.activation_key,
+            'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
+            'site_name': settings.SITE_NAME,
+            'site_public_url_prefix': settings.SITE_PUBLIC_URL_PREFIX,
+            'invitation': self,
+        }
+        context.update(extra)
+        return context
+
     def send_new_activation_email(self):
         if self.is_activated:
             raise Exception('user is already activated')
@@ -450,15 +464,7 @@ class Invitation(models.Model):
             datetime.datetime.now(tz=pytz.UTC) +
             datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS))
 
-        ctx_dict = {
-            'name': self.name,
-            'activation_key': self.activation_key,
-            'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
-            'expiration_date': expiration_date,
-            'site_name': settings.SITE_NAME,
-            'site_public_url_prefix': settings.SITE_PUBLIC_URL_PREFIX,
-            'invitation': self,
-        }
+        ctx_dict = self.get_context(expiration_date=expiration_date)
 
         # switch to the users language
         old_lang = translation.get_language()

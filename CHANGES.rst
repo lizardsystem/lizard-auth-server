@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 2.16 (unreleased)
 -----------------
 
-- Pin zc.buildout to 2.9.4 and setuptools to 36.0.1.
+- Pin zc.buildout to 2.9.4, setuptools to 36.0.1 and six to 1.10.0.
 
 - If an Invitation instance has a user, render that user's username in the
   invitation email.

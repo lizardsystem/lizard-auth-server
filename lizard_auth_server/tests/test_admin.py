@@ -1,9 +1,11 @@
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth.models import User
+from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test import TestCase
 from django.test.client import RequestFactory
+
 from lizard_auth_server import admin
 from lizard_auth_server import models
 from lizard_auth_server.tests import factories
@@ -65,6 +67,24 @@ class TestInvitationAdmin(TestCase):
         self.admin_instance.send_new_activation_email(self.some_request,
                                                       queryset)
         self.assertTrue(patched_method.called)
+
+    def test_invitation_email(self):
+        """
+        Sending mail from a test doesn't actually send the mail, but puts it in
+        a mail.outbox list of EmailMessage instances.
+        """
+        queryset = models.Invitation.objects.filter(id=self.invitation.id)
+        self.admin_instance.send_new_activation_email(
+            self.some_request, queryset)
+        # check whether there is a mail in the outbox
+        self.assertEqual(len(mail.outbox), 1)
+        # check subject
+        self.assertEqual(
+            mail.outbox[0].subject,
+            'Er is een account voor u aangemaakt op sso.lizard.net')
+        self.assertEqual(mail.outbox[0].to, ['reinout@example.org'])
+        # check mail starts with 'Hallo Reinout,'
+        self.assertTrue(mail.outbox[0].body.startswith('Hallo Reinout,'))
 
     def test_shortcut_urls1(self):
         # By default, show a shortcut url for manual activation.

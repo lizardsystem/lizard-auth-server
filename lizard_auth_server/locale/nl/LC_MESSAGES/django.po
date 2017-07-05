@@ -626,7 +626,7 @@ msgstr "Registratie afgerond"
 #: templates/lizard_auth_server/invite_user_complete.html:10
 msgid ""
 "The account has been registered, and an activation email has been sent to"
-msgstr "Het account is geregisteerd, en een activatie e-mail is verstuurt naar"
+msgstr "Het account is geregisteerd, en een activatie e-mail is verstuurd naar"
 
 #: templates/lizard_auth_server/invite_user_complete.html:13
 #: templates/lizard_auth_server/profile.html:28

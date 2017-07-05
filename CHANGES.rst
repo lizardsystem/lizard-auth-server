@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.16 (unreleased)
+2.16 (2017-07-05)
 -----------------
 
 - Pin zc.buildout to 2.9.4, setuptools to 36.0.1 and six to 1.10.0.

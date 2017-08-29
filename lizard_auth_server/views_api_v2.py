@@ -563,6 +563,7 @@ class NewUserView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
             context = {'portal_url': visit_url or portal.visit_url,
                        'activation_url': activation_url,
                        'name': ' '.join([first_name, last_name]),
+                       'username': username,
                        'sso_hostname': self.request.get_host()}
             email_message = render_to_string(
                 'lizard_auth_server/activation_email.txt', context)

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-07 15:52+0200\n"
-"PO-Revision-Date: 2016-10-07 15:58+0200\n"
+"POT-Creation-Date: 2017-08-29 07:12+0000\n"
+"PO-Revision-Date: 2017-08-29 09:13+0200\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -43,7 +43,7 @@ msgstr "V1 authorisatie"
 msgid "Dates"
 msgstr "Datums"
 
-#: admin.py:100 models.py:117 models.py:152 models.py:545
+#: admin.py:100 models.py:117 models.py:152 models.py:551
 msgid "portal"
 msgstr "portaal"
 
@@ -71,16 +71,16 @@ msgstr "Aantal rollen"
 msgid "settings for the v2 API"
 msgstr "settings voor de v2 API"
 
-#: admin.py:303 models.py:367 models.py:623 models.py:650
+#: admin.py:303 models.py:367 models.py:629 models.py:656
 msgid "organisation"
 msgstr "organisatie"
 
-#: forms.py:129
+#: forms.py:137
 #, python-format
 msgid "The new password must be at least %d characters long."
 msgstr "Het nieuwe wachtwoord moet minimaal %d karakters lang zijn."
 
-#: forms.py:145
+#: forms.py:153
 msgid ""
 "The new password must contain at least one number, one uppercase and one "
 "lowercase character."
@@ -88,71 +88,71 @@ msgstr ""
 "Het nieuwe wachtwoord moet minstens een cijfer, een hoofdletter en een "
 "kleine letter bevatten."
 
-#: forms.py:203 templates/lizard_auth_server/profile.html:15
+#: forms.py:211 templates/lizard_auth_server/profile.html:15
 msgid "Name"
 msgstr "Naam"
 
-#: forms.py:206
+#: forms.py:214
 msgid "For the purpose of an invitation email (not the username)"
 msgstr "T.b.v. de aanhef in een e-mail (niet de gebruikersnaam)"
 
-#: forms.py:209 forms.py:291 templates/lizard_auth_server/profile.html:19
+#: forms.py:217 forms.py:299 templates/lizard_auth_server/profile.html:19
 msgid "Email"
 msgstr "E-mail"
 
-#: forms.py:211
+#: forms.py:219
 msgid "Organisation"
 msgstr "Organisatie"
 
-#: forms.py:216
+#: forms.py:224
 msgid "Language"
 msgstr "Taal"
 
-#: forms.py:227
+#: forms.py:235
 msgid "Portals"
 msgstr "Portalen"
 
-#: forms.py:237 forms.py:270 forms.py:318
+#: forms.py:245 forms.py:278 forms.py:326
 msgid "{} is already taken."
 msgstr "{} wordt al gebruikt."
 
-#: forms.py:248 templates/lizard_auth_server/profile.html:17
+#: forms.py:256 templates/lizard_auth_server/profile.html:17
 msgid "Username"
 msgstr "Gebruikersnaam"
 
-#: forms.py:252
+#: forms.py:260
 msgid "New password"
 msgstr "Nieuw wachtwoord"
 
-#: forms.py:256
+#: forms.py:264
 msgid "New password confirmation"
 msgstr "Niew wachtwoord (bevestiging)"
 
-#: forms.py:261
+#: forms.py:269
 msgid "The two password fields didn't match."
 msgstr "De twee wachtwoorden zijn niet identiek"
 
-#: forms.py:267
+#: forms.py:275
 msgid "Whitespace not allowed."
 msgstr "Spaties niet toegestaan."
 
-#: forms.py:294
+#: forms.py:302
 msgid "First name"
 msgstr "Voornaam"
 
-#: forms.py:299
+#: forms.py:307
 msgid "Last name"
 msgstr "Achternaam"
 
-#: forms.py:345
+#: forms.py:353
 msgid "required 3Di billing role is missing"
 msgstr "De benodigde \"billing\" rol op 3di mist"
 
-#: forms.py:348
+#: forms.py:356
 msgid "Only one 3Di billing role is allowed ({} found)"
 msgstr "Slechts één \"billing\" rol op 3di is toegestaan ({} gevonden)"
 
-#: models.py:72 models.py:358 models.py:559 models.py:605
+#: models.py:72 models.py:358 models.py:565 models.py:611
 msgid "name"
 msgstr "naam"
 
@@ -237,7 +237,7 @@ msgstr "(authenticatieteken)"
 msgid "(authentication tokens)"
 msgstr "(authenticatietekens)"
 
-#: models.py:201 models.py:624
+#: models.py:201 models.py:630
 msgid "organisations"
 msgstr "organisaties"
 
@@ -287,28 +287,28 @@ msgstr "geactiveerd op"
 msgid "(invitation)"
 msgstr "(uitnodiging)"
 
-#: models.py:547 models.py:611
+#: models.py:553 models.py:617
 msgid "unique id"
 msgstr "uniek ID"
 
-#: models.py:553
+#: models.py:559
 msgid "code"
 msgstr "code"
 
-#: models.py:555
+#: models.py:561
 msgid "name used internally by the portal to identify the role"
 msgstr ""
 "naam die intern door het portaal gebruikt wordt om de rol te identificeren"
 
-#: models.py:560
+#: models.py:566
 msgid "human-readable name"
 msgstr "naam die aan de gebruiker getoond wordt"
 
-#: models.py:566
+#: models.py:572
 msgid "inheriting roles"
 msgstr "overervende rollen"
 
-#: models.py:569
+#: models.py:575
 msgid ""
 "roles that are automatically inherited from us for organisations that have "
 "organisation roles pointing at both base and inheriting role."
@@ -316,53 +316,53 @@ msgstr ""
 "rollen die je automatisch meekrijgt voor organisaties die organisatie-rol-"
 "koppelingen hebben naar zowel de basisrol als naar de overervende rol."
 
-#: models.py:575
+#: models.py:581
 msgid "external description"
 msgstr "omschrijving voor eindgebruikers"
 
-#: models.py:578
+#: models.py:584
 msgid "internal description"
 msgstr "interne omschrijving"
 
-#: models.py:586
+#: models.py:592
 msgid "(role)"
 msgstr "(rol)"
 
-#: models.py:587
+#: models.py:593
 msgid "(roles)"
 msgstr "(rollen)"
 
-#: models.py:590
+#: models.py:596
 #, python-brace-format
 msgid "{name} on {portal}"
 msgstr "{name} op {portal}"
 
-#: models.py:618
+#: models.py:624
 msgid "roles"
 msgstr "rollen"
 
-#: models.py:654
+#: models.py:660
 msgid "role"
 msgstr "rol"
 
-#: models.py:656
+#: models.py:662
 msgid "for all users"
 msgstr "voor alle gebruikers"
 
-#: models.py:663
+#: models.py:669
 msgid "(organisation-role-mapping)"
 msgstr "(organisatie-rol-koppeling)"
 
-#: models.py:664
+#: models.py:670
 msgid "(organisation-role-mappings)"
 msgstr "(organisatie-rol-koppelingen)"
 
-#: models.py:668
+#: models.py:674
 #, python-brace-format
 msgid "{role} for everybody in {org}"
 msgstr "{role} voor iedereen in {org}"
 
-#: models.py:683
+#: models.py:689
 msgid "The special 3di billing role is not allowed \"for all users\""
 msgstr ""
 "De speciale 3di \"billing\" role mag je niet \"voor alle gebruikers\" "
@@ -520,12 +520,16 @@ msgstr ""
 "Ga naar de volgende pagina om een wachtwoord in te vullen en uw account te "
 "activeren:"
 
-#: templates/lizard_auth_server/activation_email.txt:11
+#: templates/lizard_auth_server/activation_email.txt:10
+msgid "Your username is:"
+msgstr "Uw gebruikersnaam is:"
+
+#: templates/lizard_auth_server/activation_email.txt:12
 #: templates/lizard_auth_server/invitation_email.html:16
 msgid "Sincerely,"
 msgstr "Met vriendelijke groet,"
 
-#: templates/lizard_auth_server/activation_email.txt:13
+#: templates/lizard_auth_server/activation_email.txt:14
 #, python-format
 msgid "The %(sso_hostname)s team"
 msgstr "Het %(sso_hostname)s team"
@@ -832,7 +836,7 @@ msgstr "De `portal` parameter mist."
 msgid "Invalid `portal` query string parameter."
 msgstr "De `portal` parameter klopt niet."
 
-#: views_api_v2.py:529
+#: views_api_v2.py:562
 #, python-format
 msgid "Account invitation for %s"
 msgstr "Account uitnodiging voor %s"

@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.17 (unreleased)
+2.17 (2017-08-30)
 -----------------
 
 - Show the username in the activation email. (2.16 fixed the old

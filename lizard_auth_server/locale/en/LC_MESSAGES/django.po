@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-07 15:52+0200\n"
+"POT-Creation-Date: 2017-08-29 07:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,7 +40,7 @@ msgstr ""
 msgid "Dates"
 msgstr ""
 
-#: admin.py:100 models.py:117 models.py:152 models.py:545
+#: admin.py:100 models.py:117 models.py:152 models.py:551
 msgid "portal"
 msgstr ""
 
@@ -68,86 +68,86 @@ msgstr ""
 msgid "settings for the v2 API"
 msgstr ""
 
-#: admin.py:303 models.py:367 models.py:623 models.py:650
+#: admin.py:303 models.py:367 models.py:629 models.py:656
 msgid "organisation"
 msgstr ""
 
-#: forms.py:129
+#: forms.py:137
 #, python-format
 msgid "The new password must be at least %d characters long."
 msgstr ""
 
-#: forms.py:145
+#: forms.py:153
 msgid ""
 "The new password must contain at least one number, one uppercase and one "
 "lowercase character."
 msgstr ""
 
-#: forms.py:203 templates/lizard_auth_server/profile.html:15
+#: forms.py:211 templates/lizard_auth_server/profile.html:15
 msgid "Name"
 msgstr ""
 
-#: forms.py:206
+#: forms.py:214
 msgid "For the purpose of an invitation email (not the username)"
 msgstr ""
 
-#: forms.py:209 forms.py:291 templates/lizard_auth_server/profile.html:19
+#: forms.py:217 forms.py:299 templates/lizard_auth_server/profile.html:19
 msgid "Email"
 msgstr ""
 
-#: forms.py:211
+#: forms.py:219
 msgid "Organisation"
 msgstr ""
 
-#: forms.py:216
+#: forms.py:224
 msgid "Language"
 msgstr ""
 
-#: forms.py:227
+#: forms.py:235
 msgid "Portals"
 msgstr ""
 
-#: forms.py:237 forms.py:270 forms.py:318
+#: forms.py:245 forms.py:278 forms.py:326
 msgid "{} is already taken."
 msgstr ""
 
-#: forms.py:248 templates/lizard_auth_server/profile.html:17
+#: forms.py:256 templates/lizard_auth_server/profile.html:17
 msgid "Username"
 msgstr ""
 
-#: forms.py:252
+#: forms.py:260
 msgid "New password"
 msgstr ""
 
-#: forms.py:256
+#: forms.py:264
 msgid "New password confirmation"
 msgstr ""
 
-#: forms.py:261
+#: forms.py:269
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: forms.py:267
+#: forms.py:275
 msgid "Whitespace not allowed."
 msgstr ""
 
-#: forms.py:294
+#: forms.py:302
 msgid "First name"
 msgstr ""
 
-#: forms.py:299
+#: forms.py:307
 msgid "Last name"
 msgstr ""
 
-#: forms.py:345
+#: forms.py:353
 msgid "required 3Di billing role is missing"
 msgstr ""
 
-#: forms.py:348
+#: forms.py:356
 msgid "Only one 3Di billing role is allowed ({} found)"
 msgstr ""
 
-#: models.py:72 models.py:358 models.py:559 models.py:605
+#: models.py:72 models.py:358 models.py:565 models.py:611
 msgid "name"
 msgstr ""
 
@@ -226,7 +226,7 @@ msgstr ""
 msgid "(authentication tokens)"
 msgstr ""
 
-#: models.py:201 models.py:624
+#: models.py:201 models.py:630
 msgid "organisations"
 msgstr ""
 
@@ -274,79 +274,79 @@ msgstr ""
 msgid "(invitation)"
 msgstr ""
 
-#: models.py:547 models.py:611
+#: models.py:553 models.py:617
 msgid "unique id"
 msgstr ""
 
-#: models.py:553
+#: models.py:559
 msgid "code"
 msgstr ""
 
-#: models.py:555
+#: models.py:561
 msgid "name used internally by the portal to identify the role"
 msgstr ""
 
-#: models.py:560
+#: models.py:566
 msgid "human-readable name"
 msgstr ""
 
-#: models.py:566
+#: models.py:572
 msgid "inheriting roles"
 msgstr ""
 
-#: models.py:569
+#: models.py:575
 msgid ""
 "roles that are automatically inherited from us for organisations that have "
 "organisation roles pointing at both base and inheriting role."
 msgstr ""
 
-#: models.py:575
+#: models.py:581
 msgid "external description"
 msgstr ""
 
-#: models.py:578
+#: models.py:584
 msgid "internal description"
 msgstr ""
 
-#: models.py:586
+#: models.py:592
 msgid "(role)"
 msgstr ""
 
-#: models.py:587
+#: models.py:593
 msgid "(roles)"
 msgstr ""
 
-#: models.py:590
+#: models.py:596
 #, python-brace-format
 msgid "{name} on {portal}"
 msgstr ""
 
-#: models.py:618
+#: models.py:624
 msgid "roles"
 msgstr ""
 
-#: models.py:654
+#: models.py:660
 msgid "role"
 msgstr ""
 
-#: models.py:656
+#: models.py:662
 msgid "for all users"
 msgstr ""
 
-#: models.py:663
+#: models.py:669
 msgid "(organisation-role-mapping)"
 msgstr ""
 
-#: models.py:664
+#: models.py:670
 msgid "(organisation-role-mappings)"
 msgstr ""
 
-#: models.py:668
+#: models.py:674
 #, python-brace-format
 msgid "{role} for everybody in {org}"
 msgstr ""
 
-#: models.py:683
+#: models.py:689
 msgid "The special 3di billing role is not allowed \"for all users\""
 msgstr ""
 
@@ -494,12 +494,16 @@ msgid ""
 "Please go to the following page to set a password and activate your account:"
 msgstr ""
 
-#: templates/lizard_auth_server/activation_email.txt:11
+#: templates/lizard_auth_server/activation_email.txt:10
+msgid "Your username is:"
+msgstr ""
+
+#: templates/lizard_auth_server/activation_email.txt:12
 #: templates/lizard_auth_server/invitation_email.html:16
 msgid "Sincerely,"
 msgstr ""
 
-#: templates/lizard_auth_server/activation_email.txt:13
+#: templates/lizard_auth_server/activation_email.txt:14
 #, python-format
 msgid "The %(sso_hostname)s team"
 msgstr ""
@@ -790,7 +794,7 @@ msgstr ""
 msgid "Invalid `portal` query string parameter."
 msgstr ""
 
-#: views_api_v2.py:529
+#: views_api_v2.py:562
 #, python-format
 msgid "Account invitation for %s"
 msgstr ""

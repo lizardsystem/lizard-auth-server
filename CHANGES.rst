@@ -5,7 +5,9 @@ Changelog of lizard-auth-server
 2.17 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Show the username in the activation email. (2.16 fixed the old
+  now-mostly-unused invitation email, this fixes the new v2 activation
+  email).
 
 
 2.16 (2017-07-05)

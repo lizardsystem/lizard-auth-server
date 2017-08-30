@@ -15,7 +15,6 @@ from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.utils import IntegrityError
-from django.forms import ValidationError
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
@@ -564,6 +563,7 @@ class NewUserView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
             context = {'portal_url': visit_url or portal.visit_url,
                        'activation_url': activation_url,
                        'name': ' '.join([first_name, last_name]),
+                       'username': username,
                        'sso_hostname': self.request.get_host()}
             email_message = render_to_string(
                 'lizard_auth_server/activation_email.txt', context)

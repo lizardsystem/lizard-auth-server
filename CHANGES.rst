@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 2.18 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Added newline in activation email (cosmetic reason).
 
 
 2.17 (2017-08-30)

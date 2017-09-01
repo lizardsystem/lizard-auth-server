@@ -17,7 +17,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - .:/code
+      - .:/code:delegated
     depends_on:
       - db
 

@@ -14,12 +14,10 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.db.utils import IntegrityError
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
-from django.http import HttpResponseServerError
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.decorators import method_decorator
@@ -96,7 +94,8 @@ class StartView(View):
 
         The available endpoints:
 
-        - ``check-credentials``: :class:`lizard_auth_server.views_api_v2.CheckCredentialsView`
+        - ``check-credentials``:
+            :class:`lizard_auth_server.views_api_v2.CheckCredentialsView`
 
         - ``login``: :class:`lizard_auth_server.views_api_v2.LoginView`
 
@@ -183,6 +182,7 @@ class CheckCredentialsView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
             ('password' not in form.cleaned_data)):
             return HttpResponseBadRequest(
                 "username and/or password are missing from the JWT message")
+
         portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
         # Verify the username/password
         user = django_authenticate(username=form.cleaned_data.get('username'),
@@ -452,9 +452,9 @@ class NewUserView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
             An error 400 when mandatory keys are missing from the decoded
             JWT message or when the language is unknown.
 
-            An error 500 when a duplicate username is found.
-
+            An error 409 (conflict) when the  username is already used.
         """
+
         portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
         # The JWT message is validated; now check the message's contents.
         mandatory_keys = ['username', 'email', 'first_name', 'last_name']
@@ -477,28 +477,36 @@ class NewUserView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
             logger.info("Found existing user %s, giving that one to %s",
                         user, portal)
 
+        if (not user and User.objects.filter(
+            username=form.cleaned_data['username']).exists()):
+
+            # Return statuscode 409 (conflict) when username is already in use.
+            return HttpResponse("Error: Username is already in use: %s" %
+                                form.cleaned_data['username'], status=409)
+
         if not user:
+            # No user found by email or username
             language = form.cleaned_data.get('language', 'en')
             visit_url = form.cleaned_data.get('visit_url')
+
             if language not in AVAILABLE_LANGUAGES:
                 return HttpResponseBadRequest("Language %s is not in %s" % (
                     language,
                     AVAILABLE_LANGUAGES))
-            try:
-                user = self.create_and_mail_user(
-                    username=form.cleaned_data['username'],
-                    first_name=form.cleaned_data['first_name'],
-                    last_name=form.cleaned_data['last_name'],
-                    email=form.cleaned_data['email'],
-                    portal=portal,
-                    language=language,
-                    visit_url=visit_url)
-            except IntegrityError as e:
-                logger.exception("Probably duplicate username")
-                return HttpResponseServerError(
-                    "Probably duplicate username: %s" % str(e))
+
+            user = self.create_and_mail_user(
+                username=form.cleaned_data['username'],
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                email=form.cleaned_data['email'],
+                portal=portal,
+                language=language,
+                visit_url=visit_url)
             status_code = 201  # Created
 
+        # Return json dump of user data with one of the following status_codes:
+        # 200 => emailadres already in use (return first matching user)
+        # 201 => new user created (return new user)
         user_data = construct_user_data(user=user)
         return HttpResponse(json.dumps({'user': user_data}),
                             content_type='application/json',

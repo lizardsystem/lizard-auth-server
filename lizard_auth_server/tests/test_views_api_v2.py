@@ -1,12 +1,12 @@
 import copy
 import datetime
+import json
 import jwt
 import mock
 
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.forms import ValidationError
 from django.test import Client
 from django.test import TestCase
 from django.test.client import RequestFactory
@@ -132,7 +132,6 @@ class TestLoginView(TestCase):
 
         resp2 = self.client.get('/api2/login/', jwt_params)
         self.assertEqual(resp2.status_code, 302)
-        print(resp2.url)
         self.assertTrue(
             'http://very.custom.net/sso/local_login/' in resp2.url)
 
@@ -143,18 +142,16 @@ class TestLoginView(TestCase):
             'unauthenticated_is_ok_url': 'http://cstm.net/not_logged_in/',
             }
         message = jwt.encode(payload,
-                                  self.secret_key,
-                                  algorithm='HS256')
+                             self.secret_key,
+                             algorithm='HS256')
         jwt_params = {
             'key': self.sso_key,
             'message': message,
             }
         response = self.client.get('/api2/login/', jwt_params)
         self.assertEqual(response.status_code, 302)
-        print(response.url)
         self.assertTrue(
             'http://cstm.net/not_logged_in/' in response.url)
-
 
     def test_redirect_to_login_page(self):
         jwt_params = {
@@ -163,7 +160,6 @@ class TestLoginView(TestCase):
             }
         response = self.client.get('/api2/login/', jwt_params)
         self.assertEqual(response.status_code, 302)
-        print(response.url)
         self.assertTrue(
             '/accounts/login/' in response.url)
 
@@ -247,7 +243,6 @@ class TestLogoutViewV2(TestCase):
         }
         response = self.client.get('/api2/logout/', params)
         self.assertEqual(response.status_code, 302)
-        print(response.url)
         self.assertTrue(
             '/accounts/logout/' in response.url)
         self.assertTrue(
@@ -269,7 +264,7 @@ class TestNewUserView(TestCase):
     def setUp(self):
         self.view = views_api_v2.NewUserView()
         self.sso_key = 'sso key'
-        factories.PortalF.create(sso_key=self.sso_key)
+        self.portal = factories.PortalF.create(sso_key=self.sso_key)
         self.request_factory = RequestFactory()
         self.some_request = self.request_factory.get(
             'http://some.site/some/url/')
@@ -308,7 +303,6 @@ class TestNewUserView(TestCase):
                 'lizard_auth_server.views_api_v2.send_mail') as mocked:
             self.view.form_valid(form)
             arguments = mocked.call_args[0]
-            print(arguments)
             message = arguments[1]
             self.assertIn('sso%20key', message)
 
@@ -340,18 +334,34 @@ class TestNewUserView(TestCase):
         form = mock.Mock()
         form.cleaned_data = self.user_data
         response = self.view.form_valid(form)
-        self.assertEqual(500, response.status_code)
+        self.assertEqual(409, response.status_code)
 
     def test_duplicate_username_http_response(self):
+        # Duplicate username (with different e-mail)
+        # should return HTTP 409 (conflict)
+
+        factories.UserF(username='pietje',
+                        email='nietpietje@example.com')
         client = Client()
         params = {'username': 'pietje',
-                  'email': 'nietpietje@example.com',
+                  'email': 'nietpietje1@example.com',
                   'first_name': 'pietje',
                   'last_name': 'pietje',
-              }
+                  'iss': self.sso_key}
+
+        # Encode data in JWT
+        message = jwt.encode(params,
+                             self.portal.sso_secret,
+                             algorithm='HS256')
+
+        # Send data both plain and in JWT.
+        params.update({
+            'key': self.sso_key,
+            'message': message.decode('utf8')})
+
         response = client.post(
             reverse('lizard_auth_server.api_v2.new_user'), params)
-        self.assertEquals(400, response.status_code)
+        self.assertEquals(409, response.status_code)
 
     def test_optional_visit_url(self):
         user_data = {'iss': self.sso_key,
@@ -386,7 +396,6 @@ class TestNewUserView(TestCase):
                 'lizard_auth_server.views_api_v2.send_mail') as mocked:
             self.view.form_valid(form)
             arguments = mocked.call_args[0]
-            print(arguments)
             message = arguments[1]
             self.assertIn('http://reinout.vanrees.org/', message)
 

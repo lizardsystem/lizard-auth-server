@@ -355,5 +355,4 @@ class UserProfileForm(forms.ModelForm):
             self._errors['roles'] = self.error_class([
                 _('Only one 3Di billing role is allowed ({} found)').format(
                     num_threedi_billing_roles)])
-        print(self._errors)
         return cleaned_data

@@ -27,10 +27,8 @@ class TestSearchFields(TestCase):
                 admin.OrganisationAdmin,
                 admin.OrganisationRoleAdmin]:
             model_class = model_admin_class.model
-            print("Testing search fields for %s" % model_class)
             for fieldname in model_admin_class.search_fields:
                 query = '%s__icontains' % fieldname
-                print("Testing with %s" % query)
                 kwargs = {query: 'reinout'}
                 # We have no content, so the number of results if we search on
                 # something should be zero. The only thing that matters is

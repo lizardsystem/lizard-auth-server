@@ -311,14 +311,16 @@ class TestNewUserView(TestCase):
         form = mock.Mock()
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
-        self.assertEquals(200, result.status_code)
+        # Should return a 409 conflict statuscode.
+        self.assertEquals(409, result.status_code)
 
     def test_exiting_user_different_case(self):
         factories.UserF(email='Pietje@Klaasje.Test.Com')
         form = mock.Mock()
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
-        self.assertEquals(200, result.status_code)
+        # Should return a 409 conflict statucode
+        self.assertEquals(409, result.status_code)
 
     def test_exiting_user_duplicate_email(self):
         factories.UserF(email='pietje@klaasje.test.com')
@@ -326,7 +328,8 @@ class TestNewUserView(TestCase):
         form = mock.Mock()
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
-        self.assertEquals(200, result.status_code)
+        # Should return a 409 conflict statuscode
+        self.assertEquals(409, result.status_code)
 
     def test_duplicate_username(self):
         factories.UserF(username='pietje',

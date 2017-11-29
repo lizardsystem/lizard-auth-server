@@ -60,7 +60,7 @@ class FormInvalidMixin(object):
         logger.error('Error while decrypting form: %s',
                      form.errors.as_text())
         return ErrorMessageResponse(self.request,
-                                    _('Communication error.'),
+                                    _(form.errors.as_text()),
                                     400)
 
 

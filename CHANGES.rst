@@ -7,6 +7,15 @@ Changelog of lizard-auth-server
 
 - Added newline in activation email (cosmetic reason).
 
+- New behaviour when adding users with existing username via api2/new_user/:
+  * Old: HTTP 500 statuscode with empty content
+  * New: HTTP 409 (conflict) statuscode with error message in (text) content
+
+- New behaviour when adding users with existing email via api2/new_user/:
+  * Old: HTTP 200 statuscode with userdata in (json) content
+  * New: HTTP 409 (conflict) statuscode with error message in (text) content
+
+  Note: Use api2/find_user/ to search for users.
 
 2.17 (2017-08-30)
 -----------------

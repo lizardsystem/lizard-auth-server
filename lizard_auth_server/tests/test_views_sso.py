@@ -1,4 +1,5 @@
 import uuid
+import mock
 
 from django.test import Client
 from django.test import TestCase
@@ -96,16 +97,22 @@ class TestLoginRedirect(TestCase):
         msg = {'request_token': request_token,
                'key': self.key,
                'domain': domain}
-        message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
-        params = {'key': self.key, 'message': message}
-        response = self.client.get('/sso/authorize/', params)
-        self.assertEquals(response.status_code, 302)
 
-        msg = {'request_token': request_token, 'auth_token': auth_token}
-        message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
-        expec = '{}{}?message={}'.format(redirect,
-                                         '/sso/local_login/',
-                                         message)
+        # Hardcode the test time value for both URLSafeTimedSerializers
+        hardcoded_time_value = 1511775523
+
+        with mock.patch('time.time', return_value=hardcoded_time_value):
+            message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
+            params = {'key': self.key, 'message': message}
+            response = self.client.get('/sso/authorize/', params)
+            self.assertEquals(response.status_code, 302)
+
+            msg = {'request_token': request_token, 'auth_token': auth_token}
+            message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
+
+            expec = '{}{}?message={}'.format(redirect,
+                                             '/sso/local_login/',
+                                             message)
 
         def _strip_after_last_dot(url):
             # After the last dot, there's some time-specific stuff that

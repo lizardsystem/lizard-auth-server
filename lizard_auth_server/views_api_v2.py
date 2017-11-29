@@ -423,10 +423,10 @@ class NewUserView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
         return super(NewUserView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        """Return user data of a new or existing user
+        """Try to create a new user
 
         The JWT message's content is now the form's cleaned data. So we start
-        out by extracting the contents. Then we find/create the user and
+        out by extracting the contents. Then we try to create the user and
         return it.
 
         If a new user has been created, we send an email with an activation
@@ -447,12 +447,12 @@ class NewUserView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
 
         Returns:
             A dict with key ``user`` with user data like first name, last
-            name.
+            name if the user has been created.
 
             An error 400 when mandatory keys are missing from the decoded
             JWT message or when the language is unknown.
 
-            An error 409 (conflict) when the  username is already used.
+            An error 409 (conflict) when the username or email is already used.
         """
 
         portal = Portal.objects.get(sso_key=form.cleaned_data['iss'])
@@ -466,51 +466,54 @@ class NewUserView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
         # Try to find the user first. You can have multiple matches.
         matching_users = User.objects.filter(
             email__iexact=form.cleaned_data['email'])
-        user = None
-        status_code = 200
+
         if matching_users:
+
+            # Return statuscode 409 (conflict) when email address is
+            # already in use.
             if len(matching_users) > 1:
                 logger.debug(
                     "More than one user found for '%s', returning the first",
                     form.cleaned_data['email'])
             user = matching_users[0]
-            logger.info("Found existing user %s, giving that one to %s",
+            logger.info("Found existing user based on email %s in %s",
                         user, portal)
 
-        if (not user and User.objects.filter(
-            username=form.cleaned_data['username']).exists()):
+            return HttpResponse("Error: Email address is already in use: %s" %
+                                form.cleaned_data['email'], status=409)
+
+        if User.objects.filter(
+            username=form.cleaned_data['username']).exists():
 
             # Return statuscode 409 (conflict) when username is already in use.
             return HttpResponse("Error: Username is already in use: %s" %
                                 form.cleaned_data['username'], status=409)
 
-        if not user:
-            # No user found by email or username
-            language = form.cleaned_data.get('language', 'en')
-            visit_url = form.cleaned_data.get('visit_url')
+        # No user found by either email or username
+        # create the user and return user
+        # data in json format
 
-            if language not in AVAILABLE_LANGUAGES:
-                return HttpResponseBadRequest("Language %s is not in %s" % (
-                    language,
-                    AVAILABLE_LANGUAGES))
+        language = form.cleaned_data.get('language', 'en')
+        visit_url = form.cleaned_data.get('visit_url')
 
-            user = self.create_and_mail_user(
-                username=form.cleaned_data['username'],
-                first_name=form.cleaned_data['first_name'],
-                last_name=form.cleaned_data['last_name'],
-                email=form.cleaned_data['email'],
-                portal=portal,
-                language=language,
-                visit_url=visit_url)
-            status_code = 201  # Created
+        if language not in AVAILABLE_LANGUAGES:
+            return HttpResponseBadRequest("Language %s is not in %s" % (
+                language,
+                AVAILABLE_LANGUAGES))
+
+        user = self.create_and_mail_user(
+            username=form.cleaned_data['username'],
+            first_name=form.cleaned_data['first_name'],
+            last_name=form.cleaned_data['last_name'],
+            email=form.cleaned_data['email'],
+            portal=portal,
+            language=language,
+            visit_url=visit_url)
 
         # Return json dump of user data with one of the following status_codes:
-        # 200 => emailadres already in use (return first matching user)
-        # 201 => new user created (return new user)
-        user_data = construct_user_data(user=user)
-        return HttpResponse(json.dumps({'user': user_data}),
-                            content_type='application/json',
-                            status=status_code)
+        return HttpResponse(
+            json.dumps({'user': construct_user_data(user=user)}),
+            content_type='application/json', status=201)
 
     def create_and_mail_user(self, username, first_name, last_name, email,
                              portal, language, visit_url):

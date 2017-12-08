@@ -161,6 +161,7 @@ class Token(models.Model):
     user = models.ForeignKey(
         User,
         verbose_name=_('user'),
+        related_name='user_tokens',
         blank=True,
         null=True)
     created = models.DateTimeField(

@@ -17,6 +17,10 @@ Changelog of lizard-auth-server
 
   Note: Use api2/find_user/ to search for users.
 
+- Added related_name from User to Token so that there's no conflict with
+  django-oidc-provider.
+
+
 2.17 (2017-08-30)
 -----------------
 

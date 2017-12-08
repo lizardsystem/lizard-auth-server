@@ -46,8 +46,7 @@ Development with docker
 The short version::
 
     $ docker-compose build
-    $ docker-compose run web python3 bootstrap.py
-    $ docker-compose run web bin/buildout
+    $ docker-compose run web buildout
     $ docker-compose run web bin/django migrate
     $ docker-compose up
 

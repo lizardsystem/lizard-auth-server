@@ -10,9 +10,8 @@ cache:
     - $HOME/.local
 install:
   - psql -c "create user buildout with password 'buildout' superuser;" -U postgres
-  - pip install psycopg2
-  - python bootstrap.py
-  - bin/buildout -v
+  - pip install -U psycopg2 zc.buildout setuptools
+  - buildout -v
 script:
   - bin/test
 after_success:

@@ -40,6 +40,7 @@ urlpatterns = patterns(
     url(r'^$', views.ProfileView.as_view(), name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'', include('oidc_provider.urls', namespace='oidc_provider')),
 
     # Version 1 API
     #

@@ -183,6 +183,7 @@ INSTALLED_APPS = (
 
 DEFAULT_FROM_EMAIL = 'noreply@nelen-schuurmans.nl'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+OIDC_USERINFO = 'lizard_auth_server.oidc.userinfo'
 
 try:
     # Import local settings that aren't stored in svn/git.

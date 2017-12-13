@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.19 (unreleased)
+2.19 (2017-12-13)
 -----------------
 
 - Added django-iodc-provider so that we can work as "openID connect

@@ -5,7 +5,13 @@ Changelog of lizard-auth-server
 2.19 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Added django-iodc-provider so that we can work as "openID connect
+  provider".
+
+  Adjusted scopes and userinfo to the minimum that we want. Note: in the sso,
+  add the following setting::
+
+    OIDC_USERINFO = 'lizard_auth_server.oidc.userinfo'
 
 
 2.18 (2017-12-08)

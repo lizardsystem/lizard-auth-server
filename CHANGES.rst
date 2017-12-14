@@ -5,7 +5,13 @@ Changelog of lizard-auth-server
 2.20 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Removed now-unused and now-confusing listing of portals and organisations on
+  the homepage.
+
+  Now-unused: only one or two sites use the access functionality, but these
+  don't use organisations.
+
+  Removed: it is still there for superusers for debug purposes.
 
 
 2.19 (2017-12-13)

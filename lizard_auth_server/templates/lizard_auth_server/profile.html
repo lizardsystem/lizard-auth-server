@@ -56,46 +56,51 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="span8">
 
-        <h3>{% trans 'Available portals' %}</h3>
-        {% if user.is_staff %}
-          <p>{% trans 'All portals (staff member):' %}</p>
-        {% else %}
-          <p>{% trans 'You have access to the following portals:' %}</p>
-        {% endif %}
+    {% if user.is_superuser %}
+      <h2>Note: old role stuff below, only visible for superusers</h2>
 
-        <ul>
-          {% for portal in view.portals %}
-            <li>
-              <a href="{{ portal.visit_url }}">
-                {{ portal.name }}
-              </a><br>
-              <small class="muted">{{ portal.visit_url }}</small><br>
-              <a href="{% url 'lizard_auth_server.access_to_portal' portal_pk=portal.id %}">
-                <small>
-                  &rarr; {% trans 'permissions' %}
-                </small>
-              </a>
-            </li>
-          {% empty %}
-            <li>{% trans 'No portals found.' %}</li>
-          {% endfor %}
-        </ul>
+      <div class="row">
+        <div class="span8">
 
+          <h3>{% trans 'Available portals' %}</h3>
+          {% if user.is_staff %}
+            <p>{% trans 'All portals (staff member):' %}</p>
+          {% else %}
+            <p>{% trans 'You have access to the following portals:' %}</p>
+          {% endif %}
+
+          <ul>
+            {% for portal in view.portals %}
+              <li>
+                <a href="{{ portal.visit_url }}">
+                  {{ portal.name }}
+                </a><br>
+                <small class="muted">{{ portal.visit_url }}</small><br>
+                <a href="{% url 'lizard_auth_server.access_to_portal' portal_pk=portal.id %}">
+                  <small>
+                    &rarr; {% trans 'permissions' %}
+                  </small>
+                </a>
+              </li>
+            {% empty %}
+              <li>{% trans 'No portals found.' %}</li>
+            {% endfor %}
+          </ul>
+
+        </div>
+        <div class="span4">
+
+          <h3>{% trans 'Organisations' %}</h3>
+          <p>{% trans 'You are a member of the following organisations:' %}</p>
+          <ul>
+            {% for organisation in view.profile.organisations.all %}
+              <li>{{ organisation }}</li>
+            {% endfor %}
+          </ul>
+
+        </div>
       </div>
-      <div class="span4">
-
-        <h3>{% trans 'Organisations' %}</h3>
-        <p>{% trans 'You are a member of the following organisations:' %}</p>
-        <ul>
-          {% for organisation in view.profile.organisations.all %}
-            <li>{{ organisation }}</li>
-          {% endfor %}
-        </ul>
-
-      </div>
-    </div>
+    {% endif %}
 
 {% endblock %}

@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.20 (unreleased)
+2.20 (2017-12-14)
 -----------------
 
 - Removed now-unused and now-confusing listing of portals and organisations on

@@ -56,6 +56,27 @@
       </div>
     </div>
 
+    {% if view.oidc_clients_with_consent %}
+      <h2>
+        {% trans 'websites' %}
+      </h2>
+      <p>
+        {% blocktrans %}
+          Here are the websites you've given permission to log you in.
+        {% endblocktrans %}
+      </p>
+      <dl>
+        {% for oidc_client in view.oidc_clients_with_consent %}
+          <dt>{{ oidc_client.name }}</dt>
+          <dd>
+            <a href="{{ oidc_client.website_url }}">
+              {{ oidc_client.website_url }}
+            </a>
+          </dd>
+        {% endfor %}
+      </dl>
+
+    {% endif %}
 
     {% if user.is_superuser %}
       <h2>Note: old role stuff below, only visible for superusers</h2>

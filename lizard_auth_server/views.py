@@ -2,10 +2,10 @@
 
 from __future__ import unicode_literals
 
-from datetime import datetime
 import jwt
 import logging
 
+from datetime import datetime
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -24,9 +24,8 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-
-# urllib is the hardest module to use from Python 2/3 compatible code. Six
-# provides a version for wrapping over differences between Python 2 and 3.
+# from oidc_provider.models import UserConsent
+from oidc_provider.models import Client
 from six.moves.urllib import parse
 
 from lizard_auth_server import forms
@@ -93,6 +92,16 @@ class ProfileView(TemplateView):
             return Portal.objects.all()
         else:
             return self.profile.portals.all()
+
+    @cached_property
+    def oidc_clients_with_consent(self):
+        """Return OIDC clients with our consent for logging in
+
+        'Client' means a website with an 'OpenID connect' connection with
+        us. Consent means that the user allows the client to use the SSO to
+        log them in.
+        """
+        return Client.objects.filter(userconsent__user=self.request.user)
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

@@ -108,6 +108,14 @@ class ProfileView(TemplateView):
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
 
 
+class UserConsentsEditView(TemplateView):
+    """
+    View for listing and *removing* openid connect user consents
+    """
+    template_name = 'lizard_auth_server/userconsents.html'
+
+
+
 class AccessToPortalView(TemplateView):
     template_name = 'lizard_auth_server/access-to-portal.html'
 

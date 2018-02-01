@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.conf import settings
 from django.conf.urls import include
 from django.conf.urls import patterns
@@ -238,6 +239,11 @@ urlpatterns = patterns(
         r'^edit_profile/$',
         views.EditProfileView.as_view(),
         name='lizard_auth_server.edit_profile'
+    ),
+    url(
+        r'^manage_permission$',
+        views.ManagePermissionView.as_view(),
+        name='lizard_auth_server.manage_permission'
     ),
     # URLs for third-party apps.
     url(

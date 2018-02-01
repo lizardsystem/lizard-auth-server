@@ -2,10 +2,14 @@
 
 from __future__ import unicode_literals
 
-import jwt
 import logging
-
 from datetime import datetime
+
+import jwt
+# from oidc_provider.models import UserConsent
+from oidc_provider.models import Client
+from six.moves.urllib import parse
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -24,10 +28,6 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-# from oidc_provider.models import UserConsent
-from oidc_provider.models import Client
-from six.moves.urllib import parse
-
 from lizard_auth_server import forms
 from lizard_auth_server.conf import settings
 from lizard_auth_server.models import Invitation
@@ -199,6 +199,13 @@ class EditProfileView(FormView):
 
         return HttpResponseRedirect(reverse('profile'))
 
+class ManagePermissionView(TemplateView):
+     template_name = 'lizard_auth_server/manage_permission.html'
+     test_list = ['website1', 'website2']
+
+     @property
+     def make_list(self):
+        return self.test_list
 
 class InviteUserView(StaffOnlyMixin, FormView):
     template_name = 'lizard_auth_server/invite_user.html'

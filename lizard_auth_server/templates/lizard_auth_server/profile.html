@@ -34,6 +34,13 @@
               Here are the websites you've given permission to log you in.
             {% endblocktrans %}
           </p>
+            <ul>
+            <li>
+              <a href="{% url 'lizard_auth_server.manage_permission' %}">
+                {% trans 'Manage permission' %}
+              </a>
+            </li>
+            </ul>
           <dl>
             {% for oidc_client in view.oidc_clients_with_consent %}
               <dt>{{ oidc_client.name }}</dt>
@@ -76,7 +83,6 @@
             </li>
           {% endif %}
         </ul>
-
       </div>
     </div>
 

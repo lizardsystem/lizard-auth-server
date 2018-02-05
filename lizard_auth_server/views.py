@@ -199,13 +199,20 @@ class EditProfileView(FormView):
 
         return HttpResponseRedirect(reverse('profile'))
 
+
 class ManagePermissionView(TemplateView):
      template_name = 'lizard_auth_server/manage_permission.html'
-     test_list = ['website1', 'website2']
 
-     @property
-     def make_list(self):
-        return self.test_list
+     @cached_property
+     def oidc_clients_with_consent(self):
+         """Return OIDC clients with our consent for logging in
+
+         'Client' means a website with an 'OpenID connect' connection with
+         us. Consent means that the user allows the client to use the SSO to
+         log them in.
+         """
+         return Client.objects.filter(userconsent__user=self.request.user)
+
 
 class InviteUserView(StaffOnlyMixin, FormView):
     template_name = 'lizard_auth_server/invite_user.html'

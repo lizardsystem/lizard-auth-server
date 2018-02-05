@@ -2,17 +2,17 @@
 
 from datetime import datetime
 
+import jwt
+from faker import Faker
+from jwt.exceptions import ExpiredSignatureError
+from nose.tools import raises
+
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test import TestCase
 from django.test.client import RequestFactory
-from faker import Faker
-from jwt.exceptions import ExpiredSignatureError
-from nose.tools import raises
-import jwt
-
 from lizard_auth_server.conf import settings
 from lizard_auth_server.models import GenKey
 from lizard_auth_server.tests import factories
@@ -38,6 +38,53 @@ class ProfileViewTestCase(TestCase):
         client.login(username='admin', password='pass')
         result = client.get(reverse('index'))
         self.assertEquals(result.status_code, 200)
+
+
+class ManagePermissionViewTestCase(TestCase):
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.portal = factories.PortalF()
+        self.user = factories.UserF()
+        #zorg dat er een UserConsent object is in de db (in factory of hier?).
+
+        #Get the list of all users before the tests.
+        # self.users_before = list(User.objects.values_list('id', flat=True))
+
+    def test_remove_one_and_correct_user_from_UserConsent(self):
+        '''
+        1) verwijder 1 object uit de UserConsent (via delete knop)
+        UserConsent.user(Client_test).delete()
+            --> maar zo kan de test al werken zonder goede code.
+
+        2) Get the list of all users after the tests.
+        users_after = list(User.objects.values_list('id', flat=True))
+
+        3) Calculate the set difference is 1.
+        users_removed= users_after - self.users_before
+        self.assertEqual(1, user_removed)
+
+        4) does this need a new test: verifying if correct user is removed
+        search on the user that is removed in previous test
+        user_to_remove not in users_removed
+        expect attribute error.
+        '''
+
+    def test_remove_two_and_correct_users_from_UserConsent(self):
+        '''
+        1) verwijder 2 object uit de UserConsent (via delete knop)
+
+        2) Get the list of all users after the tests.
+        users_after = list(User.objects.values_list('id', flat=True))
+
+        3) Calculate the set difference is 2
+        users_removed= users_after - self.users_before
+        self.assertEqual(2, user_removed)
+
+        4) search on the user that is removed in previous test
+        user_to_remove not in users_removed
+        expect attribute error.
+        '''
 
 
 class JWTViewTestCase(TestCase):

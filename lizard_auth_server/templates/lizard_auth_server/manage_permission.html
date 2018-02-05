@@ -1,7 +1,29 @@
 {% extends 'lizard_auth_server/base.html' %}
+{% load i18n %}
 
 {% block container %}
-    {{ view.make_list }}
+  <div class="content">
+    <h2>{% trans 'Websites' %}</h2>
 
-    hoi
+      <div class="span4">
+
+        {% if view.oidc_clients_with_consent %}
+          <p>
+            {% blocktrans %}
+              Listed are the OIDC clients with a consent for logging in. You can delete the consent to log in.
+            {% endblocktrans %}
+          </p>
+          <dl>
+            {% for oidc_client in view.oidc_clients_with_consent %}
+              <dt>{{ oidc_client.name }}</dt>
+              <dd>
+                <a href="{{ oidc_client.website_url }}">
+                  {{ oidc_client.website_url }}
+                </a>
+              </dd>
+            {% endfor %}
+          </dl>
+        </div>
+      </div>
+    {% endif %}
 {% endblock %}

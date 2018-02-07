@@ -1,0 +1,21 @@
+{% extends 'lizard_auth_server/base.html' %}
+{% load urlify %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}
+{{ instance.title }} | {{ block.super }}
+{% endblock head_title %}
+
+{% block content %}
+
+<div class="col-sm-6 col-sm-offset-3">
+
+    <form method="post" action="."> {% csrf_token %}
+        <p>Do you want to delete: "{{ object }}"?</p>
+
+        <input type="submit" value="Confirm" class="btn btn-warning">
+        <a href="{{ object.get_absolute_url }}" class="btn btn-default">Cancel</a>
+    </form>
+</div>
+
+{% endblock content %}

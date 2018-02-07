@@ -199,13 +199,6 @@ class EditProfileView(FormView):
 
         return HttpResponseRedirect(reverse('profile'))
 
-class ManagePermissionView(TemplateView):
-     template_name = 'lizard_auth_server/manage_permission.html'
-     test_list = ['website1', 'website2']
-
-     @property
-     def make_list(self):
-        return self.test_list
 
 class InviteUserView(StaffOnlyMixin, FormView):
     template_name = 'lizard_auth_server/invite_user.html'
@@ -233,6 +226,24 @@ class InviteUserView(StaffOnlyMixin, FormView):
             reverse(
                 'lizard_auth_server.invite_user_complete',
                 kwargs={'invitation_pk': inv.pk}))
+
+
+class ConfirmDeletionUserconsentView(TemplateView):
+    template_name = 'lizard_auth_server/confirm_deletion_userconsent.html'
+
+    '''
+    def comment_delete(request, id):
+     obj = get_object_or_404(Comment, id=id)
+     if request.method == "POST":
+         parent_obj_url = obj.content_object.get_absolute.url()
+         obj.delete()
+         messages.success(request ,"Website is deleted")
+         return HttpResponseRedirect(parent_obj_url)
+     context = {
+         "object": obj
+     }
+     return render(request, "confirm_deletion_userconsent.html", context)
+    '''
 
 
 class InviteUserCompleteView(StaffOnlyMixin, TemplateView):

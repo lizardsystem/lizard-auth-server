@@ -216,6 +216,11 @@ urlpatterns = patterns(
         name='lizard_auth_server.invite_user'
     ),
     url(
+        r'^confirm_deletion_userconsent/$',
+        views.ConfirmDeletionUserconsentView.as_view(),
+        name='lizard_auth_server.confirm_deletion_userconsent'
+    ),
+    url(
         r'^invite/complete/(?P<invitation_pk>\d+)/$',
         views.InviteUserCompleteView.as_view(),
         name='lizard_auth_server.invite_user_complete'
@@ -239,11 +244,6 @@ urlpatterns = patterns(
         r'^edit_profile/$',
         views.EditProfileView.as_view(),
         name='lizard_auth_server.edit_profile'
-    ),
-    url(
-        r'^manage_permission$',
-        views.ManagePermissionView.as_view(),
-        name='lizard_auth_server.manage_permission'
     ),
     # URLs for third-party apps.
     url(

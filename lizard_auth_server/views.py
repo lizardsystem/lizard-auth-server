@@ -6,8 +6,7 @@ import logging
 from datetime import datetime
 
 import jwt
-# from oidc_provider.models import UserConsent
-from oidc_provider.models import Client
+from oidc_provider.models import UserConsent
 from six.moves.urllib import parse
 
 from django.contrib.admin.views.decorators import staff_member_required
@@ -94,14 +93,18 @@ class ProfileView(TemplateView):
             return self.profile.portals.all()
 
     @cached_property
-    def oidc_clients_with_consent(self):
+    def oidc_userconsent(self):
         """Return OIDC clients with our consent for logging in
 
         'Client' means a website with an 'OpenID connect' connection with
         us. Consent means that the user allows the client to use the SSO to
         log them in.
         """
-        return Client.objects.filter(userconsent__user=self.request.user)
+        #oidc_userconsent = UserConsent.objects.filter()
+        return UserConsent.objects.filter()
+
+    #oidc_client_test = Client.objects.filter(userconsent__user=self.request.user)
+    #return Client.objects.filter(userconsent__user=self.request.user)
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -231,19 +234,28 @@ class InviteUserView(StaffOnlyMixin, FormView):
 class ConfirmDeletionUserconsentView(TemplateView):
     template_name = 'lizard_auth_server/confirm_deletion_userconsent.html'
 
-    '''
-    def comment_delete(request, id):
-     obj = get_object_or_404(Comment, id=id)
-     if request.method == "POST":
-         parent_obj_url = obj.content_object.get_absolute.url()
-         obj.delete()
-         messages.success(request ,"Website is deleted")
-         return HttpResponseRedirect(parent_obj_url)
-     context = {
-         "object": obj
-     }
-     return render(request, "confirm_deletion_userconsent.html", context)
-    '''
+    def var_constant(self):
+        userconsent_pk = self.kwargs['userconsent_pk']
+        return UserConsent.objects.get(id=userconsent_pk)
+
+    #def get_post(self, request, *args, **kwargs):
+
+
+'''
+    def confirm_deletion(self, id):
+        #get object based on the id
+        userconsent = get_object_or_404(Post, id=id)   #post ipv comment
+        parent_obj_url = userconsent.content_object.get_absolute.url()
+        userconsent.delete()
+        #messages.success(request ,"Website is deleted")
+        return HttpResponseRedirect(parent_obj_url)
+        context = {
+            "object": userconsent
+         }
+
+    def get_absolute_url(self):
+        return reverse("posts:detail", kwargs={"slug": self.slug})
+'''
 
 
 class InviteUserCompleteView(StaffOnlyMixin, TemplateView):

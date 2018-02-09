@@ -18,6 +18,7 @@ from django.test.client import RequestFactory
 from lizard_auth_server.conf import settings
 from lizard_auth_server.models import GenKey
 from lizard_auth_server.tests import factories
+from lizard_auth_server.views import ConfirmDeletionUserconsentView
 from lizard_auth_server.views import JWTView
 
 JWT_EXPIRATION_DELTA = settings.LIZARD_AUTH_SERVER_JWT_EXPIRATION_DELTA
@@ -62,16 +63,17 @@ class ConfirmDeletionUserconsentViewTestCase(TestCase):
     def test_remove_one_and_correct_user_from_UserConsent(self):
 
         #Verwijder object uit de UserConsent (via delete knop)
-        '''
-        ManagePermissionView.Userconsent(Client_test).delete()
 
-        2) Get the list of all users after the tests.
+        ConfirmDeletionUserconsentView.delete()
+
+        #Get the list of all users after the tests.
         users_after = list(User.objects.values_list('id', flat=True))
 
-        3) Calculate the set difference is 1.
+        #Calculate there is one userconsent removed.
         users_removed= users_after - self.users_before
-        self.assertEqual(1, user_removed)
+        self.assertEqual(1, users_removed)
 
+        '''
         4) does this need a new test: verifying if correct user is removed
         search on the user that is removed in previous test
         user_to_remove not in users_removed

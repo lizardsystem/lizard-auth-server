@@ -1,12 +1,10 @@
 {% extends 'lizard_auth_server/base.html' %}
-{% load urlify %}
-{% load crispy_forms_tags %}
 
 {% block head_title %}
 {{ instance.title }} | {{ block.super }}
 {% endblock head_title %}
 
-{% block content %}
+{% block container %}
 
 <div class="col-sm-6 col-sm-offset-3">
 
@@ -18,4 +16,4 @@
     </form>
 </div>
 
-{% endblock content %}
+{% endblock %}

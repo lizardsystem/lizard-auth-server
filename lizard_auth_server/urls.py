@@ -216,7 +216,7 @@ urlpatterns = patterns(
         name='lizard_auth_server.invite_user'
     ),
     url(
-        r'^confirm_deletion_userconsent/$',
+        r'^confirm_deletion_userconsent/(?P<userconsent_pk>\d+)/$',
         views.ConfirmDeletionUserconsentView.as_view(),
         name='lizard_auth_server.confirm_deletion_userconsent'
     ),

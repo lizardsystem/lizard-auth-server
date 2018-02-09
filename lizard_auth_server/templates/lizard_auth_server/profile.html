@@ -26,7 +26,7 @@
       </div>
       <div class="span4">
 
-        {% if view.oidc_clients_with_consent %}
+        {% if view.oidc_userconsent %}
           <h3>
             {% trans 'Websites' %}
           </h3>
@@ -36,8 +36,13 @@
             {% endblocktrans %}
           </p>
           <dl>
-            {% for oidc_client in view.oidc_clients_with_consent %}
-              <dt>{{ oidc_client.name }} <button style="font-size:16px"><i class="fa fa-trash-o"></i></button>
+            {% for oidc_userconsent in view.oidc_userconsent %}
+              <dt>{{ oidc_userconsent }}
+                  <td><a href="{% url 'lizard_auth_server.confirm_deletion_userconsent' userconsent_pk=oidc_userconsent.id %}">
+                      <button type="button" style="font-size:16px"><i>
+                          class="fa fa-trash-o"></i></button>
+                      </a>
+                  </td>
               <dd>
                 <a href="{{ oidc_client.website_url }}">
                   {{ oidc_client.website_url }}

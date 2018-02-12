@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 from django.core.validators import URLValidator
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
@@ -26,6 +27,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _
 from django.views.generic import View
 from django.views.generic.base import TemplateView
+from django.views.generic.edit import DeleteView
 from django.views.generic.edit import FormView
 from lizard_auth_server import forms
 from lizard_auth_server.conf import settings
@@ -94,17 +96,15 @@ class ProfileView(TemplateView):
 
     @cached_property
     def oidc_userconsent(self):
-        """Return OIDC clients with our consent for logging in
+        """
+        Returns UserConsent. Couples foreign key from user and OIDC clients
+        to give consent for logging in on the OIDC client.
 
         'Client' means a website with an 'OpenID connect' connection with
         us. Consent means that the user allows the client to use the SSO to
         log them in.
         """
-        #oidc_userconsent = UserConsent.objects.filter()
         return UserConsent.objects.filter()
-
-    #oidc_client_test = Client.objects.filter(userconsent__user=self.request.user)
-    #return Client.objects.filter(userconsent__user=self.request.user)
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -116,7 +116,6 @@ class UserConsentsEditView(TemplateView):
     View for listing and *removing* openid connect user consents
     """
     template_name = 'lizard_auth_server/userconsents.html'
-
 
 
 class AccessToPortalView(TemplateView):
@@ -231,31 +230,19 @@ class InviteUserView(StaffOnlyMixin, FormView):
                 kwargs={'invitation_pk': inv.pk}))
 
 
-class ConfirmDeletionUserconsentView(TemplateView):
+class ConfirmDeletionUserconsentView(DeleteView):
+    model = UserConsent
     template_name = 'lizard_auth_server/confirm_deletion_userconsent.html'
+    context_object_name = 'userconsent'
 
-    def var_constant(self):
+    def delete(self, request, *args, **kwargs):
         userconsent_pk = self.kwargs['userconsent_pk']
-        return UserConsent.objects.get(id=userconsent_pk)
-
-    #def get_post(self, request, *args, **kwargs):
-
-
-'''
-    def confirm_deletion(self, id):
-        #get object based on the id
-        userconsent = get_object_or_404(Post, id=id)   #post ipv comment
-        parent_obj_url = userconsent.content_object.get_absolute.url()
-        userconsent.delete()
-        #messages.success(request ,"Website is deleted")
-        return HttpResponseRedirect(parent_obj_url)
-        context = {
-            "object": userconsent
-         }
-
-    def get_absolute_url(self):
-        return reverse("posts:detail", kwargs={"slug": self.slug})
-'''
+        success_url = reverse_lazy('profile')
+        if request.user is userconsent_pk:
+            self.object.delete()
+            return HttpResponseRedirect(success_url)
+        else:
+            a = "b"
 
 
 class InviteUserCompleteView(StaffOnlyMixin, TemplateView):

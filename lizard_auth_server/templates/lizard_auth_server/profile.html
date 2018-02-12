@@ -38,7 +38,7 @@
           <dl>
             {% for oidc_userconsent in view.oidc_userconsent %}
               <dt>{{ oidc_userconsent }}
-                  <td><a href="{% url 'lizard_auth_server.confirm_deletion_userconsent' userconsent_pk=oidc_userconsent.id %}">
+                  <td><a href="{% url 'lizard_auth_server.confirm_deletion_userconsent' pk=oidc_userconsent.id %}">
                       <button type="button" style="font-size:16px"><i>
                           class="fa fa-trash-o"></i></button>
                       </a>

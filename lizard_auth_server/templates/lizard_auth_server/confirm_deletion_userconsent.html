@@ -8,11 +8,11 @@
 
 <div class="col-sm-6 col-sm-offset-3">
 
-    <form method="post" action="."> {% csrf_token %}
-        <p>Do you want to delete: "{{ object }}"?</p>
+    <form method="post" action=""> {% csrf_token %}
+        <p>Do you want to delete: "{{ userconsent }}"?</p>
 
-        <input type="submit" value="Confirm" class="btn btn-warning">
-        <a href="{{ object.get_absolute_url }}" class="btn btn-default">Cancel</a>
+        <input type="submit" value="Confirm" class="btn btn-warning" action="lizard_auth_server.confirm_deletion_userconsent">
+        <a href="{{ "object.get_absolute_url" }}" class="btn btn-default">Cancel</a>
     </form>
 </div>
 

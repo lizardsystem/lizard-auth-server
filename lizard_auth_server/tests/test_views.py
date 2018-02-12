@@ -47,7 +47,7 @@ class ConfirmDeletionUserconsentViewTestCase(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.user = factories.UserF()
-        self.client = OIDC_Client.objects.create()
+        self.client = OIDC_Client.objects.create(client_id='id')
         expires_at = datetime(3022, 2, 17)
         date_given = datetime(3018, 4, 16)
         self.user_consent = UserConsent.objects.create(
@@ -55,33 +55,19 @@ class ConfirmDeletionUserconsentViewTestCase(TestCase):
 
         #Get the list of all Userconsent objects before the tests.
         self.users_before = list(UserConsent.objects.values_list('id', flat=True))
-
-    '''
+        '''
     def test_setup(self):
         a = "b"
 
     def test_remove_one_and_correct_user_from_UserConsent(self):
-        #Verwijder 1 UserConsent object
         ConfirmDeletionUserconsentView.delete()
-
         #Get the list of all users after the tests.
         users_after = list(User.objects.values_list('id', flat=True))
 
         #Calculate there is one userconsent removed.
         users_removed= users_after - self.users_before
         self.assertEqual(1, users_removed)
-
-        example from stackoverflow:
-
-    def test_my_get_request(self):
-        response = self.client.get(reverse('remove_myclass', args=(myobject.id,)), follow=True)
-        self.assertContains(response, 'Are you sure you want to remove')
-
-    def test_my_post_request(self):
-        post_response = self.client.post(reverse('remove_myclass', args=(myobject.id,)), follow=True)
-        self.assertRedirects(post_response, reverse('myclass_removed'), status_code=302)
         '''
-
 
 class JWTViewTestCase(TestCase):
 

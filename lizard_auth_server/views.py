@@ -97,7 +97,8 @@ class ProfileView(TemplateView):
     @cached_property
     def oidc_userconsent(self):
         """
-        Returns UserConsent. Couples foreign key from user and OIDC clients
+        Returns UserConsent of the user that is logged in.
+        UserConsent couples foreign key from user and OIDC clients
         to give consent for logging in on the OIDC client.
 
         'Client' means a website with an 'OpenID connect' connection with
@@ -234,15 +235,14 @@ class ConfirmDeletionUserconsentView(DeleteView):
     model = UserConsent
     template_name = 'lizard_auth_server/confirm_deletion_userconsent.html'
     context_object_name = 'userconsent'
+    success_url = reverse_lazy('profile')
 
     def delete(self, request, *args, **kwargs):
-        userconsent_pk = self.kwargs['userconsent_pk']
-        success_url = reverse_lazy('profile')
-        if request.user is userconsent_pk:
+        self.object = self.get_object()
+        # Users can only delete their own UserConsents
+        if request.user == self.object.user:
             self.object.delete()
-            return HttpResponseRedirect(success_url)
-        else:
-            a = "b"
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class InviteUserCompleteView(StaffOnlyMixin, TemplateView):

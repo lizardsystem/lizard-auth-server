@@ -105,7 +105,7 @@ class ProfileView(TemplateView):
         us. Consent means that the user allows the client to use the SSO to
         log them in.
         """
-        return UserConsent.objects.filter()
+        return UserConsent.objects.filter(user=self.request.user)
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

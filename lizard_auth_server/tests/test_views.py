@@ -18,6 +18,7 @@ from django.test.client import RequestFactory
 from lizard_auth_server.conf import settings
 from lizard_auth_server.models import GenKey
 from lizard_auth_server.tests import factories
+from lizard_auth_server.views import ConfirmDeletionUserconsentView
 from lizard_auth_server.views import JWTView
 
 JWT_EXPIRATION_DELTA = settings.LIZARD_AUTH_SERVER_JWT_EXPIRATION_DELTA
@@ -53,21 +54,20 @@ class ConfirmDeletionUserconsentViewTestCase(TestCase):
         self.user_consent = UserConsent.objects.create(
             expires_at=expires_at, client=self.client, user=self.user, date_given=date_given)
 
-        #Get the list of all Userconsent objects before the tests.
-        self.users_before = list(UserConsent.objects.values_list('id', flat=True))
-        '''
-    def test_setup(self):
-        a = "b"
+        self.userconsents_before_deletion = UserConsent.objects.count()
 
     def test_remove_one_and_correct_user_from_UserConsent(self):
-        ConfirmDeletionUserconsentView.delete()
-        #Get the list of all users after the tests.
-        users_after = list(User.objects.values_list('id', flat=True))
+        pk = self.user_consent.pk
+        request = self.factory.post('/confirm_deletion_userconsent/')
+        # Login
+        request.user = self.user
+        # Call the delete method
+        response = ConfirmDeletionUserconsentView.as_view()(request, pk=pk)
+        self.assertEqual(response.status_code, 302)
+        userconsents_after_deletion = UserConsent.objects.count()
+        self.assertEqual(1, self.userconsents_before_deletion - userconsents_after_deletion)
+        self.assertFalse(UserConsent.objects.filter(pk=pk).exists())
 
-        #Calculate there is one userconsent removed.
-        users_removed= users_after - self.users_before
-        self.assertEqual(1, users_removed)
-        '''
 
 class JWTViewTestCase(TestCase):
 

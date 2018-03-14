@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lizardsystem\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-19 10:19+0000\n"
+"POT-Creation-Date: 2018-03-14 14:53+0000\n"
 "PO-Revision-Date: 2017-12-19 11:38+0100\n"
 "Last-Translator: admin <admin@example.com>\n"
 "Language-Team: \n"
@@ -401,7 +401,7 @@ msgstr "Niet in gebruik. We slaan geen adresgegevens op."
 msgid "Lizard SSO"
 msgstr "Lizard SSO"
 
-#: templates/admin/base_site.html:10 templates/lizard_auth_server/base.html:57
+#: templates/admin/base_site.html:10 templates/lizard_auth_server/base.html:58
 msgid "Django administration"
 msgstr "Django administratiepagina's"
 
@@ -418,7 +418,7 @@ msgstr "Afgezien van inloggen heeft u geen speciale rechten."
 msgid "Access denied"
 msgstr "Geen toegang"
 
-#: templates/lizard_auth_server/access_denied.html:10 views.py:423
+#: templates/lizard_auth_server/access_denied.html:10 views.py:442
 msgid "You do not have access to this portal."
 msgstr "U heeft geen toegang tot dit portaal."
 
@@ -517,7 +517,7 @@ msgid "Your account has been activated.  You may go ahead and log in now."
 msgstr "Uw account is geactiveerd. U kunt verder gaan door in te loggen."
 
 #: templates/lizard_auth_server/activation_complete.html:10
-#: templates/lizard_auth_server/base.html:73
+#: templates/lizard_auth_server/base.html:74
 #: templates/lizard_auth_server/login.html:4
 #: templates/lizard_auth_server/login.html:19
 #: templates/lizard_auth_server/login.html:26
@@ -563,26 +563,26 @@ msgstr "Met vriendelijke groet,"
 msgid "The %(sso_hostname)s team"
 msgstr "Het %(sso_hostname)s team"
 
-#: templates/lizard_auth_server/base.html:54
+#: templates/lizard_auth_server/base.html:55
 #, python-format
 msgid "Hello, %(name)s"
 msgstr "Hallo, %(name)s"
 
-#: templates/lizard_auth_server/base.html:55
+#: templates/lizard_auth_server/base.html:56
 msgid "Profile"
 msgstr "Profiel"
 
-#: templates/lizard_auth_server/base.html:59
-#: templates/lizard_auth_server/base.html:74
+#: templates/lizard_auth_server/base.html:60
+#: templates/lizard_auth_server/base.html:75
 msgid "Log out"
 msgstr "Afmelden"
 
-#: templates/lizard_auth_server/base.html:75
-#: templates/lizard_auth_server/profile.html:61
+#: templates/lizard_auth_server/base.html:76
+#: templates/lizard_auth_server/profile.html:64
 msgid "Change password"
 msgstr "Verander het wachtwoord"
 
-#: templates/lizard_auth_server/base.html:76
+#: templates/lizard_auth_server/base.html:77
 #: templates/lizard_auth_server/login.html:31
 #: templates/lizard_auth_server/password_reset_done.html:4
 #: templates/lizard_auth_server/password_reset_done.html:8
@@ -591,6 +591,22 @@ msgstr "Verander het wachtwoord"
 #: templates/lizard_auth_server/password_reset_form.html:24
 msgid "Reset my password"
 msgstr "Reset mijn wachtwoord"
+
+#: templates/lizard_auth_server/confirm_deletion_userconsent.html:14
+#, python-format
+msgid ""
+"\n"
+"            Do you want to delete: \"%(userconsent)s\"?\n"
+"          "
+msgstr "Wilt u het volgende deleten: \"%(userconsent)s\"?\n"
+
+#: templates/lizard_auth_server/confirm_deletion_userconsent.html:21
+msgid "Confirm"
+msgstr "Bevestig"
+
+#: templates/lizard_auth_server/confirm_deletion_userconsent.html:25
+msgid "Cancel"
+msgstr "Annuleer"
 
 #: templates/lizard_auth_server/edit_profile.html:4
 #: templates/lizard_auth_server/edit_profile.html:16
@@ -628,7 +644,7 @@ msgid "With this account, you can access the following sites:"
 msgstr "Met dit account kunt u de volgende portalen benaderen:"
 
 #: templates/lizard_auth_server/invitation_email.html:14
-#: templates/lizard_auth_server/profile.html:110
+#: templates/lizard_auth_server/profile.html:112
 msgid "No portals found."
 msgstr "Geen portalen gevonden."
 
@@ -662,7 +678,7 @@ msgid ""
 msgstr "Het account is geregisteerd, en een activatie e-mail is verstuurd naar"
 
 #: templates/lizard_auth_server/invite_user_complete.html:13
-#: templates/lizard_auth_server/profile.html:52
+#: templates/lizard_auth_server/profile.html:55
 msgid "Actions"
 msgstr "Acties"
 
@@ -808,73 +824,80 @@ msgid "Websites"
 msgstr "Websites"
 
 #: templates/lizard_auth_server/profile.html:33
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "              Here are the websites you've given permission to log you "
+#| "in.\n"
+#| "            "
 msgid ""
 "\n"
-"              Here are the websites you've given permission to log you in.\n"
+"              Here are the websites you've given permission to log you in. "
+"You can delete this permission per site.\n"
 "            "
 msgstr ""
 "\n"
 "Dit zijn de websites waarvoor u inloggen toegestaan heeft."
 
-#: templates/lizard_auth_server/profile.html:56
+#: templates/lizard_auth_server/profile.html:59
 msgid "Edit my profile"
 msgstr "Bewerk mijn profiel"
 
-#: templates/lizard_auth_server/profile.html:67
+#: templates/lizard_auth_server/profile.html:70
 msgid "Register a new user"
 msgstr "Registreer een nieuwe gebruiker"
 
-#: templates/lizard_auth_server/profile.html:74
+#: templates/lizard_auth_server/profile.html:77
 msgid "Manage SSO portals"
 msgstr "Beheer SSO portalen"
 
-#: templates/lizard_auth_server/profile.html:89
+#: templates/lizard_auth_server/profile.html:91
 msgid "Available portals"
 msgstr "Beschikbare portalen"
 
-#: templates/lizard_auth_server/profile.html:91
+#: templates/lizard_auth_server/profile.html:93
 msgid "All portals (staff member):"
 msgstr "Alle portalen (vanwege admin-rechten):"
 
-#: templates/lizard_auth_server/profile.html:93
+#: templates/lizard_auth_server/profile.html:95
 msgid "You have access to the following portals:"
 msgstr "Dit zijn de portalen waar u toegang tot heeft:"
 
-#: templates/lizard_auth_server/profile.html:105
+#: templates/lizard_auth_server/profile.html:107
 msgid "permissions"
 msgstr "rechten"
 
-#: templates/lizard_auth_server/profile.html:117
+#: templates/lizard_auth_server/profile.html:119
 msgid "Organisations"
 msgstr "Organisaties"
 
-#: templates/lizard_auth_server/profile.html:118
+#: templates/lizard_auth_server/profile.html:120
 msgid "You are a member of the following organisations:"
 msgstr "U behoort tot de volgende organisaties:"
 
-#: views.py:60
+#: views.py:61
 msgid "An unknown error occurred."
 msgstr "Onbekende fout."
 
-#: views.py:126
+#: views.py:129
 msgid "Access to portal {} for {}"
 msgstr "Toegang tot portaal {} voor {}"
 
-#: views.py:261
+#: views.py:280
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 "Ongeldige activatiesleutel. Dit betekent waarschijnlijk dat het account al "
 "geactiveerd is."
 
-#: views.py:409
+#: views.py:428
 msgid "Invalid `next` query string parameter."
 msgstr "De `next` parameter klopt niet."
 
-#: views.py:413
+#: views.py:432
 msgid "Missing `portal` query string parameter."
 msgstr "De `portal` parameter mist."
 
-#: views.py:417
+#: views.py:436
 msgid "Invalid `portal` query string parameter."
 msgstr "De `portal` parameter klopt niet."
 

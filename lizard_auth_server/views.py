@@ -97,26 +97,18 @@ class ProfileView(TemplateView):
     @cached_property
     def oidc_userconsent(self):
         """
-        Returns UserConsent of the user that is logged in.
+        Returns UserConsents of logged in User.
         UserConsent couples foreign key from user and OIDC clients
         to give consent for logging in on the OIDC client.
 
-        'Client' means a website with an 'OpenID connect' connection with
-        us. Consent means that the user allows the client to use the SSO to
-        log them in.
+        'Client' being the website with an 'OpenID connect' to our Nens server.
+        'Consent' means the user allowed the client to use the SSO for log in.
         """
         return UserConsent.objects.filter(user=self.request.user)
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
-
-
-class UserConsentsEditView(TemplateView):
-    """
-    View for listing and *removing* openid connect user consents
-    """
-    template_name = 'lizard_auth_server/userconsents.html'
 
 
 class AccessToPortalView(TemplateView):
@@ -240,6 +232,8 @@ class ConfirmDeletionUserconsentView(DeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         # Users can only delete their own UserConsents
+        # Incorrect user can't delete UserConsent but will redirect to succes url.
+        # Thus, will get no error message.
         if request.user == self.object.user:
             self.object.delete()
         return HttpResponseRedirect(self.get_success_url())

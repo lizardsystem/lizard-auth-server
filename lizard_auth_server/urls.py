@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.conf import settings
 from django.conf.urls import include
 from django.conf.urls import patterns
@@ -213,6 +214,11 @@ urlpatterns = patterns(
         r'^invite/$',
         views.InviteUserView.as_view(),
         name='lizard_auth_server.invite_user'
+    ),
+    url(
+        r'^confirm_deletion_userconsent/(?P<pk>\d+)/$',
+        views.ConfirmDeletionUserconsentView.as_view(),
+        name='lizard_auth_server.confirm_deletion_userconsent'
     ),
     url(
         r'^invite/complete/(?P<invitation_pk>\d+)/$',

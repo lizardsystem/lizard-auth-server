@@ -2,15 +2,19 @@
 
 from __future__ import unicode_literals
 
-from datetime import datetime
-import jwt
 import logging
+from datetime import datetime
+
+import jwt
+from oidc_provider.models import UserConsent
+from six.moves.urllib import parse
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 from django.core.validators import URLValidator
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
@@ -23,12 +27,8 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _
 from django.views.generic import View
 from django.views.generic.base import TemplateView
+from django.views.generic.edit import DeleteView
 from django.views.generic.edit import FormView
-
-# urllib is the hardest module to use from Python 2/3 compatible code. Six
-# provides a version for wrapping over differences between Python 2 and 3.
-from six.moves.urllib import parse
-
 from lizard_auth_server import forms
 from lizard_auth_server.conf import settings
 from lizard_auth_server.models import Invitation
@@ -94,9 +94,29 @@ class ProfileView(TemplateView):
         else:
             return self.profile.portals.all()
 
+    @cached_property
+    def oidc_userconsent(self):
+        """
+        Returns UserConsent of the user that is logged in.
+        UserConsent couples foreign key from user and OIDC clients
+        to give consent for logging in on the OIDC client.
+
+        'Client' means a website with an 'OpenID connect' connection with
+        us. Consent means that the user allows the client to use the SSO to
+        log them in.
+        """
+        return UserConsent.objects.filter(user=self.request.user)
+
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
+
+
+class UserConsentsEditView(TemplateView):
+    """
+    View for listing and *removing* openid connect user consents
+    """
+    template_name = 'lizard_auth_server/userconsents.html'
 
 
 class AccessToPortalView(TemplateView):
@@ -209,6 +229,20 @@ class InviteUserView(StaffOnlyMixin, FormView):
             reverse(
                 'lizard_auth_server.invite_user_complete',
                 kwargs={'invitation_pk': inv.pk}))
+
+
+class ConfirmDeletionUserconsentView(DeleteView):
+    model = UserConsent
+    template_name = 'lizard_auth_server/confirm_deletion_userconsent.html'
+    context_object_name = 'userconsent'
+    success_url = reverse_lazy('profile')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        # Users can only delete their own UserConsents
+        if request.user == self.object.user:
+            self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class InviteUserCompleteView(StaffOnlyMixin, TemplateView):

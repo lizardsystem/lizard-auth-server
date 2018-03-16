@@ -2,20 +2,23 @@
 
 from datetime import datetime
 
+import jwt
+from faker import Faker
+from jwt.exceptions import ExpiredSignatureError
+from nose.tools import raises
+from oidc_provider.models import Client as OIDC_Client
+from oidc_provider.models import UserConsent
+
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test import TestCase
 from django.test.client import RequestFactory
-from faker import Faker
-from jwt.exceptions import ExpiredSignatureError
-from nose.tools import raises
-import jwt
-
 from lizard_auth_server.conf import settings
 from lizard_auth_server.models import GenKey
 from lizard_auth_server.tests import factories
+from lizard_auth_server.views import ConfirmDeletionUserconsentView
 from lizard_auth_server.views import JWTView
 
 JWT_EXPIRATION_DELTA = settings.LIZARD_AUTH_SERVER_JWT_EXPIRATION_DELTA
@@ -38,6 +41,32 @@ class ProfileViewTestCase(TestCase):
         client.login(username='admin', password='pass')
         result = client.get(reverse('index'))
         self.assertEquals(result.status_code, 200)
+
+
+class ConfirmDeletionUserconsentViewTestCase(TestCase):
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = factories.UserF()
+        self.client = OIDC_Client.objects.create(client_id='id')
+        expires_at = datetime(3022, 2, 17)
+        date_given = datetime(3018, 4, 16)
+        self.user_consent = UserConsent.objects.create(
+            expires_at=expires_at, client=self.client, user=self.user, date_given=date_given)
+
+        self.userconsents_before_deletion = UserConsent.objects.count()
+
+    def test_remove_one_and_correct_user_from_UserConsent(self):
+        pk = self.user_consent.pk
+        request = self.factory.post('/confirm_deletion_userconsent/')
+        # Login
+        request.user = self.user
+        # Call the delete method
+        response = ConfirmDeletionUserconsentView.as_view()(request, pk=pk)
+        self.assertEqual(response.status_code, 302)
+        userconsents_after_deletion = UserConsent.objects.count()
+        self.assertEqual(1, self.userconsents_before_deletion - userconsents_after_deletion)
+        self.assertFalse(UserConsent.objects.filter(pk=pk).exists())
 
 
 class JWTViewTestCase(TestCase):

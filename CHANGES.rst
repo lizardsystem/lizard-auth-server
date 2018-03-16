@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 2.21 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Support display&deletion of openID connect "user consents".
 
 
 2.20 (2017-12-14)
@@ -23,7 +23,7 @@ Changelog of lizard-auth-server
 2.19 (2017-12-13)
 -----------------
 
-- Added django-iodc-provider so that we can work as "openID connect
+- Added django-oidc-provider so that we can work as "openID connect
   provider".
 
   Adjusted scopes and userinfo to the minimum that we want. Note: in the sso,

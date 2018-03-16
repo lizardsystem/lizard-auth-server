@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.21 (unreleased)
+2.21 (2018-03-16)
 -----------------
 
 - Support display&deletion of openID connect "user consents".

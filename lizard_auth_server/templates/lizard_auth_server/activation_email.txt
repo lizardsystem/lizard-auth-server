@@ -1,15 +1,17 @@
 {% spaceless %}
 {% load i18n %}
-{% endspaceless %}{% blocktrans %}Hello {{ name }},{% endblocktrans %}
+{% endspaceless %}{% blocktrans %}Dear {{ name }},{% endblocktrans %}
 
-{% blocktrans %}An account has been created for you at {{ sso_hostname }}.{% endblocktrans %}
-{% blocktrans %}You can use it to log in on {{ portal_url }}.{% endblocktrans %}
-
-{% trans "Please go to the following page to set a password and activate your account:" %}
-{{ activation_url }}
+{% blocktrans %}Thank you for requesting an account for one of our products. Via {{ activation_url }}* you can activate your account and enter your chosen password.{% endblocktrans %}
 
 {% trans "Your username is:" %} {{ username }}
 
-{% trans "Sincerely," %}
+{% blocktrans %}After activation, you can log in with your username and password at {{ portal_url }}.{% endblocktrans %}
 
-{% blocktrans %}The {{ sso_hostname }} team{% endblocktrans %}
+{% blockrtans %}To have a quick start, you can find the documentation and release notes of Lizard here: {{ lizard_docs_url }} and for 3Di here: {{ threedi_docs_url }}.{% endblocktrans %}
+
+{% trans "Best regards," %}
+
+{% blocktrans %}The Lizard and 3Di team{% endblocktrans %}
+
+*This link is valid for 2 weeks

@@ -1,0 +1,25 @@
+Dear {{ name }},
+
+
+Thank you for requesting an account for one of our products.
+Via {{ activation_url }}* you can activate your account and enter your chosen password.
+
+
+Your username is: {{ username }}.
+After activation, you can log in with your username and password at {{ portal_url }}.
+
+To have a quick start, you can find the documentation and release notes of
+Lizard and 3Di here:
+
+- https://docs.lizard.net/
+- https://docs.3di.lizard.net/
+
+If you have any questions, do not hesitate to contact us. You can do that by
+sending an email to servicedesk@nelen-schuurmans.nl
+
+
+Best regards,
+The Lizard and 3Di team
+
+
+*) This link is valid for 2 weeks

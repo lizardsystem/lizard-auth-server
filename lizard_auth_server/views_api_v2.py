@@ -576,9 +576,16 @@ class NewUserView(ApiJWTFormInvalidMixin, FormMixin, ProcessFormView):
                        'name': ' '.join([first_name, last_name]),
                        'username': username,
                        'sso_hostname': self.request.get_host()}
-            email_message = render_to_string(
-                'lizard_auth_server/activation_email.txt', context)
-            send_mail(subject, email_message, None, [email])
+            template = "lizard_auth_server/activation_email_%s.txt" % language
+            email_message = render_to_string(template, context)
+            html_template = "lizard_auth_server/activation_email_%s.html" % (
+                language)
+            html_message = render_to_string(html_template, context)
+            send_mail(subject,
+                      email_message,
+                      None,
+                      [email],
+                      html_message=html_message)
 
         return user
 

@@ -1,4 +1,5 @@
 {% extends 'lizard_auth_server/base.html' %}
+{% load i18n %}
 
 {% block head_title %}
 {{ instance.title }} | {{ block.super }}
@@ -9,10 +10,19 @@
 <div class="col-sm-6 col-sm-offset-3">
 
     <form method="post" action=""> {% csrf_token %}
-        <p>Do you want to delete: "{{ userconsent }}"?</p>
+        <p>
+          {% blocktrans %}
+            Do you want to delete: "{{ userconsent }}"?
+          {% endblocktrans %}
+        </p>
 
-        <input type="submit" value="Confirm" class="btn btn-warning" action="lizard_auth_server.confirm_deletion_userconsent">
-        <a href="{{ view.get_success_url }}" class="btn btn-default">Cancel</a>
+        <input
+            type="submit"
+            value="{% trans "Confirm" %}"
+            class="btn btn-warning"
+            action="lizard_auth_server.confirm_deletion_userconsent">
+        <a href="{{ view.get_success_url }}"
+           class="btn btn-default">{% trans "Cancel" %}</a>
     </form>
 </div>
 

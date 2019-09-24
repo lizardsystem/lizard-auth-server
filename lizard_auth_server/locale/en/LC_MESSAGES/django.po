@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-19 10:19+0000\n"
+"POT-Creation-Date: 2018-03-14 14:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -383,7 +383,7 @@ msgstr ""
 msgid "Lizard SSO"
 msgstr ""
 
-#: templates/admin/base_site.html:10 templates/lizard_auth_server/base.html:57
+#: templates/admin/base_site.html:10 templates/lizard_auth_server/base.html:58
 msgid "Django administration"
 msgstr ""
 
@@ -400,7 +400,7 @@ msgstr ""
 msgid "Access denied"
 msgstr ""
 
-#: templates/lizard_auth_server/access_denied.html:10 views.py:423
+#: templates/lizard_auth_server/access_denied.html:10 views.py:442
 msgid "You do not have access to this portal."
 msgstr ""
 
@@ -493,7 +493,7 @@ msgid "Your account has been activated.  You may go ahead and log in now."
 msgstr ""
 
 #: templates/lizard_auth_server/activation_complete.html:10
-#: templates/lizard_auth_server/base.html:73
+#: templates/lizard_auth_server/base.html:74
 #: templates/lizard_auth_server/login.html:4
 #: templates/lizard_auth_server/login.html:19
 #: templates/lizard_auth_server/login.html:26
@@ -537,26 +537,26 @@ msgstr ""
 msgid "The %(sso_hostname)s team"
 msgstr ""
 
-#: templates/lizard_auth_server/base.html:54
+#: templates/lizard_auth_server/base.html:55
 #, python-format
 msgid "Hello, %(name)s"
 msgstr ""
 
-#: templates/lizard_auth_server/base.html:55
+#: templates/lizard_auth_server/base.html:56
 msgid "Profile"
 msgstr ""
 
-#: templates/lizard_auth_server/base.html:59
-#: templates/lizard_auth_server/base.html:74
+#: templates/lizard_auth_server/base.html:60
+#: templates/lizard_auth_server/base.html:75
 msgid "Log out"
 msgstr ""
 
-#: templates/lizard_auth_server/base.html:75
-#: templates/lizard_auth_server/profile.html:61
+#: templates/lizard_auth_server/base.html:76
+#: templates/lizard_auth_server/profile.html:64
 msgid "Change password"
 msgstr ""
 
-#: templates/lizard_auth_server/base.html:76
+#: templates/lizard_auth_server/base.html:77
 #: templates/lizard_auth_server/login.html:31
 #: templates/lizard_auth_server/password_reset_done.html:4
 #: templates/lizard_auth_server/password_reset_done.html:8
@@ -564,6 +564,22 @@ msgstr ""
 #: templates/lizard_auth_server/password_reset_form.html:16
 #: templates/lizard_auth_server/password_reset_form.html:24
 msgid "Reset my password"
+msgstr ""
+
+#: templates/lizard_auth_server/confirm_deletion_userconsent.html:14
+#, python-format
+msgid ""
+"\n"
+"            Do you want to delete: \"%(userconsent)s\"?\n"
+"          "
+msgstr ""
+
+#: templates/lizard_auth_server/confirm_deletion_userconsent.html:21
+msgid "Confirm"
+msgstr ""
+
+#: templates/lizard_auth_server/confirm_deletion_userconsent.html:25
+msgid "Cancel"
 msgstr ""
 
 #: templates/lizard_auth_server/edit_profile.html:4
@@ -600,7 +616,7 @@ msgid "With this account, you can access the following sites:"
 msgstr ""
 
 #: templates/lizard_auth_server/invitation_email.html:14
-#: templates/lizard_auth_server/profile.html:110
+#: templates/lizard_auth_server/profile.html:112
 msgid "No portals found."
 msgstr ""
 
@@ -634,7 +650,7 @@ msgid ""
 msgstr ""
 
 #: templates/lizard_auth_server/invite_user_complete.html:13
-#: templates/lizard_auth_server/profile.html:52
+#: templates/lizard_auth_server/profile.html:55
 msgid "Actions"
 msgstr ""
 
@@ -770,67 +786,68 @@ msgstr ""
 #: templates/lizard_auth_server/profile.html:33
 msgid ""
 "\n"
-"              Here are the websites you've given permission to log you in.\n"
+"              Here are the websites you've given permission to log you in. "
+"You can delete this permission per site.\n"
 "            "
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:56
+#: templates/lizard_auth_server/profile.html:59
 msgid "Edit my profile"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:67
+#: templates/lizard_auth_server/profile.html:70
 msgid "Register a new user"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:74
+#: templates/lizard_auth_server/profile.html:77
 msgid "Manage SSO portals"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:89
+#: templates/lizard_auth_server/profile.html:91
 msgid "Available portals"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:91
+#: templates/lizard_auth_server/profile.html:93
 msgid "All portals (staff member):"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:93
+#: templates/lizard_auth_server/profile.html:95
 msgid "You have access to the following portals:"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:105
+#: templates/lizard_auth_server/profile.html:107
 msgid "permissions"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:117
+#: templates/lizard_auth_server/profile.html:119
 msgid "Organisations"
 msgstr ""
 
-#: templates/lizard_auth_server/profile.html:118
+#: templates/lizard_auth_server/profile.html:120
 msgid "You are a member of the following organisations:"
 msgstr ""
 
-#: views.py:60
+#: views.py:61
 msgid "An unknown error occurred."
 msgstr ""
 
-#: views.py:126
+#: views.py:129
 msgid "Access to portal {} for {}"
 msgstr ""
 
-#: views.py:261
+#: views.py:280
 msgid "Invalid activation key. Perhaps this account was already activated?"
 msgstr ""
 
-#: views.py:409
+#: views.py:428
 msgid "Invalid `next` query string parameter."
 msgstr ""
 
-#: views.py:413
+#: views.py:432
 msgid "Missing `portal` query string parameter."
 msgstr ""
 
-#: views.py:417
+#: views.py:436
 msgid "Invalid `portal` query string parameter."
 msgstr ""
 

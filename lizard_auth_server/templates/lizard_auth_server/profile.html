@@ -4,7 +4,6 @@
 {% block subtitle %}{% trans 'Your profile' %}{% endblock %}
 
 {% block container %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <div class="content">
     <h2>{% trans 'Your profile' %}</h2>
 
@@ -37,11 +36,10 @@
           </p>
           <dl>
             {% for oidc_userconsent in view.oidc_userconsent %}
-              <dt>{{ oidc_userconsent }}
-                  <td><a href="{% url 'lizard_auth_server.confirm_deletion_userconsent' pk=oidc_userconsent.id %}">
+              {{ oidc_userconsent }}
+                    <a href="{% url 'lizard_auth_server.confirm_deletion_userconsent' pk=oidc_userconsent.id %}">
                       <i class="fa fa-trash-o"></i>
-                      </a>
-                  </td>
+                    </a>
               <dd>
                 <a href="{{ oidc_client.website_url }}">
                   {{ oidc_client.website_url }}

@@ -1,0 +1,20 @@
+Beste {{ name }},
+
+Bedankt voor het aanvragen van een account voor een van onze producten.
+Via {{ activation_url }}* kunt u uw account activeren en uw zelfgekozen wachtwoord invoeren. 
+
+Uw gebruikersnaam is: {{ username }}.
+
+Hierna kunt u met uw gebruiksnaam en wachtwoord inloggen op {{ portal_url }}. 
+
+Om u alvast op weg te helpen kunt u hier de documentatie en release notes van Lizard en 3Di bekijken:
+
+- https://docs.lizard.net/
+- https://docs.3di.lizard.net/
+
+Mochten er nog vragen of onduidelijkheden zijn dan horen wij deze graag. Dit kan via servicedesk@nelen-schuurmans.nl
+
+Met vriendelijke groet,
+Het Lizard en 3Di team
+
+*) Deze activeringslink vervalt over 2 weken

@@ -9,6 +9,12 @@ Changelog of lizard-auth-server
 
 - Updated test setup so that the automatic tests run once again on travis-ci.
 
+- Invitation emails: using separate templates per language instead of `.po`
+  files: easier to switch the wording per language.
+
+- Invitation emals: using both ``.txt`` and ``.html`` templates. This way we
+  can send html emails with a visually shorter invitation link.
+
 
 2.21 (2018-03-16)
 -----------------

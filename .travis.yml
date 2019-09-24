@@ -2,17 +2,10 @@ language: python
 sudo: false
 python:
   - "3.5"
-services:
-  - postgres
-cache:
-  directories:
-    - eggs
-    - $HOME/.local
 install:
-  - psql -c "create user buildout with password 'buildout' superuser;" -U postgres
-  - pip install -U psycopg2 zc.buildout setuptools
-  - buildout -v
+  - docker-compose build
+  - docker-compose run web buildout
 script:
-  - bin/test
+  - docker-compose run web bin/test
 after_success:
-  - bin/coveralls
+  - docker-compose run web bin/coveralls

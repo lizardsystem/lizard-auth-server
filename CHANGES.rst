@@ -5,7 +5,9 @@ Changelog of lizard-auth-server
 2.22 (unreleased)
 -----------------
 
-- Make organisations also searchable by unique_id in the Django admin.
+- Made organisations also searchable by unique_id in the Django admin.
+
+- Updated test setup so that the automatic tests run once again on travis-ci.
 
 
 2.21 (2018-03-16)

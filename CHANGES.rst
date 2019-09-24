@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.22 (unreleased)
+2.22 (2019-09-24)
 -----------------
 
 - Made organisations also searchable by unique_id in the Django admin.

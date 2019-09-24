@@ -258,7 +258,7 @@ class PortalAdmin(admin.ModelAdmin):
 
 class OrganisationAdmin(admin.ModelAdmin):
     model = models.Organisation
-    search_fields = ['name']
+    search_fields = ['name', 'unique_id']
     list_display = ['name', 'num_user_profiles', 'num_roles']
     readonly_fields = ['unique_id']
     inlines = [OrganisationRoleInline]

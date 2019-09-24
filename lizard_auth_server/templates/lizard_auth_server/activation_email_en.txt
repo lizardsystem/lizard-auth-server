@@ -2,7 +2,8 @@ Dear {{ name }},
 
 
 Thank you for requesting an account for one of our products.
-Via {{ activation_url }}* you can activate your account and enter your chosen password.
+You can activate your account and enter you chosen password via this activation link:
+{{ activation_url }} *
 
 
 Your username is: {{ username }}.

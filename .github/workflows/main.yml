@@ -23,8 +23,6 @@ jobs:
       - name: test
         run: docker-compose run web bin/test
       - name: coverage report
-        run: |
-          pip3 install --upgrade coveralls
-          coveralls
+        run: docker-compose run web bin/coveralls
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

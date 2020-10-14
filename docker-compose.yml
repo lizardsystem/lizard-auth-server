@@ -20,6 +20,9 @@ services:
       - .:/code:delegated
     depends_on:
       - db
+    environment:
+      # Used for coveralls on github
+      - GITHUB_TOKEN
 
 volumes:
   pgdata:

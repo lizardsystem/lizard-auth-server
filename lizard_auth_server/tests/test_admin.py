@@ -5,7 +5,6 @@ from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test import TestCase
 from django.test.client import RequestFactory
-
 from lizard_auth_server import admin
 from lizard_auth_server import models
 from lizard_auth_server.tests import factories

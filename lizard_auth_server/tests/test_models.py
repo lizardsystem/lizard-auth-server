@@ -1,9 +1,7 @@
 from __future__ import unicode_literals
-
 from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
 from django.test import TestCase
-
 from lizard_auth_server import forms
 from lizard_auth_server import models
 from lizard_auth_server.tests import factories

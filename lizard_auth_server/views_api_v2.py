@@ -1,11 +1,6 @@
 """
 V2 API
 """
-import datetime
-import logging
-import json
-from urllib.parse import urlencode  # py3 only!
-
 from django.conf import settings
 from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.auth import login as django_login
@@ -30,13 +25,17 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormMixin
 from django.views.generic.edit import FormView
 from django.views.generic.edit import ProcessFormView
-import jwt
-
 from lizard_auth_server import forms
 from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 from lizard_auth_server.views_sso import FormInvalidMixin
 from lizard_auth_server.views_sso import ProcessGetFormView
+from urllib.parse import urlencode  # py3 only!
+
+import datetime
+import json
+import jwt
+import logging
 
 
 logger = logging.getLogger(__name__)

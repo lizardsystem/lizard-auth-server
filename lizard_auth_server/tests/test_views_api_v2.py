@@ -1,9 +1,3 @@
-import copy
-import datetime
-import json
-import jwt
-import mock
-
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
@@ -12,6 +6,12 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from lizard_auth_server import views_api_v2
 from lizard_auth_server.tests import factories
+
+import copy
+import datetime
+import json
+import jwt
+import mock
 
 
 class TestStartView(TestCase):

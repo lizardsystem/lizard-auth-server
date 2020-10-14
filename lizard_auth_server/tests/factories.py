@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-
 from django.contrib.auth.models import User
 from faker import Factory as FakerFactory
-import factory
-
 from lizard_auth_server import models
+
+import factory
 
 
 faker = FakerFactory.create()

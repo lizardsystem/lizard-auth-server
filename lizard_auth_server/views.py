@@ -1,14 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-
-import logging
 from datetime import datetime
-
-import jwt
-from oidc_provider.models import UserConsent
-from six.moves.urllib import parse
-
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -33,6 +26,12 @@ from lizard_auth_server import forms
 from lizard_auth_server.conf import settings
 from lizard_auth_server.models import Invitation
 from lizard_auth_server.models import Portal
+from oidc_provider.models import UserConsent
+from six.moves.urllib import parse
+
+import jwt
+import logging
+
 
 JWT_ALGORITHM = settings.LIZARD_AUTH_SERVER_JWT_ALGORITHM
 JWT_EXPIRATION_DELTA = settings.LIZARD_AUTH_SERVER_JWT_EXPIRATION_DELTA

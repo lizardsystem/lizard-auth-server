@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-import datetime
-import logging
-import pytz
-import uuid
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -19,8 +13,12 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _
-
 from lizard_auth_server.utils import gen_secret_key
+
+import datetime
+import logging
+import pytz
+import uuid
 
 
 BILLING_ROLE = 'billing'

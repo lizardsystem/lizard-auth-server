@@ -1,8 +1,5 @@
 from django.test import TestCase
-
-from lizard_auth_server.forms import (
-    JWTDecryptForm,
-)
+from lizard_auth_server.forms import JWTDecryptForm
 
 
 class TestForm(TestCase):

@@ -1,25 +1,25 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-
-import jwt
-from faker import Faker
-from jwt.exceptions import ExpiredSignatureError
-from nose.tools import raises
-from oidc_provider.models import Client as OIDC_Client
-from oidc_provider.models import UserConsent
-
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test import TestCase
 from django.test.client import RequestFactory
+from faker import Faker
+from jwt.exceptions import ExpiredSignatureError
 from lizard_auth_server.conf import settings
 from lizard_auth_server.models import GenKey
 from lizard_auth_server.tests import factories
 from lizard_auth_server.views import ConfirmDeletionUserconsentView
 from lizard_auth_server.views import JWTView
+from nose.tools import raises
+from oidc_provider.models import Client as OIDC_Client
+from oidc_provider.models import UserConsent
+
+import jwt
+
 
 JWT_EXPIRATION_DELTA = settings.LIZARD_AUTH_SERVER_JWT_EXPIRATION_DELTA
 

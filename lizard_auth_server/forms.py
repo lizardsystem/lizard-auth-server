@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-
 from django import forms
 from django.conf import settings
 from django.contrib.auth import forms as authforms
@@ -11,13 +10,14 @@ from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from itsdangerous import BadSignature
 from itsdangerous import URLSafeTimedSerializer
-import jwt
-
 from lizard_auth_server.models import BILLING_ROLE
 from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 from lizard_auth_server.models import THREEDI_PORTAL
 from lizard_auth_server.models import UserProfile
+
+import jwt
+
 
 MIN_LENGTH = 8
 

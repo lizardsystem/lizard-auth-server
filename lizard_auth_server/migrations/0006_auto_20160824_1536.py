@@ -7,12 +7,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lizard_auth_server', '0005_auto_20160824_1445'),
+        ("lizard_auth_server", "0005_auto_20160824_1445"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='profile',
-            options={'ordering': ['user__username'], 'verbose_name': 'user profile', 'verbose_name_plural': 'user profiles'},
+            name="profile",
+            options={
+                "ordering": ["user__username"],
+                "verbose_name": "user profile",
+                "verbose_name_plural": "user profiles",
+            },
         ),
     ]

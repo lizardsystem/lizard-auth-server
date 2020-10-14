@@ -10,23 +10,26 @@ import lizard_auth_server.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lizard_auth_server', '0010_auto_20160826_1035'),
+        ("lizard_auth_server", "0010_auto_20160826_1035"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='invitation',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='created at'),
+            model_name="invitation",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="created at"),
         ),
         migrations.AlterField(
-            model_name='token',
-            name='created',
-            field=models.DateTimeField(default=lizard_auth_server.models.token_creation_date, verbose_name='created at'),
+            model_name="token",
+            name="created",
+            field=models.DateTimeField(
+                default=lizard_auth_server.models.token_creation_date,
+                verbose_name="created at",
+            ),
         ),
         migrations.AlterField(
-            model_name='userprofile',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='created at'),
+            model_name="userprofile",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="created at"),
         ),
     ]

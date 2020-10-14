@@ -8,18 +8,28 @@ from django.db import models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lizard_auth_server', '0002_auto_20160701_1423'),
+        ("lizard_auth_server", "0002_auto_20160701_1423"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='userprofile',
-            name='organisations',
-            field=models.ManyToManyField(blank=True, related_name='user_profiles', to='lizard_auth_server.Organisation', verbose_name='organisations'),
+            model_name="userprofile",
+            name="organisations",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="user_profiles",
+                to="lizard_auth_server.Organisation",
+                verbose_name="organisations",
+            ),
         ),
         migrations.AlterField(
-            model_name='userprofile',
-            name='roles',
-            field=models.ManyToManyField(blank=True, related_name='user_profiles', to='lizard_auth_server.OrganisationRole', verbose_name='roles (via organisation)'),
+            model_name="userprofile",
+            name="roles",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="user_profiles",
+                to="lizard_auth_server.OrganisationRole",
+                verbose_name="roles (via organisation)",
+            ),
         ),
     ]

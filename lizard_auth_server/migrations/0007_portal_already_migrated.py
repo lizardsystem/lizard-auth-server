@@ -8,13 +8,13 @@ from django.db import models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lizard_auth_server', '0006_auto_20160824_1536'),
+        ("lizard_auth_server", "0006_auto_20160824_1536"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='portal',
-            name='already_migrated',
-            field=models.BooleanField(default=False, verbose_name='already migrated'),
+            model_name="portal",
+            name="already_migrated",
+            field=models.BooleanField(default=False, verbose_name="already migrated"),
         ),
     ]

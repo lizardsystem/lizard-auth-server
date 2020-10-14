@@ -18,7 +18,7 @@ def add_missing_profiles(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lizard_auth_server', '0004_auto_20160818_1641'),
+        ("lizard_auth_server", "0004_auto_20160818_1641"),
     ]
 
     operations = [

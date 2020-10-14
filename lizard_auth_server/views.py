@@ -46,6 +46,7 @@ class StaffOnlyMixin(object):
 
     Ensure this is first in the inheritance list!
     """
+
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         return super(StaffOnlyMixin, self).dispatch(request, *args, **kwargs)
@@ -55,21 +56,15 @@ class ErrorMessageResponse(TemplateResponse):
     """
     Display a slightly more user-friendly error message.
     """
+
     def __init__(self, request, error_message=None, status=500):
         if not error_message:
-            error_message = _('An unknown error occurred.')
-        context = RequestContext(
-            request,
-            {
-                'error_message': error_message
-            }
-        )
+            error_message = _("An unknown error occurred.")
+        context = RequestContext(request, {"error_message": error_message})
         super(ErrorMessageResponse, self).__init__(
-            request,
-            'lizard_auth_server/error_message.html',
-            context,
-            status=status
+            request, "lizard_auth_server/error_message.html", context, status=status
         )
+
 
 ##################################################
 # Invitation / registration / activation / profile
@@ -80,7 +75,8 @@ class ProfileView(TemplateView):
     """
     Straightforward view which displays a user's profile.
     """
-    template_name = 'lizard_auth_server/profile.html'
+
+    template_name = "lizard_auth_server/profile.html"
 
     @cached_property
     def profile(self):
@@ -111,27 +107,25 @@ class ProfileView(TemplateView):
 
 
 class AccessToPortalView(TemplateView):
-    template_name = 'lizard_auth_server/access-to-portal.html'
+    template_name = "lizard_auth_server/access-to-portal.html"
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        return super(AccessToPortalView, self).dispatch(
-            request, *args, **kwargs)
+        return super(AccessToPortalView, self).dispatch(request, *args, **kwargs)
 
     @cached_property
     def portal(self):
-        portal_pk = self.kwargs['portal_pk']
+        portal_pk = self.kwargs["portal_pk"]
         return Portal.objects.get(id=portal_pk)
 
     @cached_property
     def title(self):
-        return _('Access to portal {} for {}').format(self.portal.name,
-                                                      self.profile)
+        return _("Access to portal {} for {}").format(self.portal.name, self.profile)
 
     @cached_property
     def profile(self):
         if self.request.user.is_staff:
-            user_id = self.kwargs.get('user_pk')
+            user_id = self.kwargs.get("user_pk")
             if user_id:
                 user = User.objects.get(id=user_id)
                 return user.user_profile
@@ -141,15 +135,13 @@ class AccessToPortalView(TemplateView):
     def organisation_roles_explanation(self):
         if not self.request.user.is_staff:
             return
-        return self.profile.all_organisation_roles(
-            self.portal,
-            return_explanation=True)
+        return self.profile.all_organisation_roles(self.portal, return_explanation=True)
 
     @cached_property
     def user_profiles_for_portal(self):
         if not self.request.user.is_staff:
             return
-        return self.portal.user_profiles.select_related('user')
+        return self.portal.user_profiles.select_related("user")
 
     @cached_property
     def my_organisation_roles_for_this_portal(self):
@@ -161,7 +153,8 @@ class EditProfileView(FormView):
     Straightforward view which displays a form to have a user
     edit his / her own profile.
     """
-    template_name = 'lizard_auth_server/edit_profile.html'
+
+    template_name = "lizard_auth_server/edit_profile.html"
     form_class = forms.EditProfileForm
     _profile = None
 
@@ -177,9 +170,9 @@ class EditProfileView(FormView):
 
     def get_initial(self):
         return {
-            'email': self.profile.email,
-            'first_name': self.profile.first_name,
-            'last_name': self.profile.last_name,
+            "email": self.profile.email,
+            "first_name": self.profile.first_name,
+            "last_name": self.profile.last_name,
         }
 
     def get_form(self, form_class):
@@ -191,11 +184,11 @@ class EditProfileView(FormView):
         # let the model handle the rest
         self.profile.update_all(data)
 
-        return HttpResponseRedirect(reverse('profile'))
+        return HttpResponseRedirect(reverse("profile"))
 
 
 class InviteUserView(StaffOnlyMixin, FormView):
-    template_name = 'lizard_auth_server/invite_user.html'
+    template_name = "lizard_auth_server/invite_user.html"
     form_class = forms.InviteUserForm
 
     def form_valid(self, form):
@@ -203,30 +196,32 @@ class InviteUserView(StaffOnlyMixin, FormView):
 
         # create and fill a new Invitation
         inv = Invitation()
-        inv.name = data['name']
-        inv.email = data['email']
-        inv.language = data['language']
-        inv.organisation = data['organisation']
+        inv.name = data["name"]
+        inv.email = data["email"]
+        inv.language = data["language"]
+        inv.organisation = data["organisation"]
         inv.save()
 
         # many-to-many, so save these after the invitation has been
         # assigned an ID
-        inv.portals = data['portals']
+        inv.portals = data["portals"]
         inv.save()
 
         inv.send_new_activation_email()
 
         return HttpResponseRedirect(
             reverse(
-                'lizard_auth_server.invite_user_complete',
-                kwargs={'invitation_pk': inv.pk}))
+                "lizard_auth_server.invite_user_complete",
+                kwargs={"invitation_pk": inv.pk},
+            )
+        )
 
 
 class ConfirmDeletionUserconsentView(DeleteView):
     model = UserConsent
-    template_name = 'lizard_auth_server/confirm_deletion_userconsent.html'
-    context_object_name = 'userconsent'
-    success_url = reverse_lazy('profile')
+    template_name = "lizard_auth_server/confirm_deletion_userconsent.html"
+    context_object_name = "userconsent"
+    success_url = reverse_lazy("profile")
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -239,12 +234,11 @@ class ConfirmDeletionUserconsentView(DeleteView):
 
 
 class InviteUserCompleteView(StaffOnlyMixin, TemplateView):
-    template_name = 'lizard_auth_server/invite_user_complete.html'
+    template_name = "lizard_auth_server/invite_user_complete.html"
 
     def get(self, request, invitation_pk, *args, **kwargs):
         self.invitation_pk = int(invitation_pk)
-        return super(
-            InviteUserCompleteView, self).get(request, *args, **kwargs)
+        return super(InviteUserCompleteView, self).get(request, *args, **kwargs)
 
     @cached_property
     def invitiation(self):
@@ -259,8 +253,7 @@ class InvitationMixin(object):
     def dispatch(self, request, activation_key, *args, **kwargs):
         self.activation_key = activation_key
         try:
-            self.invitation = Invitation.objects.get(
-                activation_key=self.activation_key)
+            self.invitation = Invitation.objects.get(activation_key=self.activation_key)
         except Invitation.DoesNotExist:
             return self.invalid_activation_key(request)
 
@@ -271,17 +264,16 @@ class InvitationMixin(object):
         return super(InvitationMixin, self).dispatch(request, *args, **kwargs)
 
     def invalid_activation_key(self, request):
-        logger.warn(
-            'invalid activation key used by %s',
-            request.META['REMOTE_ADDR'])
+        logger.warn("invalid activation key used by %s", request.META["REMOTE_ADDR"])
         return ErrorMessageResponse(
             request,
-            _('Invalid activation key. Perhaps this account '
-              'was already activated?'), 404)
+            _("Invalid activation key. Perhaps this account " "was already activated?"),
+            404,
+        )
 
 
 class ActivateUserView1(InvitationMixin, FormView):
-    template_name = 'lizard_auth_server/activate_user.html'
+    template_name = "lizard_auth_server/activate_user.html"
     form_class = forms.ActivateUserForm1
 
     def form_valid(self, form):
@@ -292,17 +284,19 @@ class ActivateUserView1(InvitationMixin, FormView):
 
         return HttpResponseRedirect(
             reverse(
-                'lizard_auth_server.activate_step_2',
-                kwargs={'activation_key': self.activation_key}))
+                "lizard_auth_server.activate_step_2",
+                kwargs={"activation_key": self.activation_key},
+            )
+        )
 
 
 class ActivateUserView2(InvitationMixin, FormView):
-    template_name = 'lizard_auth_server/activate_user_step_2.html'
+    template_name = "lizard_auth_server/activate_user_step_2.html"
     form_class = forms.EditProfileForm
 
     def get_initial(self):
         return {
-            'email': self.invitation.email,
+            "email": self.invitation.email,
         }
 
     def form_valid(self, form):
@@ -313,12 +307,14 @@ class ActivateUserView2(InvitationMixin, FormView):
 
         return HttpResponseRedirect(
             reverse(
-                'lizard_auth_server.activation_complete',
-                kwargs={'activation_key': self.activation_key}))
+                "lizard_auth_server.activation_complete",
+                kwargs={"activation_key": self.activation_key},
+            )
+        )
 
 
 class ActivationCompleteView(InvitationMixin, TemplateView):
-    template_name = 'lizard_auth_server/activation_complete.html'
+    template_name = "lizard_auth_server/activation_complete.html"
     error_on_already_used = False  # see InvitationMixin
     _profile = None
 
@@ -397,11 +393,11 @@ class JWTView(View):
             str: A JSON Web Token.
 
         """
-        assert(user.is_active and user.is_authenticated())
-        assert(user.user_profile.has_access(portal))
+        assert user.is_active and user.is_authenticated()
+        assert user.user_profile.has_access(portal)
         if exp is None:
             exp = datetime.utcnow() + JWT_EXPIRATION_DELTA
-        payload = {'exp': exp, 'username': user.username}
+        payload = {"exp": exp, "username": user.username}
         secret = portal.sso_secret
         token = jwt.encode(payload, secret, algorithm=JWT_ALGORITHM)
         return token
@@ -420,45 +416,43 @@ class JWTView(View):
         An HTTP 400 Bad Request is returned in case of trouble.
 
         """
-        self.redirect_to = request.GET.get('next', '')
-        sso_key = request.GET.get('portal', '')
+        self.redirect_to = request.GET.get("next", "")
+        sso_key = request.GET.get("portal", "")
 
         if self.redirect_to and not JWTView.is_url(self.redirect_to):
-            reason = _('Invalid `next` query string parameter.')
-            return HttpResponseBadRequest(reason, content_type='text/plain')
+            reason = _("Invalid `next` query string parameter.")
+            return HttpResponseBadRequest(reason, content_type="text/plain")
 
         if not sso_key:
-            reason = _('Missing `portal` query string parameter.')
-            return HttpResponseBadRequest(reason, content_type='text/plain')
+            reason = _("Missing `portal` query string parameter.")
+            return HttpResponseBadRequest(reason, content_type="text/plain")
 
         if not JWTView.is_portal(sso_key):
-            reason = _('Invalid `portal` query string parameter.')
-            return HttpResponseBadRequest(reason, content_type='text/plain')
+            reason = _("Invalid `portal` query string parameter.")
+            return HttpResponseBadRequest(reason, content_type="text/plain")
 
         portal = Portal.objects.get(sso_key=sso_key)
 
         if not request.user.user_profile.has_access(portal):
-            reason = _('You do not have access to this portal.')
-            return HttpResponseBadRequest(reason, content_type='text/plain')
+            reason = _("You do not have access to this portal.")
+            return HttpResponseBadRequest(reason, content_type="text/plain")
 
         self.token = JWTView.get_token(request.user, portal)
 
         if self.redirect_to:
             return redirect(self.success_url)
         else:
-            return HttpResponse(self.token, content_type='text/plain')
+            return HttpResponse(self.token, content_type="text/plain")
 
     @property
     def success_url(self):
         """Return the `next` URL with a token as query string parameter."""
         # URL to parts.
-        scheme, netloc, path, params, query, fragment = parse.urlparse(
-            self.redirect_to)
+        scheme, netloc, path, params, query, fragment = parse.urlparse(self.redirect_to)
         # Add (extra) query string parameter.
         data = parse.parse_qs(query)
-        data['access_token'] = self.token
+        data["access_token"] = self.token
         query = parse.urlencode(data, True)
         # Parts to URL.
-        url = parse.urlunparse((
-            scheme, netloc, path, params, query, fragment))
+        url = parse.urlunparse((scheme, netloc, path, params, query, fragment))
         return str(url)

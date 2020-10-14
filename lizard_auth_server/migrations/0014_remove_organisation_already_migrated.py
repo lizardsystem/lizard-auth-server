@@ -7,12 +7,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lizard_auth_server', '0013_auto_20160921_1550'),
+        ("lizard_auth_server", "0013_auto_20160921_1550"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='organisation',
-            name='already_migrated',
-        ),
+        migrations.RemoveField(model_name="organisation", name="already_migrated",),
     ]

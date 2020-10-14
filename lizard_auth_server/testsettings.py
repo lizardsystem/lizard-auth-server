@@ -6,56 +6,43 @@ import os
 
 SETTINGS_DIR = os.path.dirname(os.path.realpath(__file__))
 
-BUILDOUT_DIR = os.path.abspath(os.path.join(SETTINGS_DIR, '..'))
+BUILDOUT_DIR = os.path.abspath(os.path.join(SETTINGS_DIR, ".."))
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'simple':  {
-            'format': '%(levelname)s %(message)s'},
-        'verbose': {
-            'format': '%(asctime)s %(name)s %(levelname)s\n%(message)s'}
+    "version": 1,
+    "disable_existing_loggers": True,
+    "formatters": {
+        "simple": {"format": "%(levelname)s %(message)s"},
+        "verbose": {"format": "%(asctime)s %(name)s %(levelname)s\n%(message)s"},
     },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-            'level': None
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "level": None,
         },
-        'logfile': {
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BUILDOUT_DIR, 'var', 'log', 'django.log'),
-            'formatter': 'verbose',
-            'level': 'WARN'
+        "logfile": {
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BUILDOUT_DIR, "var", "log", "django.log"),
+            "formatter": "verbose",
+            "level": "WARN",
         },
-        'null': {
-            'class': 'logging.NullHandler',
-            'level': 'DEBUG'
-        }
+        "null": {"class": "logging.NullHandler", "level": "DEBUG"},
     },
-    'loggers': {
-        '': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True
+    "loggers": {
+        "": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
+        "django.request": {
+            "handlers": ["console", "logfile"],
+            "propagate": False,
+            "level": "WARN",  # WARN also shows 404 errors
         },
-        'django.request': {
-            'handlers': ['console', 'logfile'],
-            'propagate': False,
-            'level': 'WARN',  # WARN also shows 404 errors
+        "django.db.backends": {
+            "handlers": ["null"],
+            "level": "WARN",
+            "propagate": False,
         },
-        'django.db.backends': {
-            'handlers': ['null'],
-            'level': 'WARN',
-            'propagate': False
-        },
-        'factory': {
-            'handlers': ['null'],
-            'level': 'DEBUG',
-            'propagate': False
-        }
-    }
+        "factory": {"handlers": ["null"], "level": "DEBUG", "propagate": False},
+    },
 }
 
 DEBUG = True
@@ -67,16 +54,16 @@ ADMINS = (
 )
 MANAGERS = ADMINS
 
-INSIDE_DOCKER = os.path.exists(os.path.join(os.getcwd(), '..', '.dockerenv'))
+INSIDE_DOCKER = os.path.exists(os.path.join(os.getcwd(), "..", ".dockerenv"))
 
 DATABASES = {
-    'default': {
-        'NAME': 'sso',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': 'buildout',
-        'PASSWORD': 'buildout',
-        'HOST': (INSIDE_DOCKER and 'db' or 'localhost'),
-        'PORT': 5432,
+    "default": {
+        "NAME": "sso",
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "USER": "buildout",
+        "PASSWORD": "buildout",
+        "HOST": (INSIDE_DOCKER and "db" or "localhost"),
+        "PORT": 5432,
     }
 }
 
@@ -89,16 +76,16 @@ SITE_ID = 1
 # choices may be available on all operating systems.  If running in a Windows
 # environment this must be set to the same as your system time zone.
 USE_TZ = True
-TIME_ZONE = 'Europe/Amsterdam'
+TIME_ZONE = "Europe/Amsterdam"
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'nl-NL'
+LANGUAGE_CODE = "nl-NL"
 # For at-runtime language switching.  Note: they're shown in reverse order in
 # the interface!
 LANGUAGES = (
-    ('en', 'English'),
-    ('nl', 'Nederlands'),
+    ("en", "English"),
+    ("nl", "Nederlands"),
 )
 # If you set this to False, Django will make some optimizations so as not to
 # load the internationalization machinery.
@@ -106,21 +93,21 @@ USE_I18N = True
 USE_L10N = True
 
 # Absolute path to the directory that holds user-uploaded media.
-MEDIA_ROOT = os.path.join(BUILDOUT_DIR, 'var', 'media')
+MEDIA_ROOT = os.path.join(BUILDOUT_DIR, "var", "media")
 # Absolute path to the directory where django-staticfiles'
 # "bin/django build_static" places all collected static files from all
 # applications' /media directory.
-STATIC_ROOT = os.path.join(BUILDOUT_DIR, 'var', 'static')
+STATIC_ROOT = os.path.join(BUILDOUT_DIR, "var", "static")
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
-MEDIA_URL = '/media/'
+MEDIA_URL = "/media/"
 # URL for the per-application /media static files collected by
 # django-staticfiles.  Use it in templates like
 # "{{ MEDIA_URL }}mypackage/my.css".
-STATIC_URL = '/static_media/'
+STATIC_URL = "/static_media/"
 
-SECRET_KEY = 'This is not secret but that is ok.'
+SECRET_KEY = "This is not secret but that is ok."
 
 # SSO
 SSO_TOKEN_TIMEOUT_MINUTES = 30
@@ -131,59 +118,59 @@ JWT_EXPIRATION_MINUTES = 5
 ACCOUNT_ACTIVATION_DAYS = 7
 # Prefix used to generate absolute links to this site. Note: should NOT end
 # with a slash.  Used in emails.
-SITE_PUBLIC_URL_PREFIX = 'http://127.0.0.1:8001'
+SITE_PUBLIC_URL_PREFIX = "http://127.0.0.1:8001"
 # Name of this site, for use in email subjects et cetera
-SITE_NAME = 'sso.lizard.net'
+SITE_NAME = "sso.lizard.net"
 
-ROOT_URLCONF = 'lizard_auth_server.urls'
+ROOT_URLCONF = "lizard_auth_server.urls"
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BUILDOUT_DIR, 'var', 'cache'),
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": os.path.join(BUILDOUT_DIR, "var", "cache"),
     }
 }
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    'django.core.context_processors.static',
-    'django.core.context_processors.request',
+    "django.contrib.auth.context_processors.auth",
+    "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.request",
 )
 
 MIDDLEWARE_CLASSES = (
     # Gzip needs to be at the top.
-    'django.middleware.gzip.GZipMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'tls.TLSRequestMiddleware',
+    "django.middleware.gzip.GZipMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "tls.TLSRequestMiddleware",
 )
 
 INSTALLED_APPS = (
-    'lizard_auth_server',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.messages',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.staticfiles',
-    'oidc_provider',
-    'django_extensions',
+    "lizard_auth_server",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.messages",
+    "django.contrib.sessions",
+    "django.contrib.sites",
+    "django.contrib.staticfiles",
+    "oidc_provider",
+    "django_extensions",
 )
 
-DEFAULT_FROM_EMAIL = 'noreply@nelen-schuurmans.nl'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-OIDC_USERINFO = 'lizard_auth_server.oidc.userinfo'
+DEFAULT_FROM_EMAIL = "noreply@nelen-schuurmans.nl"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+OIDC_USERINFO = "lizard_auth_server.oidc.userinfo"
 
 try:
     # Import local settings that aren't stored in svn/git.

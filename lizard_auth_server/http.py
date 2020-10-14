@@ -7,21 +7,21 @@ import json
 
 def JsonResponse(data, already_serialized=False):
     if isinstance(data, dict):
-        if 'success' not in data:
-            if 'error' in data:
-                data['success'] = False
+        if "success" not in data:
+            if "error" in data:
+                data["success"] = False
             else:
-                data['success'] = True
+                data["success"] = True
 
     return HttpResponse(
         data if already_serialized else json.dumps(data),
-        content_type='application/json'
+        content_type="application/json",
     )
 
 
 def JsonError(error_string):
     data = {
-        'success': False,
-        'error': error_string,
+        "success": False,
+        "error": error_string,
     }
     return JsonResponse(data)

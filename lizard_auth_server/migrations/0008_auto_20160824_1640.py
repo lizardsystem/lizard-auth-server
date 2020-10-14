@@ -8,17 +8,14 @@ from django.db import models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lizard_auth_server', '0007_portal_already_migrated'),
+        ("lizard_auth_server", "0007_portal_already_migrated"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='portal',
-            name='already_migrated',
-        ),
+        migrations.RemoveField(model_name="portal", name="already_migrated",),
         migrations.AddField(
-            model_name='organisation',
-            name='already_migrated',
-            field=models.BooleanField(default=False, verbose_name='already migrated'),
+            model_name="organisation",
+            name="already_migrated",
+            field=models.BooleanField(default=False, verbose_name="already migrated"),
         ),
     ]

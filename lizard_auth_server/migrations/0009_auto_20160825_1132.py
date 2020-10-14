@@ -10,13 +10,20 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lizard_auth_server', '0008_auto_20160824_1640'),
+        ("lizard_auth_server", "0008_auto_20160824_1640"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='profile',
-            name='company',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='members', to='lizard_auth_server.Company', verbose_name='company'),
+            model_name="profile",
+            name="company",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="members",
+                to="lizard_auth_server.Company",
+                verbose_name="company",
+            ),
         ),
     ]

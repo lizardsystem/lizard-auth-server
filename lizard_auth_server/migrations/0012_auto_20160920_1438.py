@@ -7,37 +7,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lizard_auth_server', '0011_auto_20160826_1242'),
+        ("lizard_auth_server", "0011_auto_20160826_1242"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='company',
-            name='administrators',
-        ),
-        migrations.RemoveField(
-            model_name='company',
-            name='guests',
-        ),
-        migrations.RemoveField(
-            model_name='profile',
-            name='company',
-        ),
-        migrations.RemoveField(
-            model_name='profile',
-            name='user',
-        ),
-        migrations.RemoveField(
-            model_name='site',
-            name='available_to',
-        ),
-        migrations.DeleteModel(
-            name='Company',
-        ),
-        migrations.DeleteModel(
-            name='Profile',
-        ),
-        migrations.DeleteModel(
-            name='Site',
-        ),
+        migrations.RemoveField(model_name="company", name="administrators",),
+        migrations.RemoveField(model_name="company", name="guests",),
+        migrations.RemoveField(model_name="profile", name="company",),
+        migrations.RemoveField(model_name="profile", name="user",),
+        migrations.RemoveField(model_name="site", name="available_to",),
+        migrations.DeleteModel(name="Company",),
+        migrations.DeleteModel(name="Profile",),
+        migrations.DeleteModel(name="Site",),
     ]

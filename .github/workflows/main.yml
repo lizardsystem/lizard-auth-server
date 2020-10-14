@@ -23,6 +23,6 @@ jobs:
       - name: test
         run: docker-compose run web bin/test
       - name: coverage report
-        run: docker-compose run web bin/coveralls
+        run: docker-compose run -e GITHUB_TOKEN web bin/coveralls
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

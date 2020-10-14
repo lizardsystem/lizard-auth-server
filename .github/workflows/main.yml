@@ -22,8 +22,9 @@ jobs:
           docker-compose run web buildout
       - name: test
         run: docker-compose run web bin/test
-      # TODO fix coveralls setup.
       - name: coverage report
-        run: docker-compose run web bin/coveralls
+        run: |
+          pip3 install --upgrade coveralls
+          coveralls
         env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

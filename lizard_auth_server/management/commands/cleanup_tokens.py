@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 # Copyright 2011 Nelen & Schuurmans
-import logging
-import datetime
-
-from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.core.management.base import BaseCommand
+from lizard_auth_server.models import Token
 
+import datetime
+import logging
 import pytz
 
-from lizard_auth_server.models import Token
 
 logger = logging.getLogger(__name__)
 

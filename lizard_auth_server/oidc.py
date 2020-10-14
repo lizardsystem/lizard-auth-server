@@ -9,12 +9,12 @@ import oidc_provider.lib.claims
 def userinfo(claims, user):
     # Populate claims dict.
     # Scope 'profile'
-    claims['name'] = '{0} {1}'.format(user.first_name, user.last_name)
-    claims['given_name'] = user.first_name
-    claims['family_name'] = user.last_name
-    claims['preferred_username'] = user.username
+    claims["name"] = "{0} {1}".format(user.first_name, user.last_name)
+    claims["given_name"] = user.first_name
+    claims["family_name"] = user.last_name
+    claims["preferred_username"] = user.username
     # Scope 'email'
-    claims['email'] = user.email
+    claims["email"] = user.email
 
     return claims
 
@@ -26,17 +26,20 @@ class StandardScopeClaims(OriginalStandardScopeClaims):
     # Monkeypatched class: we're stripping out claims we won't use.
 
     info_profile = (
-        _(u'Basic profile'),
-        _(u'Your name and username.'),
+        _("Basic profile"),
+        _("Your name and username."),
     )
+
     def scope_profile(self):
         dic = {
-            'name': self.userinfo.get('name'),
-            'given_name': self.userinfo.get('given_name') or getattr(self.user, 'first_name', None),
-            'family_name': self.userinfo.get('family_name') or getattr(self.user, 'last_name', None),
+            "name": self.userinfo.get("name"),
+            "given_name": self.userinfo.get("given_name")
+            or getattr(self.user, "first_name", None),
+            "family_name": self.userinfo.get("family_name")
+            or getattr(self.user, "last_name", None),
             # 'middle_name': self.userinfo.get('middle_name'),
             # 'nickname': self.userinfo.get('nickname') or getattr(self.user, 'username', None),
-            'preferred_username': self.userinfo.get('preferred_username'),
+            "preferred_username": self.userinfo.get("preferred_username"),
             # 'profile': self.userinfo.get('profile'),
             # 'picture': self.userinfo.get('picture'),
             # 'website': self.userinfo.get('website'),
@@ -50,21 +53,23 @@ class StandardScopeClaims(OriginalStandardScopeClaims):
         return dic
 
     info_email = (
-        _(u'Email'),
-        _(u'Your email address.'),
+        _("Email"),
+        _("Your email address."),
     )
+
     def scope_email(self):
         dic = {
-            'email': self.userinfo.get('email') or getattr(self.user, 'email', None),
+            "email": self.userinfo.get("email") or getattr(self.user, "email", None),
             # 'email_verified': self.userinfo.get('email_verified'),
         }
 
         return dic
 
     info_phone = (
-        _(u'Phone number'),
-        _(u"Unused. We're not storing your phone number."),
+        _("Phone number"),
+        _("Unused. We're not storing your phone number."),
     )
+
     def scope_phone(self):
         dic = {
             # 'phone_number': self.userinfo.get('phone_number'),
@@ -74,12 +79,13 @@ class StandardScopeClaims(OriginalStandardScopeClaims):
         return dic
 
     info_address = (
-        _(u'Address information'),
-        _(u"Unused. We're not storing your address."),
+        _("Address information"),
+        _("Unused. We're not storing your address."),
     )
+
     def scope_address(self):
         dic = {
-            'address': {
+            "address": {
                 # 'formatted': self.userinfo.get('address', {}).get('formatted'),
                 # 'street_address': self.userinfo.get('address', {}).get('street_address'),
                 # 'locality': self.userinfo.get('address', {}).get('locality'),

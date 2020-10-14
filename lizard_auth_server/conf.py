@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-
-from datetime import timedelta
-
 from appconf import AppConf
+from datetime import timedelta
 from django.conf import settings  # NOQA
 
 
@@ -18,7 +16,8 @@ class LizardAuthServerAppConf(AppConf):
     LIZARD_AUTH_SERVER_JWT_EXPIRATION_DELTA = timedelta(hours=12)
 
     """
-    JWT_ALGORITHM = 'HS256'
+
+    JWT_ALGORITHM = "HS256"
     JWT_EXPIRATION_DELTA = timedelta(seconds=300)
-    DIRTY_HARDCODED_PASSWORD = 'dirtyhardcodedpassword'
+    DIRTY_HARDCODED_PASSWORD = "dirtyhardcodedpassword"
     ACCOUNT_ACTIVATION_DAYS = 45  # A month of vacation + some margin

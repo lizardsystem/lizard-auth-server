@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-
 from django.contrib.auth.models import User
 from faker import Factory as FakerFactory
-import factory
-
 from lizard_auth_server import models
+
+import factory
 
 
 faker = FakerFactory.create()
@@ -42,15 +41,15 @@ class PortalF(factory.DjangoModelFactory):
 class RoleF(factory.DjangoModelFactory):
     class Meta:
         model = models.Role
-        django_get_or_create = ('name', 'code')
+        django_get_or_create = ("name", "code")
 
     unique_id = factory.LazyAttribute(lambda role: models.create_new_uuid())
 
-    name = 'Some role'
-    code = 'somerole'
+    name = "Some role"
+    code = "somerole"
 
-    external_description = 'Buitenkant'
-    internal_description = 'Binnenkant'
+    external_description = "Buitenkant"
+    internal_description = "Binnenkant"
 
     portal = factory.SubFactory(PortalF)
 
@@ -59,7 +58,7 @@ class TokenF(factory.DjangoModelFactory):
     class Meta:
         model = models.Token
 
-    request_token = 'Hard to guess token'
+    request_token = "Hard to guess token"
     portal = factory.SubFactory(PortalF)
 
 
@@ -67,14 +66,14 @@ class OrganisationF(factory.DjangoModelFactory):
     class Meta:
         model = models.Organisation
 
-    name = factory.Sequence(lambda n: 'organisation %s' % n)
+    name = factory.Sequence(lambda n: "organisation %s" % n)
     unique_id = factory.LazyAttribute(lambda org: models.create_new_uuid())
 
 
 class UserProfileF(factory.DjangoModelFactory):
     class Meta:
         model = models.UserProfile
-        django_get_or_create = ('user',)
+        django_get_or_create = ("user",)
 
     user = factory.SubFactory(UserF)
     organisation = factory.SubFactory(OrganisationF)
@@ -84,7 +83,7 @@ class InvitationF(factory.DjangoModelFactory):
     class Meta:
         model = models.Invitation
 
-    name = 'Reinout'
-    email = 'reinout@example.org'
-    organisation = 'Some organisation'
-    language = 'nl'
+    name = "Reinout"
+    email = "reinout@example.org"
+    organisation = "Some organisation"
+    language = "nl"

@@ -17,7 +17,8 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - .:/code:delegated
+      - ./lizard_auth_server:/code/lizard_auth_server
+      - ./doc:/code/doc
     depends_on:
       - db
 

@@ -17,11 +17,9 @@ jobs:
       # Checkout the code.
       - uses: actions/checkout@v2
       - name: build
-        run: |
-          docker-compose build
-          docker-compose run web buildout
+        run: docker-compose build
       - name: test
-        run: docker-compose run web bin/test
+        run: docker-compose run web bin/python manage.py test
       - name: coverage report
         run: docker-compose run -e COVERALLS_REPO_TOKEN web bin/coveralls
         env:

@@ -29,12 +29,12 @@ Updating translations
 Go to the ``lizard_auth_server`` subdirectory::
 
     $ cd lizard_auth_server
-    $ ../bin/django makemessages --all
+    $ ../bin/python manage.py makemessages --all
 
 Update the translations (for Dutch), for instance with "poedit". Then compile
 the new translations::
 
-    $ ../bin/django compilemessages
+    $ ../bin/python manage.py compilemessages
 
 Note: this also fetches af/vi/zh, but we don't translate into those languages
 currently. They're ignored in the ``.gitignore`` file.
@@ -46,15 +46,14 @@ Development with docker
 The short version::
 
     $ docker-compose build
-    $ docker-compose run web buildout
-    $ docker-compose run web bin/django migrate
+    $ docker-compose run web bin/python manage.py migrate
     $ docker-compose up
 
 The site will now run on http://localhost:5000
 
 Running the tests::
 
-    $ docker-compose run web bin/test
+    $ docker-compose run web bin/python manage.py test
 
 
 Grabbing production database

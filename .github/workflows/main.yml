@@ -17,7 +17,9 @@ jobs:
       # Checkout the code.
       - uses: actions/checkout@v2
       - name: build
-        run: docker-compose build
+        run: |
+          docker-compose build
+          docker-compose run web make install
       - name: test
         run: docker-compose run web python3 manage.py test
       - name: coverage report

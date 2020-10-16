@@ -46,6 +46,7 @@ Development with docker
 The short version::
 
     $ docker-compose build
+    $ docker-compose run web make install
     $ docker-compose run web python3 manage.py migrate
     $ docker-compose up
 
@@ -54,6 +55,10 @@ The site will now run on http://localhost:5000
 Running the tests::
 
     $ docker-compose run web python3 manage.py test
+
+A quick way to run isort and black::
+
+    $ docker-compose run web python3 manage.py migrate
 
 
 Grabbing production database

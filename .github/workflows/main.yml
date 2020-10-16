@@ -23,6 +23,6 @@ jobs:
       - name: test
         run: docker-compose run web bin/python manage.py test
       - name: coverage report
-        run: docker-compose run -e COVERALLS_REPO_TOKEN web coveralls
+        run: docker-compose run -e COVERALLS_REPO_TOKEN web bin/coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

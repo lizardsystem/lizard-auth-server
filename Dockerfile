@@ -11,11 +11,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
 && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install -U pip setuptools wheel
-
+# Linux uid/gid handling.
 ARG uid=1000
 ARG gid=1000
 RUN groupadd -g $gid nens && useradd -lm -u $uid -g $gid nens
-USER nens
-VOLUME /code
 WORKDIR /code
+RUN chown nens:nens /code
+USER nens
+
+VOLUME /code

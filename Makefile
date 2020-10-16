@@ -1,10 +1,17 @@
 #   Note: Makefiles need TABS.
 
-all:
-	@echo "note: if this fails at lines starting with \"&\" and \"@\" characters, update less to the latest version:"
-	@echo "      npm install less"
-	lessc lizard_auth_server/static/lizard_auth_server/bootstrap/less/bootstrap.less lizard_auth_server/static/lizard_auth_server/bootstrap/bootstrap.css
+install: bin
+	mkdir -p var/log var/media var/static
+	bin/pip install -r requirements.txt
+	bin/python manage.py collectstatic --noinput
 
-#	Not used anymore
-#	coffee -c lizard_ui/static/lizard_ui/lizardui.coffee
-#	TODO should perhaps also do django makemessages and compilemessages ?
+bin:
+	python3 -m venv .
+	bin/pip  install --upgrade pip wheel setuptools
+
+beautiful:
+	isort -rc lizard_auth_server
+	black setup.py lizard_auth_server
+
+clean:
+	rm -rf bin lib share

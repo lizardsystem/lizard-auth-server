@@ -63,3 +63,10 @@ lizard_auth_server/locale/zh/
 
 # Pycharm
 .idea/
+
+lib
+lib64
+man
+pip-selfcheck.json
+pyvenv.cfg
+share

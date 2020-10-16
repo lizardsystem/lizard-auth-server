@@ -21,7 +21,7 @@ jobs:
           docker-compose build --build-arg uid=`id -u` --build-arg gid=`id -g`
           docker-compose run web make install
       - name: test
-        run: docker-compose run web python3 manage.py test
+        run: docker-compose run web bin/python manage.py test
       - name: coverage report
         run: docker-compose run -e COVERALLS_REPO_TOKEN web coveralls
         env:

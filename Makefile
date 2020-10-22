@@ -7,7 +7,7 @@ install: bin
 
 bin:
 	python3 -m venv .
-	bin/pip  install --upgrade pip wheel setuptools
+	bin/pip  install --upgrade pip wheel setuptools pip-tools
 
 beautiful:
 	isort -rc lizard_auth_server

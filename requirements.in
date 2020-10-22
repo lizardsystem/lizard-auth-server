@@ -1,0 +1,6 @@
+-e file:.#lizard-auth-server[test]
+
+# Dev tools
+black
+isort
+flake8

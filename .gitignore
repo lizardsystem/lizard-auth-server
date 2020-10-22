@@ -70,3 +70,5 @@ man
 pip-selfcheck.json
 pyvenv.cfg
 share
+node_modules
+yarn.lock

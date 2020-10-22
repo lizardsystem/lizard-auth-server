@@ -5,21 +5,20 @@ version = "2.23.dev0"
 
 long_description = "\n\n".join([open("README.rst").read(), open("CHANGES.rst").read(),])
 
-install_requires = (
-    [
-        "Django >= 1.9",
+install_requires =     [
+        "Django <2",
         "django-appconf",
         "django-extensions",
         "django-nose",
         "django-oidc-provider",
         "django-tls",
         "itsdangerous",
+        "psycopg2-binary",
         "pyjwt",
         "pytz",
         "requests",
         "six",
-    ],
-)
+    ]
 
 tests_require = [
     "coverage",

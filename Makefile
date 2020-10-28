@@ -13,7 +13,7 @@ bin:
 	bin/pip  install --upgrade pip wheel setuptools pip-tools
 
 beautiful:
-	bin/isort -rc lizard_auth_server
+	bin/isort lizard_auth_server
 	bin/black setup.py lizard_auth_server
 
 clean:

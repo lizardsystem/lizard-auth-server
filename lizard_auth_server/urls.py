@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from django.conf import settings
 from django.conf.urls import include
-from django.conf.urls import patterns
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
@@ -36,8 +34,7 @@ admin.autodiscover()
 # login view.
 admin.site.login = login_required(admin.site.login)
 
-urlpatterns = patterns(
-    "",
+urlpatterns = [
     url(r"^$", views.ProfileView.as_view(), name="index"),
     url(r"^admin/", include(admin.site.urls)),
     url(r"^i18n/", include("django.conf.urls.i18n")),
@@ -292,7 +289,7 @@ urlpatterns = patterns(
         views.AccessToPortalView.as_view(),
         name="lizard_auth_server.access_to_portal",
     ),
-)
+]
 
 if settings.DEBUG:
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns

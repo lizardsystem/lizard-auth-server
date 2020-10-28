@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations
 from django.db import models
@@ -491,9 +490,11 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterUniqueTogether(
-            name="role", unique_together=set([("name", "portal")]),
+            name="role",
+            unique_together=set([("name", "portal")]),
         ),
         migrations.AlterUniqueTogether(
-            name="organisationrole", unique_together=set([("organisation", "role")]),
+            name="organisationrole",
+            unique_together=set([("organisation", "role")]),
         ),
     ]

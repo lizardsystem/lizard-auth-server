@@ -141,7 +141,10 @@ class JWTViewTestCase(TestCase):
     def test_get_request_with_invalid_next_parameter(self):
         request = self.factory.get(
             reverse("lizard_auth_server.jwt"),
-            {"portal": self.portal.sso_key, "next": fake.uri_path(),},
+            {
+                "portal": self.portal.sso_key,
+                "next": fake.uri_path(),
+            },
         )
         self.user.user_profile.portals.add(self.portal)
         request.user = self.user
@@ -151,7 +154,9 @@ class JWTViewTestCase(TestCase):
         self.assertEqual(expected_status_code, actual_status_code)
 
     def test_get_request_without_portal_parameters(self):
-        request = self.factory.get(reverse("lizard_auth_server.jwt"),)
+        request = self.factory.get(
+            reverse("lizard_auth_server.jwt"),
+        )
         self.user.user_profile.portals.add(self.portal)
         request.user = self.user
         response = JWTView.as_view()(request)
@@ -162,7 +167,10 @@ class JWTViewTestCase(TestCase):
     def test_get_request_with_invalid_portal_parameter(self):
         random_sso_key = GenKey("Portal", "sso_key")
         request = self.factory.get(
-            reverse("lizard_auth_server.jwt"), {"portal": random_sso_key,},
+            reverse("lizard_auth_server.jwt"),
+            {
+                "portal": random_sso_key,
+            },
         )
         self.user.user_profile.portals.add(self.portal)
         request.user = self.user
@@ -173,7 +181,10 @@ class JWTViewTestCase(TestCase):
 
     def test_get_request_without_portal_access(self):
         request = self.factory.get(
-            reverse("lizard_auth_server.jwt"), {"portal": self.portal.sso_key,},
+            reverse("lizard_auth_server.jwt"),
+            {
+                "portal": self.portal.sso_key,
+            },
         )
         request.user = self.user
         response = JWTView.as_view()(request)
@@ -183,7 +194,10 @@ class JWTViewTestCase(TestCase):
 
     def test_get_request_as_anonymous_user(self):
         request = self.factory.get(
-            reverse("lizard_auth_server.jwt"), {"portal": self.portal.sso_key,},
+            reverse("lizard_auth_server.jwt"),
+            {
+                "portal": self.portal.sso_key,
+            },
         )
         request.user = AnonymousUser()
         response = JWTView.as_view()(request)
@@ -195,7 +209,10 @@ class JWTViewTestCase(TestCase):
 
     def test_get_request_with_text_response(self):
         request = self.factory.get(
-            reverse("lizard_auth_server.jwt"), {"portal": self.portal.sso_key,},
+            reverse("lizard_auth_server.jwt"),
+            {
+                "portal": self.portal.sso_key,
+            },
         )
         self.user.user_profile.portals.add(self.portal)
         request.user = self.user
@@ -215,7 +232,10 @@ class JWTViewTestCase(TestCase):
         next_ = fake.url()
         request = self.factory.get(
             reverse("lizard_auth_server.jwt"),
-            {"portal": self.portal.sso_key, "next": next_,},
+            {
+                "portal": self.portal.sso_key,
+                "next": next_,
+            },
         )
         self.user.user_profile.portals.add(self.portal)
         request.user = self.user

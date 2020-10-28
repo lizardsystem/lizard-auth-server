@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
 from django.test import TestCase

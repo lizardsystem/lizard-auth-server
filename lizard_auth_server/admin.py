@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from django.contrib import admin
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -88,12 +87,35 @@ class UserProfileAdmin(admin.ModelAdmin):
     filter_horizontal = ("portals", "organisations", "roles")
     readonly_fields = ["created_at", "updated_at", "first_name", "last_name", "email"]
     fieldsets = (
-        (None, {"fields": ["user", "first_name", "last_name",]}),
+        (
+            None,
+            {
+                "fields": [
+                    "user",
+                    "first_name",
+                    "last_name",
+                ]
+            },
+        ),
         (
             ugettext_lazy("V1 authorization"),
-            {"fields": ["portals", "organisations", "roles",]},
+            {
+                "fields": [
+                    "portals",
+                    "organisations",
+                    "roles",
+                ]
+            },
         ),
-        (ugettext_lazy("Dates"), {"fields": ["created_at", "updated_at",]}),
+        (
+            ugettext_lazy("Dates"),
+            {
+                "fields": [
+                    "created_at",
+                    "updated_at",
+                ]
+            },
+        ),
     )
 
 

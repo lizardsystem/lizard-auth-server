@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -138,7 +137,9 @@ class TokenManager(models.Manager):
             request_token = gen_secret_key(64)
             auth_token = gen_secret_key(64)
         return self.create(
-            portal=portal, request_token=request_token, auth_token=auth_token,
+            portal=portal,
+            request_token=request_token,
+            auth_token=auth_token,
         )
 
 

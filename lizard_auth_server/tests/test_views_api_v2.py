@@ -102,7 +102,8 @@ class TestLoginView(TestCase):
         self.user_profile = factories.UserProfileF(user=user)
 
         self.portal = factories.PortalF.create(
-            sso_key=self.sso_key, sso_secret=self.secret_key,
+            sso_key=self.sso_key,
+            sso_secret=self.secret_key,
         )
         self.portal.save()
 
@@ -202,7 +203,9 @@ class TestLogoutViewV2(TestCase):
         self.user_profile = factories.UserProfileF(user=user)
 
         self.portal = factories.PortalF.create(
-            sso_key=self.sso_key, sso_secret=self.secret_key, redirect_url=redirect,
+            sso_key=self.sso_key,
+            sso_secret=self.secret_key,
+            redirect_url=redirect,
         )
         self.portal.save()
 
@@ -565,7 +568,8 @@ class TestOrganisationsView(TestCase):
         sso_key = "ssokey"
         secret_key = "a secret"
         factories.PortalF.create(
-            sso_key=sso_key, sso_secret=secret_key,
+            sso_key=sso_key,
+            sso_secret=secret_key,
         )
 
         payload = {"iss": sso_key}

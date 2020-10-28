@@ -3,22 +3,27 @@ from setuptools import setup
 
 version = "2.23.dev0"
 
-long_description = "\n\n".join([open("README.rst").read(), open("CHANGES.rst").read(),])
-
-install_requires =     [
-        "Django <2",
-        "django-appconf",
-        "django-extensions",
-        "django-nose",
-        "django-oidc-provider",
-        "django-tls",
-        "itsdangerous",
-        "psycopg2-binary",
-        "pyjwt",
-        "pytz",
-        "requests",
-        "six",
+long_description = "\n\n".join(
+    [
+        open("README.rst").read(),
+        open("CHANGES.rst").read(),
     ]
+)
+
+install_requires = [
+    "Django <2",
+    "django-appconf",
+    "django-extensions",
+    "django-nose",
+    "django-oidc-provider",
+    "django-tls",
+    "itsdangerous",
+    "psycopg2-binary",
+    "pyjwt",
+    "pytz",
+    "requests",
+    "six",
+]
 
 tests_require = [
     "coverage",
@@ -34,7 +39,10 @@ setup(
     description="A single sign-on server for centralized authentication",
     long_description=long_description,
     # Get strings from http://www.python.org/pypi?%3Aaction=list_classifiers
-    classifiers=["Programming Language :: Python", "Framework :: Django",],
+    classifiers=[
+        "Programming Language :: Python",
+        "Framework :: Django",
+    ],
     keywords=[],
     author="Erik-Jan Vos, Remco Gerlich",
     author_email="remco.gerlich@nelen-schuurmans.nl",

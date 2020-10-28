@@ -65,6 +65,13 @@ DATABASES = {
     }
 }
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+    },
+]
 
 # Almost always set to 1.  Django allows multiple sites in one database.
 SITE_ID = 1
@@ -169,9 +176,3 @@ INSTALLED_APPS = (
 DEFAULT_FROM_EMAIL = "noreply@nelen-schuurmans.nl"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 OIDC_USERINFO = "lizard_auth_server.oidc.userinfo"
-
-try:
-    # Import local settings that aren't stored in svn/git.
-    from lizard_auth_server.local_testsettings import *  # noqa
-except ImportError:
-    pass

@@ -19,8 +19,7 @@ django-oidc-provider==0.7.0  # via lizard-auth-server
 django-tls==0.0.2         # via lizard-auth-server
 django==1.11.29           # via django-appconf, lizard-auth-server
 factory-boy==3.1.0        # via lizard-auth-server
-fake-factory==9999.9.9    # via lizard-auth-server
-faker==4.14.0             # via factory-boy
+faker==4.14.0             # via factory-boy, lizard-auth-server
 flake8==3.8.4             # via -r requirements.in
 future==0.18.2            # via pyjwkest
 idna==2.10                # via requests

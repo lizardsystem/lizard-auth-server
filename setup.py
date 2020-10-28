@@ -23,7 +23,7 @@ install_requires =     [
 tests_require = [
     "coverage",
     "factory_boy >= 2.4.0",
-    "fake-factory",
+    "Faker",
     "mock",
     "nose",
 ]

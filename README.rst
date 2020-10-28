@@ -60,6 +60,10 @@ A quick way to run isort and black::
 
     $ docker-compose run web python3 manage.py migrate
 
+Note that the makefile makes sure the requirements.txt is updated with
+"pip-compile" when setup.py or requirements.in changes. You can also run it by
+hand.
+
 
 Grabbing production database
 ----------------------------

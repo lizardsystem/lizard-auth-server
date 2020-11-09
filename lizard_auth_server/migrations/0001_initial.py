@@ -126,6 +126,7 @@ class Migration(migrations.Migration):
                         related_name="organisation_roles",
                         verbose_name="organisation",
                         to="lizard_auth_server.Organisation",
+                        on_delete=models.CASCADE,
                     ),
                 ),
             ],
@@ -270,6 +271,7 @@ class Migration(migrations.Migration):
                         related_name="roles",
                         verbose_name="portal",
                         to="lizard_auth_server.Portal",
+                        on_delete=models.CASCADE,
                     ),
                 ),
             ],
@@ -313,7 +315,9 @@ class Migration(migrations.Migration):
                 (
                     "portal",
                     models.ForeignKey(
-                        verbose_name="portal", to="lizard_auth_server.Portal"
+                        verbose_name="portal",
+                        to="lizard_auth_server.Portal",
+                        on_delete=models.CASCADE,
                     ),
                 ),
                 (
@@ -323,6 +327,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         to=settings.AUTH_USER_MODEL,
                         null=True,
+                        on_delete=models.CASCADE,
                     ),
                 ),
             ],
@@ -447,6 +452,7 @@ class Migration(migrations.Migration):
                         related_name="user_profile",
                         verbose_name="user",
                         to=settings.AUTH_USER_MODEL,
+                        on_delete=models.CASCADE,
                     ),
                 ),
             ],
@@ -463,6 +469,7 @@ class Migration(migrations.Migration):
                 related_name="organisation_roles",
                 verbose_name="role",
                 to="lizard_auth_server.Role",
+                on_delete=models.CASCADE,
             ),
         ),
         migrations.AddField(
@@ -486,7 +493,11 @@ class Migration(migrations.Migration):
             model_name="invitation",
             name="user",
             field=models.ForeignKey(
-                verbose_name="user", blank=True, to=settings.AUTH_USER_MODEL, null=True
+                verbose_name="user",
+                blank=True,
+                to=settings.AUTH_USER_MODEL,
+                null=True,
+                on_delete=models.CASCADE,
             ),
         ),
         migrations.AlterUniqueTogether(

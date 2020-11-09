@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib import messages
 from django.db.models import Count
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from lizard_auth_server import forms
@@ -56,9 +57,8 @@ class InvitationAdmin(admin.ModelAdmin):
                 "lizard_auth_server.activate",
                 kwargs={"activation_key": obj.activation_key},
             )
-            return '<a href="{}">{}</a>'.format(url, _("Activate manually"))
+            return mark_safe('<a href="{}">{}</a>'.format(url, _("Activate manually")))
 
-    shortcut_urls.allow_tags = True
     shortcut_urls.short_description = ugettext_lazy("Shortcut URLs")
 
     def user_profile_link(self, obj):
@@ -68,9 +68,8 @@ class InvitationAdmin(admin.ModelAdmin):
             "admin:lizard_auth_server_userprofile_change",
             args=[obj.user.user_profile.id],
         )
-        return '<a href="{}">&rarr; {}</a>'.format(url, obj.user)
+        return mark_safe('<a href="{}">&rarr; {}</a>'.format(url, obj.user))
 
-    user_profile_link.allow_tags = True
     user_profile_link.short_description = ugettext_lazy("user profile")
 
 
@@ -166,11 +165,10 @@ class RoleInline(admin.TabularInline):
             return ""
         url = reverse("admin:lizard_auth_server_role_changelist")
         url += "?base_role={}".format(obj.id)
-        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+        return mark_safe('<a href="{}">&rarr; {}</a>'.format(url, count))
 
     num_inheriting_roles.short_description = ugettext_lazy("number of inheriting roles")
     num_inheriting_roles.admin_order_field = "inheriting_roles_count"
-    num_inheriting_roles.allow_tags = True
 
 
 class OrganisationRoleInline(admin.TabularInline):
@@ -233,13 +231,12 @@ class RoleAdmin(admin.ModelAdmin):
             return ""
         url = reverse("admin:lizard_auth_server_organisationrole_changelist")
         url += "?role__id__exact={}".format(obj.id)
-        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+        return mark_safe('<a href="{}">&rarr; {}</a>'.format(url, count))
 
     num_organisation_roles.short_description = ugettext_lazy(
         "number of organisation roles"
     )
     num_organisation_roles.admin_order_field = "organisation_roles_count"
-    num_organisation_roles.allow_tags = True
 
     def num_inheriting_roles(self, obj):
         count = obj.inheriting_roles_count
@@ -247,11 +244,10 @@ class RoleAdmin(admin.ModelAdmin):
             return ""
         url = reverse("admin:lizard_auth_server_role_changelist")
         url += "?base_role={}".format(obj.id)
-        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+        return mark_safe('<a href="{}">&rarr; {}</a>'.format(url, count))
 
     num_inheriting_roles.short_description = ugettext_lazy("number of inheriting roles")
     num_inheriting_roles.admin_order_field = "inheriting_roles_count"
-    num_inheriting_roles.allow_tags = True
 
 
 class PortalAdmin(admin.ModelAdmin):
@@ -278,21 +274,19 @@ class PortalAdmin(admin.ModelAdmin):
         count = obj.user_profiles_count
         url = reverse("admin:lizard_auth_server_userprofile_changelist")
         url += "?portals__id__exact={}".format(obj.id)
-        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+        return mark_safe('<a href="{}">&rarr; {}</a>'.format(url, count))
 
     num_user_profiles.short_description = ugettext_lazy("number of user profiles")
     num_user_profiles.admin_order_field = "user_profiles_count"
-    num_user_profiles.allow_tags = True
 
     def num_roles(self, obj):
         count = obj.roles_count
         url = reverse("admin:lizard_auth_server_role_changelist")
         url += "?portal__id__exact={}".format(obj.id)
-        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+        return mark_safe('<a href="{}">&rarr; {}</a>'.format(url, count))
 
     num_roles.short_description = ugettext_lazy("number of roles")
     num_roles.admin_order_field = "roles_count"
-    num_roles.allow_tags = True
 
     def v2_config(self, obj):
         config_lines = [
@@ -304,10 +298,9 @@ class PortalAdmin(admin.ModelAdmin):
             "SSO_KEY = '{}'".format(obj.sso_key),
             "SSO_SECRET = '{}'".format(obj.sso_secret),
         ]
-        return "<pre>{}</pre>".format("\n".join(config_lines))
+        return mark_safe("<pre>{}</pre>".format("\n".join(config_lines)))
 
     v2_config.short_description = ugettext_lazy("settings for the v2 API")
-    v2_config.allow_tags = True
 
 
 class OrganisationAdmin(admin.ModelAdmin):
@@ -328,11 +321,10 @@ class OrganisationAdmin(admin.ModelAdmin):
         count = obj.user_profiles_count
         url = reverse("admin:lizard_auth_server_userprofile_changelist")
         url += "?organisations__id__exact={}".format(obj.id)
-        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+        return mark_safe('<a href="{}">&rarr; {}</a>'.format(url, count))
 
     num_user_profiles.short_description = ugettext_lazy("number of user profiles")
     num_user_profiles.admin_order_field = "user_profiles_count"
-    num_user_profiles.allow_tags = True
 
     def num_roles(self, obj):
         count = obj.roles_count
@@ -340,11 +332,10 @@ class OrganisationAdmin(admin.ModelAdmin):
             return ""
         url = reverse("admin:lizard_auth_server_organisationrole_changelist")
         url += "?organisation__id__exact={}".format(obj.id)
-        return '<a href="{}">&rarr; {}</a>'.format(url, count)
+        return mark_safe('<a href="{}">&rarr; {}</a>'.format(url, count))
 
     num_roles.short_description = ugettext_lazy("number of roles")
     num_roles.admin_order_field = "roles_count"
-    num_roles.allow_tags = True
 
 
 class TokenAdmin(admin.ModelAdmin):

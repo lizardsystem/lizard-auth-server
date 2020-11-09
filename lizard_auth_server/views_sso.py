@@ -154,7 +154,7 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
             return HttpResponseForbidden("Invalid request token")
         if self.check_token_timeout():
             self.domain = get_domain(form)
-            if self.request.user.is_authenticated():
+            if self.request.user.is_authenticated:
                 return self.form_valid_authenticated()
             return self.form_valid_unauthenticated(
                 form.cleaned_data.get("force_sso_login", True)

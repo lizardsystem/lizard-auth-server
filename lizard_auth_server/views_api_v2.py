@@ -245,7 +245,7 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
         )
 
         # Handle the form.
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             return self.form_valid_and_authenticated()
         return self.form_valid_but_unauthenticated()
 

@@ -392,7 +392,7 @@ class JWTView(View):
             str: A JSON Web Token.
 
         """
-        assert user.is_active and user.is_authenticated()
+        assert user.is_active and user.is_authenticated
         assert user.user_profile.has_access(portal)
         if exp is None:
             exp = datetime.utcnow() + JWT_EXPIRATION_DELTA

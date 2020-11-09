@@ -45,7 +45,6 @@ LOGGING = {
 }
 
 DEBUG = True
-TEMPLATE_DEBUG = True
 
 # ADMINS get internal error mails, MANAGERS get 404 mails.
 ADMINS = (
@@ -71,6 +70,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [],
         "APP_DIRS": True,
+        "DEBUG": True,
     },
 ]
 

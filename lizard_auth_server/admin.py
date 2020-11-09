@@ -7,7 +7,6 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from lizard_auth_server import forms
 from lizard_auth_server import models
-from tls import request as tls_request
 
 
 class InvitationAdmin(admin.ModelAdmin):
@@ -299,10 +298,8 @@ class PortalAdmin(admin.ModelAdmin):
         config_lines = [
             "SSO_ENABLED = True",
             "SSO_USE_V2_LOGIN = True",
-            "SSO_SERVER_API_START_URL = '{}'".format(
-                tls_request.build_absolute_uri(
-                    reverse("lizard_auth_server.api_v2.start")
-                )
+            "SSO_SERVER_API_START_URL = 'https://sso.lizard.net{}'".format(
+                reverse("lizard_auth_server.api_v2.start")
             ),
             "SSO_KEY = '{}'".format(obj.sso_key),
             "SSO_SECRET = '{}'".format(obj.sso_secret),

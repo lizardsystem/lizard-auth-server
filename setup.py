@@ -16,7 +16,6 @@ install_requires = [
     "django-extensions",
     "django-nose",
     "django-oidc-provider",
-    "django-tls",
     "itsdangerous",
     "psycopg2-binary",
     "pyjwt",

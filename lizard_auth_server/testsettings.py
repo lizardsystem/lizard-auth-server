@@ -169,7 +169,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # Default list above.
     "django.middleware.locale.LocaleMiddleware",
-    "tls.TLSRequestMiddleware",
 ]
 
 INSTALLED_APPS = [

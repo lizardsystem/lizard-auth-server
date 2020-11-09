@@ -16,7 +16,6 @@ django-appconf==1.0.4     # via lizard-auth-server
 django-extensions==3.0.9  # via lizard-auth-server
 django-nose==1.4.7        # via lizard-auth-server
 django-oidc-provider==0.7.0  # via lizard-auth-server
-django-tls==0.0.2         # via lizard-auth-server
 django==1.11.29           # via django-appconf, lizard-auth-server
 factory-boy==3.1.0        # via lizard-auth-server
 faker==4.14.0             # via factory-boy, lizard-auth-server
@@ -47,5 +46,4 @@ toml==0.10.1              # via black
 typed-ast==1.4.1          # via black
 typing-extensions==3.7.4.3  # via black
 urllib3==1.25.11          # via requests
-werkzeug==1.0.1           # via django-tls
 zipp==3.3.1               # via importlib-metadata

@@ -188,7 +188,7 @@ class TestUserProfile(TestCase):
         orgrole2 = models.OrganisationRole.objects.create(
             organisation=org2, role=billing_role, for_all_users=True
         )
-        profile.roles = [orgrole1, orgrole2]
+        profile.roles.set([orgrole1, orgrole2])
         profile_form = forms.UserProfileForm(model_to_dict(profile), instance=profile)
         self.assertFalse(profile_form.is_valid())
 
@@ -216,7 +216,7 @@ class TestUserProfile(TestCase):
         orgrole2 = models.OrganisationRole.objects.create(
             organisation=org2, role=billing_role, for_all_users=True
         )
-        profile.roles = [orgrole1, orgrole2]
+        profile.roles.set([orgrole1, orgrole2])
         profile_form = forms.UserProfileForm(model_to_dict(profile), instance=profile)
         self.assertTrue(profile_form.is_valid())
 

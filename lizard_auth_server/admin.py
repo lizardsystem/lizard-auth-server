@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 from django.contrib import messages
-from django.core.urlresolvers import reverse
 from django.db.models import Count
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from lizard_auth_server import forms

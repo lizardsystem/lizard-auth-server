@@ -40,6 +40,7 @@ LOGGING = {
             "propagate": False,
         },
         "factory": {"handlers": ["null"], "level": "DEBUG", "propagate": False},
+        "faker": {"handlers": ["null"], "level": "DEBUG", "propagate": False},
     },
 }
 

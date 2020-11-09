@@ -152,7 +152,9 @@ class Token(models.Model):
     An auth token used to authenticate a user.
     """
 
-    portal = models.ForeignKey(Portal, verbose_name=_("portal"))
+    portal = models.ForeignKey(
+        Portal, verbose_name=_("portal"), on_delete=models.CASCADE
+    )
     request_token = models.CharField(
         verbose_name=_("request token"), max_length=64, unique=True
     )
@@ -160,7 +162,12 @@ class Token(models.Model):
         verbose_name=_("auth token"), max_length=64, unique=True
     )
     user = models.ForeignKey(
-        User, verbose_name=_("user"), related_name="user_tokens", blank=True, null=True
+        User,
+        verbose_name=_("user"),
+        related_name="user_tokens",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
     )
     created = models.DateTimeField(
         verbose_name=_("created at"), default=token_creation_date
@@ -387,7 +394,9 @@ class Invitation(models.Model):
     activated_on = models.DateTimeField(
         verbose_name=_("activated on"), null=True, blank=True
     )
-    user = models.ForeignKey(User, verbose_name=_("user"), null=True, blank=True)
+    user = models.ForeignKey(
+        User, verbose_name=_("user"), null=True, blank=True, on_delete=models.CASCADE
+    )
 
     class Meta:
         verbose_name = _("(invitation)")
@@ -527,7 +536,9 @@ class RoleManager(models.Manager):
 
 
 class Role(models.Model):
-    portal = models.ForeignKey(Portal, related_name="roles", verbose_name=_("portal"))
+    portal = models.ForeignKey(
+        Portal, related_name="roles", verbose_name=_("portal"), on_delete=models.CASCADE
+    )
     unique_id = models.CharField(
         verbose_name=_("unique id"),
         max_length=32,
@@ -626,10 +637,16 @@ class OrganisationRoleManager(models.Manager):
 
 class OrganisationRole(models.Model):
     organisation = models.ForeignKey(
-        Organisation, related_name="organisation_roles", verbose_name=_("organisation")
+        Organisation,
+        related_name="organisation_roles",
+        verbose_name=_("organisation"),
+        on_delete=models.CASCADE,
     )
     role = models.ForeignKey(
-        Role, related_name="organisation_roles", verbose_name=_("role")
+        Role,
+        related_name="organisation_roles",
+        verbose_name=_("role"),
+        on_delete=models.CASCADE,
     )
     for_all_users = models.BooleanField(verbose_name=_("for all users"), default=False)
 

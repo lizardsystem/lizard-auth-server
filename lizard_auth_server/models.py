@@ -190,7 +190,7 @@ class UserProfileManager(models.Manager):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
-        User, verbose_name=_("user"), related_name="user_profile"
+        User, verbose_name=_("user"), related_name="user_profile", on_delete=models.CASCADE
     )
 
     portals = models.ManyToManyField(

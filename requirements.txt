@@ -10,13 +10,15 @@ black==20.8b1             # via -r requirements.in
 certifi==2020.6.20        # via requests
 chardet==3.0.4            # via requests
 click==7.1.2              # via black
-coverage==5.3             # via lizard-auth-server
+coverage==5.3             # via coveralls, lizard-auth-server
+coveralls==2.1.2          # via -r requirements.in
 dataclasses==0.7          # via black
 django-appconf==1.0.4     # via lizard-auth-server
 django-extensions==3.0.9  # via lizard-auth-server
 django-nose==1.4.7        # via lizard-auth-server
 django-oidc-provider==0.7.0  # via lizard-auth-server
 django==1.11.29           # via django-appconf, lizard-auth-server
+docopt==0.6.2             # via coveralls
 factory-boy==3.1.0        # via lizard-auth-server
 faker==4.14.0             # via factory-boy, lizard-auth-server
 flake8==3.8.4             # via -r requirements.in
@@ -39,7 +41,7 @@ pyjwt==1.7.1              # via lizard-auth-server
 python-dateutil==2.8.1    # via faker
 pytz==2020.1              # via django, lizard-auth-server
 regex==2020.10.15         # via black
-requests==2.24.0          # via lizard-auth-server, pyjwkest
+requests==2.24.0          # via coveralls, lizard-auth-server, pyjwkest
 six==1.15.0               # via lizard-auth-server, pyjwkest, python-dateutil
 text-unidecode==1.3       # via faker
 toml==0.10.1              # via black

@@ -2,5 +2,6 @@
 
 # Dev tools
 black
-isort
+coveralls
 flake8
+isort

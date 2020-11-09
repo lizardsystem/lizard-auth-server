@@ -204,7 +204,7 @@ class JWTViewTestCase(TestCase):
         expected_status_code = 302
         actual_status_code = response.status_code
         self.assertEqual(expected_status_code, actual_status_code)
-        expected_url = reverse("django.contrib.auth.views.login")
+        expected_url = reverse("login")
         self.assertTrue(response.url.startswith(expected_url))
 
     def test_get_request_with_text_response(self):

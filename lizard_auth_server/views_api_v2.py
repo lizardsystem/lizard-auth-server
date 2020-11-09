@@ -271,7 +271,7 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
                 )
             ]
         )
-        return "%s?%s" % (reverse("django.contrib.auth.views.login"), params)
+        return "%s?%s" % (reverse("login"), params)
 
     def form_valid_but_unauthenticated(self):
         """Handle user login
@@ -363,7 +363,7 @@ class LogoutView(FormInvalidMixin, ProcessGetFormView):
                 "'logout_url' is missing from the JWT message"
             )
         # Handle the logout.
-        djangos_logout_url = reverse("django.contrib.auth.views.logout")
+        djangos_logout_url = reverse("logout")
         logout_redirect_back_url = reverse(
             "lizard_auth_server.api_v2.logout_redirect_back"
         )

@@ -91,7 +91,7 @@ class PortalActionView(FormInvalidMixin, ProcessGetFormView):
                     )
                 ]
             )
-            url = "%s?%s" % (reverse("django.contrib.auth.views.logout"), nextparams)
+            url = "%s?%s" % (reverse("logout"), nextparams)
             return HttpResponseRedirect(url)
         return HttpResponseBadRequest("Unknown action")
 
@@ -240,7 +240,7 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
                 )
             ]
         )
-        return "%s?%s" % (reverse("django.contrib.auth.views.login"), params)
+        return "%s?%s" % (reverse("login"), params)
 
     def build_back_to_portal_url(self):
         """Redirect user back to the portal, without logging him in."""

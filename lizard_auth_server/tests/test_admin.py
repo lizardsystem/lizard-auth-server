@@ -32,7 +32,7 @@ class TestSearchFields(TestCase):
                 # We have no content, so the number of results if we search on
                 # something should be zero. The only thing that matters is
                 # that we get no 'cannot search on foreignkey' error.
-                self.assertEquals(model_class.objects.filter(**kwargs).count(), 0)
+                self.assertEqual(model_class.objects.filter(**kwargs).count(), 0)
 
 
 class TestInvitationAdmin(TestCase):
@@ -85,11 +85,11 @@ class TestInvitationAdmin(TestCase):
     def test_shortcut_urls2(self):
         # If activated, no shortcut url for manual activation.
         self.invitation.is_activated = True
-        self.assertEquals(self.admin_instance.shortcut_urls(self.invitation), "")
+        self.assertEqual(self.admin_instance.shortcut_urls(self.invitation), "")
 
     def test_user_profile_link1(self):
         # No user profle? No handy link.
-        self.assertEquals(self.admin_instance.user_profile_link(self.invitation), None)
+        self.assertEqual(self.admin_instance.user_profile_link(self.invitation), None)
 
     def test_user_profile_link2(self):
         user_profile = factories.UserProfileF()
@@ -123,7 +123,7 @@ class TestSmokeAdminPages(TestCase):
 
     def _check_changelist_page_200(self, model_name):
         url = reverse("admin:lizard_auth_server_%s_changelist" % model_name)
-        self.assertEquals(self.client.get(url).status_code, 200)
+        self.assertEqual(self.client.get(url).status_code, 200)
 
     def test_userprofile_list(self):
         self._check_changelist_page_200("userprofile")
@@ -148,7 +148,7 @@ class TestSmokeAdminPages(TestCase):
     def _check_change_page_200(self, obj):
         model_name = obj._meta.model_name
         url = reverse("admin:lizard_auth_server_%s_change" % model_name, args=[obj.id])
-        self.assertEquals(self.client.get(url).status_code, 200)
+        self.assertEqual(self.client.get(url).status_code, 200)
 
     def test_userprofile_change_page(self):
         self._check_change_page_200(self.user_profile)

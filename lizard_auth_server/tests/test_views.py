@@ -32,14 +32,14 @@ class ProfileViewTestCase(TestCase):
         client = Client()
         client.login(username="someone", password="pass")
         result = client.get(reverse("index"))
-        self.assertEquals(result.status_code, 200)
+        self.assertEqual(result.status_code, 200)
 
     def test_smoke_as_admin(self):
         User.objects.create_superuser("admin", "a@a.nl", "pass")
         client = Client()
         client.login(username="admin", password="pass")
         result = client.get(reverse("index"))
-        self.assertEquals(result.status_code, 200)
+        self.assertEqual(result.status_code, 200)
 
 
 class ConfirmDeletionUserconsentViewTestCase(TestCase):

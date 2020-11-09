@@ -683,7 +683,10 @@ class ActivateAndSetPasswordView(FormView):
         """
         try:
             signed_data = jwt.decode(
-                self.message, self.portal.sso_secret, audience=self.portal.sso_key
+                self.message,
+                self.portal.sso_secret,
+                audience=self.portal.sso_key,
+                algorithms=[getattr(settings, "JWT_ALGORITHM", "HS256")],
             )
         except jwt.exceptions.ExpiredSignatureError:
             return HttpResponseBadRequest("Activation link has expired")

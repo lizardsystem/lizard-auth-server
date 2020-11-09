@@ -12,6 +12,8 @@ from lizard_auth_server import views_api
 from lizard_auth_server import views_api_v2
 from lizard_auth_server import views_sso
 
+import oidc_provider.urls
+
 
 def check_settings():
     """
@@ -37,9 +39,9 @@ admin.site.login = login_required(admin.site.login)
 
 urlpatterns = [
     url(r"^$", views.ProfileView.as_view(), name="index"),
-    url(r"^admin/", include(admin.site.urls)),
+    url(r"^admin/", admin.site.urls),
     url(r"^i18n/", include("django.conf.urls.i18n")),
-    url(r"", include("oidc_provider.urls", namespace="oidc_provider")),
+    url(r"", include(oidc_provider.urls, namespace="oidc_provider")),
     # Version 1 API
     #
     # /api/ and /sso/api/ URLs are mainly used for internal

@@ -5,8 +5,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
-from django.core.urlresolvers import reverse_lazy
 from django.core.validators import URLValidator
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
@@ -14,6 +12,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template.context import RequestContext
 from django.template.response import TemplateResponse
+from django.urls import reverse
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _

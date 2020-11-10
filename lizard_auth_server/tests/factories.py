@@ -75,7 +75,6 @@ class UserProfileF(factory.django.DjangoModelFactory):
         django_get_or_create = ("user",)
 
     user = factory.SubFactory(UserF)
-    # organisation = factory.SubFactory(OrganisationF)
 
 
 class InvitationF(factory.django.DjangoModelFactory):

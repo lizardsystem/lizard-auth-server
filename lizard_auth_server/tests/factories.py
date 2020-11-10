@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
 from django.contrib.auth.models import User
-from faker import Factory as FakerFactory
+from faker import Faker
 from lizard_auth_server import models
 
 import factory
 
 
-faker = FakerFactory.create()
+fake = Faker()
 
 
-class UserF(factory.DjangoModelFactory):
+class UserF(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
-    username = factory.LazyAttribute(lambda x: faker.user_name())
-    password = factory.LazyAttribute(lambda x: faker.password())
+    username = factory.LazyAttribute(lambda x: fake.user_name())
+    password = factory.LazyAttribute(lambda x: fake.password())
     # Note: normally you'd call
     # User.objects.create_user('someone', 'a@a.nl', 'pass')
 
@@ -29,16 +28,16 @@ class UserF(factory.DjangoModelFactory):
         return user
 
 
-class PortalF(factory.DjangoModelFactory):
+class PortalF(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Portal
 
-    name = factory.LazyAttribute(lambda x: faker.company())
-    redirect_url = factory.LazyAttribute(lambda x: faker.url())
-    visit_url = factory.LazyAttribute(lambda x: faker.url())
+    name = factory.LazyAttribute(lambda x: fake.company())
+    redirect_url = factory.LazyAttribute(lambda x: fake.url())
+    visit_url = factory.LazyAttribute(lambda x: fake.url())
 
 
-class RoleF(factory.DjangoModelFactory):
+class RoleF(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Role
         django_get_or_create = ("name", "code")
@@ -54,7 +53,7 @@ class RoleF(factory.DjangoModelFactory):
     portal = factory.SubFactory(PortalF)
 
 
-class TokenF(factory.DjangoModelFactory):
+class TokenF(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Token
 
@@ -62,7 +61,7 @@ class TokenF(factory.DjangoModelFactory):
     portal = factory.SubFactory(PortalF)
 
 
-class OrganisationF(factory.DjangoModelFactory):
+class OrganisationF(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Organisation
 
@@ -70,16 +69,15 @@ class OrganisationF(factory.DjangoModelFactory):
     unique_id = factory.LazyAttribute(lambda org: models.create_new_uuid())
 
 
-class UserProfileF(factory.DjangoModelFactory):
+class UserProfileF(factory.django.DjangoModelFactory):
     class Meta:
         model = models.UserProfile
         django_get_or_create = ("user",)
 
     user = factory.SubFactory(UserF)
-    organisation = factory.SubFactory(OrganisationF)
 
 
-class InvitationF(factory.DjangoModelFactory):
+class InvitationF(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Invitation
 

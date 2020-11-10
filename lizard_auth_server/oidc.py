@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # Note: contains monkeypatch
-from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 import oidc_provider.lib.claims

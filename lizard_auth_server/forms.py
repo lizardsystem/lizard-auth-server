@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
 from django import forms
 from django.conf import settings
 from django.contrib.auth import forms as authforms
@@ -115,6 +114,7 @@ class JWTDecryptForm(forms.Form):
                 original_cleaned_data["message"],
                 portal.sso_secret,
                 issuer=original_cleaned_data["key"],
+                algorithms=[getattr(settings, "JWT_ALGORITHM", "HS256")],
             )
         except jwt.exceptions.DecodeError:
             raise ValidationError("Failed to decode JWT")

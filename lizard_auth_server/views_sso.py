@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.decorators.cache import never_cache
@@ -92,7 +91,7 @@ class PortalActionView(FormInvalidMixin, ProcessGetFormView):
                     )
                 ]
             )
-            url = "%s?%s" % (reverse("django.contrib.auth.views.logout"), nextparams)
+            url = "%s?%s" % (reverse("logout"), nextparams)
             return HttpResponseRedirect(url)
         return HttpResponseBadRequest("Unknown action")
 
@@ -155,7 +154,7 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
             return HttpResponseForbidden("Invalid request token")
         if self.check_token_timeout():
             self.domain = get_domain(form)
-            if self.request.user.is_authenticated():
+            if self.request.user.is_authenticated:
                 return self.form_valid_authenticated()
             return self.form_valid_unauthenticated(
                 form.cleaned_data.get("force_sso_login", True)
@@ -241,7 +240,7 @@ class AuthorizeView(FormInvalidMixin, ProcessGetFormView):
                 )
             ]
         )
-        return "%s?%s" % (reverse("django.contrib.auth.views.login"), params)
+        return "%s?%s" % (reverse("login"), params)
 
     def build_back_to_portal_url(self):
         """Redirect user back to the portal, without logging him in."""

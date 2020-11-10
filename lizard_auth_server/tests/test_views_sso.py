@@ -11,7 +11,7 @@ import uuid
 
 class TestConstructOrganisationRoleDict(TestCase):
     def test_empy_iterable(self):
-        self.assertEquals(
+        self.assertEqual(
             views_sso.construct_organisation_role_dict([]),
             {"organisations": [], "roles": [], "organisation_roles": []},
         )
@@ -40,7 +40,7 @@ class TestConstructOrganisationRoleDict(TestCase):
 
         org_role_dicts = views_sso.construct_organisation_role_dict([orgrole])
 
-        self.assertEquals(
+        self.assertEqual(
             org_role_dicts,
             {
                 "organisations": [{"name": "testorg", "unique_id": u_org}],
@@ -103,7 +103,7 @@ class TestLoginRedirect(TestCase):
             message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
             params = {"key": self.key, "message": message}
             response = self.client.get("/sso/authorize/", params)
-            self.assertEquals(response.status_code, 302)
+            self.assertEqual(response.status_code, 302)
 
             msg = {"request_token": request_token, "auth_token": auth_token}
             message = URLSafeTimedSerializer(self.portal.sso_secret).dumps(msg)
@@ -116,7 +116,7 @@ class TestLoginRedirect(TestCase):
             parts = url.split(".")
             return ".".join(parts[:-1])
 
-        self.assertEquals(
+        self.assertEqual(
             _strip_after_last_dot(response.url), _strip_after_last_dot(expec)
         )
 
@@ -130,12 +130,12 @@ class TestLoginRedirect(TestCase):
         }
         response = self.client.post("/accounts/login/", params)
 
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
         # Before upgrading from Django 1.6 -> 1.9 this used to be this (but now
         # doesn't work):
-        # self.assertEquals(response.url, 'http://testserver/sso/authorize')
-        self.assertEquals(response.url, "/sso/authorize")
+        # self.assertEqual(response.url, 'http://testserver/sso/authorize')
+        self.assertEqual(response.url, "/sso/authorize")
 
         self.authorize_and_check_redirect(None, self.portal.redirect_url)
         self.authorize_and_check_redirect("/", self.portal.redirect_url)

@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
 from django.test import TestCase
@@ -11,12 +10,12 @@ class TestUserProfile(TestCase):
     def test_organisation_can_return_none(self):
         user = factories.UserF.create()
         profile = models.UserProfile.objects.fetch_for_user(user)
-        self.assertEquals(profile.organisation, None)
+        self.assertEqual(profile.organisation, None)
 
     def test_without_setup_all_organisation_roles_empty(self):
         portal = factories.PortalF.create()
         profile = models.UserProfile()
-        self.assertEquals(len(list(profile.all_organisation_roles(portal))), 0)
+        self.assertEqual(len(list(profile.all_organisation_roles(portal))), 0)
 
     def test_role_for_all_members_is_returned(self):
         portal = factories.PortalF.create()
@@ -31,7 +30,7 @@ class TestUserProfile(TestCase):
         profile = models.UserProfile.objects.fetch_for_user(user)
         profile.organisations.add(org)
 
-        self.assertEquals(len(list(profile.all_organisation_roles(portal))), 1)
+        self.assertEqual(len(list(profile.all_organisation_roles(portal))), 1)
 
     def test_role_for_user_is_returned(self):
         portal = factories.PortalF.create()
@@ -44,11 +43,11 @@ class TestUserProfile(TestCase):
         )
 
         profile = models.UserProfile.objects.fetch_for_user(user)
-        self.assertEquals(len(list(profile.all_organisation_roles(portal))), 0)
+        self.assertEqual(len(list(profile.all_organisation_roles(portal))), 0)
 
         profile.roles.add(orgrole)
 
-        self.assertEquals(len(list(profile.all_organisation_roles(portal))), 1)
+        self.assertEqual(len(list(profile.all_organisation_roles(portal))), 1)
 
     def test_they_are_not_both_returned(self):
         portal = factories.PortalF.create()
@@ -64,7 +63,7 @@ class TestUserProfile(TestCase):
         profile.organisations.add(org)
         profile.roles.add(orgrole)
 
-        self.assertEquals(len(list(profile.all_organisation_roles(portal))), 1)
+        self.assertEqual(len(list(profile.all_organisation_roles(portal))), 1)
 
     def test_only_the_given_portal_is_returned(self):
         portal1 = factories.PortalF.create(name="portal1")
@@ -96,9 +95,9 @@ class TestUserProfile(TestCase):
         profile.roles.add(orgrole2)
         profile.roles.add(orgrole3)
 
-        self.assertEquals(len(list(profile.all_organisation_roles(portal1))), 1)
-        self.assertEquals(len(list(profile.all_organisation_roles(portal2))), 2)
-        self.assertEquals(len(list(profile.all_organisation_roles(portal3))), 0)
+        self.assertEqual(len(list(profile.all_organisation_roles(portal1))), 1)
+        self.assertEqual(len(list(profile.all_organisation_roles(portal2))), 2)
+        self.assertEqual(len(list(profile.all_organisation_roles(portal3))), 0)
 
     def test_role_inheritance1(self):
         # User has role1 on portal1. He also has role2 on portal2 for the same
@@ -123,14 +122,14 @@ class TestUserProfile(TestCase):
         )
 
         # See, he doesn't have any roles on portal2:
-        self.assertEquals(len(list(profile.all_organisation_roles(portal2))), 0)
+        self.assertEqual(len(list(profile.all_organisation_roles(portal2))), 0)
 
         # However, when the second role an inheriting role of the first (which
         # then becomes the second role's base role):
         role1.inheriting_roles.add(role2)
 
         # Then he does:
-        self.assertEquals(profile.all_organisation_roles(portal2)[0], org_role_2)
+        self.assertEqual(profile.all_organisation_roles(portal2)[0], org_role_2)
 
     def test_role_inheritance2(self):
         # Same test as test_role_inheritance2, only "org_role_2" is attached
@@ -155,13 +154,13 @@ class TestUserProfile(TestCase):
             organisation=second_org, role=role2, for_all_users=False
         )
         # See, he doesn't have any roles on portal2:
-        self.assertEquals(len(list(profile.all_organisation_roles(portal2))), 0)
+        self.assertEqual(len(list(profile.all_organisation_roles(portal2))), 0)
 
         # Even when the second role is an inheriting role of the first we
         # don't get it as the organisations don't match.
         role1.inheriting_roles.add(role2)
 
-        self.assertEquals(len(profile.all_organisation_roles(portal2)), 0)
+        self.assertEqual(len(profile.all_organisation_roles(portal2)), 0)
 
     def test_3di_billing_not_allowed_for_all(self):
         threedi_portal = factories.PortalF.create(name="3Di")
@@ -189,7 +188,7 @@ class TestUserProfile(TestCase):
         orgrole2 = models.OrganisationRole.objects.create(
             organisation=org2, role=billing_role, for_all_users=True
         )
-        profile.roles = [orgrole1, orgrole2]
+        profile.roles.set([orgrole1, orgrole2])
         profile_form = forms.UserProfileForm(model_to_dict(profile), instance=profile)
         self.assertFalse(profile_form.is_valid())
 
@@ -217,14 +216,14 @@ class TestUserProfile(TestCase):
         orgrole2 = models.OrganisationRole.objects.create(
             organisation=org2, role=billing_role, for_all_users=True
         )
-        profile.roles = [orgrole1, orgrole2]
+        profile.roles.set([orgrole1, orgrole2])
         profile_form = forms.UserProfileForm(model_to_dict(profile), instance=profile)
         self.assertTrue(profile_form.is_valid())
 
 
 class StrMethodTestCase(TestCase):
     def call_str(self, obj):
-        self.assertEquals(type(obj.__str__()), str)
+        self.assertEqual(type(obj.__str__()), str)
 
     def test_str_portal(self):
         """Smoke tests."""

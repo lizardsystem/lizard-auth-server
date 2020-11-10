@@ -10,7 +10,7 @@ class TestGetOrganisationsView(TestCase):
 
     def test_empty(self):
         result = self.view.get_organisations(None)
-        self.assertEquals(result, {"organisations": []})
+        self.assertEqual(result, {"organisations": []})
 
     def test_with_role(self):
         portal = factories.PortalF.create()
@@ -20,5 +20,5 @@ class TestGetOrganisationsView(TestCase):
 
         organisations = self.view.get_organisations(portal)["organisations"]
 
-        self.assertEquals(len(organisations), 1)
-        self.assertEquals(organisations[0]["unique_id"], organisation.unique_id)
+        self.assertEqual(len(organisations), 1)
+        self.assertEqual(organisations[0]["unique_id"], organisation.unique_id)

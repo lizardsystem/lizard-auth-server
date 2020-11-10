@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from django.conf import settings
 from django.conf.urls import include
-from django.conf.urls import patterns
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ImproperlyConfigured
 from lizard_auth_server import forms
@@ -12,6 +11,8 @@ from lizard_auth_server import views
 from lizard_auth_server import views_api
 from lizard_auth_server import views_api_v2
 from lizard_auth_server import views_sso
+
+import oidc_provider.urls
 
 
 def check_settings():
@@ -36,12 +37,11 @@ admin.autodiscover()
 # login view.
 admin.site.login = login_required(admin.site.login)
 
-urlpatterns = patterns(
-    "",
+urlpatterns = [
     url(r"^$", views.ProfileView.as_view(), name="index"),
-    url(r"^admin/", include(admin.site.urls)),
+    url(r"^admin/", admin.site.urls),
     url(r"^i18n/", include("django.conf.urls.i18n")),
-    url(r"", include("oidc_provider.urls", namespace="oidc_provider")),
+    url(r"", include(oidc_provider.urls, namespace="oidc_provider")),
     # Version 1 API
     #
     # /api/ and /sso/api/ URLs are mainly used for internal
@@ -177,8 +177,8 @@ urlpatterns = patterns(
     # Note: ensure LOGIN_URL isn't defined in the settings
     url(
         r"^accounts/login/$",
-        "django.contrib.auth.views.login",
-        {
+        auth_views.login,
+        kwargs={
             "template_name": "lizard_auth_server/login.html",
             "authentication_form": forms.LoginForm,
         },
@@ -186,8 +186,8 @@ urlpatterns = patterns(
     ),
     url(
         r"^accounts/logout/$",
-        "django.contrib.auth.views.logout",
-        {"template_name": "lizard_auth_server/logged_out.html"},
+        auth_views.logout,
+        kwargs={"template_name": "lizard_auth_server/logged_out.html"},
         name="logout",
     ),
     # Override django-auth's default profile URL
@@ -196,8 +196,8 @@ urlpatterns = patterns(
     # Override django-auth's password change URLs
     url(
         r"^password_change/$",
-        "django.contrib.auth.views.password_change",
-        {
+        auth_views.password_change,
+        kwargs={
             "template_name": "lizard_auth_server/password_change_form.html",
             "password_change_form": forms.PasswordChangeForm,
         },
@@ -205,15 +205,15 @@ urlpatterns = patterns(
     ),
     url(
         r"^password_change/done/$",
-        "django.contrib.auth.views.password_change_done",
-        {"template_name": "lizard_auth_server/password_change_done.html"},
+        auth_views.password_change_done,
+        kwargs={"template_name": "lizard_auth_server/password_change_done.html"},
         name="password_change_done",
     ),
     # Override django-auth's password reset URLs
     url(
         r"^password_reset/$",
-        "django.contrib.auth.views.password_reset",
-        {
+        auth_views.password_reset,
+        kwargs={
             "template_name": "lizard_auth_server/password_reset_form.html",
             "email_template_name": "lizard_auth_server/password_reset_email.html",
             "subject_template_name": "lizard_auth_server/password_reset_subject.txt"
@@ -223,15 +223,15 @@ urlpatterns = patterns(
     ),
     url(
         r"^password_reset/done/$",
-        "django.contrib.auth.views.password_reset_done",
-        {"template_name": "lizard_auth_server/password_reset_done.html"},
+        auth_views.password_reset_done,
+        kwargs={"template_name": "lizard_auth_server/password_reset_done.html"},
         name="password_reset_done",
     ),
     url(
         r"^reset/(?P<uidb64>[0-9A-Za-z]{1,13})-"
         r"(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$",
-        "django.contrib.auth.views.password_reset_confirm",
-        {
+        auth_views.password_reset_confirm,
+        kwargs={
             "template_name": "lizard_auth_server/password_reset_confirm.html",
             "set_password_form": forms.SetPasswordForm,
         },
@@ -239,8 +239,8 @@ urlpatterns = patterns(
     ),
     url(
         r"^reset/done/$",
-        "django.contrib.auth.views.password_reset_complete",
-        {"template_name": "lizard_auth_server/password_reset_complete.html"},
+        auth_views.password_reset_complete,
+        kwargs={"template_name": "lizard_auth_server/password_reset_complete.html"},
         name="password_reset_complete",
     ),
     # v1 URLs for user invitation / activation
@@ -292,7 +292,7 @@ urlpatterns = patterns(
         views.AccessToPortalView.as_view(),
         name="lizard_auth_server.access_to_portal",
     ),
-)
+]
 
 if settings.DEBUG:
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns

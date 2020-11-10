@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 
 
@@ -42,11 +40,11 @@ LOGGING = {
             "propagate": False,
         },
         "factory": {"handlers": ["null"], "level": "DEBUG", "propagate": False},
+        "faker": {"handlers": ["null"], "level": "DEBUG", "propagate": False},
     },
 }
 
 DEBUG = True
-TEMPLATE_DEBUG = True
 
 # ADMINS get internal error mails, MANAGERS get 404 mails.
 ADMINS = (
@@ -67,6 +65,14 @@ DATABASES = {
     }
 }
 
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "DEBUG": True,
+    },
+]
 
 # Almost always set to 1.  Django allows multiple sites in one database.
 SITE_ID = 1
@@ -133,29 +139,39 @@ CACHES = {
     }
 }
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.contrib.messages.context_processors.messages",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.request",
-)
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                # Default list above.
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+            ]
+        },
+    },
+]
 
-MIDDLEWARE_CLASSES = (
-    # Gzip needs to be at the top.
-    "django.middleware.gzip.GZipMiddleware",
-    "django.middleware.common.CommonMiddleware",
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Default list above.
     "django.middleware.locale.LocaleMiddleware",
-    "tls.TLSRequestMiddleware",
-)
+]
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     "lizard_auth_server",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -166,14 +182,8 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "oidc_provider",
     "django_extensions",
-)
+]
 
 DEFAULT_FROM_EMAIL = "noreply@nelen-schuurmans.nl"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 OIDC_USERINFO = "lizard_auth_server.oidc.userinfo"
-
-try:
-    # Import local settings that aren't stored in svn/git.
-    from lizard_auth_server.local_testsettings import *  # noqa
-except ImportError:
-    pass

@@ -7,13 +7,13 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
@@ -245,7 +245,7 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
         )
 
         # Handle the form.
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             return self.form_valid_and_authenticated()
         return self.form_valid_but_unauthenticated()
 
@@ -271,7 +271,7 @@ class LoginView(FormInvalidMixin, ProcessGetFormView):
                 )
             ]
         )
-        return "%s?%s" % (reverse("django.contrib.auth.views.login"), params)
+        return "%s?%s" % (reverse("login"), params)
 
     def form_valid_but_unauthenticated(self):
         """Handle user login
@@ -363,7 +363,7 @@ class LogoutView(FormInvalidMixin, ProcessGetFormView):
                 "'logout_url' is missing from the JWT message"
             )
         # Handle the logout.
-        djangos_logout_url = reverse("django.contrib.auth.views.logout")
+        djangos_logout_url = reverse("logout")
         logout_redirect_back_url = reverse(
             "lizard_auth_server.api_v2.logout_redirect_back"
         )
@@ -683,7 +683,10 @@ class ActivateAndSetPasswordView(FormView):
         """
         try:
             signed_data = jwt.decode(
-                self.message, self.portal.sso_secret, audience=self.portal.sso_key
+                self.message,
+                self.portal.sso_secret,
+                audience=self.portal.sso_key,
+                algorithms=[getattr(settings, "JWT_ALGORITHM", "HS256")],
             )
         except jwt.exceptions.ExpiredSignatureError:
             return HttpResponseBadRequest("Activation link has expired")

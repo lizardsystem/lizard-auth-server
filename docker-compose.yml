@@ -13,11 +13,14 @@ services:
 
   web:
     build: .
-    command: "bin/django runserver 0.0.0.0:5000"
+    command: "bin/python manage.py runserver 0.0.0.0:5000"
     ports:
       - "5000:5000"
     volumes:
-      - .:/code
+      - .:/code:delegated
+    # Switch on PYTHONWARNINGS when you want to see deprecation warnings.
+    environment:
+      PYTHONWARNINGS: "default"
     depends_on:
       - db
 

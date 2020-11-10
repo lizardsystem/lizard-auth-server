@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.urls import reverse
 from lizard_auth_server import views_api_v2
 from lizard_auth_server.tests import factories
 
@@ -18,7 +18,7 @@ class TestStartView(TestCase):
     def test_smoke(self):
         client = Client()
         result = client.get(reverse("lizard_auth_server.api_v2.start"))
-        self.assertEquals(200, result.status_code)
+        self.assertEqual(200, result.status_code)
 
     def test_url_includes_host(self):
         response = self.client.get("https://some.server/api2/")
@@ -40,12 +40,12 @@ class TestCheckCredentialsView(TestCase):
     def test_disallowed_get(self):
         client = Client()
         result = client.get(reverse("lizard_auth_server.api_v2.check_credentials"))
-        self.assertEquals(405, result.status_code)
+        self.assertEqual(405, result.status_code)
 
     def test_smoke_post(self):
         client = Client()
         result = client.post(reverse("lizard_auth_server.api_v2.check_credentials"))
-        self.assertEquals(400, result.status_code)
+        self.assertEqual(400, result.status_code)
 
     def test_valid_login(self):
         form = mock.Mock()
@@ -56,7 +56,7 @@ class TestCheckCredentialsView(TestCase):
         }
 
         result = self.view.form_valid(form)
-        self.assertEquals(200, result.status_code)
+        self.assertEqual(200, result.status_code)
 
     def test_invalid_login(self):
         form = mock.Mock()
@@ -102,7 +102,8 @@ class TestLoginView(TestCase):
         self.user_profile = factories.UserProfileF(user=user)
 
         self.portal = factories.PortalF.create(
-            sso_key=self.sso_key, sso_secret=self.secret_key,
+            sso_key=self.sso_key,
+            sso_secret=self.secret_key,
         )
         self.portal.save()
 
@@ -119,7 +120,7 @@ class TestLoginView(TestCase):
             "next": "/api2/login/",
         }
         resp1 = self.client.post("/accounts/login/", params)
-        self.assertEquals(resp1.status_code, 302)
+        self.assertEqual(resp1.status_code, 302)
 
         jwt_params = {
             "key": self.sso_key,
@@ -202,7 +203,9 @@ class TestLogoutViewV2(TestCase):
         self.user_profile = factories.UserProfileF(user=user)
 
         self.portal = factories.PortalF.create(
-            sso_key=self.sso_key, sso_secret=self.secret_key, redirect_url=redirect,
+            sso_key=self.sso_key,
+            sso_secret=self.secret_key,
+            redirect_url=redirect,
         )
         self.portal.save()
 
@@ -252,14 +255,14 @@ class TestNewUserView(TestCase):
     def test_disallowed_get(self):
         client = Client()
         result = client.get(reverse("lizard_auth_server.api_v2.new_user"))
-        self.assertEquals(405, result.status_code)
+        self.assertEqual(405, result.status_code)
 
     def test_new_user(self):
         form = mock.Mock()
         form.cleaned_data = self.user_data
         self.view.request = self.some_request
         result = self.view.form_valid(form)
-        self.assertEquals(201, result.status_code)
+        self.assertEqual(201, result.status_code)
         self.assertTrue(User.objects.get(username="pietje"))
 
     def test_new_user_starts_inactive(self):
@@ -285,7 +288,7 @@ class TestNewUserView(TestCase):
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
         # Should return a 409 conflict statuscode.
-        self.assertEquals(409, result.status_code)
+        self.assertEqual(409, result.status_code)
 
     def test_exiting_user_different_case(self):
         factories.UserF(email="Pietje@Klaasje.Test.Com")
@@ -293,7 +296,7 @@ class TestNewUserView(TestCase):
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
         # Should return a 409 conflict statucode
-        self.assertEquals(409, result.status_code)
+        self.assertEqual(409, result.status_code)
 
     def test_exiting_user_duplicate_email(self):
         factories.UserF(email="pietje@klaasje.test.com")
@@ -302,7 +305,7 @@ class TestNewUserView(TestCase):
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
         # Should return a 409 conflict statuscode
-        self.assertEquals(409, result.status_code)
+        self.assertEqual(409, result.status_code)
 
     def test_duplicate_username(self):
         factories.UserF(username="pietje", email="nietpietje@example.com")
@@ -332,7 +335,7 @@ class TestNewUserView(TestCase):
         params.update({"key": self.sso_key, "message": message.decode("utf8")})
 
         response = client.post(reverse("lizard_auth_server.api_v2.new_user"), params)
-        self.assertEquals(409, response.status_code)
+        self.assertEqual(409, response.status_code)
 
     def test_optional_visit_url(self):
         user_data = {
@@ -352,7 +355,7 @@ class TestNewUserView(TestCase):
             self.view.form_valid(form)
             args, kwargs = mocked.call_args
             payload = args[0]
-            self.assertEquals("http://reinout.vanrees.org/", payload["visit_url"])
+            self.assertEqual("http://reinout.vanrees.org/", payload["visit_url"])
 
     def test_optional_visit_url_in_email(self):
         user_data = {
@@ -412,7 +415,7 @@ class TestActivateAndSetPasswordView(TestCase):
     def test_get_smoke(self):
         client = Client()
         response = client.get(self.activation_url)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_post_smoke(self):
         client = Client()
@@ -420,7 +423,7 @@ class TestActivateAndSetPasswordView(TestCase):
             self.activation_url,
             {"new_password1": "Pietje123", "new_password2": "Pietje123"},
         )
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
 
     def test_user_is_activated(self):
         client = Client()
@@ -455,7 +458,7 @@ class TestActivateAndSetPasswordView(TestCase):
         response = client.post(
             activation_url, {"new_password1": "Pietje123", "new_password2": "Pietje123"}
         )
-        self.assertEquals(302, response.status_code)
+        self.assertEqual(302, response.status_code)
         self.assertIn("reinout.vanrees.org", response.url)
 
     def test_checks1(self):
@@ -549,7 +552,7 @@ class TestActivatedGoToPortalView(TestCase):
     def test_smoke(self):
         client = Client()
         response = client.get("/api2/activated/%s/" % self.portal.id)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_visit_url(self):
         client = Client()
@@ -565,7 +568,8 @@ class TestOrganisationsView(TestCase):
         sso_key = "ssokey"
         secret_key = "a secret"
         factories.PortalF.create(
-            sso_key=sso_key, sso_secret=secret_key,
+            sso_key=sso_key,
+            sso_secret=secret_key,
         )
 
         payload = {"iss": sso_key}
@@ -578,11 +582,11 @@ class TestOrganisationsView(TestCase):
     def test_unauthenticated_denied(self):
         # You need an sso key (=an empty jwt message)
         response = self.client.get("/api2/organisations/")
-        self.assertEquals(400, response.status_code)
+        self.assertEqual(400, response.status_code)
 
     def test_smoke(self):
         response = self.client.get("/api2/organisations/", self.jwt_params)
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     def test_result(self):
         factories.OrganisationF(name="Signalmanufaktur Neuwitz")
@@ -604,27 +608,27 @@ class TestFindUserView(TestCase):
         form = mock.Mock()
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
-        self.assertEquals(200, result.status_code)
+        self.assertEqual(200, result.status_code)
 
     def test_exiting_user_different_case(self):
         factories.UserF(email="Pietje@Klaasje.Test.Com")
         form = mock.Mock()
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
-        self.assertEquals(200, result.status_code)
+        self.assertEqual(200, result.status_code)
 
     def test_nonexiting_user(self):
         form = mock.Mock()
         form.cleaned_data = self.user_data
         result = self.view.form_valid(form)
-        self.assertEquals(404, result.status_code)
+        self.assertEqual(404, result.status_code)
 
     def test_get_allowed(self):
         client = Client()
         result = client.get(reverse("lizard_auth_server.api_v2.find_user"))
         # Status code should be 400 because of an invalid form. It should not
         # be 405 because of a wrong method.
-        self.assertEquals(400, result.status_code)
+        self.assertEqual(400, result.status_code)
 
     def test_useful_api_error_response(self):
         client = Client()

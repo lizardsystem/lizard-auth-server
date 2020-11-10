@@ -3,10 +3,10 @@
 from datetime import datetime
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.test import Client
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.urls import reverse
 from faker import Faker
 from jwt.exceptions import ExpiredSignatureError
 from lizard_auth_server.conf import settings
@@ -32,14 +32,14 @@ class ProfileViewTestCase(TestCase):
         client = Client()
         client.login(username="someone", password="pass")
         result = client.get(reverse("index"))
-        self.assertEquals(result.status_code, 200)
+        self.assertEqual(result.status_code, 200)
 
     def test_smoke_as_admin(self):
         User.objects.create_superuser("admin", "a@a.nl", "pass")
         client = Client()
         client.login(username="admin", password="pass")
         result = client.get(reverse("index"))
-        self.assertEquals(result.status_code, 200)
+        self.assertEqual(result.status_code, 200)
 
 
 class ConfirmDeletionUserconsentViewTestCase(TestCase):
@@ -111,7 +111,7 @@ class JWTViewTestCase(TestCase):
         self.user.user_profile.portals.add(self.portal)
         token = JWTView.get_token(self.user, self.portal, exp)
         expected_payload = {"username": self.user.username, "exp": exp}
-        actual_payload = jwt.decode(token, self.portal.sso_secret)
+        actual_payload = jwt.decode(token, self.portal.sso_secret, algorithms=["HS256"])
         self.assertDictEqual(expected_payload, actual_payload)
 
     def test_token_with_exp_as_datetime(self):
@@ -121,14 +121,14 @@ class JWTViewTestCase(TestCase):
         self.user.user_profile.portals.add(self.portal)
         token = JWTView.get_token(self.user, self.portal, dt)
         expected_payload = {"username": self.user.username, "exp": exp}
-        actual_payload = jwt.decode(token, self.portal.sso_secret)
+        actual_payload = jwt.decode(token, self.portal.sso_secret, algorithms=["HS256"])
         self.assertDictEqual(expected_payload, actual_payload)
 
     def test_token_with_default_exp(self):
         self.user.user_profile.portals.add(self.portal)
         token = JWTView.get_token(self.user, self.portal)
         expected_payload = {"username": self.user.username}
-        actual_payload = jwt.decode(token, self.portal.sso_secret)
+        actual_payload = jwt.decode(token, self.portal.sso_secret, algorithms=["HS256"])
         self.assertTrue(isinstance(actual_payload.pop("exp"), int))
         self.assertDictEqual(expected_payload, actual_payload)
 
@@ -136,12 +136,15 @@ class JWTViewTestCase(TestCase):
     def test_expired_token(self):
         self.user.user_profile.portals.add(self.portal)
         token = JWTView.get_token(self.user, self.portal, 0)
-        jwt.decode(token, self.portal.sso_secret)
+        jwt.decode(token, self.portal.sso_secret, algorithms=["HS256"])
 
     def test_get_request_with_invalid_next_parameter(self):
         request = self.factory.get(
             reverse("lizard_auth_server.jwt"),
-            {"portal": self.portal.sso_key, "next": fake.uri_path(),},
+            {
+                "portal": self.portal.sso_key,
+                "next": fake.uri_path(),
+            },
         )
         self.user.user_profile.portals.add(self.portal)
         request.user = self.user
@@ -151,7 +154,9 @@ class JWTViewTestCase(TestCase):
         self.assertEqual(expected_status_code, actual_status_code)
 
     def test_get_request_without_portal_parameters(self):
-        request = self.factory.get(reverse("lizard_auth_server.jwt"),)
+        request = self.factory.get(
+            reverse("lizard_auth_server.jwt"),
+        )
         self.user.user_profile.portals.add(self.portal)
         request.user = self.user
         response = JWTView.as_view()(request)
@@ -162,7 +167,10 @@ class JWTViewTestCase(TestCase):
     def test_get_request_with_invalid_portal_parameter(self):
         random_sso_key = GenKey("Portal", "sso_key")
         request = self.factory.get(
-            reverse("lizard_auth_server.jwt"), {"portal": random_sso_key,},
+            reverse("lizard_auth_server.jwt"),
+            {
+                "portal": random_sso_key,
+            },
         )
         self.user.user_profile.portals.add(self.portal)
         request.user = self.user
@@ -173,7 +181,10 @@ class JWTViewTestCase(TestCase):
 
     def test_get_request_without_portal_access(self):
         request = self.factory.get(
-            reverse("lizard_auth_server.jwt"), {"portal": self.portal.sso_key,},
+            reverse("lizard_auth_server.jwt"),
+            {
+                "portal": self.portal.sso_key,
+            },
         )
         request.user = self.user
         response = JWTView.as_view()(request)
@@ -183,19 +194,25 @@ class JWTViewTestCase(TestCase):
 
     def test_get_request_as_anonymous_user(self):
         request = self.factory.get(
-            reverse("lizard_auth_server.jwt"), {"portal": self.portal.sso_key,},
+            reverse("lizard_auth_server.jwt"),
+            {
+                "portal": self.portal.sso_key,
+            },
         )
         request.user = AnonymousUser()
         response = JWTView.as_view()(request)
         expected_status_code = 302
         actual_status_code = response.status_code
         self.assertEqual(expected_status_code, actual_status_code)
-        expected_url = reverse("django.contrib.auth.views.login")
+        expected_url = reverse("login")
         self.assertTrue(response.url.startswith(expected_url))
 
     def test_get_request_with_text_response(self):
         request = self.factory.get(
-            reverse("lizard_auth_server.jwt"), {"portal": self.portal.sso_key,},
+            reverse("lizard_auth_server.jwt"),
+            {
+                "portal": self.portal.sso_key,
+            },
         )
         self.user.user_profile.portals.add(self.portal)
         request.user = self.user
@@ -207,7 +224,7 @@ class JWTViewTestCase(TestCase):
         actual_content_type = response.get("Content-Type")
         self.assertEqual(expected_content_type, actual_content_type)
         token = response.content
-        payload = jwt.decode(token, self.portal.sso_secret)
+        payload = jwt.decode(token, self.portal.sso_secret, algorithms=["HS256"])
         self.assertTrue(payload["username"] == self.user.username)
         self.assertTrue("exp" in payload)
 
@@ -215,7 +232,10 @@ class JWTViewTestCase(TestCase):
         next_ = fake.url()
         request = self.factory.get(
             reverse("lizard_auth_server.jwt"),
-            {"portal": self.portal.sso_key, "next": next_,},
+            {
+                "portal": self.portal.sso_key,
+                "next": next_,
+            },
         )
         self.user.user_profile.portals.add(self.portal)
         request.user = self.user

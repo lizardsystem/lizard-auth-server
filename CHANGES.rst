@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.23 (unreleased)
+2.23 (2020-11-10)
 -----------------
 
 - Upgrade to django 1.11, including fixing all deprecation warnings.

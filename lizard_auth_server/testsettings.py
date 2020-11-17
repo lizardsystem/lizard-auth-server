@@ -65,15 +65,6 @@ DATABASES = {
     }
 }
 
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
-        "DEBUG": True,
-    },
-]
-
 # Almost always set to 1.  Django allows multiple sites in one database.
 SITE_ID = 1
 

@@ -636,3 +636,103 @@ class TestFindUserView(TestCase):
         # The returned content should be a textual message about the jwt
         # error, not a html page.
         self.assertNotIn("html", str(result.content))
+
+
+class TestUserMigrationView(TestCase):
+    def setUp(self):
+        self.sso_key = "sso key"
+        self.portal = factories.PortalF.create(
+            sso_key=self.sso_key, allow_migrate_user=True
+        )
+        self.view = views_api_v2.CognitoUserMigrationView()
+        self.request_factory = RequestFactory()
+        self.some_request = self.request_factory.get("/some/url/")
+        self.username = "foo"
+        self.password = "bar"
+        self.user = factories.UserF(username=self.username, password=self.password)
+        self.url = reverse("lizard_auth_server.api_v2.migrate_user")
+        self.client = Client()
+        self.expected_profile = {
+            "username": self.user.username,
+            "email": self.user.email,
+            "first_name": self.user.first_name,
+            "last_name": self.user.last_name,
+        }
+
+    def form_valid(self, **kwargs):
+        form = mock.Mock()
+        form.cleaned_data = {
+            "iss": self.sso_key,
+            "username": self.username,
+            **kwargs,
+        }
+        return self.view.form_valid(form)
+
+    def test_disallowed_get(self):
+        result = self.client.get(self.url)
+        self.assertEqual(405, result.status_code)
+
+    def test_smoke_post(self):
+        result = self.client.post(self.url)
+        self.assertEqual(400, result.status_code)
+
+    def test_migration_not_allowed(self):
+        self.portal.allow_migrate_user = False
+        self.portal.save()
+        self.assertRaises(PermissionDenied, self.form_valid)
+
+    def test_valid_password(self):
+        result = self.form_valid(password=self.password)
+        self.assertEqual(200, result.status_code)
+        content = json.loads(result.content)
+        self.assertDictEqual(content["user"], self.expected_profile)
+        self.assertTrue(content["password_valid"])
+
+    def test_invalid_password(self):
+        result = self.form_valid(password="ikkanniettypen")
+        self.assertEqual(200, result.status_code)
+        content = json.loads(result.content)
+        self.assertDictEqual(content["user"], self.expected_profile)
+        self.assertFalse(content["password_valid"])
+
+    def test_no_password(self):
+        result = self.form_valid()
+        self.assertEqual(200, result.status_code)
+        content = json.loads(result.content)
+        self.assertDictEqual(content["user"], self.expected_profile)
+        self.assertFalse(content["password_valid"])
+
+    def test_inactive_user(self):
+        self.user.is_active = False
+        self.user.save()
+        result = self.form_valid()
+        self.assertEqual(404, result.status_code)
+
+    def test_case_insensitive_username(self):
+        result = self.form_valid(username=self.username.upper())
+        self.assertEqual(200, result.status_code)
+        # normal-case username is returned
+        content = json.loads(result.content)
+        self.assertEqual(self.username, content["user"]["username"])
+
+    def test_case_insensitive_email(self):
+        self.user.email = "A@B.coM"
+        self.user.save()
+        result = self.form_valid(username="a@b.com")
+        self.assertEqual(200, result.status_code)
+        # normal-case username and email are returned
+        content = json.loads(result.content)
+        self.assertEqual(self.username, content["user"]["username"])
+        self.assertEqual(self.user.email, content["user"]["email"])
+
+    def test_duplicate_user(self):
+        factories.UserF(username=self.username.upper())
+        result = self.form_valid()
+        self.assertEqual(409, result.status_code)
+
+    def test_duplicate_email(self):
+        self.user.email = "A@B.coM"
+        self.user.save()
+        factories.UserF(email="a@b.com")
+        result = self.form_valid(username=self.user.email)
+        self.assertEqual(409, result.status_code)

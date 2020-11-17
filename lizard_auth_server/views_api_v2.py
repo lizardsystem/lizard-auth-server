@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -30,6 +31,7 @@ from django.views.generic.edit import ProcessFormView
 from lizard_auth_server import forms
 from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
+from lizard_auth_server.models import UserProfile
 from lizard_auth_server.views_sso import FormInvalidMixin
 from lizard_auth_server.views_sso import ProcessGetFormView
 from urllib.parse import urlencode  # py3 only!
@@ -851,7 +853,7 @@ class CognitoUserMigrationView(CheckCredentialsView):
     - users will also be found by email
     - username and email are case-insensitive
     - instead of erroring if there is a bad (or no) password, this endpoint
-      returns "password_verified": true/false.
+      returns "password_valid": true/false.
     - it only uses the django User model, and not the Cognito or LDAP
       authentication backends
     """
@@ -864,7 +866,7 @@ class CognitoUserMigrationView(CheckCredentialsView):
         Returns:
           A dict with keys
           - ``user`` dict with username, email, first name, last name.
-          - ``password_verified`` boolean
+          - ``password_valid`` bool
 
         A 403 status if the supplied SSO_KEY/SECRET combination (Portal) does
         not allow user migration.
@@ -881,7 +883,7 @@ class CognitoUserMigrationView(CheckCredentialsView):
 
         portal = Portal.objects.get(sso_key=form.cleaned_data["iss"])
         if not portal.allow_migrate_user:
-            return PermissionDenied("this portal is not allowed to migrate users")
+            raise PermissionDenied("this portal is not allowed to migrate users")
 
         # Do the authentication without the django backends, because we do not
         # want to migrate LDAP user and we certainly do not want to do a call
@@ -892,21 +894,20 @@ class CognitoUserMigrationView(CheckCredentialsView):
                 is_active=True,
             )
         except User.DoesNotExist:
-            raise HttpResponseNotFound("No user found")
+            return HttpResponseNotFound("No user found")
         except User.MultipleObjectsReturned:
             logger.warning("Multiple users found with username/email %s", username)
-            raise HttpResponse("Multiple users found", status_code=409)
+            return HttpResponse("Multiple users found", status=409)
 
         # Record this call
-        user.migrated_at = timezone.now()
-        user.save(update_fields=["migrated_at"])
+        UserProfile.objects.filter(user=user).update(migrated_at=timezone.now())
 
         # Verify the password, if supplied
         password = form.cleaned_data.get("password")
-        verified = user.check_password(password) if password else False
+        password_valid = user.check_password(password) if password else False
 
         data = {
             "user": construct_user_data(user=user),
-            "password_verified": verified,
+            "password_valid": password_valid,
         }
-        return HttpResponse(json.dumps(data), content_type="application/json")
+        return JsonResponse(data)

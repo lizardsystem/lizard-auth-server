@@ -879,6 +879,8 @@ class CognitoUserMigrationView(CheckCredentialsView):
             return HttpResponseBadRequest("username is missing from the JWT message")
 
         portal = Portal.objects.get(sso_key=form.cleaned_data["iss"])
+        if not portal.allow_migrate_user:
+            return PermissionDenied("this portal is not allowed to migrate users")
 
         # Do the authentication without the django backends, because we do not
         # want to migrate LDAP user and we certainly do not want to do a call

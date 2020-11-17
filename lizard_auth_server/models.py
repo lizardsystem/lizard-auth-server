@@ -108,6 +108,9 @@ class Portal(models.Model):
         max_length=255,
         help_text=_("URL used in the UI to refer to this portal."),
     )
+    allow_migrate_user = models.BooleanField(
+        default=False, help_text="Whether to allow the migrate_user v2 api"
+    )
 
     def __str__(self):
         return self.name

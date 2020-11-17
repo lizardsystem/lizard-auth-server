@@ -15,6 +15,7 @@ from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
@@ -895,6 +896,10 @@ class CognitoUserMigrationView(CheckCredentialsView):
         except User.MultipleObjectsReturned:
             logger.warning("Multiple users found with username/email %s", username)
             raise HttpResponse("Multiple users found", status_code=409)
+
+        # Record this call
+        user.migrated_at = timezone.now()
+        user.save(update_fields=["migrated_at"])
 
         # Verify the password, if supplied
         password = form.cleaned_data.get("password")

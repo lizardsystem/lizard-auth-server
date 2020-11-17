@@ -129,6 +129,11 @@ urlpatterns = [
         name="lizard_auth_server.api_v2.check_credentials",
     ),
     url(
+        r"^api2/migrate_user/$",
+        views_api_v2.CognitoUserMigrationView.as_view(),
+        name="lizard_auth_server.api_v2.migrate_user",
+    ),
+    url(
         r"^api2/organisations/$",
         views_api_v2.OrganisationsView.as_view(),
         name="lizard_auth_server.api_v2.organisations",

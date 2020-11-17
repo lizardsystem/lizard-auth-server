@@ -64,6 +64,9 @@ lizard_auth_server/locale/zh/
 # Pycharm
 .idea/
 
+# VS Code
+.vscode/
+
 lib
 lib64
 man
@@ -72,3 +75,4 @@ pyvenv.cfg
 share
 node_modules
 yarn.lock
+docker-compose.override.yml

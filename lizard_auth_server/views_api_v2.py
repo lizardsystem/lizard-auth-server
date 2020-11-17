@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
@@ -840,3 +841,65 @@ class FindUserView(ApiJWTFormInvalidMixin, ProcessGetFormView):
         return HttpResponse(
             json.dumps({"user": user_data}), content_type="application/json"
         )
+
+
+class CognitoUserMigrationView(CheckCredentialsView):
+    """View to migrate users to AWS Cognito
+
+    This view is similar to CheckCredentialsView, with a few differences:
+    - users will also be found by email
+    - username and email are case-insensitive
+    - instead of erroring if there is a bad (or no) password, this endpoint
+      returns "password_verified": true/false.
+    - it only uses the django User model, and not the Cognito or LDAP
+      authentication backends
+    """
+
+    def form_valid(self, form):
+        """Produce data to migrate a user.
+
+        Args: See CheckCredentialsView. Password is not mandatory.
+
+        Returns:
+          A dict with keys
+          - ``user`` dict with username, email, first name, last name.
+          - ``password_verified`` boolean
+
+        A 403 status if the supplied SSO_KEY/SECRET combination (Portal) does
+        not allow user migration.
+
+        A 404 status if the user does not exist
+
+        A 409 status if there are multiple users with given username/email
+        (case insensitive). A warning will be logged in this case.
+        """
+        # The JWT message is validated; now check the message's contents.
+        username = form.cleaned_data.get("username")
+        if not username:
+            return HttpResponseBadRequest("username is missing from the JWT message")
+
+        portal = Portal.objects.get(sso_key=form.cleaned_data["iss"])
+
+        # Do the authentication without the django backends, because we do not
+        # want to migrate LDAP user and we certainly do not want to do a call
+        # to Cognito, else we end up in an infinite loop.
+        try:
+            user = User.objects.get(
+                Q(username__iexact=username) | Q(email__iexact=username),
+                is_active=True,
+            )
+        except User.DoesNotExist:
+            raise HttpResponseNotFound("No user found")
+        except User.MultipleObjectsReturned:
+            logger.warning("Multiple users found with username/email %s", username)
+            raise HttpResponse("Multiple users found", status_code=409)
+
+        # Verify the password, if supplied
+        password = form.cleaned_data.get("password")
+        verified = user.check_password(password) if password else False
+
+        data = {
+            "user": construct_user_data(user=user),
+            "password_verified": verified,
+        }
+        return HttpResponse(json.dumps(data), content_type="application/json")

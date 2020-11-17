@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name="migrated_at",
             field=models.DateTimeField(
                 blank=True,
-                help_text="The last time the api2/user_migration was called for this user",
+                help_text="The last time the api2/migrate_user was called for this user",
                 null=True,
             ),
         ),

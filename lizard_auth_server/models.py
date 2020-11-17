@@ -224,7 +224,7 @@ class UserProfile(models.Model):
     created_at = models.DateTimeField(verbose_name=_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_("updated on"), auto_now=True)
     migrated_at = models.DateTimeField(
-        help_text="The last time the api2/user_migration was called for this user",
+        help_text="The last time the api2/migrate_user was called for this user",
         null=True,
         blank=True,
     )

@@ -129,11 +129,6 @@ urlpatterns = [
         name="lizard_auth_server.api_v2.check_credentials",
     ),
     url(
-        r"^api2/migrate_user/$",
-        views_api_v2.CognitoUserMigrationView.as_view(),
-        name="lizard_auth_server.api_v2.migrate_user",
-    ),
-    url(
         r"^api2/organisations/$",
         views_api_v2.OrganisationsView.as_view(),
         name="lizard_auth_server.api_v2.organisations",
@@ -177,6 +172,16 @@ urlpatterns = [
         r"^api2/activated/(?P<portal_pk>[^/]+)/$",
         views_api_v2.ActivatedGoToPortalView.as_view(),
         name="lizard_auth_server.api_v2.activated-go-to-portal",
+    ),
+    url(
+        r"^cognito/migrate_user/$",
+        views_api_v2.CognitoUserMigrationView.as_view(),
+        name="lizard_auth_server.cognito.migrate_user",
+    ),
+    url(
+        r"^cognito/user_exists/$",
+        views_api_v2.CognitoUserExistsView.as_view(),
+        name="lizard_auth_server.cognito.user_exists",
     ),
     # Override django-auth's default login/logout URLs
     # Note: ensure LOGIN_URL isn't defined in the settings

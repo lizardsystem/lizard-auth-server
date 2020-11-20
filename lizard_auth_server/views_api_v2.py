@@ -857,7 +857,7 @@ class CognitoUserMigrationView(CheckCredentialsView):
       returns "password_valid": true/false.
     - it only uses the django User model, and not the Cognito or LDAP
       authentication backends
-    - it sets ``migrated_at`` if the request contains ``migrate=True``
+    - it sets ``migrated_at`` to the current time
     """
 
     def form_valid(self, form):
@@ -869,6 +869,8 @@ class CognitoUserMigrationView(CheckCredentialsView):
           A dict with keys
           - ``user`` dict with username, email, first name, last name.
           - ``password_valid`` bool
+
+        A 400 is "username" is missing from the request.
 
         A 403 status if the supplied SSO_KEY/SECRET combination (Portal) does
         not allow user migration.
@@ -903,10 +905,9 @@ class CognitoUserMigrationView(CheckCredentialsView):
             return HttpResponse("Multiple users found", status=409)
 
         # Record this call
-        if form.cleaned_data.get("migrate"):
-            UserProfile.objects.filter(user=user).update(
-                migrated_at=timezone.now()
-            )
+        UserProfile.objects.filter(user=user).update(
+            migrated_at=timezone.now()
+        )
 
         # Verify the password, if supplied
         password = form.cleaned_data.get("password")
@@ -917,3 +918,42 @@ class CognitoUserMigrationView(CheckCredentialsView):
             "password_valid": password_valid,
         }
         return JsonResponse(data)
+
+
+class CognitoUserExistsView(CheckCredentialsView):
+    """View to check user existence for AWS Cognito
+
+    This view accepts "username" and (optionally) "email" in the request.
+
+    A user "exists" if the username already is present as username or email in
+    the local SSO database.
+    If email is present in the request, it is also checked if the email is
+    present (as username and email)
+
+    All checks are case-insensitive and inactive / migrated users are ignored.
+    """
+
+    def form_valid(self, form):
+        """Check for user existence.
+
+        Returns:
+          A dict with keys
+          - ``exists`` bool
+        """
+        # The JWT message is validated; now check the message's contents.
+        username = form.cleaned_data.get("username")
+        email = form.cleaned_data.get("email")
+        if not username:
+            return HttpResponseBadRequest("username is missing from the JWT message")
+
+        query = Q(username__iexact=username) | Q(email__iexact=username)
+        if email:
+            query = query | Q(username__iexact=email) | Q(email__iexact=email)
+
+        result = User.objects.filter(
+            query,
+            is_active=True,
+            user_profile__migrated_at=None,
+        ).exists()
+
+        return JsonResponse({"exists": result})

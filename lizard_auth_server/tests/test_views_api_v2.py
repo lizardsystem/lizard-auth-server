@@ -645,12 +645,10 @@ class TestUserMigrationView(TestCase):
             sso_key=self.sso_key, allow_migrate_user=True
         )
         self.view = views_api_v2.CognitoUserMigrationView()
-        self.request_factory = RequestFactory()
-        self.some_request = self.request_factory.get("/some/url/")
         self.username = "foo"
         self.password = "bar"
         self.user = factories.UserF(username=self.username, password=self.password)
-        self.url = reverse("lizard_auth_server.api_v2.migrate_user")
+        self.url = reverse("lizard_auth_server.cognito.migrate_user")
         self.client = Client()
         self.expected_profile = {
             "username": self.user.username,
@@ -737,18 +735,82 @@ class TestUserMigrationView(TestCase):
         result = self.form_valid(username=self.user.email)
         self.assertEqual(409, result.status_code)
 
-    def test_not_mark_migrated(self):
-        self.form_valid()
-        self.user.user_profile.refresh_from_db()
-        self.assertIsNone(self.user.user_profile.migrated_at)
     
     def test_mark_migrated(self):
-        self.form_valid(migrate=True)
+        self.form_valid()
         self.user.user_profile.refresh_from_db()
         self.assertIsNotNone(self.user.user_profile.migrated_at)
 
     def test_ignore_migrated(self):
         self.user.user_profile.migrated_at = datetime.datetime.utcnow()
         self.user.user_profile.save()
-        result = self.form_valid(migrate=True)
+        result = self.form_valid()
         self.assertEqual(404, result.status_code)
+
+
+class TestUserExistsView(TestCase):
+    def setUp(self):
+        self.sso_key = "sso key"
+        self.portal = factories.PortalF.create(
+            sso_key=self.sso_key
+        )
+        self.view = views_api_v2.CognitoUserExistsView()
+        self.username = "foo"
+        self.password = "bar"
+        self.email = "foo@bar.com"
+        self.user = factories.UserF(username=self.username, password=self.password, email=self.email)
+        self.url = reverse("lizard_auth_server.cognito.user_exists")
+        self.client = Client()
+
+    def form_valid(self, **kwargs):
+        form = mock.Mock()
+        form.cleaned_data = {"iss": self.sso_key, **kwargs}
+        return self.view.form_valid(form)
+
+    def test_disallowed_get(self):
+        result = self.client.get(self.url)
+        self.assertEqual(405, result.status_code)
+
+    def test_smoke_post(self):
+        result = self.client.post(self.url)
+        self.assertEqual(400, result.status_code)
+
+    def test_does_not_exist(self):
+        result = self.form_valid(username="nonexisting", email="a@b.com")
+        self.assertFalse(json.loads(result.content)["exists"])
+
+    def test_username(self):
+        result = self.form_valid(username=self.username)
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_username_case_insensitive(self):
+        result = self.form_valid(username=self.username.upper())
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_email(self):
+        result = self.form_valid(username="nonexisting", email=self.email)
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_email_case_insensitive(self):
+        result = self.form_valid(username="nonexisting", email=self.email.upper())
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_email_as_username(self):
+        result = self.form_valid(username=self.email)
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_username_as_email(self):
+        result = self.form_valid(username="nonexisting", email=self.username)
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_ignore_migrated(self):
+        self.user.user_profile.migrated_at = datetime.datetime.utcnow()
+        self.user.user_profile.save()
+        result = self.form_valid(username=self.username)
+        self.assertFalse(json.loads(result.content)["exists"])
+
+    def test_ignore_inactive(self):
+        self.user.is_active = False
+        self.user.save()
+        result = self.form_valid(username=self.username)
+        self.assertFalse(json.loads(result.content)["exists"])

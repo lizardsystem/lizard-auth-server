@@ -905,9 +905,7 @@ class CognitoUserMigrationView(CheckCredentialsView):
             return HttpResponse("Multiple users found", status=409)
 
         # Record this call
-        UserProfile.objects.filter(user=user).update(
-            migrated_at=timezone.now()
-        )
+        UserProfile.objects.filter(user=user).update(migrated_at=timezone.now())
 
         # Verify the password, if supplied
         password = form.cleaned_data.get("password")

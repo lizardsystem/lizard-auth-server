@@ -735,7 +735,6 @@ class TestUserMigrationView(TestCase):
         result = self.form_valid(username=self.user.email)
         self.assertEqual(409, result.status_code)
 
-    
     def test_mark_migrated(self):
         self.form_valid()
         self.user.user_profile.refresh_from_db()
@@ -751,14 +750,14 @@ class TestUserMigrationView(TestCase):
 class TestUserExistsView(TestCase):
     def setUp(self):
         self.sso_key = "sso key"
-        self.portal = factories.PortalF.create(
-            sso_key=self.sso_key
-        )
+        self.portal = factories.PortalF.create(sso_key=self.sso_key)
         self.view = views_api_v2.CognitoUserExistsView()
         self.username = "foo"
         self.password = "bar"
         self.email = "foo@bar.com"
-        self.user = factories.UserF(username=self.username, password=self.password, email=self.email)
+        self.user = factories.UserF(
+            username=self.username, password=self.password, email=self.email
+        )
         self.url = reverse("lizard_auth_server.cognito.user_exists")
         self.client = Client()
 

@@ -736,3 +736,19 @@ class TestUserMigrationView(TestCase):
         factories.UserF(email="a@b.com")
         result = self.form_valid(username=self.user.email)
         self.assertEqual(409, result.status_code)
+
+    def test_not_mark_migrated(self):
+        self.form_valid()
+        self.user.user_profile.refresh_from_db()
+        self.assertIsNone(self.user.user_profile.migrated_at)
+    
+    def test_mark_migrated(self):
+        self.form_valid(migrate=True)
+        self.user.user_profile.refresh_from_db()
+        self.assertIsNotNone(self.user.user_profile.migrated_at)
+
+    def test_ignore_migrated(self):
+        self.user.user_profile.migrated_at = datetime.datetime.utcnow()
+        self.user.user_profile.save()
+        result = self.form_valid(migrate=True)
+        self.assertEqual(404, result.status_code)

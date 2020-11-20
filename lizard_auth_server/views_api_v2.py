@@ -852,10 +852,12 @@ class CognitoUserMigrationView(CheckCredentialsView):
     This view is similar to CheckCredentialsView, with a few differences:
     - users will also be found by email
     - username and email are case-insensitive
+    - migrated users (with ``migrated_at is not None``) are ignored
     - instead of erroring if there is a bad (or no) password, this endpoint
       returns "password_valid": true/false.
     - it only uses the django User model, and not the Cognito or LDAP
       authentication backends
+    - it sets ``migrated_at`` if the request contains ``migrate=True``
     """
 
     def form_valid(self, form):
@@ -892,6 +894,7 @@ class CognitoUserMigrationView(CheckCredentialsView):
             user = User.objects.get(
                 Q(username__iexact=username) | Q(email__iexact=username),
                 is_active=True,
+                user_profile__migrated_at=None,
             )
         except User.DoesNotExist:
             return HttpResponseNotFound("No user found")
@@ -900,7 +903,10 @@ class CognitoUserMigrationView(CheckCredentialsView):
             return HttpResponse("Multiple users found", status=409)
 
         # Record this call
-        UserProfile.objects.filter(user=user).update(migrated_at=timezone.now())
+        if form.cleaned_data.get("migrate"):
+            UserProfile.objects.filter(user=user).update(
+                migrated_at=timezone.now()
+            )
 
         # Verify the password, if supplied
         password = form.cleaned_data.get("password")

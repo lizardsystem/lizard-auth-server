@@ -686,6 +686,10 @@ class TestUserMigrationView(TestCase):
         self.assertDictEqual(content["user"], self.expected_profile)
         self.assertTrue(content["password_valid"])
 
+        # set migrated_at
+        self.user.user_profile.refresh_from_db()
+        self.assertIsNotNone(self.user.user_profile.migrated_at)
+
     def test_invalid_password(self):
         result = self.form_valid(password="ikkanniettypen")
         self.assertEqual(200, result.status_code)
@@ -693,12 +697,20 @@ class TestUserMigrationView(TestCase):
         self.assertDictEqual(content["user"], self.expected_profile)
         self.assertFalse(content["password_valid"])
 
+        # invalid password = no migration. do not set migrated_at
+        self.user.user_profile.refresh_from_db()
+        self.assertIsNone(self.user.user_profile.migrated_at)
+
     def test_no_password(self):
         result = self.form_valid()
         self.assertEqual(200, result.status_code)
         content = json.loads(result.content)
         self.assertDictEqual(content["user"], self.expected_profile)
         self.assertFalse(content["password_valid"])
+
+        # no password = forgot password flow. set migrated_at
+        self.user.user_profile.refresh_from_db()
+        self.assertIsNotNone(self.user.user_profile.migrated_at)
 
     def test_inactive_user(self):
         self.user.is_active = False

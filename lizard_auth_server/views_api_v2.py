@@ -904,12 +904,20 @@ class CognitoUserMigrationView(CheckCredentialsView):
             logger.warning("Multiple users found with username/email %s", username)
             return HttpResponse("Multiple users found", status=409)
 
-        # Record this call
-        UserProfile.objects.filter(user=user).update(migrated_at=timezone.now())
-
         # Verify the password, if supplied
         password = form.cleaned_data.get("password")
-        password_valid = user.check_password(password) if password else False
+        if password is None:
+            # Forgot password flow
+            password_valid = False  # ignored
+            migrate = True
+        else:
+            # Authentication flow
+            password_valid = user.check_password(password)
+            migrate = password_valid
+
+        # Record this call
+        if migrate:
+            UserProfile.objects.filter(user=user).update(migrated_at=timezone.now())
 
         data = {
             "user": construct_user_data(user=user),

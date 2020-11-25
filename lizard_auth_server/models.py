@@ -108,6 +108,9 @@ class Portal(models.Model):
         max_length=255,
         help_text=_("URL used in the UI to refer to this portal."),
     )
+    allow_migrate_user = models.BooleanField(
+        default=False, help_text="Whether to allow the migrate_user v2 api"
+    )
 
     def __str__(self):
         return self.name
@@ -220,6 +223,11 @@ class UserProfile(models.Model):
 
     created_at = models.DateTimeField(verbose_name=_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_("updated on"), auto_now=True)
+    migrated_at = models.DateTimeField(
+        help_text="The last time the cognito/migrate_user was called for this user",
+        null=True,
+        blank=True,
+    )
 
     objects = UserProfileManager()
 

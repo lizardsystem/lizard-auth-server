@@ -636,3 +636,192 @@ class TestFindUserView(TestCase):
         # The returned content should be a textual message about the jwt
         # error, not a html page.
         self.assertNotIn("html", str(result.content))
+
+
+class TestUserMigrationView(TestCase):
+    def setUp(self):
+        self.sso_key = "sso key"
+        self.portal = factories.PortalF.create(
+            sso_key=self.sso_key, allow_migrate_user=True
+        )
+        self.view = views_api_v2.CognitoUserMigrationView()
+        self.username = "foo"
+        self.password = "bar"
+        self.user = factories.UserF(username=self.username, password=self.password)
+        self.url = reverse("lizard_auth_server.cognito.migrate_user")
+        self.client = Client()
+        self.expected_profile = {
+            "username": self.user.username,
+            "email": self.user.email,
+            "first_name": self.user.first_name,
+            "last_name": self.user.last_name,
+        }
+
+    def form_valid(self, **kwargs):
+        form = mock.Mock()
+        form.cleaned_data = {
+            "iss": self.sso_key,
+            "username": self.username,
+            **kwargs,
+        }
+        return self.view.form_valid(form)
+
+    def test_disallowed_get(self):
+        result = self.client.get(self.url)
+        self.assertEqual(405, result.status_code)
+
+    def test_smoke_post(self):
+        result = self.client.post(self.url)
+        self.assertEqual(400, result.status_code)
+
+    def test_migration_not_allowed(self):
+        self.portal.allow_migrate_user = False
+        self.portal.save()
+        self.assertRaises(PermissionDenied, self.form_valid)
+
+    def test_valid_password(self):
+        result = self.form_valid(password=self.password)
+        self.assertEqual(200, result.status_code)
+        content = json.loads(result.content)
+        self.assertDictEqual(content["user"], self.expected_profile)
+        self.assertTrue(content["password_valid"])
+
+        # set migrated_at
+        self.user.user_profile.refresh_from_db()
+        self.assertIsNotNone(self.user.user_profile.migrated_at)
+
+    def test_invalid_password(self):
+        result = self.form_valid(password="ikkanniettypen")
+        self.assertEqual(200, result.status_code)
+        content = json.loads(result.content)
+        self.assertDictEqual(content["user"], self.expected_profile)
+        self.assertFalse(content["password_valid"])
+
+        # invalid password = no migration. do not set migrated_at
+        self.user.user_profile.refresh_from_db()
+        self.assertIsNone(self.user.user_profile.migrated_at)
+
+    def test_no_password(self):
+        result = self.form_valid()
+        self.assertEqual(200, result.status_code)
+        content = json.loads(result.content)
+        self.assertDictEqual(content["user"], self.expected_profile)
+        self.assertFalse(content["password_valid"])
+
+        # no password = forgot password flow. set migrated_at
+        self.user.user_profile.refresh_from_db()
+        self.assertIsNotNone(self.user.user_profile.migrated_at)
+
+    def test_inactive_user(self):
+        self.user.is_active = False
+        self.user.save()
+        result = self.form_valid()
+        self.assertEqual(404, result.status_code)
+
+    def test_case_insensitive_username(self):
+        result = self.form_valid(username=self.username.upper())
+        self.assertEqual(200, result.status_code)
+        # normal-case username is returned
+        content = json.loads(result.content)
+        self.assertEqual(self.username, content["user"]["username"])
+
+    def test_case_insensitive_email(self):
+        self.user.email = "A@B.coM"
+        self.user.save()
+        result = self.form_valid(username="a@b.com")
+        self.assertEqual(200, result.status_code)
+        # normal-case username and email are returned
+        content = json.loads(result.content)
+        self.assertEqual(self.username, content["user"]["username"])
+        self.assertEqual(self.user.email, content["user"]["email"])
+
+    def test_duplicate_user(self):
+        factories.UserF(username=self.username.upper())
+        result = self.form_valid()
+        self.assertEqual(409, result.status_code)
+
+    def test_duplicate_email(self):
+        self.user.email = "A@B.coM"
+        self.user.save()
+        factories.UserF(email="a@b.com")
+        result = self.form_valid(username=self.user.email)
+        self.assertEqual(409, result.status_code)
+
+    def test_mark_migrated(self):
+        self.form_valid()
+        self.user.user_profile.refresh_from_db()
+        self.assertIsNotNone(self.user.user_profile.migrated_at)
+
+    def test_ignore_migrated(self):
+        self.user.user_profile.migrated_at = datetime.datetime.utcnow()
+        self.user.user_profile.save()
+        result = self.form_valid()
+        self.assertEqual(404, result.status_code)
+
+
+class TestUserExistsView(TestCase):
+    def setUp(self):
+        self.sso_key = "sso key"
+        self.portal = factories.PortalF.create(sso_key=self.sso_key)
+        self.view = views_api_v2.CognitoUserExistsView()
+        self.username = "foo"
+        self.password = "bar"
+        self.email = "foo@bar.com"
+        self.user = factories.UserF(
+            username=self.username, password=self.password, email=self.email
+        )
+        self.url = reverse("lizard_auth_server.cognito.user_exists")
+        self.client = Client()
+
+    def form_valid(self, **kwargs):
+        form = mock.Mock()
+        form.cleaned_data = {"iss": self.sso_key, **kwargs}
+        return self.view.form_valid(form)
+
+    def test_disallowed_get(self):
+        result = self.client.get(self.url)
+        self.assertEqual(405, result.status_code)
+
+    def test_smoke_post(self):
+        result = self.client.post(self.url)
+        self.assertEqual(400, result.status_code)
+
+    def test_does_not_exist(self):
+        result = self.form_valid(username="nonexisting", email="a@b.com")
+        self.assertFalse(json.loads(result.content)["exists"])
+
+    def test_username(self):
+        result = self.form_valid(username=self.username)
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_username_case_insensitive(self):
+        result = self.form_valid(username=self.username.upper())
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_email(self):
+        result = self.form_valid(username="nonexisting", email=self.email)
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_email_case_insensitive(self):
+        result = self.form_valid(username="nonexisting", email=self.email.upper())
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_email_as_username(self):
+        result = self.form_valid(username=self.email)
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_username_as_email(self):
+        result = self.form_valid(username="nonexisting", email=self.username)
+        self.assertTrue(json.loads(result.content)["exists"])
+
+    def test_ignore_migrated(self):
+        self.user.user_profile.migrated_at = datetime.datetime.utcnow()
+        self.user.user_profile.save()
+        result = self.form_valid(username=self.username)
+        self.assertFalse(json.loads(result.content)["exists"])
+
+    def test_ignore_inactive(self):
+        self.user.is_active = False
+        self.user.save()
+        result = self.form_valid(username=self.username)
+        self.assertFalse(json.loads(result.content)["exists"])

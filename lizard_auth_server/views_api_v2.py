@@ -8,12 +8,15 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
@@ -28,6 +31,7 @@ from django.views.generic.edit import ProcessFormView
 from lizard_auth_server import forms
 from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
+from lizard_auth_server.models import UserProfile
 from lizard_auth_server.views_sso import FormInvalidMixin
 from lizard_auth_server.views_sso import ProcessGetFormView
 from urllib.parse import urlencode  # py3 only!
@@ -840,3 +844,121 @@ class FindUserView(ApiJWTFormInvalidMixin, ProcessGetFormView):
         return HttpResponse(
             json.dumps({"user": user_data}), content_type="application/json"
         )
+
+
+class CognitoUserMigrationView(CheckCredentialsView):
+    """View to migrate users to AWS Cognito
+
+    This view is similar to CheckCredentialsView, with a few differences:
+    - users will also be found by email
+    - username and email are case-insensitive
+    - migrated users (with ``migrated_at is not None``) are ignored
+    - instead of erroring if there is a bad (or no) password, this endpoint
+      returns "password_valid": true/false.
+    - it only uses the django User model, and not the Cognito or LDAP
+      authentication backends
+    - it sets ``migrated_at`` to the current time
+    """
+
+    def form_valid(self, form):
+        """Produce data to migrate a user.
+
+        Args: See CheckCredentialsView. Password is not mandatory.
+
+        Returns:
+          A dict with keys
+          - ``user`` dict with username, email, first name, last name.
+          - ``password_valid`` bool
+
+        A 400 is "username" is missing from the request.
+
+        A 403 status if the supplied SSO_KEY/SECRET combination (Portal) does
+        not allow user migration.
+
+        A 404 status if the user does not exist
+
+        A 409 status if there are multiple users with given username/email
+        (case insensitive). A warning will be logged in this case.
+        """
+        # The JWT message is validated; now check the message's contents.
+        username = form.cleaned_data.get("username")
+        if not username:
+            return HttpResponseBadRequest("username is missing from the JWT message")
+
+        portal = Portal.objects.get(sso_key=form.cleaned_data["iss"])
+        if not portal.allow_migrate_user:
+            raise PermissionDenied("this portal is not allowed to migrate users")
+
+        # Do the authentication without the django backends, because we do not
+        # want to migrate LDAP user and we certainly do not want to do a call
+        # to Cognito, else we end up in an infinite loop.
+        try:
+            user = User.objects.get(
+                Q(username__iexact=username) | Q(email__iexact=username),
+                is_active=True,
+                user_profile__migrated_at=None,
+            )
+        except User.DoesNotExist:
+            return HttpResponseNotFound("No user found")
+        except User.MultipleObjectsReturned:
+            logger.warning("Multiple users found with username/email %s", username)
+            return HttpResponse("Multiple users found", status=409)
+
+        # Verify the password, if supplied
+        password = form.cleaned_data.get("password")
+        if password is None:
+            # Forgot password flow
+            password_valid = False  # ignored
+            logger.info("User %s migrated with forgotten password", user)
+            UserProfile.objects.filter(user=user).update(migrated_at=timezone.now())
+        else:
+            # Authentication flow
+            password_valid = user.check_password(password)
+            if password_valid:
+                logger.info("User %s migrated with valid password", user)
+                UserProfile.objects.filter(user=user).update(migrated_at=timezone.now())
+
+        data = {
+            "user": construct_user_data(user=user),
+            "password_valid": password_valid,
+        }
+        return JsonResponse(data)
+
+
+class CognitoUserExistsView(CheckCredentialsView):
+    """View to check user existence for AWS Cognito
+
+    This view accepts "username" and (optionally) "email" in the request.
+
+    A user "exists" if the username already is present as username or email in
+    the local SSO database.
+    If email is present in the request, it is also checked if the email is
+    present (as username and email)
+
+    All checks are case-insensitive and inactive / migrated users are ignored.
+    """
+
+    def form_valid(self, form):
+        """Check for user existence.
+
+        Returns:
+          A dict with keys
+          - ``exists`` bool
+        """
+        # The JWT message is validated; now check the message's contents.
+        username = form.cleaned_data.get("username")
+        email = form.cleaned_data.get("email")
+        if not username:
+            return HttpResponseBadRequest("username is missing from the JWT message")
+
+        query = Q(username__iexact=username) | Q(email__iexact=username)
+        if email:
+            query = query | Q(username__iexact=email) | Q(email__iexact=email)
+
+        result = User.objects.filter(
+            query,
+            is_active=True,
+            user_profile__migrated_at=None,
+        ).exists()
+
+        return JsonResponse({"exists": result})

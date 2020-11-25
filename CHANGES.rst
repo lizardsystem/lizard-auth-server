@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.24 (unreleased)
+2.24 (2020-11-25)
 -----------------
 
 - Added API endpoints for cognito user migration.

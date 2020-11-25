@@ -909,15 +909,14 @@ class CognitoUserMigrationView(CheckCredentialsView):
         if password is None:
             # Forgot password flow
             password_valid = False  # ignored
-            migrate = True
+            logger.info("User %s migrated with forgotton password", user)
+            UserProfile.objects.filter(user=user).update(migrated_at=timezone.now())
         else:
             # Authentication flow
             password_valid = user.check_password(password)
-            migrate = password_valid
-
-        # Record this call
-        if migrate:
-            UserProfile.objects.filter(user=user).update(migrated_at=timezone.now())
+            if password_valid:
+                logger.info("User %s migrated with valid password", user)
+                UserProfile.objects.filter(user=user).update(migrated_at=timezone.now())
 
         data = {
             "user": construct_user_data(user=user),

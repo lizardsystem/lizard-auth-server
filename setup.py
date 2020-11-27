@@ -1,7 +1,7 @@
 from setuptools import setup
 
 
-version = "2.25"
+version = "2.26.dev0"
 
 long_description = "\n\n".join(
     [

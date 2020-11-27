@@ -76,14 +76,14 @@ class InvitationAdmin(admin.ModelAdmin):
 class UserProfileAdmin(admin.ModelAdmin):
     model = models.UserProfile
     form = forms.UserProfileForm
-    list_display = ["username", "full_name", "email", "created_at"]
+    list_display = ["username", "full_name", "email", "created_at", "migrated_at"]
     search_fields = ["user__first_name", "user__last_name", "user__email"]
     list_filter = ["portals", "organisations"]
     readonly_fields = ["updated_at", "created_at"]
     list_select_related = ["user"]
 
     filter_horizontal = ("portals", "organisations", "roles")
-    readonly_fields = ["created_at", "updated_at", "first_name", "last_name", "email"]
+    readonly_fields = ["created_at", "updated_at", "migrated_at", "first_name", "last_name", "email"]
     fieldsets = (
         (
             None,
@@ -111,6 +111,7 @@ class UserProfileAdmin(admin.ModelAdmin):
                 "fields": [
                     "created_at",
                     "updated_at",
+                    "migrated_at",
                 ]
             },
         ),

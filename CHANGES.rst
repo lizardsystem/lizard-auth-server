@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.26 (unreleased)
+2.26 (2020-11-27)
 -----------------
 
 - Showing ``migrated_at`` field in the admin.

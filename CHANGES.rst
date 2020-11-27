@@ -5,7 +5,8 @@ Changelog of lizard-auth-server
 2.25 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fixed bug. `get_form()` used to get a `form_class` parameter in django 1.6,
+  but not so in 1.11. Adjusted it like in django's current default edit view.
 
 
 2.24 (2020-11-25)

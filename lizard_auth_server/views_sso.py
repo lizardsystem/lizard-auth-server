@@ -42,7 +42,9 @@ class ProcessGetFormView(FormMixin, View):
     See Django's ProcessFormView.
     """
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
         return form_class(self.request.GET)
 
     @method_decorator(never_cache)

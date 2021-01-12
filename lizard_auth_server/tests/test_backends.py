@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate as django_authenticate
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from django.test import override_settings
-from django.test import TransactionTestCase
+from django.test import TestCase
 from importlib import import_module
 from mock import patch
 from warrant import Cognito
@@ -74,7 +74,7 @@ def login(client, username, password):
     return client.login(request=request, username=username, password=password)
 
 
-class AuthTests(TransactionTestCase):
+class AuthTests(TestCase):
     @patch.object(Cognito, "authenticate")
     @patch.object(Cognito, "get_user")
     def test_user_authentication(self, mock_get_user, mock_authenticate):

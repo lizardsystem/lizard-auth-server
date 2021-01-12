@@ -5,24 +5,23 @@ https://github.com/metametricsinc/django-warrant
 (BSD licensed)
 
 """
-import abc
-
 from boto3.exceptions import Boto3Error
 from botocore.exceptions import ClientError
 from django.conf import settings
-from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
 from django.utils.six import iteritems
-
 from warrant import Cognito
 
+import abc
 
-def cognito_to_dict(attr_list,mapping):
+
+def cognito_to_dict(attr_list, mapping):
     user_attrs = dict()
     for i in attr_list:
-        name = mapping.get(i.get('Name'))
+        name = mapping.get(i.get("Name"))
         if name:
-            value = i.get('Value')
+            value = i.get("Value")
             user_attrs[name] = value
     return user_attrs
 
@@ -30,25 +29,27 @@ def cognito_to_dict(attr_list,mapping):
 class CognitoUser(Cognito):
     user_class = get_user_model()
     # Mapping of Cognito User attribute name to Django User attribute name
-    COGNITO_ATTR_MAPPING = getattr(settings, 'COGNITO_ATTR_MAPPING',
-                                   {
-                                       'email': 'email',
-                                       'given_name': 'first_name',
-                                       'family_name': 'last_name',
-                                   }
-                                   )
+    COGNITO_ATTR_MAPPING = getattr(
+        settings,
+        "COGNITO_ATTR_MAPPING",
+        {
+            "email": "email",
+            "given_name": "first_name",
+            "family_name": "last_name",
+        },
+    )
 
-    def get_user_obj(self,username=None,attribute_list=[],metadata={},attr_map={}):
-        user_attrs = cognito_to_dict(attribute_list,CognitoUser.COGNITO_ATTR_MAPPING)
+    def get_user_obj(self, username=None, attribute_list=[], metadata={}, attr_map={}):
+        user_attrs = cognito_to_dict(attribute_list, CognitoUser.COGNITO_ATTR_MAPPING)
         django_fields = [f.name for f in CognitoUser.user_class._meta.get_fields()]
         extra_attrs = {}
         for k, v in user_attrs.items():
             if k not in django_fields:
                 extra_attrs.update({k: user_attrs.pop(k, None)})
-        if getattr(settings, 'COGNITO_CREATE_UNKNOWN_USERS', True):
+        if getattr(settings, "COGNITO_CREATE_UNKNOWN_USERS", True):
             user, created = CognitoUser.user_class.objects.update_or_create(
-                username=username,
-                defaults=user_attrs)
+                username=username, defaults=user_attrs
+            )
         else:
             try:
                 user = CognitoUser.user_class.objects.get(username=username)
@@ -56,7 +57,7 @@ class CognitoUser(Cognito):
                     setattr(user, k, v)
                 user.save()
             except CognitoUser.user_class.DoesNotExist:
-                    user = None
+                user = None
         if user:
             for k, v in extra_attrs.items():
                 setattr(user, k, v)
@@ -66,9 +67,9 @@ class CognitoUser(Cognito):
 class AbstractCognitoBackend(ModelBackend):
     __metaclass__ = abc.ABCMeta
 
-    UNAUTHORIZED_ERROR_CODE = 'NotAuthorizedException'
+    UNAUTHORIZED_ERROR_CODE = "NotAuthorizedException"
 
-    USER_NOT_FOUND_ERROR_CODE = 'UserNotFoundException'
+    USER_NOT_FOUND_ERROR_CODE = "UserNotFoundException"
 
     COGNITO_USER_CLASS = CognitoUser
 
@@ -83,9 +84,10 @@ class AbstractCognitoBackend(ModelBackend):
         cognito_user = CognitoUser(
             settings.COGNITO_USER_POOL_ID,
             settings.COGNITO_APP_ID,
-            access_key=getattr(settings, 'AWS_ACCESS_KEY_ID', None),
-            secret_key=getattr(settings, 'AWS_SECRET_ACCESS_KEY', None),
-            username=username)
+            access_key=getattr(settings, "AWS_ACCESS_KEY_ID", None),
+            secret_key=getattr(settings, "AWS_SECRET_ACCESS_KEY", None),
+            username=username,
+        )
         try:
             cognito_user.authenticate(password)
         except (Boto3Error, ClientError) as e:
@@ -99,11 +101,11 @@ class AbstractCognitoBackend(ModelBackend):
         return user
 
     def handle_error_response(self, error):
-        error_code = error.response['Error']['Code']
+        error_code = error.response["Error"]["Code"]
         if error_code in [
-                AbstractCognitoBackend.UNAUTHORIZED_ERROR_CODE,
-                AbstractCognitoBackend.USER_NOT_FOUND_ERROR_CODE
-            ]:
+            AbstractCognitoBackend.UNAUTHORIZED_ERROR_CODE,
+            AbstractCognitoBackend.USER_NOT_FOUND_ERROR_CODE,
+        ]:
             return None
         raise error
 
@@ -115,10 +117,11 @@ class CognitoBackend(AbstractCognitoBackend):
         refresh token in the session.
         """
         user = super(CognitoBackend, self).authenticate(
-            username=username, password=password)
+            username=username, password=password
+        )
         if user:
-            request.session['ACCESS_TOKEN'] = user.access_token
-            request.session['ID_TOKEN'] = user.id_token
-            request.session['REFRESH_TOKEN'] = user.refresh_token
+            request.session["ACCESS_TOKEN"] = user.access_token
+            request.session["ID_TOKEN"] = user.id_token
+            request.session["REFRESH_TOKEN"] = user.refresh_token
             request.session.save()
         return user

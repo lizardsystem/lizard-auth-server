@@ -83,7 +83,14 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_select_related = ["user"]
 
     filter_horizontal = ("portals", "organisations", "roles")
-    readonly_fields = ["created_at", "updated_at", "migrated_at", "first_name", "last_name", "email"]
+    readonly_fields = [
+        "created_at",
+        "updated_at",
+        "migrated_at",
+        "first_name",
+        "last_name",
+        "email",
+    ]
     fieldsets = (
         (
             None,

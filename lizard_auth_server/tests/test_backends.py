@@ -74,6 +74,14 @@ def login(client, username, password):
     return client.login(request=request, username=username, password=password)
 
 
+@override_settings(
+    AUTHENTICATION_BACKENDS=[
+        "lizard_auth_server.backends.CognitoBackend",
+        "django.contrib.auth.backends.ModelBackend",
+    ],
+    COGNITO_USER_POOL_ID="abcdefg",
+    COGNITO_APP_ID="abcdefg",
+)
 class AuthTests(TestCase):
     @patch.object(Cognito, "authenticate")
     @patch.object(Cognito, "get_user")

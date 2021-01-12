@@ -178,3 +178,16 @@ INSTALLED_APPS = [
 DEFAULT_FROM_EMAIL = "noreply@nelen-schuurmans.nl"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 OIDC_USERINFO = "lizard_auth_server.oidc.userinfo"
+
+# # These settings are needed for the cognito backend, but enabling them here
+# # wreaks everything as the IDs aren't real, of course. So.... we'll do it in
+# # the tests.
+# AUTHENTICATION_BACKENDS = [
+#     "lizard_auth_server.backends.CognitoBackend",
+#     "django.contrib.auth.backends.ModelBackend",
+# ]
+# COGNITO_USER_POOL_ID = 'abcdefg'
+# COGNITO_APP_ID = 'abcdefg'
+# # These two are needed unless there's an ~/.aws/credentials file.
+# AWS_ACCESS_KEY_ID =
+# AWS_SECRET_ACCESS_KEY =

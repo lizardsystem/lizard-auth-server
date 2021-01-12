@@ -7,6 +7,8 @@
 -e file:.#lizard-auth-server  # via -r requirements.in
 appdirs==1.4.4            # via black
 black==20.8b1             # via -r requirements.in
+boto3==1.16.52            # via lizard-auth-server, warrant
+botocore==1.19.52         # via boto3, lizard-auth-server, s3transfer
 certifi==2020.6.20        # via requests
 chardet==3.0.4            # via requests
 click==7.1.2              # via black
@@ -19,14 +21,17 @@ django-nose==1.4.7        # via lizard-auth-server
 django-oidc-provider==0.7.0  # via lizard-auth-server
 django==1.11.29           # via django-appconf, lizard-auth-server
 docopt==0.6.2             # via coveralls
+ecdsa==0.16.1             # via python-jose-cryptodome
+envs==1.3                 # via warrant
 factory-boy==3.1.0        # via lizard-auth-server
 faker==4.14.0             # via factory-boy, lizard-auth-server
 flake8==3.8.4             # via -r requirements.in
-future==0.18.2            # via pyjwkest
+future==0.18.2            # via pyjwkest, python-jose-cryptodome
 idna==2.10                # via requests
 importlib-metadata==2.0.0  # via flake8
 isort==5.6.4              # via -r requirements.in
 itsdangerous==1.1.0       # via lizard-auth-server
+jmespath==0.10.0          # via boto3, botocore
 mccabe==0.6.1             # via flake8
 mock==4.0.2               # via lizard-auth-server
 mypy-extensions==0.4.3    # via black
@@ -34,18 +39,22 @@ nose==1.3.7               # via django-nose, lizard-auth-server
 pathspec==0.8.0           # via black
 psycopg2-binary==2.8.6    # via lizard-auth-server
 pycodestyle==2.6.0        # via flake8
+pycryptodome==3.3.1       # via python-jose-cryptodome
 pycryptodomex==3.9.8      # via pyjwkest
 pyflakes==2.2.0           # via flake8
 pyjwkest==1.4.2           # via django-oidc-provider
 pyjwt==1.7.1              # via lizard-auth-server
-python-dateutil==2.8.1    # via faker
+python-dateutil==2.8.1    # via botocore, faker
+python-jose-cryptodome==1.3.2  # via warrant
 pytz==2020.1              # via django, lizard-auth-server
 regex==2020.10.15         # via black
-requests==2.24.0          # via coveralls, lizard-auth-server, pyjwkest
-six==1.15.0               # via lizard-auth-server, pyjwkest, python-dateutil
+requests==2.24.0          # via coveralls, lizard-auth-server, pyjwkest, warrant
+s3transfer==0.3.4         # via boto3
+six==1.15.0               # via ecdsa, lizard-auth-server, pyjwkest, python-dateutil, python-jose-cryptodome
 text-unidecode==1.3       # via faker
 toml==0.10.1              # via black
 typed-ast==1.4.1          # via black
 typing-extensions==3.7.4.3  # via black
-urllib3==1.25.11          # via requests
+urllib3==1.25.11          # via botocore, requests
+warrant==0.6.1            # via lizard-auth-server
 zipp==3.3.1               # via importlib-metadata

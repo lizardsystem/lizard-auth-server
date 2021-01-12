@@ -12,6 +12,8 @@ long_description = "\n\n".join(
 
 install_requires = [
     "Django <2",
+    "boto3",
+    "botocore",
     "django-appconf",
     "django-extensions",
     "django-nose",
@@ -22,6 +24,7 @@ install_requires = [
     "pytz",
     "requests",
     "six",
+    "warrant",
 ]
 
 tests_require = [

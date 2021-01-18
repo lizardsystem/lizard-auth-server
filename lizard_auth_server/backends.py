@@ -91,10 +91,6 @@ class AbstractCognitoBackend(ModelBackend):
         except (Boto3Error, ClientError) as e:
             return self.handle_error_response(e)
         user = cognito_user.get_user()
-        if user:
-            user.access_token = cognito_user.access_token
-            user.id_token = cognito_user.id_token
-            user.refresh_token = cognito_user.refresh_token
 
         return user
 

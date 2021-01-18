@@ -113,9 +113,4 @@ class CognitoBackend(AbstractCognitoBackend):
         user = super(CognitoBackend, self).authenticate(
             username=username, password=password
         )
-        if user:
-            request.session["ACCESS_TOKEN"] = user.access_token
-            request.session["ID_TOKEN"] = user.id_token
-            request.session["REFRESH_TOKEN"] = user.refresh_token
-            request.session.save()
         return user

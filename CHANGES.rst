@@ -5,7 +5,7 @@ Changelog of lizard-auth-server
 2.27 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Remove 'email' as alias for username in the two cognito migration views.
 
 
 2.26 (2020-11-27)

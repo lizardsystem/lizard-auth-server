@@ -725,26 +725,9 @@ class TestUserMigrationView(TestCase):
         content = json.loads(result.content)
         self.assertEqual(self.username, content["user"]["username"])
 
-    def test_case_insensitive_email(self):
-        self.user.email = "A@B.coM"
-        self.user.save()
-        result = self.form_valid(username="a@b.com")
-        self.assertEqual(200, result.status_code)
-        # normal-case username and email are returned
-        content = json.loads(result.content)
-        self.assertEqual(self.username, content["user"]["username"])
-        self.assertEqual(self.user.email, content["user"]["email"])
-
     def test_duplicate_user(self):
         factories.UserF(username=self.username.upper())
         result = self.form_valid()
-        self.assertEqual(409, result.status_code)
-
-    def test_duplicate_email(self):
-        self.user.email = "A@B.coM"
-        self.user.save()
-        factories.UserF(email="a@b.com")
-        result = self.form_valid(username=self.user.email)
         self.assertEqual(409, result.status_code)
 
     def test_mark_migrated(self):
@@ -796,22 +779,6 @@ class TestUserExistsView(TestCase):
 
     def test_username_case_insensitive(self):
         result = self.form_valid(username=self.username.upper())
-        self.assertTrue(json.loads(result.content)["exists"])
-
-    def test_email(self):
-        result = self.form_valid(username="nonexisting", email=self.email)
-        self.assertTrue(json.loads(result.content)["exists"])
-
-    def test_email_case_insensitive(self):
-        result = self.form_valid(username="nonexisting", email=self.email.upper())
-        self.assertTrue(json.loads(result.content)["exists"])
-
-    def test_email_as_username(self):
-        result = self.form_valid(username=self.email)
-        self.assertTrue(json.loads(result.content)["exists"])
-
-    def test_username_as_email(self):
-        result = self.form_valid(username="nonexisting", email=self.username)
         self.assertTrue(json.loads(result.content)["exists"])
 
     def test_ignore_migrated(self):

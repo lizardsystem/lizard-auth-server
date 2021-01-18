@@ -850,8 +850,7 @@ class CognitoUserMigrationView(CheckCredentialsView):
     """View to migrate users to AWS Cognito
 
     This view is similar to CheckCredentialsView, with a few differences:
-    - users will also be found by email
-    - username and email are case-insensitive
+    - username is case-insensitive
     - migrated users (with ``migrated_at is not None``) are ignored
     - instead of erroring if there is a bad (or no) password, this endpoint
       returns "password_valid": true/false.
@@ -877,7 +876,7 @@ class CognitoUserMigrationView(CheckCredentialsView):
 
         A 404 status if the user does not exist
 
-        A 409 status if there are multiple users with given username/email
+        A 409 status if there are multiple users with given username
         (case insensitive). A warning will be logged in this case.
         """
         # The JWT message is validated; now check the message's contents.
@@ -894,7 +893,7 @@ class CognitoUserMigrationView(CheckCredentialsView):
         # to Cognito, else we end up in an infinite loop.
         try:
             user = User.objects.get(
-                Q(username__iexact=username) | Q(email__iexact=username),
+                username__iexact=username,
                 is_active=True,
                 user_profile__migrated_at=None,
             )
@@ -928,14 +927,10 @@ class CognitoUserMigrationView(CheckCredentialsView):
 class CognitoUserExistsView(CheckCredentialsView):
     """View to check user existence for AWS Cognito
 
-    This view accepts "username" and (optionally) "email" in the request.
+    This view accepts "username" in the request and responds with whether a
+    username exists (ignoring inactive and migrated users).
 
-    A user "exists" if the username already is present as username or email in
-    the local SSO database.
-    If email is present in the request, it is also checked if the email is
-    present (as username and email)
-
-    All checks are case-insensitive and inactive / migrated users are ignored.
+    The check is case-insensitive.
     """
 
     def form_valid(self, form):
@@ -947,16 +942,10 @@ class CognitoUserExistsView(CheckCredentialsView):
         """
         # The JWT message is validated; now check the message's contents.
         username = form.cleaned_data.get("username")
-        email = form.cleaned_data.get("email")
         if not username:
             return HttpResponseBadRequest("username is missing from the JWT message")
-
-        query = Q(username__iexact=username) | Q(email__iexact=username)
-        if email:
-            query = query | Q(username__iexact=email) | Q(email__iexact=email)
-
         result = User.objects.filter(
-            query,
+            username__iexact=username,
             is_active=True,
             user_profile__migrated_at=None,
         ).exists()

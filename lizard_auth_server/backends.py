@@ -13,8 +13,6 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils.six import iteritems
 from warrant import Cognito
 
-import abc
-
 
 def cognito_to_dict(attr_list, mapping):
     user_attrs = dict()
@@ -62,8 +60,7 @@ class CognitoUser(Cognito):
         return user
 
 
-class AbstractCognitoBackend(ModelBackend):
-    __metaclass__ = abc.ABCMeta
+class CognitoBackend(ModelBackend):
 
     UNAUTHORIZED_ERROR_CODE = "NotAuthorizedException"
 
@@ -71,7 +68,6 @@ class AbstractCognitoBackend(ModelBackend):
 
     COGNITO_USER_CLASS = CognitoUser
 
-    @abc.abstractmethod
     def authenticate(self, username=None, password=None):
         """
         Authenticate a Cognito User
@@ -102,15 +98,3 @@ class AbstractCognitoBackend(ModelBackend):
         ]:
             return None
         raise error
-
-
-class CognitoBackend(AbstractCognitoBackend):
-    def authenticate(self, request, username=None, password=None):
-        """
-        Authenticate a Cognito User and store an access, ID and
-        refresh token in the session.
-        """
-        user = super(CognitoBackend, self).authenticate(
-            username=username, password=password
-        )
-        return user

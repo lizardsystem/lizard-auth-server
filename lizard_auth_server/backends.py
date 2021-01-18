@@ -46,21 +46,19 @@ class CognitoUser(Cognito):
         for k, v in user_attrs.items():
             if k not in django_fields:
                 extra_attrs.update({k: user_attrs.pop(k, None)})
-        if getattr(settings, "COGNITO_CREATE_UNKNOWN_USERS", True):
-            user, created = CognitoUser.user_class.objects.update_or_create(
-                username=username, defaults=user_attrs
-            )
-        else:
-            try:
-                user = CognitoUser.user_class.objects.get(username=username)
-                for k, v in iteritems(user_attrs):
-                    setattr(user, k, v)
-                user.save()
-            except CognitoUser.user_class.DoesNotExist:
-                user = None
-        if user:
-            for k, v in extra_attrs.items():
+
+        # The original code used COGNITO_CREATE_UNKNOWN_USERS, but in our case
+        # we always need the user (for the local session) so we always create
+        # it if missing. There's no update of attributes as we don't care
+        # about that after migration to cognito. We *do* set ``migrated_at``.
+        user, created = CognitoUser.user_class.objects.get_or_create(username=username)
+        if created:
+            logger.info("Created local user %s as they exist on cognito.", user)
+            for k, v in iteritems(user_attrs):
                 setattr(user, k, v)
+            user.migrated_at = django.utils.timezone.now()
+            user.save()
+
         return user
 
 

@@ -83,7 +83,10 @@ class CognitoBackend(ModelBackend):
             username=username,
         )
         try:
-            cognito_user.authenticate(password)
+            cognito_user.admin_authenticate(password)
+            # ^^^ This uses ADMIN_NO_SRP_AUTH, but that's the old name for
+            # ADMIN_USER_PASSWORD_AUTH (which we need), so it will probably be
+            # OK.
         except (Boto3Error, ClientError) as e:
             return self.handle_error_response(e)
         user = cognito_user.get_user()

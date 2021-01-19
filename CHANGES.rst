@@ -7,6 +7,8 @@ Changelog of lizard-auth-server
 
 - Remove 'email' as alias for username in the two cognito migration views.
 
+- Add 'reset migration status' action to UserProfileAdmin.
+
 
 2.26 (2020-11-27)
 -----------------

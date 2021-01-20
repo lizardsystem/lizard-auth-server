@@ -86,6 +86,7 @@ class CognitoBackend(ModelBackend):
             settings.COGNITO_APP_ID,
             access_key=getattr(settings, "AWS_ACCESS_KEY_ID", None),
             secret_key=getattr(settings, "AWS_SECRET_ACCESS_KEY", None),
+            client_secret=getattr(settings, "COGNITO_APP_SECRET", None),
             username=username,
         )
         try:

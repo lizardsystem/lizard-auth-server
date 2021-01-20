@@ -191,3 +191,9 @@ OIDC_USERINFO = "lizard_auth_server.oidc.userinfo"
 # # These two are needed unless there's an ~/.aws/credentials file.
 # AWS_ACCESS_KEY_ID =
 # AWS_SECRET_ACCESS_KEY =
+
+
+try:
+    from lizard_auth_server.localsettings import *
+except:
+    pass

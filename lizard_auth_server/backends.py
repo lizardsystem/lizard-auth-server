@@ -13,6 +13,12 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils.six import iteritems
 from warrant import Cognito
 
+import django.utils.timezone
+import logging
+
+
+logger = logging.getLogger(__name__)
+
 
 def cognito_to_dict(attr_list, mapping):
     user_attrs = dict()
@@ -96,8 +102,8 @@ class CognitoBackend(ModelBackend):
     def handle_error_response(self, error):
         error_code = error.response["Error"]["Code"]
         if error_code in [
-            AbstractCognitoBackend.UNAUTHORIZED_ERROR_CODE,
-            AbstractCognitoBackend.USER_NOT_FOUND_ERROR_CODE,
+            CognitoBackend.UNAUTHORIZED_ERROR_CODE,
+            CognitoBackend.USER_NOT_FOUND_ERROR_CODE,
         ]:
             return None
         raise error

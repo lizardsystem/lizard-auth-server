@@ -188,6 +188,7 @@ OIDC_USERINFO = "lizard_auth_server.oidc.userinfo"
 # ]
 # COGNITO_USER_POOL_ID = 'abcdefg'
 # COGNITO_APP_ID = 'abcdefg'
+# COGNITO_APP_SECRET = 'abcdefg'
 # # These two are needed unless there's an ~/.aws/credentials file.
 # AWS_ACCESS_KEY_ID =
 # AWS_SECRET_ACCESS_KEY =

@@ -10,6 +10,10 @@ Changelog of lizard-auth-server
   others use it transparently through the SSO. This is a temporary situation
   before the SSO is phased out.
 
+- Remove 'email' as alias for username in the two cognito migration views.
+
+- Add 'reset migration status' action to UserProfileAdmin.
+
 
 2.26 (2020-11-27)
 -----------------

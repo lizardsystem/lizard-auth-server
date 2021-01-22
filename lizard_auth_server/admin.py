@@ -78,19 +78,13 @@ class UserProfileAdmin(admin.ModelAdmin):
     form = forms.UserProfileForm
     list_display = ["username", "full_name", "email", "created_at", "migrated_at"]
     search_fields = ["user__first_name", "user__last_name", "user__email"]
-    list_filter = ["portals", "organisations"]
+    list_filter = ["portals", "organisations", "migrated_at"]
     readonly_fields = ["updated_at", "created_at"]
     list_select_related = ["user"]
+    actions = ["reset_migration_status"]
 
     filter_horizontal = ("portals", "organisations", "roles")
-    readonly_fields = [
-        "created_at",
-        "updated_at",
-        "migrated_at",
-        "first_name",
-        "last_name",
-        "email",
-    ]
+    readonly_fields = ["created_at", "updated_at", "first_name", "last_name", "email"]
     fieldsets = (
         (
             None,
@@ -122,6 +116,17 @@ class UserProfileAdmin(admin.ModelAdmin):
                 ]
             },
         ),
+    )
+
+    def reset_migration_status(self, request, queryset):
+        num = queryset.exclude(migrated_at=None).update(migrated_at=None)
+        messages.info(
+            request,
+            "The migration status of {} user(s) was reset".format(num),
+        )
+
+    reset_migration_status.short_description = ugettext_lazy(
+        "Reset the migration status."
     )
 
 

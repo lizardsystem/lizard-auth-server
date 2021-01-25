@@ -60,7 +60,7 @@ class TestCognitoUser(TestCase):
     def test_smoke(self, patched_init):
         """Quick test
 
-        The code has been mostly been copied from djangp-warrant and has been
+        The code has been mostly been copied from django-warrant and has been
         tested there, so I'm not going to re-build the entire test
         infrastructure here, especially as calls to amazon are being made.
 

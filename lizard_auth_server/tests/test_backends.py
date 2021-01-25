@@ -90,6 +90,7 @@ class TestCognitoUser(TestCase):
         cognito_user = backends.CognitoUser()
         django_user1 = cognito_user.get_user_obj(username="test", attribute_list=attribute_list)
         self.assertEqual(django_user1.email, "test@email.com")
+        self.assertTrue(django_user1.user_profile.migrated_at)
         # Doing it a second time reuses the exisiting user.
         django_user2 = cognito_user.get_user_obj(username="test", attribute_list=attribute_list)
         self.assertEqual(django_user2.id, django_user1.id)

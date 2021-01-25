@@ -60,8 +60,8 @@ class CognitoUser(Cognito):
             logger.info("Created local user %s as they exist on cognito.", user)
             for k, v in iteritems(user_attrs):
                 setattr(user, k, v)
-            user.migrated_at = django.utils.timezone.now()
-            user.save()
+            user.user_profile.migrated_at = django.utils.timezone.now()
+            user.user_profile.save()
 
         return user
 

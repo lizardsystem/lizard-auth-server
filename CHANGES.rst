@@ -2,7 +2,7 @@ Changelog of lizard-auth-server
 ===================================================
 
 
-2.27 (unreleased)
+2.27 (2021-01-25)
 -----------------
 
 - Transparently use cognito instead of our own DB/AD for authentication. This

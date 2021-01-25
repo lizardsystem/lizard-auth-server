@@ -5,6 +5,11 @@ Changelog of lizard-auth-server
 2.27 (unreleased)
 -----------------
 
+- Transparently use cognito instead of our own DB/AD for authentication. This
+  way, sites can gradually switch to using cognito. Some use it directly,
+  others use it transparently through the SSO. This is a temporary situation
+  before the SSO is phased out.
+
 - Remove 'email' as alias for username in the two cognito migration views.
 
 - Add 'reset migration status' action to UserProfileAdmin.

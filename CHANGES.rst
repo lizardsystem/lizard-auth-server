@@ -5,7 +5,11 @@ Changelog of lizard-auth-server
 2.28 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Disabled the edit_profile view.
+
+- Use cognito for changing passwords (Change password and Forgot password).
+  This feature is only switched on if the setting AWS_ACCESS_KEY_ID is
+  configured.
 
 
 2.27 (2021-01-25)

@@ -1,7 +1,8 @@
 """Mostly copied from django-warrant's tests.py."""
 
 from django.conf import settings
-from django.test import TestCase, override_settings
+from django.test import override_settings
+from django.test import TestCase
 from lizard_auth_server import backends
 from unittest import mock
 

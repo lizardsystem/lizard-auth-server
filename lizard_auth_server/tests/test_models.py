@@ -1,9 +1,35 @@
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
+from django.test import override_settings
 from django.test import TestCase
 from lizard_auth_server import forms
 from lizard_auth_server import models
 from lizard_auth_server.tests import factories
+from unittest import mock
+
+
+@override_settings(AWS_ACCESS_KEY_ID="something")
+@mock.patch("lizard_auth_server.signal_handlers.CognitoUser")
+class TestCheckUserExists(TestCase):
+    def test_create_user_ok(self, CognitoUser_m):
+        # Mock existence check through CognitoUser().admin_user_exists
+        cognito_user = CognitoUser_m.from_username.return_value
+        cognito_user.admin_user_exists.return_value = False
+
+        User.objects.create(username="testuser")
+
+        # Check the construction of CognitoUser
+        self.assertEqual(("testuser",), CognitoUser_m.from_username.call_args[0])
+        # Check the call to admin_user_exists
+        self.assertTrue(cognito_user.admin_user_exists.called)
+
+    def test_create_user_exists(self, CognitoUser_m):
+        # Mock existence check through CognitoUser().admin_user_exists
+        cognito_user = CognitoUser_m.from_username.return_value
+        cognito_user.admin_user_exists.return_value = True
+
+        self.assertRaises(ValidationError, User.objects.create, username="testuser")
 
 
 class TestUserProfile(TestCase):

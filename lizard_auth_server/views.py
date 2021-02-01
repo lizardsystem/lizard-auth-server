@@ -152,16 +152,7 @@ class EditProfileView(TemplateView):
     Display a message that this view is now unavailable.
     """
 
-    template_name = "lizard_auth_server/error_message.html"
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["error_message"] = (
-            "Editing profiles is currently unavailable due to a transition to "
-            "a new user authentication system. Please contact "
-            "servicedesk@nelen-schuurmans.nl for changing your email or name."
-        )
-        return context
+    template_name = "lizard_auth_server/edit_profile.html"
 
 
 class InviteUserView(StaffOnlyMixin, FormView):

@@ -1,16 +1,9 @@
 """Mostly copied from django-warrant's tests.py."""
 
-from botocore.exceptions import ClientError
 from django.conf import settings
-from django.contrib.auth import authenticate as django_authenticate
-from django.contrib.auth import get_user_model
-from django.http import HttpRequest
-from django.test import override_settings
 from django.test import TestCase
-from importlib import import_module
 from lizard_auth_server import backends
 from unittest import mock
-from warrant import Cognito
 
 
 def get_user(cls, *args, **kwargs):

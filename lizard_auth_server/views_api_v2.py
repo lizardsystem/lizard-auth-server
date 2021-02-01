@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.db import transaction
-from django.db.models import Q
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound

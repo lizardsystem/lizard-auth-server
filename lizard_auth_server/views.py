@@ -147,45 +147,38 @@ class AccessToPortalView(TemplateView):
         return self.profile.all_organisation_roles(self.portal)
 
 
-class EditProfileView(FormView):
+class EditProfileView(TemplateView):
     """
-    Straightforward view which displays a form to have a user
-    edit his / her own profile.
+    Display a message that this view is now unavailable.
     """
 
-    template_name = "lizard_auth_server/edit_profile.html"
-    form_class = forms.EditProfileForm
-    _profile = None
+    template_name = "lizard_auth_server/error_message.html"
 
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super(EditProfileView, self).dispatch(request, *args, **kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["error_message"] = (
+            "Editing profiles is currently unavailable due to a transition to "
+            "a new user authentication system. Please contact "
+            "servicedesk@nelen-schuurmans.nl for changing your email or name."
+        )
+        return context
 
-    @property
-    def profile(self):
-        if not self._profile:
-            self._profile = self.request.user.user_profile
-        return self._profile
 
-    def get_initial(self):
-        return {
-            "email": self.profile.email,
-            "first_name": self.profile.first_name,
-            "last_name": self.profile.last_name,
-        }
+class ChangePasswordView(TemplateView):
+    """
+    Display a message that this view is now unavailable.
+    """
 
-    def get_form(self, form_class=None):
-        if form_class is None:
-            form_class = self.get_form_class()
-        return form_class(user=self.request.user, **self.get_form_kwargs())
+    template_name = "lizard_auth_server/error_message.html"
 
-    def form_valid(self, form):
-        data = form.cleaned_data
-
-        # let the model handle the rest
-        self.profile.update_all(data)
-
-        return HttpResponseRedirect(reverse("profile"))
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["error_message"] = (
+            "Changing password is currently unavailable due to a transition "
+            " to a new user authentication system. Please contact "
+            "servicedesk@nelen-schuurmans.nl for a password reset."
+        )
+        return context
 
 
 class InviteUserView(StaffOnlyMixin, FormView):

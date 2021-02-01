@@ -8,9 +8,9 @@ from django.http import HttpRequest
 from django.test import override_settings
 from django.test import TestCase
 from importlib import import_module
+from lizard_auth_server import backends
 from mock import patch
 from warrant import Cognito
-from lizard_auth_server import backends
 
 
 def get_user(cls, *args, **kwargs):
@@ -48,6 +48,7 @@ def get_user(cls, *args, **kwargs):
         metadata=user_metadata,
     )
 
+
 @override_settings(
     AUTHENTICATION_BACKENDS=[
         "lizard_auth_server.backends.CognitoBackend",
@@ -55,7 +56,6 @@ def get_user(cls, *args, **kwargs):
     ],
 )
 class TestCognitoUser(TestCase):
-
     @patch("lizard_auth_server.backends.CognitoUser.__init__")
     def test_smoke(self, patched_init):
         """Quick test
@@ -88,9 +88,13 @@ class TestCognitoUser(TestCase):
         }
         attribute_list = example_user["UserAttributes"]
         cognito_user = backends.CognitoUser()
-        django_user1 = cognito_user.get_user_obj(username="test", attribute_list=attribute_list)
+        django_user1 = cognito_user.get_user_obj(
+            username="test", attribute_list=attribute_list
+        )
         self.assertEqual(django_user1.email, "test@email.com")
         self.assertTrue(django_user1.user_profile.migrated_at)
         # Doing it a second time reuses the exisiting user.
-        django_user2 = cognito_user.get_user_obj(username="test", attribute_list=attribute_list)
+        django_user2 = cognito_user.get_user_obj(
+            username="test", attribute_list=attribute_list
+        )
         self.assertEqual(django_user2.id, django_user1.id)

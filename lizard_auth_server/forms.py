@@ -9,12 +9,13 @@ from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from itsdangerous import BadSignature
 from itsdangerous import URLSafeTimedSerializer
+from lizard_auth_server.backends import CognitoBackend
+from lizard_auth_server.backends import CognitoUser
 from lizard_auth_server.models import BILLING_ROLE
 from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 from lizard_auth_server.models import THREEDI_PORTAL
 from lizard_auth_server.models import UserProfile
-from lizard_auth_server.backends import CognitoUser, CognitoBackend
 
 import jwt
 
@@ -188,13 +189,16 @@ class SetPasswordMixin:
             return super().clean_old_password()
 
         old_password = self.cleaned_data["old_password"]
-        if CognitoBackend().authenticate(
-            username=self.user.username, password=old_password
-        ) is None:
+        if (
+            CognitoBackend().authenticate(
+                username=self.user.username, password=old_password
+            )
+            is None
+        ):
             # Copy of the error in the super() call
             raise forms.ValidationError(
-                self.error_messages['password_incorrect'],
-                code='password_incorrect',
+                self.error_messages["password_incorrect"],
+                code="password_incorrect",
             )
 
         return old_password
@@ -205,8 +209,7 @@ class SetPasswordMixin:
         return password1
 
     def save(self, commit=True):
-        """Override the builtin SetPassword and send the password to Cognito
-        """
+        """Override the builtin SetPassword and send the password to Cognito"""
         # Old behaviour if AWS is not setup (local situations)
         if not getattr(settings, "AWS_ACCESS_KEY_ID", None):
             return super().save(commit=commit)

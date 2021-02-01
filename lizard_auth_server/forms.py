@@ -180,21 +180,26 @@ class SetPasswordMixin:
     """Used to check whether the new password is secure and for the AWS
     coupling."""
 
+    def clean_new_password1(self):
+        password1 = self.cleaned_data.get("new_password1")
+        validate_password(password1)
+        return password1
+
     def clean_old_password(self):
         """
         Validates that the old_password field is correct.
+
+        This uses Cognito (if enabled) to check the password.
         """
         # Old behaviour if AWS is not setup (local situations)
         if not getattr(settings, "AWS_ACCESS_KEY_ID", None):
             return super().clean_old_password()
 
         old_password = self.cleaned_data["old_password"]
-        if (
-            CognitoBackend().authenticate(
-                username=self.user.username, password=old_password
-            )
-            is None
-        ):
+        authenticated_user = CognitoBackend().authenticate(
+            username=self.user.username, password=old_password
+        )
+        if authenticated_user is None:
             # Copy of the error in the super() call
             raise forms.ValidationError(
                 self.error_messages["password_incorrect"],
@@ -203,13 +208,11 @@ class SetPasswordMixin:
 
         return old_password
 
-    def clean_new_password1(self):
-        password1 = self.cleaned_data.get("new_password1")
-        validate_password(password1)
-        return password1
-
     def save(self, commit=True):
-        """Override the builtin SetPassword and send the password to Cognito"""
+        """Save the new password.
+
+        This saves the new password to Cognito (if enabled).
+        """
         # Old behaviour if AWS is not setup (local situations)
         if not getattr(settings, "AWS_ACCESS_KEY_ID", None):
             return super().save(commit=commit)

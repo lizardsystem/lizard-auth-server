@@ -11,6 +11,8 @@ Changelog of lizard-auth-server
   This feature is only switched on if the setting AWS_ACCESS_KEY_ID is
   configured.
 
+- Add a User pre_save signal handler that checks if a user exists in Cognito.
+
 
 2.27 (2021-01-25)
 -----------------

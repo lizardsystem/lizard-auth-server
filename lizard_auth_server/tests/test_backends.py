@@ -9,7 +9,7 @@ from django.test import override_settings
 from django.test import TestCase
 from importlib import import_module
 from lizard_auth_server import backends
-from mock import patch
+from unittest import mock
 from warrant import Cognito
 
 
@@ -55,8 +55,8 @@ def get_user(cls, *args, **kwargs):
         "django.contrib.auth.backends.ModelBackend",
     ],
 )
+@mock.patch("lizard_auth_server.backends.CognitoUser.__init__")
 class TestCognitoUser(TestCase):
-    @patch("lizard_auth_server.backends.CognitoUser.__init__")
     def test_smoke(self, patched_init):
         """Quick test
 
@@ -98,3 +98,23 @@ class TestCognitoUser(TestCase):
             username="test", attribute_list=attribute_list
         )
         self.assertEqual(django_user2.id, django_user1.id)
+
+    def test_admin_set_password(self, patched_init):
+        patched_init.return_value = None
+        cognito_user = backends.CognitoUser()
+
+        cognito_user.client = mock.Mock()  # the boto3 client
+        cognito_user.username = "testuser"
+        cognito_user.user_pool_id = "foo"
+
+        cognito_user.admin_set_user_password("bar")
+
+        # the boto3 client should be called as documented
+        args, kwargs = cognito_user.client.admin_set_user_password.call_args
+        expected = {
+            "UserPoolId": "foo",
+            "Username": "testuser",
+            "Password": "bar",
+            "Permanent": True,
+        }
+        self.assertDictEqual(expected, kwargs)

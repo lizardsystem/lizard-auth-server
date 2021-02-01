@@ -164,23 +164,6 @@ class EditProfileView(TemplateView):
         return context
 
 
-class ChangePasswordView(TemplateView):
-    """
-    Display a message that this view is now unavailable.
-    """
-
-    template_name = "lizard_auth_server/error_message.html"
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["error_message"] = (
-            "Changing password is currently unavailable due to a transition "
-            " to a new user authentication system. Please contact "
-            "servicedesk@nelen-schuurmans.nl for a password reset."
-        )
-        return context
-
-
 class InviteUserView(StaffOnlyMixin, FormView):
     template_name = "lizard_auth_server/invite_user.html"
     form_class = forms.InviteUserForm

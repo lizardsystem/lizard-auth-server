@@ -1,7 +1,7 @@
 """Mostly copied from django-warrant's tests.py."""
 
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from lizard_auth_server import backends
 from unittest import mock
 
@@ -102,12 +102,30 @@ class TestCognitoUser(TestCase):
 
         cognito_user.admin_set_user_password("bar")
 
-        # the boto3 client should be called as documented
+        # AdminSetUserPassword should be called as documented
         args, kwargs = cognito_user.client.admin_set_user_password.call_args
         expected = {
             "UserPoolId": "foo",
             "Username": "testuser",
             "Password": "bar",
             "Permanent": True,
+        }
+        self.assertDictEqual(expected, kwargs)
+
+    def test_admin_user_exists(self, patched_init):
+        patched_init.return_value = None
+        cognito_user = backends.CognitoUser()
+
+        cognito_user.client = mock.Mock()  # the boto3 client
+        cognito_user.username = "testuser"
+        cognito_user.user_pool_id = "foo"
+
+        cognito_user.admin_user_exists()
+
+        # AdminGetUser should be called as documented
+        args, kwargs = cognito_user.client.admin_get_user.call_args
+        expected = {
+            "UserPoolId": "foo",
+            "Username": "testuser",
         }
         self.assertDictEqual(expected, kwargs)

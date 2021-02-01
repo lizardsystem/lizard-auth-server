@@ -77,12 +77,27 @@ class CognitoUser(Cognito):
         return user
 
     def admin_set_user_password(self, password):
+        """Set the user's password"""
         self.client.admin_set_user_password(
             UserPoolId=self.user_pool_id,
             Username=self.username,
             Permanent=True,
             Password=password,
         )
+
+    def admin_user_exists(self):
+        """Return whether a user with username == self.username exists"""
+        try:
+            self.client.admin_get_user(
+                UserPoolId=self.user_pool_id, Username=self.username
+            )
+        except (Boto3Error, ClientError) as e:
+            error_code = e.response["Error"]["Code"]
+            if error_code == CognitoBackend.USER_NOT_FOUND_ERROR_CODE:
+                return False
+            else:
+                raise
+        return True
 
 
 class CognitoBackend(ModelBackend):

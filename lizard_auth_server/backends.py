@@ -43,6 +43,17 @@ class CognitoUser(Cognito):
         },
     )
 
+    @classmethod
+    def from_username(cls, username):
+        return cls(
+            settings.COGNITO_USER_POOL_ID,
+            settings.COGNITO_APP_ID,
+            access_key=getattr(settings, "AWS_ACCESS_KEY_ID", None),
+            secret_key=getattr(settings, "AWS_SECRET_ACCESS_KEY", None),
+            client_secret=getattr(settings, "COGNITO_APP_SECRET", None),
+            username=username,
+        )
+
     def get_user_obj(self, username=None, attribute_list=[], metadata={}, attr_map={}):
         user_attrs = cognito_to_dict(attribute_list, CognitoUser.COGNITO_ATTR_MAPPING)
         django_fields = [f.name for f in CognitoUser.user_class._meta.get_fields()]
@@ -65,6 +76,14 @@ class CognitoUser(Cognito):
 
         return user
 
+    def admin_set_user_password(self, password):
+        self.client.admin_set_user_password(
+            UserPoolId=self.user_pool_id,
+            Username=self.username,
+            Permanent=True,
+            Password=password,
+        )
+
 
 class CognitoBackend(ModelBackend):
 
@@ -81,14 +100,7 @@ class CognitoBackend(ModelBackend):
         :param password: Cognito password
         :return: returns User instance of AUTH_USER_MODEL or None
         """
-        cognito_user = CognitoUser(
-            settings.COGNITO_USER_POOL_ID,
-            settings.COGNITO_APP_ID,
-            access_key=getattr(settings, "AWS_ACCESS_KEY_ID", None),
-            secret_key=getattr(settings, "AWS_SECRET_ACCESS_KEY", None),
-            client_secret=getattr(settings, "COGNITO_APP_SECRET", None),
-            username=username,
-        )
+        cognito_user = CognitoUser.from_username(username)
         try:
             cognito_user.admin_authenticate(password)
             # ^^^ This uses ADMIN_NO_SRP_AUTH, but that's the old name for

@@ -14,6 +14,7 @@ from lizard_auth_server.models import Organisation
 from lizard_auth_server.models import Portal
 from lizard_auth_server.models import THREEDI_PORTAL
 from lizard_auth_server.models import UserProfile
+from lizard_auth_server.backends import CognitoUser, CognitoBackend
 
 import jwt
 
@@ -174,22 +175,55 @@ class AuthenticateUnsignedForm(forms.Form):
         return data
 
 
-class PasswordChangeForm(authforms.PasswordChangeForm):
-    """Used to verify whether the new password is secure."""
+class SetPasswordMixin:
+    """Used to check whether the new password is secure and for the AWS
+    coupling."""
+
+    def clean_old_password(self):
+        """
+        Validates that the old_password field is correct.
+        """
+        # Old behaviour if AWS is not setup (local situations)
+        if not getattr(settings, "AWS_ACCESS_KEY_ID", None):
+            return super().clean_old_password()
+
+        old_password = self.cleaned_data["old_password"]
+        if CognitoBackend().authenticate(
+            username=self.user.username, password=old_password
+        ) is None:
+            # Copy of the error in the super() call
+            raise forms.ValidationError(
+                self.error_messages['password_incorrect'],
+                code='password_incorrect',
+            )
+
+        return old_password
 
     def clean_new_password1(self):
         password1 = self.cleaned_data.get("new_password1")
         validate_password(password1)
         return password1
 
+    def save(self, commit=True):
+        """Override the builtin SetPassword and send the password to Cognito
+        """
+        # Old behaviour if AWS is not setup (local situations)
+        if not getattr(settings, "AWS_ACCESS_KEY_ID", None):
+            return super().save(commit=commit)
 
-class SetPasswordForm(authforms.SetPasswordForm):
-    """Used to verify whether the new password is secure."""
+        if commit:
+            password = self.cleaned_data["new_password1"]
+            cognito_user = CognitoUser.from_username(self.user.username)
+            cognito_user.admin_set_user_password(password)
+        return self.user
 
-    def clean_new_password1(self):
-        password1 = self.cleaned_data.get("new_password1")
-        validate_password(password1)
-        return password1
+
+class PasswordChangeForm(SetPasswordMixin, authforms.PasswordChangeForm):
+    pass
+
+
+class SetPasswordForm(SetPasswordMixin, authforms.SetPasswordForm):
+    pass
 
 
 def organisation_choices():

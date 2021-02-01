@@ -206,14 +206,36 @@ urlpatterns = [
     # Override django-auth's password change URLs
     url(
         r"^password_change/$",
-        views.ChangePasswordView.as_view(),
+        auth_views.password_change,
+        kwargs={
+            "template_name": "lizard_auth_server/password_change_form.html",
+            "password_change_form": forms.PasswordChangeForm,
+        },
         name="password_change",
+    ),
+    url(
+        r"^password_change/done/$",
+        auth_views.password_change_done,
+        kwargs={"template_name": "lizard_auth_server/password_change_done.html"},
+        name="password_change_done",
     ),
     # Override django-auth's password reset URLs
     url(
         r"^password_reset/$",
-        views.ChangePasswordView.as_view(),
+        auth_views.password_reset,
+        kwargs={
+            "template_name": "lizard_auth_server/password_reset_form.html",
+            "email_template_name": "lizard_auth_server/password_reset_email.html",
+            "subject_template_name": "lizard_auth_server/password_reset_subject.txt"
+            # TODO can't configure email language somehow
+        },
         name="password_reset",
+    ),
+    url(
+        r"^password_reset/done/$",
+        auth_views.password_reset_done,
+        kwargs={"template_name": "lizard_auth_server/password_reset_done.html"},
+        name="password_reset_done",
     ),
     url(
         r"^reset/(?P<uidb64>[0-9A-Za-z]{1,13})-"
